@@ -1,0 +1,52 @@
+.studies_container {
+  margin: 17vh 10vw 10vh 10vw;
+  min-height: 73vh;
+  line-height: 1.5rem;
+  // background-color: yellowgreen;
+}
+
+.cards_container {
+  margin: 3vh 0 0 0;
+}
+
+.card_content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  min-height: 18vh;
+  max-height: 18vh;
+  border: 1px lightgray solid;
+  border-radius: 5px;
+  padding: 8px;
+}
+
+.study_name {
+  margin: 0 0 20px 0;
+}
+
+.study_details {
+  // background-color: khaki;
+  width: 50vw;
+}
+
+.study_desc {
+  line-height: 1.5rem;
+}
+
+.study_details_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.study_details_right {
+  display: flex;
+  flex-direction: column;
+  // background-color: aquamarine;
+  width: 22vw;
+  margin: 2.5vh 0 0 0;
+}
+
+.study_dropdown {
+  margin: 0 0 2vh 0;
+}

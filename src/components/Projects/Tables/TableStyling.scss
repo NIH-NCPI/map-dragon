@@ -1,0 +1,73 @@
+@import '../../Styling/BackgroundImage';
+@import '../../Styling/Variables';
+
+.table_id_container {
+  margin: 17vh 10vw 10vh 10vw;
+  min-height: 70vh;
+  width: 63vw;
+}
+
+.row_header {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.integer_row {
+  border-bottom: 1px solid $greyColor;
+}
+
+#first_integer_cell {
+  border-bottom: 1px solid transparent;
+}
+
+#integer_value {
+  border: none;
+}
+
+.integer_div {
+  display: flex;
+  flex-direction: column;
+}
+
+.numerical_header {
+  width: 5vw;
+}
+
+.edit_div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+input::file-selector-button {
+  @include manage_term_button;
+  margin: 0 1vw 2vh 0;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+input::file-selector-button:hover {
+  @include manage_term_button_hover;
+}
+
+.button_disabled {
+  padding: 1vh 2.5vh;
+  border: 1px solid darkgrey;
+  color: gray;
+  border-radius: 25px;
+  font: {
+    size: 0.7rem;
+    weight: 800;
+  }
+}
+
+.transparent_button {
+  border: none;
+  background-color: transparent;
+}
+
+.study_desc {
+  font-family: 'Wix Madefor Display', sans-serif;
+  font-size: 16px;
+  margin: 0 0 10px 0;
+}

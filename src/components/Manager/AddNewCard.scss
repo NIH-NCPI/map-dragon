@@ -1,0 +1,18 @@
+.new_study_card_container {
+  display: flex;
+  flex-flow: row wrap;
+  // background-color: papayawhip;
+  font-size: 2rem;
+  height: 20vh;
+  border: 1px lightgray solid;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 6vh 0 0 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.new_study_card {
+  display: flex;
+  text-align: center;
+}

@@ -1,0 +1,12 @@
+.image_container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: -1;
+}
+
+.background_image_results {
+  position: fixed;
+  transform: translate(41%, -42%);
+  width: 100vw;
+}

@@ -1,0 +1,133 @@
+@import '../../Styling/Variables';
+@import '../../Styling/Table';
+.terminology_container {
+  margin: 17vh 10vw 10vh 10vw;
+  min-height: 70vh;
+  width: 60vw;
+}
+
+.terminology_sub_nav,
+.description_wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.add_code_link,
+.terminology_header {
+  margin-left: 50px;
+}
+
+.terminology_details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  line-height: 2.2rem;
+}
+
+.terminology_name {
+  margin: 0 0 1.5vh 0;
+}
+
+.terminology_desc {
+  margin: 0 0 2vh 0;
+}
+
+.no_description {
+  color: rgb(208, 205, 205);
+}
+
+.initial_div {
+  width: 4vw;
+}
+
+.empty_description {
+  height: 4.5vh;
+}
+
+.manage_term_button {
+  @include manage_term_button;
+}
+.manage_term_button:hover {
+  @include manage_term_button_hover;
+}
+
+.manage_term_button:active {
+  @include manage_term_button_active;
+}
+
+.manage_term_button:not(:hover, :active) {
+  margin-bottom: 2px;
+}
+
+.terminology_input {
+  margin-left: 0.6vw;
+  height: 3vh;
+  width: 60vw;
+}
+
+.input_field,
+.code_input,
+.code_description_input {
+  @include input_field;
+}
+
+.code_input {
+  width: 15vw;
+}
+
+.code_description_input {
+  width: 38vw;
+}
+
+.modal_term_ontology {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  color: $darkBlue;
+}
+
+.modal_search_result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 10px 10px 6px;
+}
+
+.modal_checkbox {
+  margin: 0 10px 0 15px;
+}
+
+.mappings_checkbox {
+  margin: 0 0 5px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: $lightBlue;
+}
+a:hover {
+  color: $darkBlue;
+}
+
+.view_more_link {
+  margin: 0 0 0 10px;
+  cursor: pointer;
+  color: $lightBlue;
+}
+.view_more_link:hover {
+  color: $darkBlue;
+}
+
+.mappings_container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 15px 0;
+}
+
+.footer_buttons {
+  display: flex;
+  justify-content: space-between;
+}
