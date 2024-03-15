@@ -1,0 +1,74 @@
+@import '../Styling/Variables';
+@import '../Styling/BackgroundImage.scss';
+
+.results_page_container {
+  min-height: 81vh;
+  margin: 0 30vw 0 5vw;
+}
+
+.search_button_results {
+  @include button;
+  margin-left: 20px;
+  cursor: pointer;
+  &.disabled_results {
+    cursor: default;
+  }
+}
+.search_button_results:hover:not(.disabled_results) {
+  @include button_hover;
+}
+
+.search_button_results:active:not(.disabled_results) {
+  @include button_active;
+}
+
+.search_field_container {
+  padding: 10px 0 20px 0;
+  margin-top: 19vh;
+}
+
+.search_results {
+  background-color: none;
+  z-index: 1;
+}
+
+.search_field_results {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#search_input_results {
+  background-image: url('./assets/magnifying_glass.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 30px;
+  height: 50px;
+  width: 450px;
+  font-size: 1.3rem;
+  padding-left: 5px;
+}
+
+#search_input_results ::placeholder {
+  font-size: 1.3rem;
+  padding: 5px;
+}
+
+.search_result {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.term_ontology {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  color: $darkBlue;
+  font-size: 1.2rem;
+}
+
+.pagination {
+  text-align: center;
+  margin: 0 0 10vh 10vh;
+}

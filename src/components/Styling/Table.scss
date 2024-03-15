@@ -1,0 +1,64 @@
+@import '../Styling/Variables';
+
+table,
+td:not(.icon_cell, .input_no_border, .initial_cell) {
+  border-bottom: 1px solid $greyColor;
+  border-collapse: collapse;
+}
+
+table:first-child {
+  border: none;
+}
+
+table {
+  width: 60vw;
+  margin: 0 0 4vh 0;
+}
+
+.header_row {
+  border-left: transparent;
+}
+
+th,
+td {
+  text-align: left;
+  overflow-wrap: break-word;
+}
+th,
+td:not(.icon_cell, .row_input_cell) {
+  padding: 8px 12px;
+}
+
+.icon_cell {
+  width: 4vw;
+}
+
+.small_icon {
+  width: 1.5vw;
+  cursor: pointer;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.small_icon:hover {
+  box-shadow: 0 0 2px 2px rgb(8, 7, 5, 0.2);
+}
+
+.first_cell {
+  width: 15vw;
+}
+.second_cell {
+  width: 29vw;
+}
+
+.third_cell {
+  width: 8vw;
+}
+
+.delete_cell {
+  width: 2vw;
+}
+
+.project_first_cell {
+  width: 18vw;
+}
