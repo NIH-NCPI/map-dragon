@@ -1,8 +1,10 @@
-# Vite React App
-
-This is a simple React application bootstrapped with Vite. \
+# Vocabulary Management Tool
+This application will support several user groups in submitting and validating their data, managing and tracking data definitions, and aligning data to standardized terms. 
 
 ## Getting Started
+### Vite React App
+
+This is a React application bootstrapped with Vite. 
 
 ### Prerequisites
 
