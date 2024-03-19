@@ -25,7 +25,7 @@ Make sure you have Node.js and npm installed on your machine.
    npm i
 
 ### Development
-
+To start the development, server run: 
 ```sh
 npm run dev
 
