@@ -34,7 +34,7 @@ Make sure you have Node.js and npm installed on your machine.
 ### Dependencies
 This project utilizes the following dependencies:
 
-React: A JavaScript library for building user interfaces.  
-Vite: A front-end tooling for web development.  
-Ant Design: A design component library.  
++ React: A JavaScript library for building user interfaces.  
++ Vite: A front-end tooling for web development.  
++ Ant Design: A design component library.  
 
