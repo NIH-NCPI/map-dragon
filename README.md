@@ -36,5 +36,6 @@ This project utilizes the following dependencies:
 
 + React: A JavaScript library for building user interfaces.  
 + Vite: A front-end tooling for web development.  
-+ Ant Design: A design component library.  
++ Ant Design: A design component library.
++ Sass: A CSS preprocessor.
 
