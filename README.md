@@ -27,10 +27,14 @@ Make sure you have Node.js and npm installed on your machine.
    npm i
 
 ### Development
-To start the development server, run:
+1. To start the development server, run:
+   ```sh
+   npm run dev
 
-```sh
-npm run dev
+### Dependencies
+This project utilizes the following dependencies:
 
-
+React: A JavaScript library for building user interfaces.
+Vite: A front-end tooling for web development.
+Ant Design: A design component library.
 
