@@ -1,3 +1,4 @@
+// Loading spinner
 import { Spin } from 'antd';
 import './Spinner.scss';
 export const Spinner = () => {
@@ -10,6 +11,7 @@ export const Spinner = () => {
   );
 };
 
+// Loading spinner for modal with slightly different styling
 export const ModalSpinner = () => {
   return (
     <div className="loading_screen">

@@ -7,6 +7,8 @@ import { Form, Input, Select } from 'antd';
 export const AddStudy = ({ form }) => {
   const { vocabUrl, studyDDs, setStudyDDs } = useContext(myContext);
 
+  // Each study has a reference to a data dictionary.
+  // getStudyDD fetches all data dictionaries and sets studyDDs to the response
   const getStudyDD = () => {
     getAll(vocabUrl, 'DataDictionary').then(data => setStudyDDs(data));
   };
@@ -15,6 +17,9 @@ export const AddStudy = ({ form }) => {
     getStudyDD();
   }, []);
 
+  // ant.design Form is returned where the user can manually input a new study
+  // Input fields include name (required), description, title, identifier prefix (required), url (required)
+  // and a multi-select of data dictionaries to choose from (at least 1 required)
   return (
     <Form form={form} layout="vertical" name="form_in_modal">
       <h2>Create Study</h2>
@@ -65,6 +70,8 @@ export const AddStudy = ({ form }) => {
           },
         ]}
       >
+        {/* Multi-select that lists all the available data dictionaries (DD). The user can choose multiple DD's to 
+        associate with the study. The DD id is set as the value to be uploaded for the DD reference and the DD name is displayed. */}
         <Select
           mode="multiple"
           allowClear
