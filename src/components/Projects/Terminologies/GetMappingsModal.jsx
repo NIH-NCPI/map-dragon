@@ -1,21 +1,21 @@
 import { Checkbox, Modal, Form, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { myContext } from '../../../App';
-import { ellipsisString } from '../../Manager/Utilitiy';
+import {
+  ellipsisString,
+  ontologyFilter,
+  systemsMatch,
+} from '../../Manager/Utilitiy';
 import { ModalSpinner } from '../../Manager/Spinner';
-import { getById, handleUpdate } from '../../Manager/FetchManager';
 
 export const GetMappingsModal = ({
   terminology,
-  setTerminology,
   getMappings,
   setGetMappings,
   setMapping,
-  terminologyId,
 }) => {
   const [form] = Form.useForm();
-  const { URL, vocabUrl } = useContext(myContext);
+  const { searchUrl, vocabUrl } = useContext(myContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
   const [loading, setLoading] = useState(true);
@@ -26,30 +26,39 @@ export const GetMappingsModal = ({
 
   let ref = useRef();
 
+  // since the code is passed through getMappings, the '!!' forces it to be evaluated as a boolean.
+  // if there is a code being passed, it evaluates to true and runs the search function.
+  // The function is run when the page changes and when the code changes.
   useEffect(() => {
     if (!!getMappings) {
       fetchResults(page);
     }
   }, [page, getMappings]);
 
+  /* Pagination is handled via a "View More" link at the bottom of the page. 
+  Each click on the "View More" link makes an API call to fetch the next 15 results.
+  This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
+  Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
   useEffect(() => {
     if (results && page > 0) {
       const container = ref.current.closest('.ant-modal-body');
       const scrollTop = ref.current.offsetTop - container.offsetTop;
       container.scrollTop = scrollTop;
-      // container.scrollIntoView({
-      //   behavior: 'smooth',
-      // });
     }
   }, [results]);
+
+  // sets the code to null on dismount.
 
   useEffect(
     () => () => {
       setGetMappings(null);
     },
-    [],
+    []
   );
 
+  // Function to send a PUT call to update the mappings.
+  // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
+  // The mappings are turned into objects in the mappings array.
   const handleSubmit = values => {
     const mappingsDTO = () => {
       let mappings = [];
@@ -64,7 +73,7 @@ export const GetMappingsModal = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(mappingsDTO()),
-      },
+      }
     )
       .then(res => {
         if (res.ok) {
@@ -76,53 +85,57 @@ export const GetMappingsModal = ({
       .then(data => setMapping(data.codes));
   };
 
+  // The function that makes the API call to search for the passed code.
+
   const fetchResults = page => {
     if (!!!getMappings) {
       return undefined;
     }
     setLoading(true);
+    /* The OLS API returns 10 results by default unless specified otherwise. The fetch call includes a specified
+    number of results to return per page (entriesPerPage) and a calculation of the first index to start the results
+    on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
     return fetch(
-      `${URL}q=${getMappings?.code}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
+      `${searchUrl}q=${getMappings?.code}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
       {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-      },
+      }
     )
       .then(res => res.json())
       .then(data => {
+        // filters results through the ontologyFilter function (defined in Manager/Utility.jsx)
+
         let res = ontologyFilter(data?.response?.docs);
+        // if the page > 0 (i.e. if this is not the first batch of results), the new results
+        // are concatenated to the old
         if (page > 0 && results.length > 0) {
           res = results.concat(res);
         } else {
+          // the total number of search results are set to totalCount for pagination
+
           setTotalCount(data.response.numFound);
         }
+        //the results are set to res (the filtered, concatenated results)
+
         setResults(res);
+        // resultsCount is set to the length of the filtered, concatenated results for pagination
         setResultsCount(res.length);
       })
       .then(() => setLoading(false));
   };
 
-  const ontologySystems = {
-    MONDO: 'http://purl.obolibrary.org/obo/mondo.owl',
-    HP: 'http://purl.obolibrary.org/obo/hp.owl',
-    MAXO: 'http://purl.obolibrary.org/obo/maxo.owl',
-    NCIT: 'http://purl.obolibrary.org/obo/ncit.owl',
-  };
-
-  const systemsMatch = ont => {
-    return ontologySystems[ont];
-  };
-
+  // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
   const handleViewMore = e => {
     e.preventDefault();
     setPage(page + 1);
   };
-  const ontologyFilter = d =>
-    d.filter(d => d?.obo_id.split(':')[0] === d?.ontology_prefix);
 
+  // The display for the checkboxes. The index is set to the count of the results before you fetch the new batch of results
+  // again + 1, to move the scrollbar to the first result of the new batch.
   const checkBoxDisplay = (d, index) => {
     index === lastCount + 1;
     return (
@@ -189,6 +202,8 @@ export const GetMappingsModal = ({
                   <div className="modal_search_results_header">
                     <h3>Search results for: {getMappings?.code}</h3>
                   </div>
+                  {/* ant.design form displaying the checkboxes with the search results.  */}
+
                   {results?.length > 0 ? (
                     <div className="result_container">
                       <Form form={form} layout="vertical">
@@ -212,7 +227,7 @@ export const GetMappingsModal = ({
                                     display: d.label,
                                     // description: d.description[0],
                                     system: systemsMatch(
-                                      d?.obo_id.split(':')[0],
+                                      d?.obo_id.split(':')[0]
                                     ),
                                   }),
                                   label: checkBoxDisplay(d, index),
@@ -225,6 +240,10 @@ export const GetMappingsModal = ({
                         </Form.Item>
                       </Form>
                       <div>
+                        {/* 'View More' pagination displaying the number of results being displayed
+                      out of the total number of results. Because of the filter to filter out the duplicates,
+                      there is a tooltip informing the user that redundant entries have been removed to explain any
+                      inconsistencies in results numbers per page. */}
                         <Tooltip
                           placement="bottom"
                           title="Redundant entries have been removed"

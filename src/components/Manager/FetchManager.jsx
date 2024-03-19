@@ -1,3 +1,4 @@
+// Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name) => {
   return fetch(`${vocabUrl}/${name}`, {
     method: 'GET',
@@ -13,6 +14,7 @@ export const getAll = (vocabUrl, name) => {
   });
 };
 
+// Fetches one element by its id
 export const getById = (vocabUrl, name, id) => {
   return fetch(`${vocabUrl}/${name}/${id}`, {
     method: 'GET',
@@ -28,6 +30,7 @@ export const getById = (vocabUrl, name, id) => {
   });
 };
 
+// Deletes one element by its id
 export const handleDelete = (evt, vocabUrl, name, component) => {
   return fetch(`${vocabUrl}/${name}/${component.id}`, {
     method: 'DELETE',
@@ -45,6 +48,7 @@ export const handleDelete = (evt, vocabUrl, name, component) => {
     });
 };
 
+// Updates one elemnt by its id.
 export const handleUpdate = (vocabUrl, name, component) => {
   return fetch(`${vocabUrl}/${name}/${component.id}`, {
     method: 'PUT',
@@ -61,6 +65,7 @@ export const handleUpdate = (vocabUrl, name, component) => {
   });
 };
 
+// Posts a new element to an endpoint.
 export const handlePost = (vocabUrl, name, body) => {
   return fetch(`${vocabUrl}/${name}`, {
     method: 'POST',

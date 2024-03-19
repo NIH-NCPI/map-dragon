@@ -30,6 +30,9 @@ export const EditMappingsModal = ({
   };
 
   const fetchMappings = () => {
+    /* The terminology code was passed through the editMappings prop.
+    If there is a code, the mappings for the code in the terminology are fetched.
+    */
     if (editMappings) {
       setLoading(true);
       return fetch(
@@ -39,7 +42,7 @@ export const EditMappingsModal = ({
           headers: {
             'Content-Type': 'application/json',
           },
-        },
+        }
       )
         .then(res => {
           if (res.ok) {
@@ -49,23 +52,34 @@ export const EditMappingsModal = ({
           }
         })
         .then(data => {
+          // If the mappings array length for the code is < 1, undefined is returned
           if (data.mappings.length < 1) {
             return undefined;
           }
+          // array of mapped codes used to check default values in checkboxes
           const mappings = [];
+          // array of mapped codes used to display the the checkboxes and build data structure of object
           const options = [];
 
           data.mappings.forEach((m, index) => {
+            {
+              /* For each mapping in the mappings array, JSON stringify the object below of code, display, and system. 
+          The API does not yet support the description field, so it is commented out for easy future integration
+          */
+            }
             const val = JSON.stringify({
               code: m.code,
               display: m.display,
-              // description: d.description[0],
+              // description: m.description[0],
               system: m?.system,
             });
-            mappings.push(val);
+
+            mappings.push(val); // For each mapping in the mappings array, push the stringified object above to the mappings array.
+            // For each mapping in the mappings array, push the stringified object above to the options array
+            // as the value for the value field for the ant.design checkbox. The label for the checkbox is returned in edditMappingsLabel function.
             options.push({ value: val, label: editMappingsLabel(m, index) });
           });
-          setMappingsForSearch(data.mappings);
+          // termMappings are set to the mappings array. Options are set to the options array.
           setTermMappings(mappings);
           setOptions(options);
         })
@@ -73,58 +87,8 @@ export const EditMappingsModal = ({
     }
   };
 
-  // console.log('mappingsForSearch', mappingsForSearch);
-
-  const updateMappings = values => {
-    const mappingsDTO = () => {
-      let mappings = [];
-      values?.mappings?.forEach(v => mappings.push(JSON.parse(v)));
-      return { mappings: mappings };
-    };
-    fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(mappingsDTO()),
-      },
-    )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(data => setMapping(data.codes));
-  };
-
-  const handleDelete = evt => {
-    return fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
-      {
-        method: 'DELETE',
-      },
-    )
-      .then(response => response.json())
-      .then(() => {
-        return fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping`);
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(() => setReset(true));
-  };
-
-  // console.log('MAPPINGS', termMappings);
-  // console.log('options', options);
-
+  // The label for the checkbox for each mapping. Displays JSX to show the display and code.
+  // The description field is commented out to be integrated when there is API support.
   const editMappingsLabel = (item, index) => {
     return (
       <>
@@ -147,8 +111,63 @@ export const EditMappingsModal = ({
     );
   };
 
+  // Function to send a PUT call to update the mappings.
+  // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
+  // The mappings are turned into objects in the mappings array.
+  const updateMappings = values => {
+    const mappingsDTO = () => {
+      let mappings = [];
+      values?.mappings?.forEach(v => mappings.push(JSON.parse(v)));
+      return { mappings: mappings };
+    };
+    fetch(
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO()),
+      }
+    )
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => setMapping(data.codes));
+  };
+
+  // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
+  // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
+  // setReset is set to true to open the modal that performs the search for the code again.
+  const handleDelete = evt => {
+    return fetch(
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
+      {
+        method: 'DELETE',
+      }
+    )
+      .then(response => response.json())
+      .then(() => {
+        return fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping`);
+      })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(() => setReset(true));
+  };
+
   return (
     <Modal
+      // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
+      // if there is a code being passed, it evaluates to true and opens the modal.
       open={!!editMappings}
       width={'51%'}
       styles={{ body: { height: '60vh', overflowY: 'auto' } }}
@@ -157,7 +176,9 @@ export const EditMappingsModal = ({
         form
           .validateFields()
           .then(values => {
-            console.log('VALUEUUEUS', values);
+            {
+              /* Performs the updateMappings PUT call on 'Save' button click */
+            }
             updateMappings(values);
             clearData();
             form.resetFields();
@@ -172,20 +193,25 @@ export const EditMappingsModal = ({
         setEditMappings(null);
         setReset(false);
       }}
-      maskClosable={true}
+      closeIcon={false}
+      maskClosable={false}
       destroyOnClose={true}
       footer={(_, { OkBtn /*CancelBtn*/ }) => (
         <>
           <div className="footer_buttons">
-            <Button
-              danger
-              onClick={evt => {
-                // setReset(true);
-                handleDelete(evt);
-              }}
-            >
-              Reset
-            </Button>
+            {/* If reset is true, no button is displayed. Othewise, the Reset button is displayed. */}
+            {reset ? (
+              ''
+            ) : (
+              <Button
+                danger
+                onClick={evt => {
+                  handleDelete(evt);
+                }}
+              >
+                Reset
+              </Button>
+            )}
             {/* <CancelBtn /> */}
             <OkBtn />
           </div>
@@ -196,6 +222,7 @@ export const EditMappingsModal = ({
         <ModalSpinner />
       ) : !reset ? (
         <>
+          {/* If reset is false, the mappings for the code are displayed with checkboxes */}
           <div className="modal_search_results_header">
             <h3>Mappings for: {editMappings?.code}</h3>
           </div>
@@ -203,7 +230,7 @@ export const EditMappingsModal = ({
             <Form.Item
               name={['mappings']}
               valuePropName="value"
-              // rules={[{ required: true, message: 'Please make a selection.' }]}
+              // Each checkbox is checked by default. The user can uncheck a checkbox to remove a mapping by clicking the save button.
               initialValue={termMappings}
             >
               <Checkbox.Group className="mappings_checkbox" options={options} />
@@ -211,6 +238,7 @@ export const EditMappingsModal = ({
           </Form>
         </>
       ) : (
+        // If reset is true the MappingSearch modal opens to perform the search for the terminology code
         <MappingSearch
           terminologyId={terminologyId}
           editMappings={editMappings}

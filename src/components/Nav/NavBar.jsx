@@ -20,11 +20,7 @@ export const NavBar = () => {
             <NavLink to="/studies">
               <li className="nav_link">Studies</li>
             </NavLink>
-            {/* <NavLink to="/projects">
-              <li className="nav_link" to="/projects">
-                Projects
-              </li>
-            </NavLink> */}
+            {/* Placeholder elements below. No functionality at this time.*/}
             <NavLink to="/help">
               <li className="nav_link">Help</li>
             </NavLink>

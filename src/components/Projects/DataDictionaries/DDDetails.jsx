@@ -17,7 +17,6 @@ import {
 } from 'antd';
 
 import './DDStyling.scss';
-import { Checkbox } from 'antd';
 import { getAll, getById, handleUpdate } from '../../Manager/FetchManager';
 import { ellipsisString } from '../../Manager/Utilitiy';
 
@@ -33,10 +32,15 @@ export const DDDetails = () => {
   } = useContext(myContext);
   const { DDId } = useParams();
 
+  /* function that maps through the tables array inside the given data dictionary (DD) and splits the 'reference' value at the '/'
+for each table to get an array of table ids*/
   const arrayOfIds = dataDictionary?.tables?.map(r => {
     return r.reference.split('/')[1];
   });
 
+  /* Function that maps through the arrayOfIds function above.
+  For each table, it pushes an API GET request to get that table to the tablePromises array.
+  Promise.all fulfills all of the fetch calls. The response is set to tablesDD  */
   const getDDTables = () => {
     let tablePromises = [];
     arrayOfIds?.forEach(id =>
@@ -44,6 +48,8 @@ export const DDDetails = () => {
     );
     Promise.all(tablePromises).then(data => setTablesDD(data));
   };
+
+  // fetches the specified DD. Sets response to 'dataDictionary' and loading to false.
 
   useEffect(() => {
     setLoading(true);
@@ -53,6 +59,8 @@ export const DDDetails = () => {
     getAll(vocabUrl, 'Table').then(data => setTablesDD(data));
     setLoading(false);
   }, []);
+
+  // calls the getDDTables function and sets loading to false
 
   useEffect(() => {
     setLoading(true);
@@ -65,6 +73,7 @@ export const DDDetails = () => {
     console.log('click', e);
   };
 
+  // Items to display in dropdown. Currently a placeholder and do not have functionality
   const items = [
     {
       label: 'Edit',
@@ -82,24 +91,10 @@ export const DDDetails = () => {
     onClick: handleMenuClick,
   };
 
-  const updateTablesDD = selectedIds => {
-    const dataDictionaryIds = selectedIds.filter(obj => !!obj);
-    const tablesDTO = dataDictionaryIds.map(dd => {
-      return { reference: `Table/${dd}` };
-    });
-    handleUpdate(vocabUrl, 'DataDictionary', {
-      ...dataDictionary,
-      tables: tablesDTO,
-    }).then(data => setDataDictionary(data));
-  };
-
-  const selectedObjs = tablesDD.filter(table => {
-    return arrayOfIds?.includes(table.id);
-  });
-
   return (
     <>
       {loading ? (
+        // If page is loading, display loading spinner. Otherwise display code below
         <Spinner />
       ) : (
         <div className="studies_container">
@@ -111,6 +106,8 @@ export const DDDetails = () => {
               <Col span={15}>
                 <div className="study_details">
                   <div className="study_name">
+                    {/* Displays DD name if there is one. If no name, displays DD id */}
+
                     <h2>
                       {dataDictionary?.name
                         ? dataDictionary?.name
@@ -118,6 +115,8 @@ export const DDDetails = () => {
                     </h2>
                   </div>
                   <div className="study_desc">
+                    {/* Displays the DD description if there is one.
+                    If there is no description, 'No description provided' is displayed in a gray font */}
                     {dataDictionary?.description ? (
                       dataDictionary?.description
                     ) : (
@@ -131,6 +130,7 @@ export const DDDetails = () => {
               <Col span={6}>
                 <div className="study_details_right">
                   <div className="study_dropdown">
+                    {/* ant.design dropdown with placeholder values. */}
                     <Dropdown menu={menuProps} style={{ width: '30vw' }}>
                       <Button>
                         <Space
@@ -155,8 +155,11 @@ export const DDDetails = () => {
           </Divider>
           <div className="study_details_cards_container">
             <Row gutter={[20, 24]}>
+              {/* Cards with table information associated with the DD. */}
               {tablesDD?.map((table, index) => (
                 <Col key={index} span={6}>
+                  {/* Displays the name if one is available or the id if there is no name.
+                  Links to view the details of the table via the 'View/Edit' button. */}
                   <Card
                     key={index}
                     title={table?.name ? table?.name : table?.id}
@@ -175,6 +178,8 @@ export const DDDetails = () => {
                     ]}
                   >
                     <Skeleton loading={loading}>
+                      {/* Displays the description up to 180 characters, truncated with ellipsis. */}
+
                       <Meta
                         style={{
                           height: '15vh',
@@ -184,6 +189,8 @@ export const DDDetails = () => {
                         }}
                         description={ellipsisString(table?.description, '180')}
                       />
+                      {/* Displays the number of variables associated with the table
+                       by getting the length of the variables array in the table */}
                       <Meta
                         style={{
                           padding: '0 5px',
