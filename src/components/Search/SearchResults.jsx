@@ -170,13 +170,10 @@ export const SearchResults = () => {
               </div>
             </>
           ) : (
-            {
-              /* if the search results are still loading, the loading spinner is displayed */
-            }(
-              <div className="loading_spinner">
-                <Spinner />
-              </div>
-            )
+            /* if the search results are still loading, the loading spinner is displayed */
+            <div className="loading_spinner">
+              <Spinner />
+            </div>
           )}
         </>
         {/* if loading has completed and search results were found, the paginator is displayed */}
