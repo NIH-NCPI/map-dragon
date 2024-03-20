@@ -29,8 +29,11 @@
   margin: 0 0 1.5vh 0;
 }
 
-.terminology_desc {
+.terminology_desc,
+.terminology_url {
   margin: 0 0 2vh 0;
+  font-family: 'Wix Madefor Display', sans-serif;
+  font-size: 16px;
 }
 
 .no_description {
@@ -129,4 +132,8 @@ a:hover {
 .footer_buttons {
   display: flex;
   justify-content: space-between;
+}
+
+.edit_message {
+  margin-top: 20vh;
 }

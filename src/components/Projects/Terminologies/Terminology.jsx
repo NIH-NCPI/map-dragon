@@ -4,12 +4,16 @@ import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
-import { getById } from '../../Manager/FetchManager';
-import { Table, Tooltip, Modal } from 'antd';
+import { getById, handleUpdate } from '../../Manager/FetchManager';
+import { Table, Tooltip, Modal, Form, Col, Row, message } from 'antd';
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
+import { SettingsDropdown } from '../../Manager/SettingsDropdown';
+import { EditTerminologyDetails } from './EditTerminologyDetails';
 
 export const Terminology = () => {
+  const [form] = Form.useForm();
+
   const { terminologyId } = useParams();
   const {
     terminology,
@@ -21,9 +25,12 @@ export const Terminology = () => {
     setEditMappings,
     getMappings,
     setGetMappings,
+    edit,
+    setEdit,
   } = useContext(myContext);
 
   const [mapping, setMapping] = useState({});
+  const [terminologyEdit, setTerminologyEdit] = useState(false);
 
   // Fetches the terminoology using the terminologyId param and sets 'terminology' to the response.
   // Fetches the mappings for the terminology and sets the response to 'mapping'
@@ -121,6 +128,19 @@ to the terminology code.
     };
   });
 
+  // Submit function for the modal to edit the terminology name, description, and url.
+  // The function adds the codes to the body of the PUT request to retain the complete
+  // terminology object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
+  const handleSubmit = values => {
+    handleUpdate(vocabUrl, 'Terminology', terminology, {
+      ...values,
+      codes: terminology?.codes,
+    })
+      .then(data => setTerminology(data))
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Changes saved successfully.'));
+  };
+
   return (
     <>
       {/* If page is still loading, display loading spinner. */}
@@ -131,20 +151,43 @@ to the terminology code.
           <div className="image_container">
             <img className="background_image_results" src={Background} />
           </div>
-          <div className="terminology_details terminology_name">
-            {/* Displays terminology name. If there is no name, displays id. */}
-            <h3> {terminology?.name ? terminology?.name : terminology?.id}</h3>
-          </div>
-          <div className="terminology_details">{terminology?.url}</div>
-          <div className="terminology_details terminology_desc">
-            {/* Displays the terminology description if there is one.
+          <Row gutter={30}>
+            <div className="study_details_container">
+              <Col span={15}>
+                <div className="study_details">
+                  <div className="study_name">
+                    {/* Displays table name if there is one. If no name, displays DD id */}
+
+                    <h2>
+                      {terminology?.name ? terminology?.name : terminology?.id}
+                    </h2>
+                  </div>
+                  <div className="terminology_url">{terminology?.url}</div>
+
+                  <div className="terminology_desc">
+                    {/* Displays the DD description if there is one.
                     If there is no description, 'No description provided' is displayed in a gray font */}
-            {terminology?.description ? (
-              terminology?.description
-            ) : (
-              <span className="no_description">No description provided.</span>
-            )}
-          </div>
+                    {terminology?.description ? (
+                      terminology?.description
+                    ) : (
+                      <span className="no_description">
+                        No description provided.
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Col>
+              <Col span={6}>
+                <div className="study_details_right">
+                  <div className="study_dropdown">
+                    {/* ant.design dropdown for edit. */}
+                    <SettingsDropdown />
+                  </div>
+                </div>
+              </Col>
+            </div>
+          </Row>
+
           <div className="table_container">
             {/* ant.design table with columns */}
             <Table columns={columns} dataSource={dataSource} />
@@ -167,6 +210,30 @@ to the terminology code.
             setMapping={setMapping}
             terminologyId={terminologyId}
           />
+
+          {/* Modal to edit details */}
+          <Modal
+            open={edit}
+            width={'51%'}
+            onOk={() =>
+              form.validateFields().then(values => {
+                form.resetFields();
+                setEdit(false);
+                handleSubmit(values);
+              })
+            }
+            onCancel={() => {
+              form.resetFields();
+              setEdit(false);
+            }}
+            maskClosable={false}
+            closeIcon={false}
+            destroyOnClose={true}
+          >
+            {/* Displays the edit form */}
+
+            <EditTerminologyDetails form={form} terminology={terminology} />
+          </Modal>
         </div>
       )}
     </>
