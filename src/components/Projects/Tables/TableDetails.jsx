@@ -5,8 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
-import { Table, Dropdown, Button, Space, Row, Col, Modal, Form } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { Table, Row, Col, Modal, Form, message } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { SettingsDropdown } from '../../Manager/SettingsDropdown';
 
@@ -65,7 +64,10 @@ export const TableDetails = () => {
       ...values,
       filename: table.filename,
       variables: table?.variables,
-    }).then(data => setTable(data));
+    })
+      .then(data => setTable(data))
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Changes saved successfully.'));
   };
 
   // columns for the ant.design table

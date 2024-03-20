@@ -135,7 +135,10 @@ to the terminology code.
     handleUpdate(vocabUrl, 'Terminology', terminology, {
       ...values,
       codes: terminology?.codes,
-    }).then(data => setTerminology(data));
+    })
+      .then(data => setTerminology(data))
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Changes saved successfully.'));
   };
 
   return (
