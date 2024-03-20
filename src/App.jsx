@@ -41,6 +41,7 @@ function App() {
   const [addStudy, setAddStudy] = useState(false); //triggers modal to open to add a new study
   const [editMappings, setEditMappings] = useState(false); //triggers modal to open to edit mappings
   const [getMappings, setGetMappings] = useState(false); //triggers modal to open to search to get new mappings
+  const [edit, setEdit] = useState(false);
 
   const [loading, setLoading] = useState(true);
 
@@ -79,6 +80,8 @@ function App() {
         setEditMappings,
         getMappings,
         setGetMappings,
+        edit,
+        setEdit,
       }}
     >
       <Routes>

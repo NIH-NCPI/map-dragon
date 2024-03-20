@@ -8,13 +8,13 @@ import { getById, handleUpdate } from '../../Manager/FetchManager';
 import { Table, Dropdown, Button, Space, Row, Col, Modal, Form } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { EditTableDetails } from './EditTableDetails';
+import { SettingsDropdown } from '../../Manager/SettingsDropdown';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
-  const { table, setTable, vocabUrl } = useContext(myContext);
+  const { table, setTable, vocabUrl, edit, setEdit } = useContext(myContext);
   const { tableId } = useParams();
   const [loading, setLoading] = useState(true);
-  const [tableEdit, setTableEdit] = useState(false);
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
@@ -45,10 +45,10 @@ export const TableDetails = () => {
     },
   ];
 
-  // onClick for 'Edit' in the dropdown. Sets tableEdit to true to trigger modal to open.
+  // onClick for 'Edit' in the dropdown. Sets edit to true to trigger modal to open.
   // The modal has a form to edit the table name, description, and url.
   const onClick = ({ key }) => {
-    if (key === '0') setTableEdit(true);
+    if (key === '0') setEdit(true);
   };
 
   // Props for dropdown menu.
@@ -67,6 +67,7 @@ export const TableDetails = () => {
       variables: table?.variables,
     }).then(data => setTable(data));
   };
+
   // columns for the ant.design table
   const columns = [
     { title: 'Name', dataIndex: 'name' },
@@ -161,22 +162,8 @@ export const TableDetails = () => {
               <Col span={6}>
                 <div className="study_details_right">
                   <div className="study_dropdown">
-                    {/* ant.design dropdown with placeholder values. */}
-
-                    <Dropdown menu={menuProps} style={{ width: '30vw' }}>
-                      <Button>
-                        <Space
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            width: 100,
-                          }}
-                        >
-                          Settings
-                          <DownOutlined />
-                        </Space>
-                      </Button>
-                    </Dropdown>
+                    {/* ant.design dropdown for edit. */}
+                    <SettingsDropdown />
                   </div>
                 </div>
               </Col>
@@ -220,18 +207,18 @@ export const TableDetails = () => {
 
       {/* Modal to edit details */}
       <Modal
-        open={tableEdit}
+        open={edit}
         width={'51%'}
         onOk={() =>
           form.validateFields().then(values => {
             form.resetFields();
-            setTableEdit(false);
+            setEdit(false);
             handleSubmit(values);
           })
         }
         onCancel={() => {
           form.resetFields();
-          setTableEdit(false);
+          setEdit(false);
         }}
         maskClosable={false}
         closeIcon={false}
