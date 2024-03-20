@@ -4,14 +4,17 @@ import './TableStyling.scss';
 import { Link, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
-import { getById } from '../../Manager/FetchManager';
-import { Table, Dropdown, Button, Space, Row, Col } from 'antd';
+import { getById, handleUpdate } from '../../Manager/FetchManager';
+import { Table, Dropdown, Button, Space, Row, Col, Modal, Form } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+import { EditTableDetails } from './EditTableDetails';
 
 export const TableDetails = () => {
+  const [form] = Form.useForm();
   const { table, setTable, vocabUrl } = useContext(myContext);
   const { tableId } = useParams();
   const [loading, setLoading] = useState(true);
+  const [tableEdit, setTableEdit] = useState(false);
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
@@ -37,20 +40,33 @@ export const TableDetails = () => {
     },
     {
       label: 'Delete',
-      key: '2',
+      key: '1',
       danger: true,
     },
   ];
 
-  const handleMenuClick = e => {
-    // message.info('Click on menu item.');
-    console.log('click', e);
-  };
-  const menuProps = {
-    items,
-    onClick: handleMenuClick,
+  // onClick for 'Edit' in the dropdown. Sets tableEdit to true to trigger modal to open.
+  // The modal has a form to edit the table name, description, and url.
+  const onClick = ({ key }) => {
+    if (key === '0') setTableEdit(true);
   };
 
+  // Props for dropdown menu.
+  const menuProps = {
+    items,
+    onClick,
+  };
+
+  // Submit function for the modal to edit the table name, description, and url.
+  // The function adds the variables and filename to the body of the PUT request to retain the complete
+  // table object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
+  const handleSubmit = values => {
+    handleUpdate(vocabUrl, 'Table', table, {
+      ...values,
+      filename: table.filename,
+      variables: table?.variables,
+    }).then(data => setTable(data));
+  };
   // columns for the ant.design table
   const columns = [
     { title: 'Name', dataIndex: 'name' },
@@ -201,6 +217,29 @@ export const TableDetails = () => {
           </div>
         </div>
       )}
+
+      {/* Modal to edit details */}
+      <Modal
+        open={tableEdit}
+        width={'51%'}
+        onOk={() =>
+          form.validateFields().then(values => {
+            form.resetFields();
+            setTableEdit(false);
+            handleSubmit(values);
+          })
+        }
+        onCancel={() => {
+          form.resetFields();
+          setTableEdit(false);
+        }}
+        maskClosable={false}
+        closeIcon={false}
+        destroyOnClose={true}
+      >
+        {/* Displays the edit form */}
+        <EditTableDetails form={form} table={table} />
+      </Modal>
     </>
   );
 };

@@ -17,7 +17,7 @@ import {
 } from 'antd';
 
 import './DDStyling.scss';
-import { getAll, getById, handleUpdate } from '../../Manager/FetchManager';
+import { getAll, getById } from '../../Manager/FetchManager';
 import { ellipsisString } from '../../Manager/Utilitiy';
 
 export const DDDetails = () => {

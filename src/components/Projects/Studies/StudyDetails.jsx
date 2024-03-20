@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
 import './StudyStyling.scss';
-import { getById, handleUpdate } from '../../Manager/FetchManager';
+import { getById } from '../../Manager/FetchManager';
 import { DownOutlined } from '@ant-design/icons';
 import {
   Button,

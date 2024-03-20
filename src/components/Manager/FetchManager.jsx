@@ -48,14 +48,14 @@ export const handleDelete = (evt, vocabUrl, name, component) => {
     });
 };
 
-// Updates one elemnt by its id.
-export const handleUpdate = (vocabUrl, name, component) => {
+// Updates one element by its id.
+export const handleUpdate = (vocabUrl, name, component, values) => {
   return fetch(`${vocabUrl}/${name}/${component.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(component),
+    body: JSON.stringify(values),
   }).then(res => {
     if (res.ok) {
       return res.json();
