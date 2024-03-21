@@ -19,6 +19,7 @@ export const EditMappingsModal = ({
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
+  const [editSearch, setEditSearch] = useState(false);
 
   useEffect(() => {
     fetchMappings();
@@ -184,6 +185,7 @@ export const EditMappingsModal = ({
             form.resetFields();
             setEditMappings(null);
             setReset(false);
+            setEditSearch(false);
           })
           .then(data => setMapping(data));
       }}
@@ -192,35 +194,43 @@ export const EditMappingsModal = ({
         form.resetFields();
         setEditMappings(null);
         setReset(false);
+        setEditSearch(false);
       }}
       closeIcon={false}
       maskClosable={false}
       destroyOnClose={true}
-      footer={(_, { OkBtn /*CancelBtn*/ }) => (
+      footer={(_, { OkBtn, CancelBtn }) => (
         <>
-          <div className="footer_buttons">
+          <div className={!reset ? 'footer_buttons' : 'save_button_only'}>
             {/* If reset is true, no button is displayed. Othewise, the Reset button is displayed. */}
-            {reset ? (
-              ''
-            ) : (
-              <Button
-                danger
-                onClick={evt => {
-                  handleDelete(evt);
-                }}
-              >
-                Reset
-              </Button>
-            )}
-            {/* <CancelBtn /> */}
-            <OkBtn />
+            <div className="reset_edit_buttons">
+              {!reset && !editSearch && (
+                <>
+                  <Button
+                    danger
+                    onClick={evt => {
+                      handleDelete(evt);
+                    }}
+                  >
+                    Reset
+                  </Button>
+                  <Button onClick={() => setEditSearch(true)}>
+                    Edit / Add
+                  </Button>
+                </>
+              )}
+            </div>
+            <div className="cancel_ok_buttons">
+              {!reset && <CancelBtn />}
+              <OkBtn />
+            </div>
           </div>
         </>
       )}
     >
       {loading ? (
         <ModalSpinner />
-      ) : !reset ? (
+      ) : !reset && !editSearch ? (
         <>
           {/* If reset is false, the mappings for the code are displayed with checkboxes */}
           <div className="modal_search_results_header">
@@ -237,7 +247,7 @@ export const EditMappingsModal = ({
             </Form.Item>
           </Form>
         </>
-      ) : (
+      ) : reset ? (
         // If reset is true the MappingSearch modal opens to perform the search for the terminology code
         <MappingSearch
           terminologyId={terminologyId}
@@ -248,6 +258,18 @@ export const EditMappingsModal = ({
           options={options}
           form={form}
         />
+      ) : (
+        editSearch && (
+          <MappingSearch
+            terminologyId={terminologyId}
+            editMappings={editMappings}
+            setEditMappings={setEditMappings}
+            setMapping={setMapping}
+            mappingsForSearch={mappingsForSearch}
+            options={options}
+            form={form}
+          />
+        )
       )}
     </Modal>
   );

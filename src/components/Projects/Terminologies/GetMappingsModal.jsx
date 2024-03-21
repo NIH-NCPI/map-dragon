@@ -251,7 +251,7 @@ export const GetMappingsModal = ({
                           Displaying {resultsCount}
                           &nbsp;of&nbsp;{totalCount}
                         </Tooltip>
-                        {resultsCount !== totalCount ? (
+                        {resultsCount !== totalCount && (
                           <span
                             className="view_more_link"
                             onClick={e => {
@@ -261,8 +261,6 @@ export const GetMappingsModal = ({
                           >
                             View More
                           </span>
-                        ) : (
-                          ''
                         )}
                       </div>
                     </div>

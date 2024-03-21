@@ -134,6 +134,17 @@ a:hover {
   justify-content: space-between;
 }
 
-.edit_message {
-  margin-top: 20vh;
+.save_button_only {
+  display: flex;
+  justify-content: end;
+}
+
+.reset_edit_buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.cancel_ok_buttons {
+  display: flex;
+  gap: 8px;
 }
