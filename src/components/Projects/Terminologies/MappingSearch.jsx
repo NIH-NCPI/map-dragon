@@ -164,7 +164,7 @@ export const MappingSearch = ({
                   <div className="result_container">
                     <Form form={form} layout="vertical" preserve={false}>
                       <Form.Item
-                        initialValue={initialChecked()}
+                        initialValue={!reset ? initialChecked() : null}
                         name={['mappings']}
                         valuePropName="value"
                         rules={[
