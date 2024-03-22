@@ -11,9 +11,11 @@ import { SettingsDropdown } from '../../Manager/SettingsDropdown';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
-  const { table, setTable, vocabUrl, edit, setEdit } = useContext(myContext);
+  const { vocabUrl, edit, setEdit } = useContext(myContext);
   const { tableId } = useParams();
   const [loading, setLoading] = useState(true);
+  const initialTable = { name: '', description: '', url: '', variables: [] }; //initial state of table
+  const [table, setTable] = useState(initialTable);
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {

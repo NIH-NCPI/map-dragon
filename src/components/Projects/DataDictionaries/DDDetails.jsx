@@ -21,16 +21,12 @@ import { getAll, getById } from '../../Manager/FetchManager';
 import { ellipsisString } from '../../Manager/Utilitiy';
 
 export const DDDetails = () => {
-  const {
-    dataDictionary,
-    setDataDictionary,
-    vocabUrl,
-    loading,
-    setLoading,
-    tablesDD,
-    setTablesDD,
-  } = useContext(myContext);
+  const { vocabUrl, tablesDD, setTablesDD } = useContext(myContext);
   const { DDId } = useParams();
+  const initialDD = { name: '', description: '', tables: [] }; //initial state of data dictionary
+
+  const [dataDictionary, setDataDictionary] = useState(initialDD);
+  const [loading, setLoading] = useState(true);
 
   /* function that maps through the tables array inside the given data dictionary (DD) and splits the 'reference' value at the '/'
 for each table to get an array of table ids*/

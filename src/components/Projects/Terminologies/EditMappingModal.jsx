@@ -53,6 +53,7 @@ export const EditMappingsModal = ({
           }
         })
         .then(data => {
+          setMappingsForSearch(data.mappings);
           // If the mappings array length for the code is < 1, undefined is returned
           if (data.mappings.length < 1) {
             return undefined;
@@ -257,6 +258,7 @@ export const EditMappingsModal = ({
           mappingsForSearch={mappingsForSearch}
           options={options}
           form={form}
+          reset={reset}
         />
       ) : (
         editSearch && (
@@ -268,6 +270,7 @@ export const EditMappingsModal = ({
             mappingsForSearch={mappingsForSearch}
             options={options}
             form={form}
+            reset={reset}
           />
         )
       )}

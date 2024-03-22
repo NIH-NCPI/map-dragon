@@ -7,23 +7,15 @@ import Background from '../../assets/Background.png';
 import { Spinner } from '../Manager/Spinner';
 
 export const SearchResults = () => {
-  const {
-    results,
-    setResults,
-    rows,
-    setRows,
-    current,
-    setCurrent,
-    buttonDisabled,
-    setButtonDisabled,
-    loading,
-    setLoading,
-    searchUrl,
-  } = useContext(myContext);
+  const { results, setResults, buttonDisabled, setButtonDisabled, searchUrl } =
+    useContext(myContext);
 
   const [page, setPage] = useState(1); //page number for search results pagination
   /* useParams() gets the search term param from the address bar, 
   which was placed there from the input field in OntologySearch.jsx */
+  const [rows, setRows] = useState(20); //number of rows displayed in each page of search results
+  const [current, setCurrent] = useState(1); //the page of search results currently displayed
+  const [loading, setLoading] = useState(true);
   const { query } = useParams();
   const navigate = useNavigate();
   const ref = useRef();
@@ -146,27 +138,28 @@ export const SearchResults = () => {
                 </div>
                 {/* if the length of the results array is greater than 0 (i.e. there is a return with results for the search term),
                 the results are displayed. */}
-                {results?.docs?.length > 0
-                  ? results?.docs.map((d, index) => {
-                      return (
-                        <>
-                          <div key={index} className="search_result">
-                            <div className="term_ontology">
-                              <div>
-                                <b>{d.label}</b>
-                              </div>
-                              <div>{d.obo_id}</div>
+                {results?.docs?.length > 0 ? (
+                  results?.docs.map((d, index) => {
+                    return (
+                      <>
+                        <div key={index} className="search_result">
+                          <div className="term_ontology">
+                            <div>
+                              <b>{d.label}</b>
                             </div>
-                            <div>{d.description}</div>
-                            <div>Ontology: {d.ontology_prefix}</div>
+                            <div>{d.obo_id}</div>
                           </div>
-                        </>
-                      );
-                    })
-                  : {
-                      /* if the length of the results array is not greater than 0 (i.e. there are no results found for the search term),
+                          <div>{d.description}</div>
+                          <div>Ontology: {d.ontology_prefix}</div>
+                        </div>
+                      </>
+                    );
+                  })
+                ) : (
+                  /* if the length of the results array is not greater than 0 (i.e. there are no results found for the search term),
                 the "No results found" is displayed */
-                    }(<h4>No results found.</h4>)}
+                  <h4>No results found.</h4>
+                )}
               </div>
             </>
           ) : (

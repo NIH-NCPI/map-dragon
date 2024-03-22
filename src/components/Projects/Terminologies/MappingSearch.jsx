@@ -8,7 +8,13 @@ import {
 } from '../../Manager/Utilitiy';
 import { ModalSpinner } from '../../Manager/Spinner';
 
-export const MappingSearch = ({ editMappings, setEditMappings, form }) => {
+export const MappingSearch = ({
+  editMappings,
+  setEditMappings,
+  form,
+  mappingsForSearch,
+  reset,
+}) => {
   const { searchUrl } = useContext(myContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
@@ -125,6 +131,24 @@ export const MappingSearch = ({ editMappings, setEditMappings, form }) => {
     );
   };
 
+  const initialChecked = () => {
+    let initialMappings = [];
+    const mappingFilter = mappingsForSearch.map(m =>
+      results.filter(r => r.obo_id === m.code)
+    );
+
+    mappingFilter.forEach((m, index) => {
+      const val = JSON.stringify({
+        code: m?.[0]?.obo_id,
+        display: m?.[0].label,
+        // description: m.description[0],
+        system: systemsMatch(m?.[0]?.obo_id.split(':')[0]),
+      });
+      initialMappings.push(val);
+    });
+    return initialMappings;
+  };
+
   return (
     <>
       <div className="results_modal_container">
@@ -140,6 +164,7 @@ export const MappingSearch = ({ editMappings, setEditMappings, form }) => {
                   <div className="result_container">
                     <Form form={form} layout="vertical" preserve={false}>
                       <Form.Item
+                        initialValue={initialChecked()}
                         name={['mappings']}
                         valuePropName="value"
                         rules={[
