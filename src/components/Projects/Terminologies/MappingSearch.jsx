@@ -131,6 +131,9 @@ export const MappingSearch = ({
     );
   };
 
+  // Maps through the array of previously selected mappings and filters the mappings id to the terminology code
+  // for a match. For each of the matches, it returns a JSON stringified object that is pushed to a separate array.
+  // That array is returned to use as default checked values for the checkboxes in the search.
   const initialChecked = () => {
     let initialMappings = [];
     const mappingFilter = mappingsForSearch.map(m =>
@@ -164,6 +167,7 @@ export const MappingSearch = ({
                   <div className="result_container">
                     <Form form={form} layout="vertical" preserve={false}>
                       <Form.Item
+                        // If it is NOT in reset state (i.e. edit mode), default values are checked. If reset is set, default values are blank, since all values were deleted.
                         initialValue={!reset ? initialChecked() : null}
                         name={['mappings']}
                         valuePropName="value"

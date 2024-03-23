@@ -53,7 +53,7 @@ export const EditMappingsModal = ({
           }
         })
         .then(data => {
-          setMappingsForSearch(data.mappings);
+          setMappingsForSearch(data.mappings); // will be passed to MappingSearch.jsx to check existing mappings by default
           // If the mappings array length for the code is < 1, undefined is returned
           if (data.mappings.length < 1) {
             return undefined;
