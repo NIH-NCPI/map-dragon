@@ -14,15 +14,9 @@ const { Meta } = Card;
 
 export const StudyList = () => {
   const [form] = Form.useForm();
-  const {
-    loading,
-    setLoading,
-    studies,
-    setStudies,
-    addStudy,
-    setAddStudy,
-    vocabUrl,
-  } = useContext(myContext);
+  const { addStudy, setAddStudy, vocabUrl } = useContext(myContext);
+  const [studies, setStudies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 

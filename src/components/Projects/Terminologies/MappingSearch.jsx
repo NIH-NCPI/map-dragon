@@ -8,7 +8,13 @@ import {
 } from '../../Manager/Utilitiy';
 import { ModalSpinner } from '../../Manager/Spinner';
 
-export const MappingSearch = ({ editMappings, setEditMappings, form }) => {
+export const MappingSearch = ({
+  editMappings,
+  setEditMappings,
+  form,
+  mappingsForSearch,
+  reset,
+}) => {
   const { searchUrl } = useContext(myContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
@@ -125,6 +131,27 @@ export const MappingSearch = ({ editMappings, setEditMappings, form }) => {
     );
   };
 
+  // Maps through the array of previously selected mappings and filters the mappings id to the terminology code
+  // for a match. For each of the matches, it returns a JSON stringified object that is pushed to a separate array.
+  // That array is returned to use as default checked values for the checkboxes in the search.
+  const initialChecked = () => {
+    let initialMappings = [];
+    const mappingFilter = mappingsForSearch.map(m =>
+      results.filter(r => r.obo_id === m.code)
+    );
+
+    mappingFilter.forEach((m, index) => {
+      const val = JSON.stringify({
+        code: m?.[0]?.obo_id,
+        display: m?.[0].label,
+        // description: m.description[0],
+        system: systemsMatch(m?.[0]?.obo_id.split(':')[0]),
+      });
+      initialMappings.push(val);
+    });
+    return initialMappings;
+  };
+
   return (
     <>
       <div className="results_modal_container">
@@ -140,6 +167,8 @@ export const MappingSearch = ({ editMappings, setEditMappings, form }) => {
                   <div className="result_container">
                     <Form form={form} layout="vertical" preserve={false}>
                       <Form.Item
+                        // If it is NOT in reset state (i.e. edit mode), default values are checked. If reset is set, default values are blank, since all values were deleted.
+                        initialValue={!reset ? initialChecked() : null}
                         name={['mappings']}
                         valuePropName="value"
                         rules={[

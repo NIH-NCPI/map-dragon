@@ -16,11 +16,7 @@ export const Terminology = () => {
 
   const { terminologyId } = useParams();
   const {
-    terminology,
-    setTerminology,
     vocabUrl,
-    loading,
-    setLoading,
     editMappings,
     setEditMappings,
     getMappings,
@@ -29,8 +25,12 @@ export const Terminology = () => {
     setEdit,
   } = useContext(myContext);
 
+  const [loading, setLoading] = useState(true);
   const [mapping, setMapping] = useState({});
   const [terminologyEdit, setTerminologyEdit] = useState(false);
+  const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
+
+  const [terminology, setTerminology] = useState(initialTerminology);
 
   // Fetches the terminoology using the terminologyId param and sets 'terminology' to the response.
   // Fetches the mappings for the terminology and sets the response to 'mapping'

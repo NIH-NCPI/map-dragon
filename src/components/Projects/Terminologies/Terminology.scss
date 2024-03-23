@@ -1,7 +1,7 @@
 @import '../../Styling/Variables';
 .terminology_container {
   margin: 17vh 10vw 10vh 10vw;
-  min-height: 70vh;
+  min-height: 73vh;
   width: 60vw;
 }
 
@@ -134,6 +134,17 @@ a:hover {
   justify-content: space-between;
 }
 
-.edit_message {
-  margin-top: 20vh;
+.save_button_only {
+  display: flex;
+  justify-content: end;
+}
+
+.reset_edit_buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.cancel_ok_buttons {
+  display: flex;
+  gap: 8px;
 }
