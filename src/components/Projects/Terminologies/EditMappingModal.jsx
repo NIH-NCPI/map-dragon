@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from './MappingSearch';
-import { handleDelete } from '../../Manager/FetchManager';
+import { ResetMappings } from './ResetMappings';
 
 export const EditMappingsModal = ({
   editMappings,
@@ -142,30 +142,6 @@ export const EditMappingsModal = ({
       .then(data => setMapping(data.codes));
   };
 
-  // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
-  // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
-  // setReset is set to true to open the modal that performs the search for the code again.
-  const handleDelete = evt => {
-    return fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
-      {
-        method: 'DELETE',
-      }
-    )
-      .then(response => response.json())
-      .then(() => {
-        return fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping`);
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(() => setReset(true));
-  };
-
   return (
     <Modal
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
@@ -203,18 +179,18 @@ export const EditMappingsModal = ({
       footer={(_, { OkBtn, CancelBtn }) => (
         <>
           <div className={!reset ? 'footer_buttons' : 'save_button_only'}>
-            {/* If reset is true, no button is displayed. Othewise, the Reset button is displayed. */}
+            {/* If reset and editSearch are false, the reset and edit buttons are displayed
+            The reset button opens a modal to confirm mapping deletion, then the search is performed again
+            in the MappingSearch modal below. The edit/add button sets editSearch to true and opens 
+            the modal to perform the search in MappingSearch below. */}
             <div className="reset_edit_buttons">
               {!reset && !editSearch && (
                 <>
-                  <Button
-                    danger
-                    onClick={evt => {
-                      handleDelete(evt);
-                    }}
-                  >
-                    Reset
-                  </Button>
+                  <ResetMappings
+                    terminologyId={terminologyId}
+                    editMappings={editMappings}
+                    setReset={setReset}
+                  />
                   <Button onClick={() => setEditSearch(true)}>
                     Edit / Add
                   </Button>
@@ -249,7 +225,7 @@ export const EditMappingsModal = ({
           </Form>
         </>
       ) : (
-        // If reset is true the MappingSearch modal opens to perform the search for the terminology code
+        // If reset or editSearch is true the MappingSearch modal opens to perform the search for the terminology code
         (editSearch || reset) && (
           <MappingSearch
             terminologyId={terminologyId}
