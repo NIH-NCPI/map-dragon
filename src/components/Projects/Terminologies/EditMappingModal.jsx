@@ -23,7 +23,7 @@ export const EditMappingsModal = ({
 
   useEffect(() => {
     fetchMappings();
-  }, [editMappings, mapping]);
+  }, [editMappings]);
 
   const clearData = () => {
     setTermMappings([]);
@@ -248,20 +248,9 @@ export const EditMappingsModal = ({
             </Form.Item>
           </Form>
         </>
-      ) : reset ? (
-        // If reset is true the MappingSearch modal opens to perform the search for the terminology code
-        <MappingSearch
-          terminologyId={terminologyId}
-          editMappings={editMappings}
-          setEditMappings={setEditMappings}
-          setMapping={setMapping}
-          mappingsForSearch={mappingsForSearch}
-          options={options}
-          form={form}
-          reset={reset}
-        />
       ) : (
-        editSearch && (
+        // If reset is true the MappingSearch modal opens to perform the search for the terminology code
+        (editSearch || reset) && (
           <MappingSearch
             terminologyId={terminologyId}
             editMappings={editMappings}
@@ -271,6 +260,7 @@ export const EditMappingsModal = ({
             options={options}
             form={form}
             reset={reset}
+            onClose={form.resetFields}
           />
         )
       )}

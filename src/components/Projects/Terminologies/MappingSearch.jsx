@@ -14,6 +14,7 @@ export const MappingSearch = ({
   form,
   mappingsForSearch,
   reset,
+  onClose,
 }) => {
   const { searchUrl } = useContext(myContext);
   const [page, setPage] = useState(0);
@@ -49,6 +50,7 @@ export const MappingSearch = ({
   // sets the code to null on dismount.
   useEffect(
     () => () => {
+      onClose();
       setEditMappings(null);
     },
     []
@@ -165,7 +167,7 @@ export const MappingSearch = ({
                 {/* ant.design form displaying the checkboxes with the search results.  */}
                 {results?.length > 0 ? (
                   <div className="result_container">
-                    <Form form={form} layout="vertical" preserve={false}>
+                    <Form form={form} layout="vertical">
                       <Form.Item
                         // If it is NOT in reset state (i.e. edit mode), default values are checked. If reset is set, default values are blank, since all values were deleted.
                         initialValue={!reset ? initialChecked() : null}
