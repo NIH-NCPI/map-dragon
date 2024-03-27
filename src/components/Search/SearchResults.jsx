@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useContext } from 'react';
-import { Pagination } from 'antd';
+import { Pagination, notification } from 'antd';
 import { myContext } from '../../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
@@ -7,8 +7,8 @@ import Background from '../../assets/Background.png';
 import { Spinner } from '../Manager/Spinner';
 
 export const SearchResults = () => {
-  const { results, setResults, buttonDisabled, setButtonDisabled, searchUrl } =
-    useContext(myContext);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const { results, setResults, searchUrl } = useContext(myContext);
 
   const [page, setPage] = useState(1); //page number for search results pagination
   /* useParams() gets the search term param from the address bar, 
@@ -60,11 +60,27 @@ export const SearchResults = () => {
     )
       .then(res => res.json())
       .then(data => setResults(data.response))
-      .then(() => {
-        setLoading(false);
-      });
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
   };
 
+  /* if the input field has a value (i.e. term being searched), the value is transposed into the address bar. 
+The user is then redirected to the search page, which completes the search for the search term.*/
+  const searchOnEnter = e => {
+    if (e.key === 'Enter') {
+      if (ref.current.value) {
+        setPage(1), setCurrent(1), navigate(`/search/${ref.current.value}`);
+      }
+    }
+  };
   return (
     <>
       <div className="results_page_container">
@@ -81,24 +97,11 @@ export const SearchResults = () => {
                 placeholder="Search"
                 defaultValue={query}
                 ref={ref}
-                /* if the input field has a value (i.e. term being searched), the value is transposed into the address bar. 
-                  The user is then redirected to the search page, which completes the search for the search term.
-                  */
                 onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    if (ref.current.value) {
-                      setPage(1),
-                        setCurrent(1),
-                        navigate(`/search/${ref.current.value}`);
-                    }
-                  }
+                  searchOnEnter(e);
                 }}
                 // if there is no value in the input field, the search button is disabled.
-                onChange={e => {
-                  e.target.value === ''
-                    ? setButtonDisabled(true)
-                    : setButtonDisabled(false);
-                }}
+                onChange={e => setButtonDisabled(e.target.value === '')}
               />
             </div>
 

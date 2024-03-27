@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { myContext } from '../../../App';
 import { Spinner } from '../../Manager/Spinner';
 import { getAll, handlePost } from '../../Manager/FetchManager';
-import { Modal, Form, Row, Col, Card, Button, Skeleton } from 'antd';
+import { Modal, Form, Row, Col, Card, notification, Skeleton } from 'antd';
 import { AddStudy } from './AddStudy';
 import Background from '../../../assets/Background.png';
 import { ellipsisString } from '../../Manager/Utilitiy';
@@ -25,7 +25,16 @@ export const StudyList = () => {
     setLoading(true);
     getAll(vocabUrl, 'Study')
       .then(data => setStudies(data))
-      .then(() => setLoading(false));
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // Submit function for adding a new study.

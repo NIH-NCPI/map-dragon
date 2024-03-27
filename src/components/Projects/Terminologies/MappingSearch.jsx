@@ -93,7 +93,16 @@ export const MappingSearch = ({
         // resultsCount is set to the length of the filtered, concatenated results for pagination
         setResultsCount(res.length);
       })
-      .then(() => setLoading(false));
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
   };
 
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
@@ -154,6 +163,19 @@ export const MappingSearch = ({
     return initialMappings;
   };
 
+  const viewMorePagination = (
+    <span
+      className="view_more_link"
+      onClick={e => {
+        handleViewMore(e);
+        // the lastcount being set to resultsCount prior to fetching the next batch of results
+        setLastCount(resultsCount);
+      }}
+    >
+      View More
+    </span>
+  );
+
   return (
     <>
       <div className="results_modal_container">
@@ -212,20 +234,7 @@ export const MappingSearch = ({
                         Displaying {resultsCount}
                         &nbsp;of&nbsp;{totalCount}
                       </Tooltip>
-                      {resultsCount !== totalCount ? (
-                        <span
-                          className="view_more_link"
-                          onClick={e => {
-                            handleViewMore(e);
-                            // the lastcount being set to resultsCount prior to fetching the next batch of results
-                            setLastCount(resultsCount);
-                          }}
-                        >
-                          View More
-                        </span>
-                      ) : (
-                        ''
-                      )}
+                      {resultsCount !== totalCount && viewMorePagination}
                     </div>
                   </div>
                 ) : (

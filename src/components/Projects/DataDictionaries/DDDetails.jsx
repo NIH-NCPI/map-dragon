@@ -14,6 +14,7 @@ import {
   Divider,
   Skeleton,
   Card,
+  notification,
 } from 'antd';
 
 import './DDStyling.scss';
@@ -49,11 +50,30 @@ for each table to get an array of table ids*/
 
   useEffect(() => {
     setLoading(true);
-    getById(vocabUrl, 'DataDictionary', DDId).then(data =>
-      setDataDictionary(data)
-    );
-    getAll(vocabUrl, 'Table').then(data => setTablesDD(data));
-    setLoading(false);
+    getById(vocabUrl, 'DataDictionary', DDId)
+      .then(data => setDataDictionary(data))
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
+    getAll(vocabUrl, 'Table')
+      .then(data => setTablesDD(data))
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // calls the getDDTables function and sets loading to false

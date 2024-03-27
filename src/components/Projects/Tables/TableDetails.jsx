@@ -5,7 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
-import { Table, Row, Col, Modal, Form, message } from 'antd';
+import { Table, Row, Col, Modal, Form, message, notification } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { SettingsDropdown } from '../../Manager/SettingsDropdown';
 
@@ -22,7 +22,16 @@ export const TableDetails = () => {
     setLoading(true);
     getById(vocabUrl, 'Table', tableId)
       .then(data => setTable(data))
-      .then(() => setLoading(false));
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // sets table to an empty object on dismount
