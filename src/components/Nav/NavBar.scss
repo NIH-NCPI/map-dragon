@@ -3,9 +3,9 @@ $linkColor: #fffc31;
 
 nav {
   z-index: 1;
-  width: 100vw;
+  width: 100%;
   background-color: $navColor;
-  height: 14vh;
+  height: 115px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -32,7 +32,7 @@ nav {
 
 .logo_container {
   left: 0;
-  padding-left: 8vw;
+  padding-left: 100px;
 }
 
 .nav_logo {
@@ -60,8 +60,8 @@ nav {
   align-items: center;
   justify-content: center;
   background-color: $linkColor;
-  height: 9vh;
-  width: 9vw;
+  height: 75px;
+  width: 115px;
   border-radius: 10px;
 }
 
@@ -74,7 +74,7 @@ footer {
   margin-top: auto;
   bottom: 0;
   width: 100%;
-  height: 6vh;
+  height: 75px;
   margin-top: -6vh;
   background-color: $navColor;
 }
