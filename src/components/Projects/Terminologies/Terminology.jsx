@@ -5,7 +5,16 @@ import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
-import { Table, Tooltip, Modal, Form, Col, Row, message } from 'antd';
+import {
+  Table,
+  Tooltip,
+  Modal,
+  Form,
+  Col,
+  Row,
+  message,
+  notification,
+} from 'antd';
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
 import { SettingsDropdown } from '../../Manager/SettingsDropdown';
@@ -37,12 +46,30 @@ export const Terminology = () => {
   // Sets loading to false
   useEffect(() => {
     setLoading(true);
-    getById(vocabUrl, 'Terminology', terminologyId).then(data =>
-      setTerminology(data)
-    );
+    getById(vocabUrl, 'Terminology', terminologyId)
+      .then(data => setTerminology(data))
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
     getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
       .then(data => setMapping(data.codes))
-      .then(() => setLoading(false));
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.

@@ -44,7 +44,6 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
           Are you sure you want to <b>delete</b> the mappings?{' '}
         </span>
       ),
-
       onOk() {
         handleDelete();
       },
