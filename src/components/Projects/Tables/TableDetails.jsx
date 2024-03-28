@@ -25,8 +25,8 @@ export const TableDetails = () => {
       .catch(error => {
         if (error) {
           notification.error({
-            message: error.name,
-            description: error.message,
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
           });
         }
         return error;
@@ -41,31 +41,6 @@ export const TableDetails = () => {
     },
     []
   );
-
-  // placeholder items for the dropdown
-  const items = [
-    {
-      label: 'Edit',
-      key: '0',
-    },
-    {
-      label: 'Delete',
-      key: '1',
-      danger: true,
-    },
-  ];
-
-  // onClick for 'Edit' in the dropdown. Sets edit to true to trigger modal to open.
-  // The modal has a form to edit the table name, description, and url.
-  const onClick = ({ key }) => {
-    if (key === '0') setEdit(true);
-  };
-
-  // Props for dropdown menu.
-  const menuProps = {
-    items,
-    onClick,
-  };
 
   // Submit function for the modal to edit the table name, description, and url.
   // The function adds the variables and filename to the body of the PUT request to retain the complete

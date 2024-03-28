@@ -1,4 +1,6 @@
 .loading_screen {
+  margin-top: 115px;
+  height: calc(100vh - 115px);
   display: flex;
   flex-direction: row;
   align-items: center;

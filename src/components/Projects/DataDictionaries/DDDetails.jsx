@@ -55,8 +55,8 @@ for each table to get an array of table ids*/
       .catch(error => {
         if (error) {
           notification.error({
-            message: error.name,
-            description: error.message,
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
           });
         }
         return error;
@@ -67,8 +67,8 @@ for each table to get an array of table ids*/
       .catch(error => {
         if (error) {
           notification.error({
-            message: error.name,
-            description: error.message,
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
           });
         }
         return error;

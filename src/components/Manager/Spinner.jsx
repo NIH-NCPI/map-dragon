@@ -21,3 +21,13 @@ export const ModalSpinner = () => {
     </div>
   );
 };
+
+export const SearchSpinner = () => {
+  return (
+    <div className="search_screen">
+      <div className="spinner">
+        <Spin />
+      </div>
+    </div>
+  );
+};

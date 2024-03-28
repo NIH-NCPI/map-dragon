@@ -86,8 +86,8 @@ export const EditMappingsModal = ({
         .catch(error => {
           if (error) {
             notification.error({
-              message: error.name,
-              description: error.message,
+              message: 'Error',
+              description: 'An error occurred. Please try again.',
             });
           }
           return error;
@@ -150,8 +150,8 @@ export const EditMappingsModal = ({
       .catch(error => {
         if (error) {
           notification.error({
-            message: error.name,
-            description: error.message,
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
           });
         }
         return error;
