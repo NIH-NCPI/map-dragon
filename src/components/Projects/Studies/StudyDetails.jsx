@@ -4,24 +4,18 @@ import { Link, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
 import './StudyStyling.scss';
-import { getById } from '../../Manager/FetchManager';
-import { DownOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Dropdown,
-  Space,
-  Row,
-  Col,
-  Divider,
-  Skeleton,
-  Card,
-} from 'antd';
+import { getById, handleUpdate } from '../../Manager/FetchManager';
+import { Row, Col, Divider, Skeleton, Card, Modal, Form, message } from 'antd';
 
 import { ellipsisString } from '../../Manager/Utilitiy';
+import { SettingsDropdownStudy } from '../../Manager/SettingsDropdownStudy';
+import { EditStudyDetails } from './EditStudyDetails';
 const { Meta } = Card;
 
 export const StudyDetails = () => {
-  const { vocabUrl, studyDDs, setStudyDDs } = useContext(myContext);
+  const [form] = Form.useForm();
+  const { vocabUrl, studyDDs, setStudyDDs, edit, setEdit } =
+    useContext(myContext);
   const { studyId } = useParams();
   const initialStudy = {
     identifier_prefix: '',
@@ -48,23 +42,20 @@ for each DD to get an array of DD ids*/
     arrayOfIds?.forEach(id =>
       dDPromises.push(getById(vocabUrl, 'DataDictionary', id))
     );
-    Promise.all(dDPromises).then(data => setStudyDDs(data));
+    Promise.all(dDPromises)
+      .then(data => setStudyDDs(data))
+      .then(() => setLoading(false));
   };
 
   // fetches the specified study. Sets response to 'study' and loading to false.
   useEffect(() => {
     setLoading(true);
-    getById(vocabUrl, 'Study', studyId)
-      .then(data => setStudy(data))
-      .then(() => setLoading(false));
+    getById(vocabUrl, 'Study', studyId).then(data => setStudy(data));
   }, []);
 
   // calls the getStudyDDs function and sets loading to false
   useEffect(() => {
-    setLoading(true);
     getStudyDDs();
-
-    setLoading(false);
   }, [study]);
 
   // resets the study to an empty object on dismount
@@ -76,32 +67,19 @@ for each DD to get an array of DD ids*/
     []
   );
 
-  const handleMenuClick = e => {
-    console.log('click', e);
+  // Submit function for the modal to edit the study name, description, and url.
+  // The function adds the variables and filename to the body of the PUT request to retain the complete
+  // study object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
+  const handleSubmit = values => {
+    handleUpdate(vocabUrl, 'Study', study, {
+      ...values,
+      datadictionary: study?.datadictionary,
+    })
+      .then(data => setStudy(data))
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Changes saved successfully.'));
   };
 
-  // Items to display in dropdown. Currently a placeholder and do not have functionality
-  const items = [
-    {
-      label: 'Edit',
-      key: '0',
-    },
-    {
-      label: 'Invite collaborators',
-      key: '1',
-    },
-    {
-      label: 'Delete',
-      key: '2',
-      danger: true,
-    },
-  ];
-
-  // Props for dropdown
-  const menuProps = {
-    items,
-    onClick: handleMenuClick,
-  };
   return (
     <>
       {loading ? (
@@ -136,21 +114,7 @@ for each DD to get an array of DD ids*/
               <Col span={6}>
                 <div className="study_details_right">
                   <div className="study_dropdown">
-                    {/* ant.design dropdown with placeholder values. */}
-                    <Dropdown menu={menuProps} style={{ width: '30vw' }}>
-                      <Button>
-                        <Space
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            width: 100,
-                          }}
-                        >
-                          Settings
-                          <DownOutlined />
-                        </Space>
-                      </Button>
-                    </Dropdown>
+                    <SettingsDropdownStudy study={study} />
                   </div>
                   <div className="study_url">URL: {study.url}</div>
                 </div>
@@ -214,6 +178,29 @@ for each DD to get an array of DD ids*/
           </div>
         </div>
       )}
+      {/* Modal to edit details */}
+      <Modal
+        open={edit}
+        width={'51%'}
+        onOk={() =>
+          form.validateFields().then(values => {
+            form.resetFields();
+            setEdit(false);
+            // console.log(values);
+            handleSubmit(values);
+          })
+        }
+        onCancel={() => {
+          form.resetFields();
+          setEdit(false);
+        }}
+        maskClosable={false}
+        closeIcon={false}
+        destroyOnClose={true}
+      >
+        {/* Displays the edit form */}
+        <EditStudyDetails form={form} study={study} />
+      </Modal>
     </>
   );
 };

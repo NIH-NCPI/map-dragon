@@ -4,7 +4,7 @@ import { myContext } from '../../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
 import Background from '../../assets/Background.png';
-import { Spinner } from '../Manager/Spinner';
+import { SearchSpinner } from '../Manager/Spinner';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -63,8 +63,8 @@ export const SearchResults = () => {
       .catch(error => {
         if (error) {
           notification.error({
-            message: error.name,
-            description: error.message,
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
           });
         }
         return error;
@@ -168,7 +168,7 @@ The user is then redirected to the search page, which completes the search for t
           ) : (
             /* if the search results are still loading, the loading spinner is displayed */
             <div className="loading_spinner">
-              <Spinner />
+              <SearchSpinner />
             </div>
           )}
         </>
