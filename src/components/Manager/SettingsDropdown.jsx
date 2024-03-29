@@ -4,7 +4,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { myContext } from '../../App';
 
 export const SettingsDropdown = () => {
-  const { edit, setEdit } = useContext(myContext);
+  const { setEdit } = useContext(myContext);
 
   // placeholder items for the dropdown
   const items = [

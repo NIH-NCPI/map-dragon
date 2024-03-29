@@ -3,26 +3,28 @@ import { myContext } from '../../../App';
 import { Link, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
-import { DownOutlined } from '@ant-design/icons';
 const { Meta } = Card;
 import {
-  Button,
-  Dropdown,
-  Space,
+  Modal,
   Row,
   Col,
   Divider,
   Skeleton,
   Card,
   notification,
+  Form,
 } from 'antd';
 
 import './DDStyling.scss';
-import { getAll, getById } from '../../Manager/FetchManager';
+import { getAll, getById, handleUpdate } from '../../Manager/FetchManager';
 import { ellipsisString } from '../../Manager/Utilitiy';
+import { SettingsDropdown } from '../../Manager/SettingsDropdown';
+import { EditDDDetails } from './EditDDDetails';
 
 export const DDDetails = () => {
-  const { vocabUrl, tablesDD, setTablesDD } = useContext(myContext);
+  const [form] = Form.useForm();
+  const { vocabUrl, tablesDD, setTablesDD, edit, setEdit } =
+    useContext(myContext);
   const { DDId } = useParams();
   const initialDD = { name: '', description: '', tables: [] }; //initial state of data dictionary
 
@@ -84,27 +86,17 @@ for each table to get an array of table ids*/
     setLoading(false);
   }, [dataDictionary]);
 
-  const handleMenuClick = e => {
-    // message.info('Click on menu item.');
-    console.log('click', e);
-  };
-
-  // Items to display in dropdown. Currently a placeholder and do not have functionality
-  const items = [
-    {
-      label: 'Edit',
-      key: '0',
-    },
-    {
-      label: 'Delete',
-      key: '2',
-      danger: true,
-    },
-  ];
-
-  const menuProps = {
-    items,
-    onClick: handleMenuClick,
+  // Submit function for the modal to edit the study name, description, and url.
+  // The function adds the variables and filename to the body of the PUT request to retain the complete
+  // study object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
+  const handleSubmit = values => {
+    handleUpdate(vocabUrl, 'DataDicitonary', dataDictionary, {
+      ...values,
+      tables: dataDictionary?.tables,
+    })
+      .then(data => setDataDictionary(data))
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Changes saved successfully.'));
   };
 
   return (
@@ -146,21 +138,7 @@ for each table to get an array of table ids*/
               <Col span={6}>
                 <div className="study_details_right">
                   <div className="study_dropdown">
-                    {/* ant.design dropdown with placeholder values. */}
-                    <Dropdown menu={menuProps} style={{ width: '30vw' }}>
-                      <Button>
-                        <Space
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            width: 100,
-                          }}
-                        >
-                          Settings
-                          <DownOutlined />
-                        </Space>
-                      </Button>
-                    </Dropdown>
+                    <SettingsDropdown dataDictionary={dataDictionary} />
                   </div>
                 </div>
               </Col>
@@ -224,6 +202,28 @@ for each table to get an array of table ids*/
           </div>
         </div>
       )}
+      <Modal
+        open={edit}
+        width={'51%'}
+        onOk={() =>
+          form.validateFields().then(values => {
+            form.resetFields();
+            setEdit(false);
+            // console.log(values);
+            handleSubmit(values);
+          })
+        }
+        onCancel={() => {
+          form.resetFields();
+          setEdit(false);
+        }}
+        maskClosable={false}
+        closeIcon={false}
+        destroyOnClose={true}
+      >
+        {/* Displays the edit form */}
+        <EditDDDetails form={form} dataDictionary={dataDictionary} />
+      </Modal>
     </>
   );
 };
