@@ -18,7 +18,7 @@ import {
 import './DDStyling.scss';
 import { getAll, getById, handleUpdate } from '../../Manager/FetchManager';
 import { ellipsisString } from '../../Manager/Utilitiy';
-import { SettingsDropdown } from '../../Manager/SettingsDropdown';
+import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { EditDDDetails } from './EditDDDetails';
 
 export const DDDetails = () => {
