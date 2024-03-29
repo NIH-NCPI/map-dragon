@@ -7,7 +7,7 @@ import { Spinner } from '../../Manager/Spinner';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
 import { Table, Row, Col, Modal, Form, message, notification } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
-import { SettingsDropdown } from '../../Manager/SettingsDropdown';
+import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();

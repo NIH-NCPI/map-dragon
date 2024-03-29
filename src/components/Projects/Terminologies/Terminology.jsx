@@ -17,8 +17,9 @@ import {
 } from 'antd';
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
-import { SettingsDropdown } from '../../Manager/SettingsDropdown';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
+import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
+import { ClearMappings } from './ClearMappings';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -32,13 +33,13 @@ export const Terminology = () => {
     setGetMappings,
     edit,
     setEdit,
+    clear,
+    setClear,
   } = useContext(myContext);
 
   const [loading, setLoading] = useState(true);
   const [mapping, setMapping] = useState({});
-  const [terminologyEdit, setTerminologyEdit] = useState(false);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
-
   const [terminology, setTerminology] = useState(initialTerminology);
 
   // Fetches the terminoology using the terminologyId param and sets 'terminology' to the response.
@@ -208,7 +209,7 @@ to the terminology code.
                 <div className="study_details_right">
                   <div className="study_dropdown">
                     {/* ant.design dropdown for edit. */}
-                    <SettingsDropdown />
+                    <SettingsDropdownTerminology />
                   </div>
                 </div>
               </Col>
@@ -261,6 +262,7 @@ to the terminology code.
 
             <EditTerminologyDetails form={form} terminology={terminology} />
           </Modal>
+          <ClearMappings terminologyId={terminologyId} />
         </div>
       )}
     </>

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Dropdown, Button, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { myContext } from '../../App';
+import { myContext } from '../../../App';
 
 export const SettingsDropdown = () => {
   const { setEdit } = useContext(myContext);

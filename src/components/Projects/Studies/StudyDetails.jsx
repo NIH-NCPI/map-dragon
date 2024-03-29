@@ -8,7 +8,7 @@ import { getById, handleUpdate } from '../../Manager/FetchManager';
 import { Row, Col, Divider, Skeleton, Card, Modal, Form, message } from 'antd';
 
 import { ellipsisString } from '../../Manager/Utilitiy';
-import { SettingsDropdownStudy } from '../../Manager/SettingsDropdownStudy';
+import { SettingsDropdownStudy } from '../../Manager/Dropdown/SettingsDropdownStudy';
 import { EditStudyDetails } from './EditStudyDetails';
 const { Meta } = Card;
 

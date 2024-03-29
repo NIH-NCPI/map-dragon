@@ -1,20 +1,20 @@
 import { useContext } from 'react';
 import { Dropdown, Button, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { myContext } from '../../App';
+import { myContext } from '../../../App';
 
-export const SettingsDropdownStudy = () => {
-  const { edit, setEdit } = useContext(myContext);
+export const SettingsDropdownTerminology = () => {
+  const { clear, setEdit, setClear } = useContext(myContext);
 
-  // placeholder items for the dropdown
   const items = [
     {
       label: 'Edit',
       key: '0',
     },
     {
-      label: 'Invite collaborators',
+      label: 'Clear mapped terms',
       key: '1',
+      danger: true,
     },
     {
       label: 'Delete',
@@ -26,7 +26,12 @@ export const SettingsDropdownStudy = () => {
   // onClick for 'Edit' in the dropdown. Sets tableEdit to true to trigger modal to open.
   // The modal has a form to edit the table name, description, and url.
   const onClick = ({ key }) => {
-    if (key === '0') setEdit(true);
+    switch (key) {
+      case '0':
+        return setEdit(true);
+      case '1':
+        return setClear(true);
+    }
   };
 
   // Props for dropdown menu.
