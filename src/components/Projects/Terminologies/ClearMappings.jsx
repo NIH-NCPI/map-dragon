@@ -4,10 +4,12 @@ import './Terminology.scss';
 
 import { useContext, useEffect } from 'react';
 import { myContext } from '../../../App';
+import { getById } from '../../Manager/FetchManager';
 
 export const ClearMappings = ({ terminologyId }) => {
   const { confirm } = Modal;
-  const { vocabUrl, clear, setClear } = useContext(myContext);
+  const { vocabUrl, clear, setClear, setMapping, mapping } =
+    useContext(myContext);
 
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
@@ -17,22 +19,15 @@ export const ClearMappings = ({ terminologyId }) => {
       method: 'DELETE',
     })
       .then(res => {
-        console.log(res);
         if (res.ok) {
-          return res
-            .json()
-            .then(() => message.success('Changes saved successfully.'));
+          return res.json();
         } else {
           throw new Error('An unknown error occurred.');
         }
       })
-      .then(() => {
-        return fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping`);
-      })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
+      .then(data => {
+        setMapping(data.codes);
+        message.success('Changes saved successfully.');
       })
       .catch(error => {
         if (error) {

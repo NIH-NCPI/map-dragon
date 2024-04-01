@@ -14,8 +14,7 @@ function App() {
   const [getMappings, setGetMappings] = useState(false); //triggers modal to open to search to get new mappings
   const [edit, setEdit] = useState(false); //edit state for settings dropdown menus. Triggers edit modal to open.
   const [clear, setClear] = useState(false); // clear mappings state for dropdown menus. Triggers confirm pop-up to clear mappings.
-
-  const [loading, setLoading] = useState(true);
+  const [mapping, setMapping] = useState({});
 
   return (
     <myContext.Provider
@@ -38,6 +37,8 @@ function App() {
         setEdit,
         clear,
         setClear,
+        mapping,
+        setMapping,
       }}
     >
       <AppRouter />

@@ -33,16 +33,15 @@ export const Terminology = () => {
     setGetMappings,
     edit,
     setEdit,
-    clear,
-    setClear,
+    mapping,
+    setMapping,
   } = useContext(myContext);
 
   const [loading, setLoading] = useState(true);
-  const [mapping, setMapping] = useState({});
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
 
-  // Fetches the terminoology using the terminologyId param and sets 'terminology' to the response.
+  // Fetches the terminology using the terminologyId param and sets 'terminology' to the response.
   // Fetches the mappings for the terminology and sets the response to 'mapping'
   // Sets loading to false
   useEffect(() => {
@@ -53,19 +52,20 @@ export const Terminology = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description:
+              'An error occurred loading the Terminology. Please try again.',
           });
         }
         return error;
-      })
-      .finally(() => setLoading(false));
+      });
     getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
       .then(data => setMapping(data.codes))
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description:
+              'An error occurred loading mappings. Please try again.',
           });
         }
         return error;

@@ -14,7 +14,7 @@ export const Spinner = () => {
 // Loading spinner for modal with slightly different styling
 export const ModalSpinner = () => {
   return (
-    <div className="loading_screen">
+    <div className="loading_screen_modal">
       <div className="modal_spinner">
         <Spin />
       </div>
