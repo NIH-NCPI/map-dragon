@@ -14,7 +14,10 @@ function App() {
   const [getMappings, setGetMappings] = useState(false); //triggers modal to open to search to get new mappings
   const [edit, setEdit] = useState(false); //edit state for settings dropdown menus. Triggers edit modal to open.
   const [clear, setClear] = useState(false); // clear mappings state for dropdown menus. Triggers confirm pop-up to clear mappings.
-  const [mapping, setMapping] = useState({});
+  const [mapping, setMapping] = useState({}); // mapped terms for an individual terminologys
+  const [deleteState, setDeleteState] = useState(false);
+  const initialTable = { name: '', description: '', url: '', variables: [] }; //initial state of table
+  const [table, setTable] = useState(initialTable);
 
   return (
     <myContext.Provider
@@ -39,6 +42,10 @@ function App() {
         setClear,
         mapping,
         setMapping,
+        deleteState,
+        setDeleteState,
+        table,
+        setTable,
       }}
     >
       <AppRouter />

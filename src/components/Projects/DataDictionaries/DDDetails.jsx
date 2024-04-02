@@ -13,6 +13,8 @@ import {
   Card,
   notification,
   Form,
+  message,
+  Button,
 } from 'antd';
 
 import './DDStyling.scss';
@@ -90,13 +92,24 @@ for each table to get an array of table ids*/
   // The function adds the variables and filename to the body of the PUT request to retain the complete
   // study object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
   const handleSubmit = values => {
-    handleUpdate(vocabUrl, 'DataDicitonary', dataDictionary, {
+    handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
       ...values,
       tables: dataDictionary?.tables,
     })
-      .then(data => setDataDictionary(data))
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Changes saved successfully.'));
+      .then(data => {
+        setDataDictionary(data);
+        message.success('Changes saved successfully.');
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description:
+              'An error occurred editing the Data Dictionary. Please try again.',
+          });
+        }
+        return error;
+      });
   };
 
   return (

@@ -5,7 +5,17 @@ import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
 import './StudyStyling.scss';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
-import { Row, Col, Divider, Skeleton, Card, Modal, Form, message } from 'antd';
+import {
+  Row,
+  Col,
+  Divider,
+  Skeleton,
+  Card,
+  Modal,
+  Form,
+  message,
+  notification,
+} from 'antd';
 
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { SettingsDropdownStudy } from '../../Manager/Dropdown/SettingsDropdownStudy';
@@ -50,7 +60,17 @@ for each DD to get an array of DD ids*/
   // fetches the specified study. Sets response to 'study' and loading to false.
   useEffect(() => {
     setLoading(true);
-    getById(vocabUrl, 'Study', studyId).then(data => setStudy(data));
+    getById(vocabUrl, 'Study', studyId)
+      .then(data => setStudy(data))
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
+          });
+        }
+        return error;
+      });
   }, []);
 
   // calls the getStudyDDs function and sets loading to false
