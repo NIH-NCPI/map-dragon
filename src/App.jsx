@@ -18,6 +18,9 @@ function App() {
   const [deleteState, setDeleteState] = useState(false);
   const initialTable = { name: '', description: '', url: '', variables: [] }; //initial state of table
   const [table, setTable] = useState(initialTable);
+  const initialDD = { name: '', description: '', tables: [] }; //initial state of data dictionary
+
+  const [dataDictionary, setDataDictionary] = useState(initialDD);
 
   return (
     <myContext.Provider
@@ -46,6 +49,8 @@ function App() {
         setDeleteState,
         table,
         setTable,
+        dataDictionary,
+        setDataDictionary,
       }}
     >
       <AppRouter />
