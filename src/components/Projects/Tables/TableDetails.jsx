@@ -8,14 +8,13 @@ import { getById, handleUpdate } from '../../Manager/FetchManager';
 import { Table, Row, Col, Modal, Form, message, notification } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
+import { DeleteTable } from './DeleteTable';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
-  const { vocabUrl, edit, setEdit } = useContext(myContext);
+  const { vocabUrl, edit, setEdit, table, setTable } = useContext(myContext);
   const { tableId } = useParams();
   const [loading, setLoading] = useState(true);
-  const initialTable = { name: '', description: '', url: '', variables: [] }; //initial state of table
-  const [table, setTable] = useState(initialTable);
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
@@ -215,6 +214,7 @@ export const TableDetails = () => {
         {/* Displays the edit form */}
         <EditTableDetails form={form} table={table} />
       </Modal>
+      <DeleteTable />
     </>
   );
 };

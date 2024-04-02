@@ -4,7 +4,6 @@ import './Terminology.scss';
 
 import { useContext, useEffect } from 'react';
 import { myContext } from '../../../App';
-import { getById } from '../../Manager/FetchManager';
 
 export const ClearMappings = ({ terminologyId }) => {
   const { confirm } = Modal;
