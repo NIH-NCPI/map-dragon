@@ -217,7 +217,7 @@ export const TableDetails = () => {
         {/* Displays the edit form */}
         <EditTableDetails form={form} table={table} />
       </Modal>
-      <DeleteTable propDD={propDD} />
+      <DeleteTable />
     </>
   );
 };

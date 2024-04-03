@@ -3,11 +3,13 @@ import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
 import './TableStyling.scss';
 import { handlePost } from '../../Manager/FetchManager';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { myContext } from '../../../App';
 
-export const UploadTable = ({ addTable, setAddTable }) => {
+export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
+  const { vocabUrl } = useContext(myContext);
 
   const handleUpload = values => {
     Papa.parse(values.csvContents.file, {
@@ -16,9 +18,7 @@ export const UploadTable = ({ addTable, setAddTable }) => {
       complete: function (result) {
         values.filename = values.csvContents.file.name;
         values.csvContents = result.data;
-        handlePost(vocabUrl, 'LoadTable', values).then(data =>
-          navigate(`/table/${data?.id}`)
-        );
+        handlePost(vocabUrl, 'LoadTable', values);
       },
     });
   };
@@ -35,7 +35,7 @@ export const UploadTable = ({ addTable, setAddTable }) => {
         onOk={() =>
           form.validateFields().then(values => {
             console.log(values);
-            // handleUpload(values);
+            handleUpload(values);
             form.resetFields();
             setAddTable(false);
           })

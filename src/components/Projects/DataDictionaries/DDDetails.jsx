@@ -267,7 +267,11 @@ for each table to get an array of table ids*/
         {/* Displays the edit form */}
         <EditDDDetails form={form} dataDictionary={dataDictionary} />
       </Modal>
-      <UploadTable addTable={addTable} setAddTable={setAddTable} />
+      <UploadTable
+        addTable={addTable}
+        setAddTable={setAddTable}
+        setTablesDD={setTablesDD}
+      />
     </>
   );
 };

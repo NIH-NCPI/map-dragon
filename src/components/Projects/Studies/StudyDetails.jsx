@@ -20,22 +20,15 @@ import {
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { SettingsDropdownStudy } from '../../Manager/Dropdown/SettingsDropdownStudy';
 import { EditStudyDetails } from './EditStudyDetails';
+import { DeleteStudy } from './DeleteStudy';
 const { Meta } = Card;
 
 export const StudyDetails = () => {
   const [form] = Form.useForm();
-  const { vocabUrl, studyDDs, setStudyDDs, edit, setEdit } =
+  const { vocabUrl, studyDDs, setStudyDDs, edit, setEdit, study, setStudy } =
     useContext(myContext);
   const { studyId } = useParams();
-  const initialStudy = {
-    identifier_prefix: '',
-    datadictionary: [],
-    name: '',
-    description: '',
-    title: '',
-    url: '',
-  }; //initial state of study
-  const [study, setStudy] = useState(initialStudy);
+
   const [loading, setLoading] = useState(true);
 
   /* function that maps through the datadictionary (DD) array inside the given study and splits the 'reference' value at the '/'
@@ -221,6 +214,7 @@ for each DD to get an array of DD ids*/
         {/* Displays the edit form */}
         <EditStudyDetails form={form} study={study} />
       </Modal>
+      <DeleteStudy />
     </>
   );
 };
