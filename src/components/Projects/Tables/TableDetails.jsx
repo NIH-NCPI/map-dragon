@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import './TableStyling.scss';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
@@ -12,9 +12,12 @@ import { DeleteTable } from './DeleteTable';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
+  const location = useLocation();
+
   const { vocabUrl, edit, setEdit, table, setTable } = useContext(myContext);
   const { tableId } = useParams();
   const [loading, setLoading] = useState(true);
+  const [propDD, setPropDD] = useState(location?.state?.propDD);
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {

@@ -19,8 +19,8 @@ export const SettingsDropdown = () => {
     },
   ];
 
-  // onClick for 'Edit' in the dropdown. Sets tableEdit to true to trigger modal to open.
-  // The modal has a form to edit the table name, description, and url.
+  // onClick for dropdown. Sets states to true depending on their key.
+  // A modal is then triggered to open in the component to perform the desired task.
   const onClick = ({ key }) => {
     switch (key) {
       case '0':

@@ -4,7 +4,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { myContext } from '../../../App';
 
 export const SettingsDropdownStudy = () => {
-  const { setEdit } = useContext(myContext);
+  const { setEdit, setDeleteState } = useContext(myContext);
 
   // placeholder items for the dropdown
   const items = [
@@ -23,12 +23,16 @@ export const SettingsDropdownStudy = () => {
     },
   ];
 
-  // onClick for 'Edit' in the dropdown. Sets tableEdit to true to trigger modal to open.
-  // The modal has a form to edit the table name, description, and url.
+  // onClick for dropdown. Sets states to true depending on their key.
+  // A modal is then triggered to open in the component to perform the desired task.
   const onClick = ({ key }) => {
-    if (key === '0') setEdit(true);
+    switch (key) {
+      case '0':
+        return setEdit(true);
+      case '2':
+        return setDeleteState(true);
+    }
   };
-
   // Props for dropdown menu.
   const menuProps = {
     items,

@@ -3,6 +3,8 @@ import { myContext } from '../../../App';
 import { Link, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
+import Papa from 'papaparse';
+
 const { Meta } = Card;
 import {
   Modal,
@@ -22,16 +24,23 @@ import { getAll, getById, handleUpdate } from '../../Manager/FetchManager';
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { EditDDDetails } from './EditDDDetails';
+import { UploadTable } from '../Tables/UploadTable';
 
 export const DDDetails = () => {
   const [form] = Form.useForm();
-  const { vocabUrl, tablesDD, setTablesDD, edit, setEdit } =
-    useContext(myContext);
+  const {
+    vocabUrl,
+    tablesDD,
+    setTablesDD,
+    edit,
+    setEdit,
+    dataDictionary,
+    setDataDictionary,
+  } = useContext(myContext);
   const { DDId } = useParams();
-  const initialDD = { name: '', description: '', tables: [] }; //initial state of data dictionary
 
-  const [dataDictionary, setDataDictionary] = useState(initialDD);
   const [loading, setLoading] = useState(true);
+  const [addTable, setAddTable] = useState(false);
 
   /* function that maps through the tables array inside the given data dictionary (DD) and splits the 'reference' value at the '/'
 for each table to get an array of table ids*/
@@ -162,6 +171,24 @@ for each table to get an array of table ids*/
           </Divider>
           <div className="study_details_cards_container">
             <Row gutter={[20, 24]}>
+              <Col span={6}>
+                {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
+                and triggers the modal to open*/}
+                <span onClick={() => setAddTable(true)}>
+                  <Card
+                    hoverable
+                    bordered={true}
+                    style={{
+                      border: '1px solid darkgray',
+                      height: '42vh',
+                    }}
+                  >
+                    <div className="new_study_card_container">
+                      <div className="new_study_card">Create New Table</div>
+                    </div>
+                  </Card>
+                </span>
+              </Col>
               {/* Cards with table information associated with the DD. */}
               {tablesDD?.map((table, index) => (
                 <Col key={index} span={6}>
@@ -176,7 +203,10 @@ for each table to get an array of table ids*/
                       height: '42vh',
                     }}
                     actions={[
-                      <Link to={`/Table/${table?.id}`}>
+                      <Link
+                        state={{ propDD: dataDictionary.id }}
+                        to={`/Table/${table?.id}`}
+                      >
                         <button className="manage_term_button">
                           View / Edit
                         </button>
@@ -237,6 +267,11 @@ for each table to get an array of table ids*/
         {/* Displays the edit form */}
         <EditDDDetails form={form} dataDictionary={dataDictionary} />
       </Modal>
+      <UploadTable
+        addTable={addTable}
+        setAddTable={setAddTable}
+        setTablesDD={setTablesDD}
+      />
     </>
   );
 };

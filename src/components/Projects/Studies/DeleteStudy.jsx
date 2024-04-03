@@ -6,15 +6,15 @@ import { myContext } from '../../../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import { handleDelete } from '../../Manager/FetchManager';
 
-export const DeleteTable = () => {
+export const DeleteStudy = () => {
   const { confirm } = Modal;
-  const { vocabUrl, deleteState, setDeleteState, table } =
+  const { vocabUrl, deleteState, setDeleteState, study } =
     useContext(myContext);
   const navigate = useNavigate();
 
-  const deleteTable = evt =>
-    handleDelete(evt, vocabUrl, 'Table', table).then(() => {
-      message.success('Table deleted successfully.');
+  const deleteStudy = evt =>
+    handleDelete(evt, vocabUrl, 'Study', study).then(() => {
+      message.success('Study deleted successfully.');
       navigate(`/studies`);
     });
 
@@ -26,7 +26,7 @@ export const DeleteTable = () => {
       icon: <ExclamationCircleFilled />,
       content: <span>Are you sure you want to delete the Study?</span>,
       onOk() {
-        deleteTable();
+        deleteStudy();
         setDeleteState(false);
       },
       onCancel() {
