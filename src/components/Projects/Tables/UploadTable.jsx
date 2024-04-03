@@ -1,4 +1,4 @@
-import { Button, Form, Input, Upload, Modal } from 'antd';
+import { Button, Form, Input, Upload, Modal, notification } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
 import './TableStyling.scss';
@@ -18,7 +18,15 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
       complete: function (result) {
         values.filename = values.csvContents.file.name;
         values.csvContents = result.data;
-        handlePost(vocabUrl, 'LoadTable', values);
+        handlePost(vocabUrl, 'LoadTable', values).catch(error => {
+          if (error) {
+            notification.error({
+              message: 'Error',
+              description: 'An error occurred uploading the table.',
+            });
+          }
+          return error;
+        });
       },
     });
   };

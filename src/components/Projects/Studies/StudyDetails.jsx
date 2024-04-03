@@ -21,6 +21,7 @@ import { ellipsisString } from '../../Manager/Utilitiy';
 import { SettingsDropdownStudy } from '../../Manager/Dropdown/SettingsDropdownStudy';
 import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
+import { AddDD } from '../DataDictionaries/AddDD';
 const { Meta } = Card;
 
 export const StudyDetails = () => {
@@ -28,7 +29,7 @@ export const StudyDetails = () => {
   const { vocabUrl, studyDDs, setStudyDDs, edit, setEdit, study, setStudy } =
     useContext(myContext);
   const { studyId } = useParams();
-
+  const [addDD, setAddDD] = useState(false);
   const [loading, setLoading] = useState(true);
 
   /* function that maps through the datadictionary (DD) array inside the given study and splits the 'reference' value at the '/'
@@ -139,6 +140,26 @@ for each DD to get an array of DD ids*/
           </Divider>
           <div className="study_details_cards_container">
             <Row gutter={[20, 24]}>
+              <Col span={6}>
+                {/* The first column is a card that opens a modal to add a new study. It sets 'addStudy' to true on click
+                and triggers the modal to open*/}
+                <span onClick={() => setAddDD(true)}>
+                  <Card
+                    hoverable
+                    bordered={true}
+                    style={{
+                      border: '1px solid darkgray',
+                      height: '42vh',
+                    }}
+                  >
+                    <div className="new_study_card_container">
+                      <div className="new_study_card">
+                        Create New Data Dictionary
+                      </div>
+                    </div>
+                  </Card>
+                </span>
+              </Col>
               {/* Cards with DD information associated with the study. */}
               {studyDDs?.map((dd, index) => (
                 <Col span={6} key={index}>
@@ -215,6 +236,7 @@ for each DD to get an array of DD ids*/
         <EditStudyDetails form={form} study={study} />
       </Modal>
       <DeleteStudy />
+      <AddDD addDD={addDD} setAddDD={setAddDD} study={study} />
     </>
   );
 };
