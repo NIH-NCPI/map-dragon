@@ -11,14 +11,14 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
 
   const navigate = useNavigate();
   // copy of datadictionary array in study
-  const newDDArray = [...study.datadictionary];
 
   //POST call to create a new data dictionary(DD) in a study
   // POST for new DD. Then the id from the new DD is pushed to the
   // copy of the datadictionary array in the study. The value of the
   // datadictionary array is set to the copy with the new DD.
   const handleSubmit = values => {
-    handlePost(vocabUrl, 'DataDictionary', values, {
+    const newDDArray = [...study.datadictionary];
+    handlePost(vocabUrl, 'DataDictionary', {
       ...values,
       tables: [],
     })
@@ -30,7 +30,7 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
           ...study,
           datadictionary: newDDArray,
         });
-        navigate(`DataDictionary/${data.id}`);
+        navigate(`/DataDictionary/${data.id}`);
       })
       .catch(error => {
         if (error) {
@@ -60,8 +60,9 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
         setAddDD(false);
       }}
       maskClosable={false}
+      destroyOnClose={true}
     >
-      <Form form={form} layout="vertical" name="form_in_modal">
+      <Form form={form} layout="vertical" name="form_in_modal" preserve={false}>
         <h2>Create Data Dictionary</h2>
         <Form.Item
           name="name"

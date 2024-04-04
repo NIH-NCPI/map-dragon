@@ -3,7 +3,6 @@ import { myContext } from '../../../App';
 import { Link, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
-import Papa from 'papaparse';
 
 const { Meta } = Card;
 import {
@@ -16,11 +15,10 @@ import {
   notification,
   Form,
   message,
-  Button,
 } from 'antd';
 
 import './DDStyling.scss';
-import { getAll, getById, handleUpdate } from '../../Manager/FetchManager';
+import { getById, handleUpdate } from '../../Manager/FetchManager';
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { EditDDDetails } from './EditDDDetails';
@@ -44,21 +42,18 @@ export const DDDetails = () => {
 
   /* function that maps through the tables array inside the given data dictionary (DD) and splits the 'reference' value at the '/'
 for each table to get an array of table ids*/
-  const arrayOfIds =
-    dataDictionary?.tables?.length > 0 &&
-    dataDictionary?.tables?.map(r => {
-      return r.reference.split('/')[1];
-    });
+  const arrayOfIds = dataDictionary?.tables?.map(r => {
+    return r.reference.split('/')[1];
+  });
 
   /* Function that maps through the arrayOfIds function above.
   For each table, it pushes an API GET request to get that table to the tablePromises array.
   Promise.all fulfills all of the fetch calls. The response is set to tablesDD  */
   const getDDTables = () => {
     let tablePromises = [];
-    arrayOfIds?.length > 0 &&
-      arrayOfIds?.forEach(id =>
-        tablePromises.push(getById(vocabUrl, 'Table', id))
-      );
+    arrayOfIds?.forEach(id =>
+      tablePromises.push(getById(vocabUrl, 'Table', id))
+    );
     Promise.all(tablePromises).then(data => setTablesDD(data));
   };
 
@@ -193,10 +188,7 @@ for each table to get an array of table ids*/
                       height: '42vh',
                     }}
                     actions={[
-                      <Link
-                        state={{ propDD: dataDictionary.id }}
-                        to={`/Table/${table?.id}`}
-                      >
+                      <Link to={`/DataDictionary/${DDId}/Table/${table?.id}`}>
                         <button className="manage_term_button">
                           View / Edit
                         </button>
@@ -242,7 +234,6 @@ for each table to get an array of table ids*/
           form.validateFields().then(values => {
             form.resetFields();
             setEdit(false);
-            // console.log(values);
             handleSubmit(values);
           })
         }
@@ -261,6 +252,9 @@ for each table to get an array of table ids*/
         addTable={addTable}
         setAddTable={setAddTable}
         setTablesDD={setTablesDD}
+        tablesDD={tablesDD}
+        dataDictionary={dataDictionary}
+        setDataDictionary={setDataDictionary}
       />
     </>
   );
