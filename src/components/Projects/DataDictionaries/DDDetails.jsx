@@ -44,18 +44,21 @@ export const DDDetails = () => {
 
   /* function that maps through the tables array inside the given data dictionary (DD) and splits the 'reference' value at the '/'
 for each table to get an array of table ids*/
-  const arrayOfIds = dataDictionary?.tables?.map(r => {
-    return r.reference.split('/')[1];
-  });
+  const arrayOfIds =
+    dataDictionary?.tables?.length > 0 &&
+    dataDictionary?.tables?.map(r => {
+      return r.reference.split('/')[1];
+    });
 
   /* Function that maps through the arrayOfIds function above.
   For each table, it pushes an API GET request to get that table to the tablePromises array.
   Promise.all fulfills all of the fetch calls. The response is set to tablesDD  */
   const getDDTables = () => {
     let tablePromises = [];
-    arrayOfIds?.forEach(id =>
-      tablePromises.push(getById(vocabUrl, 'Table', id))
-    );
+    arrayOfIds?.length > 0 &&
+      arrayOfIds?.forEach(id =>
+        tablePromises.push(getById(vocabUrl, 'Table', id))
+      );
     Promise.all(tablePromises).then(data => setTablesDD(data));
   };
 
@@ -73,20 +76,7 @@ for each table to get an array of table ids*/
           });
         }
         return error;
-      })
-      .finally(() => setLoading(false));
-    getAll(vocabUrl, 'Table')
-      .then(data => setTablesDD(data))
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred. Please try again.',
-          });
-        }
-        return error;
-      })
-      .finally(() => setLoading(false));
+      });
   }, []);
 
   // calls the getDDTables function and sets loading to false

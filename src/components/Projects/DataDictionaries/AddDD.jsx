@@ -3,13 +3,20 @@ import { myContext } from '../../../App';
 import { Form, Input, Select, Modal } from 'antd';
 import './DDStyling.scss';
 import { handlePost, handleUpdate } from '../../Manager/FetchManager';
+import { useNavigate } from 'react-router-dom';
 
 export const AddDD = ({ addDD, setAddDD, study }) => {
   const [form] = Form.useForm();
-  const { vocabUrl, dataDictionary, setDataDictionary } = useContext(myContext);
+  const { vocabUrl, setDataDictionary } = useContext(myContext);
 
+  const navigate = useNavigate();
+  // copy of datadictionary array in study
   const newDDArray = [...study.datadictionary];
 
+  //POST call to create a new data dictionary(DD) in a study
+  // POST for new DD. Then the id from the new DD is pushed to the
+  // copy of the datadictionary array in the study. The value of the
+  // datadictionary array is set to the copy with the new DD.
   const handleSubmit = values => {
     handlePost(vocabUrl, 'DataDictionary', values, {
       ...values,
@@ -23,7 +30,7 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
           ...study,
           datadictionary: newDDArray,
         });
-        Navigate(`DataDictionary/${data.id}`);
+        navigate(`DataDictionary/${data.id}`);
       })
       .catch(error => {
         if (error) {
@@ -35,8 +42,6 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
         return error;
       });
   };
-
-  console.log(study);
 
   return (
     <Modal
