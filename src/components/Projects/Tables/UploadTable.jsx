@@ -2,14 +2,54 @@ import { Button, Form, Input, Upload, Modal, notification } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
 import './TableStyling.scss';
-import { handlePost } from '../../Manager/FetchManager';
+import { handlePost, handleUpdate } from '../../Manager/FetchManager';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, dataDictionary, setTable } = useContext(myContext);
+  const { DDId } = useParams();
+  const navigate = useNavigate();
+
+  const tableUpload = values => {
+    const newTableArray = [...dataDictionary?.tables];
+
+    handlePost(vocabUrl, 'LoadTable', values).then(data => {
+      setTable(data);
+      newTableArray.push({ 'reference': `Table/${data.id}` });
+
+      handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
+        ...dataDictionary,
+        tables: newTableArray,
+      }).then(updatedData => {
+        setTablesDD(updatedData);
+        navigate(`/DataDictionary/${DDId}/Table/${data.id}`);
+      });
+      // .catch(error => {
+      //   if (error) {
+      //     notification.error({
+      //       message: 'Error',
+      //       description:
+      //         'An error occurred updating the data dictionary. Please try again.',
+      //     });
+      //   }
+      //   return error;
+      // });
+    });
+    // .catch(error => {
+    //   if (error) {
+    //     notification.error({
+    //       message: 'Error',
+    //       description:
+    //         'An error occurred uploading the table. Please try again.',
+    //     });
+    //   }
+    //   return error;
+    // });
+  };
 
   const handleUpload = values => {
     Papa.parse(values.csvContents.file, {
@@ -18,15 +58,7 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
       complete: function (result) {
         values.filename = values.csvContents.file.name;
         values.csvContents = result.data;
-        handlePost(vocabUrl, 'LoadTable', values).catch(error => {
-          if (error) {
-            notification.error({
-              message: 'Error',
-              description: 'An error occurred uploading the table.',
-            });
-          }
-          return error;
-        });
+        tableUpload(values);
       },
     });
   };
@@ -42,7 +74,6 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
         width={'70%'}
         onOk={() =>
           form.validateFields().then(values => {
-            console.log(values);
             handleUpload(values);
             form.resetFields();
             setAddTable(false);

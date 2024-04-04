@@ -12,12 +12,10 @@ import { DeleteTable } from './DeleteTable';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
-  const location = useLocation();
 
   const { vocabUrl, edit, setEdit, table, setTable } = useContext(myContext);
-  const { tableId } = useParams();
+  const { DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
-  const [propDD, setPropDD] = useState(location?.state?.propDD);
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
@@ -217,7 +215,7 @@ export const TableDetails = () => {
         {/* Displays the edit form */}
         <EditTableDetails form={form} table={table} />
       </Modal>
-      <DeleteTable />
+      <DeleteTable DDId={DDId} />
     </>
   );
 };

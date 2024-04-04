@@ -26,8 +26,14 @@ export const AppRouter = () => {
         <Route path="/search/:query" element={<SearchResults />} />
         <Route path="/studies" element={<StudyList />} />
         <Route path="/Terminology/:terminologyId" element={<Terminology />} />
-        <Route path="/Table/:tableId" element={<TableDetails />} />
-        <Route path="/DataDictionary/:DDId" element={<DDDetails />} />
+        {/* <Route path="/Table/:tableId" element={<TableDetails />} /> */}
+        <Route path="/DataDictionary/:DDId">
+          <Route index element={<DDDetails />} />
+          <Route
+            path="/DataDictionary/:DDId/Table/:tableId"
+            element={<TableDetails />}
+          />
+        </Route>
         <Route path="/Study/:studyId" element={<StudyDetails />} />
       </Route>
     </Routes>
