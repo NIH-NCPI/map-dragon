@@ -24,7 +24,7 @@ export const DeleteTable = () => {
       className: 'clear-mappings',
       title: 'Alert',
       icon: <ExclamationCircleFilled />,
-      content: <span>Are you sure you want to delete the Study?</span>,
+      content: <span>Are you sure you want to delete the Table?</span>,
       onOk() {
         deleteTable();
         setDeleteState(false);
