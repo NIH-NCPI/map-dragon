@@ -252,6 +252,9 @@ for each table to get an array of table ids*/
         addTable={addTable}
         setAddTable={setAddTable}
         setTablesDD={setTablesDD}
+        tablesDD={tablesDD}
+        dataDictionary={dataDictionary}
+        setDataDictionary={setDataDictionary}
       />
     </>
   );
