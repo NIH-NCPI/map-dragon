@@ -220,7 +220,6 @@ for each DD to get an array of DD ids*/
           form.validateFields().then(values => {
             form.resetFields();
             setEdit(false);
-            // console.log(values);
             handleSubmit(values);
           })
         }

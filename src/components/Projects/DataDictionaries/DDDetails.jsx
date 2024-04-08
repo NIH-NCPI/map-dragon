@@ -85,12 +85,12 @@ for each table to get an array of table ids*/
 
   useEffect(
     () => () => {
-      setTablesDD(undefined);
+      setTablesDD([]);
+      setDataDictionary({});
     },
     []
   );
 
-  console.log('tablesDD', tablesDD);
   // Submit function for the modal to edit the study name, description, and url.
   // The function adds the variables and filename to the body of the PUT request to retain the complete
   // study object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.

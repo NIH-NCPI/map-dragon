@@ -11,6 +11,9 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   const [fileList, setFileList] = useState([]);
   const { vocabUrl } = useContext(myContext);
 
+  /* Function for upload. Takes the values from the form, parses the uploaded file's content
+  into JSON, gets the file name to display on the page later, creates a "csvContents" array 
+  with the file's data, then makes the POST call to load the new table.*/
   const handleUpload = values => {
     Papa.parse(values.csvContents.file, {
       header: true,
@@ -42,7 +45,6 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
         width={'70%'}
         onOk={() =>
           form.validateFields().then(values => {
-            console.log(values);
             handleUpload(values);
             form.resetFields();
             setAddTable(false);
