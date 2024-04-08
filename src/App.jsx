@@ -29,7 +29,6 @@ function App() {
     url: '',
   }; //initial state of study
   const [study, setStudy] = useState(initialStudy);
-
   return (
     <myContext.Provider
       value={{

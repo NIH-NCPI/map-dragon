@@ -54,7 +54,9 @@ for each table to get an array of table ids*/
     arrayOfIds?.forEach(id =>
       tablePromises.push(getById(vocabUrl, 'Table', id))
     );
-    Promise.all(tablePromises).then(data => setTablesDD(data));
+    Promise.all(tablePromises)
+      .then(data => setTablesDD(data))
+      .finally(() => setLoading(false));
   };
 
   // fetches the specified DD. Sets response to 'dataDictionary' and loading to false.
@@ -79,8 +81,15 @@ for each table to get an array of table ids*/
   useEffect(() => {
     setLoading(true);
     getDDTables();
-    setLoading(false);
   }, [dataDictionary]);
+
+  useEffect(
+    () => () => {
+      setTablesDD([]);
+      setDataDictionary({});
+    },
+    []
+  );
 
   // Submit function for the modal to edit the study name, description, and url.
   // The function adds the variables and filename to the body of the PUT request to retain the complete
@@ -169,7 +178,7 @@ for each table to get an array of table ids*/
                     }}
                   >
                     <div className="new_study_card_container">
-                      <div className="new_study_card">Create New Table</div>
+                      <div className="new_study_card">Upload Table</div>
                     </div>
                   </Card>
                 </span>

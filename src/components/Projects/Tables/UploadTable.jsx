@@ -1,76 +1,19 @@
-import {
-  Button,
-  Form,
-  Input,
-  Upload,
-  Modal,
-  notification,
-  message,
-} from 'antd';
+import { Button, Form, Input, Upload, Modal, notification } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
 import './TableStyling.scss';
-import { handlePost, handleUpdate } from '../../Manager/FetchManager';
+import { handlePost } from '../../Manager/FetchManager';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { useNavigate, useParams } from 'react-router-dom';
 
-export const UploadTable = ({
-  addTable,
-  setAddTable,
-  dataDictionary,
-  setDataDictionary,
-}) => {
+export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
-  const { vocabUrl, setTable } = useContext(myContext);
-  const { DDId } = useParams();
-  const navigate = useNavigate();
+  const { vocabUrl } = useContext(myContext);
 
-  //POST call to create a new table in a data dictionary (DD)
-  // POST for new table. Then the id from the new table is pushed to the
-  // copy of the table array in the DD. The value of the
-  // table array is set to the copy with the new table.
-  const tableUpload = values => {
-    const newTableArray = [...dataDictionary?.tables];
-    handlePost(vocabUrl, 'LoadTable', values)
-      .then(data => {
-        setTable(data);
-        newTableArray.push({ 'reference': `Table/${data.id}` });
-
-        handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
-          ...dataDictionary,
-          tables: newTableArray,
-        })
-          .then(updatedData => {
-            setDataDictionary(updatedData);
-            message.success('Table uploaded successfully.');
-
-            navigate(`/DataDictionary/${DDId}/Table/${data.id}`);
-          })
-          .catch(error => {
-            if (error) {
-              notification.error({
-                message: 'Error',
-                description:
-                  'An error occurred updating the data dictionary. Please try again.',
-              });
-            }
-            return error;
-          });
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred uploading the table. Please try again.',
-          });
-        }
-        return error;
-      });
-  };
-
+  /* Function for upload. Takes the values from the form, parses the uploaded file's content
+  into JSON, gets the file name to display on the page later, creates a "csvContents" array 
+  with the file's data, then makes the POST call to load the new table.*/
   const handleUpload = values => {
     Papa.parse(values.csvContents.file, {
       header: true,
@@ -78,7 +21,15 @@ export const UploadTable = ({
       complete: function (result) {
         values.filename = values.csvContents.file.name;
         values.csvContents = result.data;
-        tableUpload(values);
+        handlePost(vocabUrl, 'LoadTable', values).catch(error => {
+          if (error) {
+            notification.error({
+              message: 'Error',
+              description: 'An error occurred uploading the table.',
+            });
+          }
+          return error;
+        });
       },
     });
   };
