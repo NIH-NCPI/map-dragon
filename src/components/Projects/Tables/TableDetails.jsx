@@ -5,10 +5,20 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
-import { Table, Row, Col, Modal, Form, message, notification } from 'antd';
+import {
+  Table,
+  Row,
+  Col,
+  Modal,
+  Form,
+  message,
+  notification,
+  Card,
+} from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { DeleteTable } from './DeleteTable';
+import { LoadVariables } from './LoadVariables';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -16,6 +26,7 @@ export const TableDetails = () => {
   const { vocabUrl, edit, setEdit, table, setTable } = useContext(myContext);
   const { DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
+  const [load, setLoad] = useState(false);
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
@@ -171,24 +182,49 @@ export const TableDetails = () => {
           <div className="table_container">
             {/* ant.design table displaying the pre-defined columns and data, with expandable rows. 
             The expandable rows currently show the min, max, and units properties with no styling. */}
-            <Table
-              columns={columns}
-              dataSource={dataSource}
-              expandable={{
-                expandedRowRender: record => (
-                  <p
-                    style={{
-                      marginLeft: 50,
-                    }}
-                  >
-                    min: {record.min} max: {record.max} units:{record.units}
-                  </p>
-                ),
-                rowExpandable: record =>
-                  record.data_type === 'INTEGER' ||
-                  record.data_type === 'QUANTITY',
-              }}
-            />
+            {table.variables.length > 0 ? (
+              <Table
+                columns={columns}
+                dataSource={dataSource}
+                expandable={{
+                  expandedRowRender: record => (
+                    <p
+                      style={{
+                        marginLeft: 50,
+                      }}
+                    >
+                      min: {record.min} max: {record.max} units:{record.units}
+                    </p>
+                  ),
+                  rowExpandable: record =>
+                    record.data_type === 'INTEGER' ||
+                    record.data_type === 'QUANTITY',
+                }}
+              />
+            ) : (
+              <Row gutter={[20, 24]}>
+                <Col span={6}>
+                  {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
+                and triggers the modal to open*/}
+                  <span onClick={() => setLoad(true)}>
+                    <Card
+                      hoverable
+                      bordered={true}
+                      style={{
+                        border: '1px solid darkgray',
+                        height: '42vh',
+                      }}
+                    >
+                      <div className="new_study_card_container">
+                        <div className="new_study_card">
+                          Upload Variables (CSV)
+                        </div>
+                      </div>
+                    </Card>
+                  </span>
+                </Col>
+              </Row>
+            )}
           </div>
         </div>
       )}
@@ -216,6 +252,7 @@ export const TableDetails = () => {
         <EditTableDetails form={form} table={table} />
       </Modal>
       <DeleteTable DDId={DDId} />
+      <LoadVariables load={load} setLoad={setLoad} />
     </>
   );
 };
