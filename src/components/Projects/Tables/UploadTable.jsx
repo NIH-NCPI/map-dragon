@@ -18,7 +18,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
-  const { vocabUrl, dataDictionary, setDataDictionary, setTable } =
+  const { vocabUrl, dataDictionary, setDataDictionary, setTable, table } =
     useContext(myContext);
   const { DDId } = useParams();
   const navigate = useNavigate();
@@ -28,17 +28,38 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   // copy of the tables array in the DD. The value of the
   // tables array is set to the copy with the new table in the PUT call (handleUpdate function)
   const tableUpload = values => {
-    handleUpdate(vocabUrl, 'LoadTable', values)
-      .then(updatedData => {
-        setTable(updatedData);
-        message.success('Variables uploaded successfully.');
+    const newTableArray = [...dataDictionary?.tables];
+    handlePost(vocabUrl, 'LoadTable', values)
+      .then(data => {
+        setTable(data);
+        newTableArray.push({ 'reference': `Table/${data.id}` });
+        handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
+          ...dataDictionary,
+          tables: newTableArray,
+        })
+          .then(updatedData => {
+            setDataDictionary(updatedData);
+            message.success('Table uploaded successfully.');
+
+            navigate(`/DataDictionary/${DDId}/Table/${data.id}`);
+          })
+          .catch(error => {
+            if (error) {
+              notification.error({
+                message: 'Error',
+                description:
+                  'An error occurred updating the data dictionary. Please try again.',
+              });
+            }
+            return error;
+          });
       })
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
             description:
-              'An error occurred uploading the variables. Please try again.',
+              'An error occurred uploading the table. Please try again.',
           });
         }
         return error;
@@ -47,17 +68,24 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
 
   /* Function for upload. If a file was uploaded, it takes the values from the form, parses the uploaded file's content
   into JSON, gets the file name to display on the page later, creates a "csvContents" array 
-  with the file's data, then runs the tableUpload function to create the new table. */
+  with the file's data, then runs the tableUpload function to create the new table.
+  If there is no file selected, it skips the JSON parsing and skips straight to the POST. */
   const handleUpload = values => {
-    Papa.parse(values.csvContents.file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: function (result) {
-        values.filename = values.csvContents.file.name;
-        values.csvContents = result.data;
-        tableUpload(values);
-      },
-    });
+    values?.csvContents?.file
+      ? Papa.parse(values.csvContents.file, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function (result) {
+            values.filename = values.csvContents.file.name;
+            values.csvContents = result.data;
+            tableUpload(values);
+          },
+        })
+      : tableUpload({
+          ...values,
+          csvContents: [],
+          filename: null,
+        });
   };
   return (
     <>

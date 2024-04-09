@@ -3,10 +3,8 @@ import { myContext } from '../../../App';
 import { Link, useParams } from 'react-router-dom';
 import Background from '../../../assets/Background.png';
 import { Spinner } from '../../Manager/Spinner';
-
 const { Meta } = Card;
 import {
-  Modal,
   Row,
   Col,
   Divider,
@@ -14,15 +12,15 @@ import {
   Card,
   notification,
   Form,
-  message,
+  Button,
 } from 'antd';
-
 import './DDStyling.scss';
-import { getById, handleUpdate } from '../../Manager/FetchManager';
+import { getById } from '../../Manager/FetchManager';
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { EditDDDetails } from './EditDDDetails';
 import { UploadTable } from '../Tables/UploadTable';
+import { RemoveTableDD } from './RemoveTableDD';
 
 export const DDDetails = () => {
   const [form] = Form.useForm();
@@ -90,30 +88,6 @@ for each table to get an array of table ids*/
     },
     []
   );
-
-  // Submit function for the modal to edit the study name, description, and url.
-  // The function adds the variables and filename to the body of the PUT request to retain the complete
-  // study object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
-  const handleSubmit = values => {
-    handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
-      ...values,
-      tables: dataDictionary?.tables,
-    })
-      .then(data => {
-        setDataDictionary(data);
-        message.success('Changes saved successfully.');
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred editing the Data Dictionary. Please try again.',
-          });
-        }
-        return error;
-      });
-  };
 
   return (
     <>
@@ -197,6 +171,8 @@ for each table to get an array of table ids*/
                       height: '42vh',
                     }}
                     actions={[
+                      // Button to remove a table from a DD
+                      <RemoveTableDD DDId={DDId} table={table} />,
                       <Link to={`/DataDictionary/${DDId}/Table/${table?.id}`}>
                         <button className="manage_term_button">
                           View / Edit
@@ -236,27 +212,15 @@ for each table to get an array of table ids*/
           </div>
         </div>
       )}
-      <Modal
-        open={edit}
-        width={'51%'}
-        onOk={() =>
-          form.validateFields().then(values => {
-            form.resetFields();
-            setEdit(false);
-            handleSubmit(values);
-          })
-        }
-        onCancel={() => {
-          form.resetFields();
-          setEdit(false);
-        }}
-        maskClosable={false}
-        closeIcon={false}
-        destroyOnClose={true}
-      >
-        {/* Displays the edit form */}
-        <EditDDDetails form={form} dataDictionary={dataDictionary} />
-      </Modal>
+
+      {/* Displays the edit form */}
+      <EditDDDetails
+        edit={edit}
+        setEdit={setEdit}
+        form={form}
+        dataDictionary={dataDictionary}
+        setDataDictionary={setDataDictionary}
+      />
       <UploadTable
         addTable={addTable}
         setAddTable={setAddTable}
