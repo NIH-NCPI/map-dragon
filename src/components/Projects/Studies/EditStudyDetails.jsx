@@ -5,6 +5,7 @@ export const EditStudyDetails = ({ form, study }) => {
   const changeHandler = () => {
     form.setFieldsValue({
       name: study.name,
+      title: study.title,
       description: study.description,
       url: study.url,
     });
@@ -23,6 +24,13 @@ export const EditStudyDetails = ({ form, study }) => {
           name="name"
           label="Name"
           rules={[{ required: true, message: 'Please input Study name.' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="title"
+          label="Title"
+          rules={[{ required: true, message: 'Please input Study title.' }]}
         >
           <Input />
         </Form.Item>

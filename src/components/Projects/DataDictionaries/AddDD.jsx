@@ -1,6 +1,6 @@
 import { React, useContext, useEffect } from 'react';
 import { myContext } from '../../../App';
-import { Form, Input, Select, Modal } from 'antd';
+import { Form, Input, notification, message, Modal } from 'antd';
 import './DDStyling.scss';
 import { handlePost, handleUpdate } from '../../Manager/FetchManager';
 import { useNavigate } from 'react-router-dom';
@@ -30,6 +30,8 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
           ...study,
           datadictionary: newDDArray,
         });
+        message.success('Data Dictionary added successfully.');
+
         navigate(`/DataDictionary/${data.id}`);
       })
       .catch(error => {

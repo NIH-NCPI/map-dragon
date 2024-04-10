@@ -1,6 +1,8 @@
+@import '../Styling/Variables';
+
 .loading_screen {
-  margin-top: 115px;
-  height: calc(100vh - 115px);
+  margin-top: $navHeight;
+  height: calc(100vh - $navHeight);
   display: flex;
   flex-direction: row;
   align-items: center;

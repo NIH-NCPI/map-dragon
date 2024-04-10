@@ -4,6 +4,7 @@ $buttonEffect: #232323;
 $darkBlue: #336699; //dark blue
 $greyColor: #bdbdbb; //dark grey
 $lightBlue: #86bbd8; //light blue
+$navHeight: 115px;
 
 @mixin button($padding: 16px 32px) {
   background-color: $blackColor;
