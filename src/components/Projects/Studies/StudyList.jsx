@@ -6,7 +6,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { myContext } from '../../../App';
 import { Spinner } from '../../Manager/Spinner';
 import { getAll, handlePost } from '../../Manager/FetchManager';
-import { Modal, Form, Row, Col, Card, notification, Skeleton } from 'antd';
+import {
+  Modal,
+  Form,
+  Row,
+  Col,
+  Card,
+  notification,
+  Skeleton,
+  message,
+} from 'antd';
 import { AddStudy } from './AddStudy';
 import Background from '../../../assets/Background.png';
 import { ellipsisString } from '../../Manager/Utilitiy';
@@ -45,11 +54,23 @@ export const StudyList = () => {
   // The user is then redirected to the new study created.
   const handleSubmit = values => {
     values.datadictionary = values.datadictionary?.map(ref => {
-      return { reference: `DataDictionary/${ref}` };
+      return { 'reference': `DataDictionary/${ref}` };
     });
-    handlePost(vocabUrl, 'Study', values).then(data =>
-      navigate(`/study/${data?.id}`)
-    );
+    handlePost(vocabUrl, 'Study', values)
+      .then(data => {
+        message.success('Study added successfully.');
+        navigate(`/study/${data?.id}`);
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description:
+              'An error occurred creating the Study. Please try again.',
+          });
+        }
+        return error;
+      });
   };
 
   return (

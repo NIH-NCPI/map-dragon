@@ -3,7 +3,7 @@
 
 .table_id_container {
   margin: 17vh 10vw 10vh 10vw;
-  min-height: 70vh;
+  // min-height: 70vh;
   width: 63vw;
 }
 
@@ -64,12 +64,6 @@ input::file-selector-button:hover {
 .transparent_button {
   border: none;
   background-color: transparent;
-}
-
-.study_desc {
-  font-family: 'Wix Madefor Display', sans-serif;
-  font-size: 16px;
-  margin: 0 0 10px 0;
 }
 
 .delete_table_confirm {

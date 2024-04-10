@@ -73,11 +73,5 @@ export const handlePost = (vocabUrl, name, body) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
-  }).then(res => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      throw new Error('An unknown error occurred.');
-    }
-  });
+  }).then(res => res.json());
 };

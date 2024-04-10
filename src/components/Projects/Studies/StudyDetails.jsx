@@ -48,7 +48,7 @@ for each DD to get an array of DD ids*/
     );
     Promise.all(dDPromises)
       .then(data => setStudyDDs(data))
-      .then(() => setLoading(false));
+      .finally(() => setLoading(false));
   };
 
   // fetches the specified study. Sets response to 'study' and loading to false.
@@ -56,6 +56,7 @@ for each DD to get an array of DD ids*/
     setLoading(true);
     getById(vocabUrl, 'Study', studyId)
       .then(data => setStudy(data))
+      .finally(() => setLoading(false))
       .catch(error => {
         if (error) {
           notification.error({
@@ -112,6 +113,7 @@ for each DD to get an array of DD ids*/
                     {/* Displays study name if there is one. If no name, displays study id */}
                     <h2>{study?.name ? study?.name : study?.id}</h2>
                   </div>
+                  <div className="study_">{study?.title}</div>
                   <div className="study_desc">
                     {/* Displays the study description if there is one.
                     If there is no description, 'No description provided' is displayed in a gray font */}
@@ -130,7 +132,7 @@ for each DD to get an array of DD ids*/
                   <div className="study_dropdown">
                     <SettingsDropdownStudy study={study} />
                   </div>
-                  <div className="study_url">URL: {study.url}</div>
+                  <div className="study_url">URL: {study?.url}</div>
                 </div>
               </Col>
             </div>

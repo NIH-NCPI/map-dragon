@@ -8,6 +8,7 @@ import { TableDetails } from './components/Projects/Tables/TableDetails';
 import { DDDetails } from './components/Projects/DataDictionaries/DDDetails';
 import { StudyDetails } from './components/Projects/Studies/StudyDetails';
 import { StudyList } from './components/Projects/Studies/StudyList';
+import './App.scss';
 
 export const AppRouter = () => {
   return (
@@ -16,9 +17,13 @@ export const AppRouter = () => {
         path="/"
         element={
           <>
-            <NavBar />
-            <Outlet />
-            <Footer />
+            <div className="approuter_div">
+              <NavBar />
+              <div className="outlet_div">
+                <Outlet />
+              </div>
+              <Footer />
+            </div>
           </>
         }
       >

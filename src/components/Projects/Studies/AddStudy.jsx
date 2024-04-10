@@ -38,7 +38,11 @@ export const AddStudy = ({ form }) => {
       >
         <Input />
       </Form.Item>
-      <Form.Item name="title" label="Title" rules={[{ required: false }]}>
+      <Form.Item
+        name="title"
+        label="Title"
+        rules={[{ required: true, message: 'Please input Study title.' }]}
+      >
         <Input />
       </Form.Item>
       <Form.Item

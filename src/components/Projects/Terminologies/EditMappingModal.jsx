@@ -1,4 +1,4 @@
-import { Checkbox, Modal, Form, Button, notification } from 'antd';
+import { Checkbox, Modal, Form, Button, notification, message } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
@@ -146,7 +146,10 @@ export const EditMappingsModal = ({
           throw new Error('An unknown error occurred.');
         }
       })
-      .then(data => setMapping(data.codes))
+      .then(data => {
+        setMapping(data.codes);
+        message.success('Mappings updated successfully.');
+      })
       .catch(error => {
         if (error) {
           notification.error({
