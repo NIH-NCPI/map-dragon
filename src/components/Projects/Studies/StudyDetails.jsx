@@ -53,7 +53,6 @@ for each DD to get an array of DD ids*/
 
   // fetches the specified study. Sets response to 'study' and loading to false.
   useEffect(() => {
-    setLoading(true);
     getById(vocabUrl, 'Study', studyId)
       .then(data => setStudy(data))
       .finally(() => setLoading(false))
