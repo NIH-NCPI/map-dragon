@@ -56,21 +56,18 @@ export const StudyList = () => {
     values.datadictionary = values.datadictionary?.map(ref => {
       return { 'reference': `DataDictionary/${ref}` };
     });
-    handlePost(vocabUrl, 'Study', values)
-      .then(data => {
+    handlePost(vocabUrl, 'Study', values).then(res => {
+      if (res.status === 201) {
         message.success('Study added successfully.');
         navigate(`/study/${data?.id}`);
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred creating the Study. Please try again.',
-          });
-        }
-        return error;
-      });
+      } else {
+        notification.error({
+          message: 'Error',
+          description:
+            'An error occurred creating the Study. Please try again.',
+        });
+      }
+    });
   };
 
   return (
