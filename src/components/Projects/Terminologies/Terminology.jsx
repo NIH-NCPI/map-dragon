@@ -44,9 +44,15 @@ export const Terminology = () => {
   const [loading, setLoading] = useState(true);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
-  const newcodeRef = useRef();
-  const otherThingRef = useRef();
+  const newCodeRef = useRef();
+  const newDisplayRef = useRef();
 
+  /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
+The codes in the mappings need to be matched up to each code in the terminology.
+The function maps through the mapping array. For each code, if the mapping code is equal to the 
+code in the terminology, AND the mappings array length for the code is > 0, the mappings array is mapped through
+and returns the length of the mapping array (i.e. returns the number of codes mapped to the terminology code). 
+There is then a tooltip that displays the codes on hover.*/
   const matchCode = code =>
     mapping?.length > 0
       ? mapping?.map((item, index) =>
@@ -119,12 +125,6 @@ export const Terminology = () => {
     });
   };
 
-  /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
-The codes in the mappings need to be matched up to each code in the terminology.
-The function maps through the mapping array. For each code, if the mapping code is equal to the 
-code in the terminology, AND the mappings array length for the code is > 0, the mappings array is mapped through
-and returns the length of the mapping array (i.e. returns the number of codes mapped to the terminology code). 
-There is then a tooltip that displays the codes on hover.*/
   const [dataSource, setDataSource] = useState(tableData);
 
   useEffect(() => {
@@ -185,8 +185,8 @@ There is then a tooltip that displays the codes on hover.*/
 
   const saveNewRow = () => {
     console.log({
-      key: newcodeRef.current.input.defaultValue,
-      display: otherThingRef.current.input.defaultValue,
+      code: newCodeRef.current.input.defaultValue,
+      display: newDisplayRef.current.input.defaultValue,
     });
   };
 
@@ -194,22 +194,15 @@ There is then a tooltip that displays the codes on hover.*/
     setDataSource([
       {
         key: 'newRow',
-        code: <Input ref={newcodeRef} />,
-        display: <Input ref={otherThingRef} />,
+        code: <Input ref={newCodeRef} />,
+        display: <Input ref={newDisplayRef} />,
         mapped_terms: '',
         get_mappings: <Button onClick={() => saveNewRow()}>Save</Button>,
       },
       ...dataSource,
     ]);
-    // const newData = {
-    //   key: index,
-    //   name: `Edward King ${count}`,
-    //   age: '32',
-    //   address: `London, Park Lane no. ${count}`,
-    // };
-    // setDataSource([...dataSource, newData]);
-    // setCount(count + 1);
   };
+
   return (
     <>
       {/* If page is still loading, display loading spinner. */}
