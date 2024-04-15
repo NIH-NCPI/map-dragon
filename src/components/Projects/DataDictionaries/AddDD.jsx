@@ -38,7 +38,8 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description:
+              'An error adding the Data Dictionary. Please try again.',
           });
         }
         return error;
