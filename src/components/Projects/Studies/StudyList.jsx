@@ -6,23 +6,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { myContext } from '../../../App';
 import { Spinner } from '../../Manager/Spinner';
 import { getAll, handlePost } from '../../Manager/FetchManager';
-import {
-  Modal,
-  Form,
-  Row,
-  Col,
-  Card,
-  notification,
-  Skeleton,
-  message,
-} from 'antd';
+import { Form, Row, Col, Card, notification, Skeleton } from 'antd';
 import { AddStudy } from './AddStudy';
 import Background from '../../../assets/Background.png';
 import { ellipsisString } from '../../Manager/Utilitiy';
 const { Meta } = Card;
 
 export const StudyList = () => {
-  const [form] = Form.useForm();
   const { addStudy, setAddStudy, vocabUrl } = useContext(myContext);
   const [studies, setStudies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,30 +35,6 @@ export const StudyList = () => {
       })
       .finally(() => setLoading(false));
   }, []);
-
-  // Submit function for adding a new study.
-  // Maps through the datadictionary (DD) array of the values being submitted (the array is an array of DD id's ).
-  // For each iteration of the array, it returns a reference object with the value of "DataDictionary/"
-  // and the DD id on the other side of the slash
-  // The funciton to make the POST request is called with the values to put into the body of the request.
-  // The user is then redirected to the new study created.
-  const handleSubmit = values => {
-    values.datadictionary = values.datadictionary?.map(ref => {
-      return { 'reference': `DataDictionary/${ref}` };
-    });
-    handlePost(vocabUrl, 'Study', values).then(res => {
-      if (res.status === 201) {
-        message.success('Study added successfully.');
-        navigate(`/study/${data?.id}`);
-      } else {
-        notification.error({
-          message: 'Error',
-          description:
-            'An error occurred creating the Study. Please try again.',
-        });
-      }
-    });
-  };
 
   return (
     <>
@@ -152,29 +118,7 @@ export const StudyList = () => {
           </>
         )}
 
-        {/* ant.design modal with the form to add a study */}
-        {/* when the OK button is pressed, the form validates the fields to ensure required sections are completed.
-        The handleSubmit function is called to POST the values to the API. 
-        The modal is reset to its initial, blank state.
-        addStudy is set to false to close the modal */}
-        <Modal
-          open={addStudy}
-          width={'70%'}
-          onOk={() =>
-            form.validateFields().then(values => {
-              handleSubmit(values);
-              form.resetFields();
-              setAddStudy(false);
-            })
-          }
-          onCancel={() => {
-            form.resetFields();
-            setAddStudy(false);
-          }}
-          maskClosable={false}
-        >
-          <AddStudy form={form} />
-        </Modal>
+        <AddStudy addStudy={addStudy} setAddStudy={setAddStudy} />
       </div>
     </>
   );
