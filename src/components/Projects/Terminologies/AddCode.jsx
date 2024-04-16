@@ -1,4 +1,4 @@
-import { useContext, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { Button, Input, message } from 'antd';
 import { handleUpdate } from '../../Manager/FetchManager';
@@ -10,9 +10,15 @@ export const AddCode = ({
   setDataSource,
 }) => {
   const { vocabUrl } = useContext(myContext);
-
+  const [addRow, setAddRow] = useState(false);
   const newCodeRef = useRef();
   const newDisplayRef = useRef();
+
+  console.log(addRow);
+
+  useEffect(() => {
+    addRow && handleAdd();
+  }, [addRow]);
 
   // allCodes set to the terminology codes array. Then the refs from the code and display
   // input fields are pushed to the allCodes array to be attached to the body of the PUT request.
@@ -36,6 +42,18 @@ export const AddCode = ({
       .then(() => message.success('Changes saved successfully.'));
   };
 
+  const rowButtons = () => {
+    return (
+      <>
+        <span>
+          <Button onClick={() => setAddRow(false)}>Cancel</Button>{' '}
+          <Button onClick={() => saveNewRow()}>Save</Button>
+        </span>
+      </>
+    );
+  };
+
+  console.log(addRow);
   // Sets the data source for the table to input fields with respective refs.
   // A save button in the end that calls the saveNewRow PUT request function on click.
   const handleAdd = () => {
@@ -45,15 +63,18 @@ export const AddCode = ({
         code: <Input ref={newCodeRef} />,
         display: <Input ref={newDisplayRef} />,
         mapped_terms: '',
-        get_mappings: <Button onClick={() => saveNewRow()}>Save</Button>,
+        get_mappings: rowButtons(),
       },
       ...dataSource,
     ]);
   };
+
   return (
     <div className="add_row_button">
       <Button
-        onClick={() => handleAdd()}
+        onClick={() => {
+          setAddRow(true);
+        }}
         type="primary"
         style={{
           marginBottom: 16,
