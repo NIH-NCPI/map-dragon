@@ -22,6 +22,7 @@ import { GetMappingsModal } from './GetMappingsModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from './ClearMappings';
+import { AddCode } from './AddCode';
 
 export const EditContext = createContext();
 
@@ -44,8 +45,8 @@ export const Terminology = () => {
   const [loading, setLoading] = useState(true);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
-  const newCodeRef = useRef();
-  const newDisplayRef = useRef();
+  // const newCodeRef = useRef();
+  // const newDisplayRef = useRef();
 
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
 The codes in the mappings need to be matched up to each code in the terminology.
@@ -184,36 +185,36 @@ There is then a tooltip that displays the codes on hover.*/
       .then(() => message.success('Changes saved successfully.'));
   };
 
-  const newRowDTO = () => {
-    let allCodes = terminology.codes;
-    allCodes.push({
-      code: newCodeRef.current.input.defaultValue,
-      display: newDisplayRef.current.input.defaultValue,
-    });
-    return allCodes;
-  };
-  const saveNewRow = () => {
-    handleUpdate(vocabUrl, 'Terminology', terminology, {
-      ...terminology,
-      codes: newRowDTO(),
-    })
-      .then(data => setTerminology(data))
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Changes saved successfully.'));
-  };
+  // const newRowDTO = () => {
+  //   let allCodes = terminology.codes;
+  //   allCodes.push({
+  //     code: newCodeRef.current.input.defaultValue,
+  //     display: newDisplayRef.current.input.defaultValue,
+  //   });
+  //   return allCodes;
+  // };
+  // const saveNewRow = () => {
+  //   handleUpdate(vocabUrl, 'Terminology', terminology, {
+  //     ...terminology,
+  //     codes: newRowDTO(),
+  //   })
+  //     .then(data => setTerminology(data))
+  //     // Displays a self-closing message that the udpates have been successfully saved.
+  //     .then(() => message.success('Changes saved successfully.'));
+  // };
 
-  const handleAdd = () => {
-    setDataSource([
-      {
-        key: 'newRow',
-        code: <Input ref={newCodeRef} />,
-        display: <Input ref={newDisplayRef} />,
-        mapped_terms: '',
-        get_mappings: <Button onClick={() => saveNewRow()}>Save</Button>,
-      },
-      ...dataSource,
-    ]);
-  };
+  // const handleAdd = () => {
+  //   setDataSource([
+  //     {
+  //       key: 'newRow',
+  //       code: <Input ref={newCodeRef} />,
+  //       display: <Input ref={newDisplayRef} />,
+  //       mapped_terms: '',
+  //       get_mappings: <Button onClick={() => saveNewRow()}>Save</Button>,
+  //     },
+  //     ...dataSource,
+  //   ]);
+  // };
 
   return (
     <>
@@ -262,7 +263,13 @@ There is then a tooltip that displays the codes on hover.*/
             </div>
           </Row>
           <div className="table_container">
-            <div className="add_row_button">
+            <AddCode
+              terminology={terminology}
+              setTerminology={setTerminology}
+              dataSource={dataSource}
+              setDataSource={setDataSource}
+            />
+            {/* <div className="add_row_button">
               <Button
                 onClick={() => handleAdd()}
                 type="primary"
@@ -272,7 +279,7 @@ There is then a tooltip that displays the codes on hover.*/
               >
                 Add code
               </Button>
-            </div>
+            </div> */}
             {/* ant.design table with columns */}
             <Table columns={columns} dataSource={dataSource} />
           </div>
