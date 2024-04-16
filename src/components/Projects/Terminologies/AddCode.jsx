@@ -10,8 +10,12 @@ export const AddCode = ({
   setDataSource,
 }) => {
   const { vocabUrl } = useContext(myContext);
+
   const newCodeRef = useRef();
   const newDisplayRef = useRef();
+
+  // allCodes set to the terminology codes array. Then the refs from the code and display
+  // input fields are pushed to the allCodes array to be attached to the body of the PUT request.
   const newRowDTO = () => {
     let allCodes = terminology.codes;
     allCodes.push({
@@ -20,6 +24,8 @@ export const AddCode = ({
     });
     return allCodes;
   };
+
+  // Takes the newRowDTO function above and adds it to the body of the PUT request to add new codes to the codes array
   const saveNewRow = () => {
     handleUpdate(vocabUrl, 'Terminology', terminology, {
       ...terminology,
@@ -29,6 +35,9 @@ export const AddCode = ({
       // Displays a self-closing message that the udpates have been successfully saved.
       .then(() => message.success('Changes saved successfully.'));
   };
+
+  // Sets the data source for the table to input fields with respective refs.
+  // A save button in the end that calls the saveNewRow PUT request function on click.
   const handleAdd = () => {
     setDataSource([
       {

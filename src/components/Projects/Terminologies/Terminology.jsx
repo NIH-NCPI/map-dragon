@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { myContext } from '../../../App';
 import './Terminology.scss';
@@ -6,10 +6,8 @@ import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
 import {
-  Button,
   Col,
   Form,
-  Input,
   message,
   Modal,
   notification,
@@ -45,8 +43,6 @@ export const Terminology = () => {
   const [loading, setLoading] = useState(true);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
-  // const newCodeRef = useRef();
-  // const newDisplayRef = useRef();
 
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
 The codes in the mappings need to be matched up to each code in the terminology.
@@ -185,37 +181,6 @@ There is then a tooltip that displays the codes on hover.*/
       .then(() => message.success('Changes saved successfully.'));
   };
 
-  // const newRowDTO = () => {
-  //   let allCodes = terminology.codes;
-  //   allCodes.push({
-  //     code: newCodeRef.current.input.defaultValue,
-  //     display: newDisplayRef.current.input.defaultValue,
-  //   });
-  //   return allCodes;
-  // };
-  // const saveNewRow = () => {
-  //   handleUpdate(vocabUrl, 'Terminology', terminology, {
-  //     ...terminology,
-  //     codes: newRowDTO(),
-  //   })
-  //     .then(data => setTerminology(data))
-  //     // Displays a self-closing message that the udpates have been successfully saved.
-  //     .then(() => message.success('Changes saved successfully.'));
-  // };
-
-  // const handleAdd = () => {
-  //   setDataSource([
-  //     {
-  //       key: 'newRow',
-  //       code: <Input ref={newCodeRef} />,
-  //       display: <Input ref={newDisplayRef} />,
-  //       mapped_terms: '',
-  //       get_mappings: <Button onClick={() => saveNewRow()}>Save</Button>,
-  //     },
-  //     ...dataSource,
-  //   ]);
-  // };
-
   return (
     <>
       {/* If page is still loading, display loading spinner. */}
@@ -269,17 +234,7 @@ There is then a tooltip that displays the codes on hover.*/
               dataSource={dataSource}
               setDataSource={setDataSource}
             />
-            {/* <div className="add_row_button">
-              <Button
-                onClick={() => handleAdd()}
-                type="primary"
-                style={{
-                  marginBottom: 16,
-                }}
-              >
-                Add code
-              </Button>
-            </div> */}
+
             {/* ant.design table with columns */}
             <Table columns={columns} dataSource={dataSource} />
           </div>
