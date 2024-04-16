@@ -129,7 +129,8 @@ There is then a tooltip that displays the codes on hover.*/
 
   useEffect(() => {
     setDataSource(tableData(terminology));
-  }, [terminology]);
+  }, [terminology, mapping]);
+
   // Fetches the terminology using the terminologyId param and sets 'terminology' to the response.
   // Fetches the mappings for the terminology and sets the response to 'mapping'
   // Sets loading to false
@@ -183,11 +184,22 @@ There is then a tooltip that displays the codes on hover.*/
       .then(() => message.success('Changes saved successfully.'));
   };
 
-  const saveNewRow = () => {
-    console.log({
+  const newRowDTO = () => {
+    let allCodes = terminology.codes;
+    allCodes.push({
       code: newCodeRef.current.input.defaultValue,
       display: newDisplayRef.current.input.defaultValue,
     });
+    return allCodes;
+  };
+  const saveNewRow = () => {
+    handleUpdate(vocabUrl, 'Terminology', terminology, {
+      ...terminology,
+      codes: newRowDTO(),
+    })
+      .then(data => setTerminology(data))
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Changes saved successfully.'));
   };
 
   const handleAdd = () => {
@@ -250,10 +262,7 @@ There is then a tooltip that displays the codes on hover.*/
             </div>
           </Row>
           <div className="table_container">
-            {/* ant.design table with columns */}
-            <Table columns={columns} dataSource={dataSource} />
             <div className="add_row_button">
-              {' '}
               <Button
                 onClick={() => handleAdd()}
                 type="primary"
@@ -264,6 +273,8 @@ There is then a tooltip that displays the codes on hover.*/
                 Add code
               </Button>
             </div>
+            {/* ant.design table with columns */}
+            <Table columns={columns} dataSource={dataSource} />
           </div>
           {/* The modals to edit and get mappings with data being passed. */}
           <EditMappingsModal
