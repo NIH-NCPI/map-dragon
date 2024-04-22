@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { Button, Input, message } from 'antd';
 import { handleUpdate } from '../../Manager/FetchManager';
@@ -13,12 +13,6 @@ export const AddCode = ({
   const [addRow, setAddRow] = useState(false);
   const newCodeRef = useRef();
   const newDisplayRef = useRef();
-
-  console.log(addRow);
-
-  useEffect(() => {
-    addRow && handleAdd();
-  }, [addRow]);
 
   // allCodes set to the terminology codes array. Then the refs from the code and display
   // input fields are pushed to the allCodes array to be attached to the body of the PUT request.
@@ -38,6 +32,7 @@ export const AddCode = ({
       codes: newRowDTO(),
     })
       .then(data => setTerminology(data))
+      .then(() => setAddRow(false))
       // Displays a self-closing message that the udpates have been successfully saved.
       .then(() => message.success('Changes saved successfully.'));
   };
@@ -46,17 +41,21 @@ export const AddCode = ({
     return (
       <>
         <span>
-          <Button onClick={() => setAddRow(false)}>Cancel</Button>{' '}
-          <Button onClick={() => saveNewRow()}>Save</Button>
+          <Button onClick={handleCancel}>Cancel</Button>{' '}
+          <Button onClick={saveNewRow}>Save</Button>
         </span>
       </>
     );
   };
 
-  console.log(addRow);
   // Sets the data source for the table to input fields with respective refs.
   // A save button in the end that calls the saveNewRow PUT request function on click.
   const handleAdd = () => {
+    if (addRow) {
+      message.info('One row at a time, please.');
+      return;
+    }
+    setAddRow(true);
     setDataSource([
       {
         key: 'newRow',
@@ -69,12 +68,17 @@ export const AddCode = ({
     ]);
   };
 
+  const handleCancel = () => {
+    const dS = dataSource;
+    dS.shift();
+    setDataSource(dS);
+    setAddRow(false);
+  };
+
   return (
     <div className="add_row_button">
       <Button
-        onClick={() => {
-          setAddRow(true);
-        }}
+        onClick={handleAdd}
         type="primary"
         style={{
           marginBottom: 16,
