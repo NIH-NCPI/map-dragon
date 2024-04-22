@@ -2,6 +2,7 @@ import { useContext, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { Button, Input, message } from 'antd';
 import { handleUpdate } from '../../Manager/FetchManager';
+import './Terminology.scss';
 
 export const AddCode = ({
   terminology,
@@ -11,6 +12,7 @@ export const AddCode = ({
 }) => {
   const { vocabUrl } = useContext(myContext);
   const [addRow, setAddRow] = useState(false);
+
   const newCodeRef = useRef();
   const newDisplayRef = useRef();
 
@@ -27,14 +29,17 @@ export const AddCode = ({
 
   // Takes the newRowDTO function above and adds it to the body of the PUT request to add new codes to the codes array
   const saveNewRow = () => {
-    handleUpdate(vocabUrl, 'Terminology', terminology, {
-      ...terminology,
-      codes: newRowDTO(),
-    })
-      .then(data => setTerminology(data))
-      .then(() => setAddRow(false))
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Changes saved successfully.'));
+    newCodeRef.current.input.defaultValue === '' ||
+    newDisplayRef.current.input.defaultValue === ''
+      ? message.error('The code and display cannot be left blank.')
+      : handleUpdate(vocabUrl, 'Terminology', terminology, {
+          ...terminology,
+          codes: newRowDTO(),
+        })
+          .then(data => setTerminology(data))
+          .then(() => setAddRow(false))
+          // Displays a self-closing message that the udpates have been successfully saved.
+          .then(() => message.success('Code added successfully.'));
   };
 
   const rowButtons = () => {

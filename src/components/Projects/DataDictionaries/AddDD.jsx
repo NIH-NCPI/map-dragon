@@ -52,7 +52,6 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
       width={'70%'}
       onOk={() =>
         form.validateFields().then(values => {
-          console.log(values);
           handleSubmit(values);
           form.resetFields();
           setAddDD(false);
