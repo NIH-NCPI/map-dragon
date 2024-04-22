@@ -1,7 +1,8 @@
-import { useContext, useRef } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { Button, Input, message } from 'antd';
 import { handleUpdate } from '../../Manager/FetchManager';
+import './Terminology.scss';
 
 export const AddCode = ({
   terminology,
@@ -10,6 +11,7 @@ export const AddCode = ({
   setDataSource,
 }) => {
   const { vocabUrl } = useContext(myContext);
+  const [addRow, setAddRow] = useState(false);
 
   const newCodeRef = useRef();
   const newDisplayRef = useRef();
@@ -27,33 +29,61 @@ export const AddCode = ({
 
   // Takes the newRowDTO function above and adds it to the body of the PUT request to add new codes to the codes array
   const saveNewRow = () => {
-    handleUpdate(vocabUrl, 'Terminology', terminology, {
-      ...terminology,
-      codes: newRowDTO(),
-    })
-      .then(data => setTerminology(data))
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Changes saved successfully.'));
+    newCodeRef.current.input.defaultValue === '' ||
+    newDisplayRef.current.input.defaultValue === ''
+      ? message.error('The code and display cannot be left blank.')
+      : handleUpdate(vocabUrl, 'Terminology', terminology, {
+          ...terminology,
+          codes: newRowDTO(),
+        })
+          .then(data => setTerminology(data))
+          .then(() => setAddRow(false))
+          // Displays a self-closing message that the udpates have been successfully saved.
+          .then(() => message.success('Code added successfully.'));
+  };
+
+  const rowButtons = () => {
+    return (
+      <>
+        <span>
+          <Button onClick={handleCancel}>Cancel</Button>{' '}
+          <Button onClick={saveNewRow}>Save</Button>
+        </span>
+      </>
+    );
   };
 
   // Sets the data source for the table to input fields with respective refs.
   // A save button in the end that calls the saveNewRow PUT request function on click.
   const handleAdd = () => {
+    if (addRow) {
+      message.info('One row at a time, please.');
+      return;
+    }
+    setAddRow(true);
     setDataSource([
       {
         key: 'newRow',
         code: <Input ref={newCodeRef} />,
         display: <Input ref={newDisplayRef} />,
         mapped_terms: '',
-        get_mappings: <Button onClick={() => saveNewRow()}>Save</Button>,
+        get_mappings: rowButtons(),
       },
       ...dataSource,
     ]);
   };
+
+  const handleCancel = () => {
+    const dS = dataSource;
+    dS.shift();
+    setDataSource(dS);
+    setAddRow(false);
+  };
+
   return (
     <div className="add_row_button">
       <Button
-        onClick={() => handleAdd()}
+        onClick={handleAdd}
         type="primary"
         style={{
           marginBottom: 16,

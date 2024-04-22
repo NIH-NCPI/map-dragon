@@ -5,16 +5,7 @@ import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
-import {
-  Col,
-  Form,
-  message,
-  Modal,
-  notification,
-  Row,
-  Table,
-  Tooltip,
-} from 'antd';
+import { Col, Form, notification, Row, Table, Tooltip } from 'antd';
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
@@ -34,8 +25,6 @@ export const Terminology = () => {
     setEditMappings,
     getMappings,
     setGetMappings,
-    edit,
-    setEdit,
     mapping,
     setMapping,
   } = useContext(myContext);
@@ -168,19 +157,6 @@ There is then a tooltip that displays the codes on hover.*/
     { title: '', dataIndex: 'get_mappings' },
   ];
 
-  // Submit function for the modal to edit the terminology name, description, and url.
-  // The function adds the codes to the body of the PUT request to retain the complete
-  // terminology object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
-  const handleSubmit = values => {
-    handleUpdate(vocabUrl, 'Terminology', terminology, {
-      ...values,
-      codes: terminology?.codes,
-    })
-      .then(data => setTerminology(data))
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Changes saved successfully.'));
-  };
-
   return (
     <>
       {/* If page is still loading, display loading spinner. */}
@@ -254,29 +230,13 @@ There is then a tooltip that displays the codes on hover.*/
             setMapping={setMapping}
             terminologyId={terminologyId}
           />
-          {/* Modal to edit details */}
-          <Modal
-            open={edit}
-            width={'51%'}
-            onOk={() =>
-              form.validateFields().then(values => {
-                form.resetFields();
-                setEdit(false);
-                handleSubmit(values);
-              })
-            }
-            onCancel={() => {
-              form.resetFields();
-              setEdit(false);
-            }}
-            maskClosable={false}
-            closeIcon={false}
-            destroyOnClose={true}
-          >
-            {/* Displays the edit form */}
 
-            <EditTerminologyDetails form={form} terminology={terminology} />
-          </Modal>
+          {/* Displays the edit form */}
+          <EditTerminologyDetails
+            form={form}
+            terminology={terminology}
+            setTerminology={setTerminology}
+          />
           <ClearMappings terminologyId={terminologyId} />
         </div>
       )}

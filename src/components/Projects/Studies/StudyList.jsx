@@ -115,9 +115,8 @@ export const StudyList = () => {
             </div>
           </>
         )}
-
-        <AddStudy addStudy={addStudy} setAddStudy={setAddStudy} />
       </div>
+      <AddStudy addStudy={addStudy} setAddStudy={setAddStudy} />
     </>
   );
 };
