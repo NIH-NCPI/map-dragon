@@ -166,6 +166,8 @@ There is then a tooltip that displays the codes on hover.*/
             dataSource={dataSource}
             setDataSource={setDataSource}
             tableData={tableData}
+            terminology={terminology}
+            setTerminology={setTerminology}
           />
         ) : null,
     },
