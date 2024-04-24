@@ -163,8 +163,6 @@ There is then a tooltip that displays the codes on hover.*/
       render: (_, tableData) =>
         dataSource.length >= 1 ? (
           <DeleteCode
-            dataSource={dataSource}
-            setDataSource={setDataSource}
             tableData={tableData}
             terminology={terminology}
             setTerminology={setTerminology}
