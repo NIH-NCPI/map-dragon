@@ -58,17 +58,17 @@ export const SearchResults = () => {
         },
       }
     )
-      .then(res => res.json())
-      .then(data => setResults(data.response))
-      .catch(error => {
-        if (error) {
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
           notification.error({
             message: 'Error',
             description: 'An error occurred. Please try again.',
           });
         }
-        return error;
       })
+      .then(data => setResults(data.response))
       .finally(() => setLoading(false));
   };
 

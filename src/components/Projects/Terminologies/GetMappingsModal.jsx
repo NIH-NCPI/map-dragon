@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import {
   ellipsisString,
-  ontologyFilter,
+  ontologyReducer,
   systemsMatch,
 } from '../../Manager/Utilitiy';
 import { ModalSpinner } from '../../Manager/Spinner';
@@ -23,6 +23,7 @@ export const GetMappingsModal = ({
   const [totalCount, setTotalCount] = useState();
   const [resultsCount, setResultsCount] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
+  const [filteredResultsCount, setFilteredResultsCount] = useState(0);
 
   let ref = useRef();
 
@@ -107,13 +108,13 @@ export const GetMappingsModal = ({
     )
       .then(res => res.json())
       .then(data => {
-        // filters results through the ontologyFilter function (defined in Manager/Utility.jsx)
+        // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
 
-        let res = ontologyFilter(data?.response?.docs);
+        let res = ontologyReducer(data?.response?.docs);
         // if the page > 0 (i.e. if this is not the first batch of results), the new results
         // are concatenated to the old
         if (page > 0 && results.length > 0) {
-          res = results.concat(res);
+          res.results = results.concat(res.results);
         } else {
           // the total number of search results are set to totalCount for pagination
 
@@ -121,9 +122,10 @@ export const GetMappingsModal = ({
         }
         //the results are set to res (the filtered, concatenated results)
 
-        setResults(res);
+        setResults(res.results);
+        setFilteredResultsCount(res?.filteredResults?.length);
         // resultsCount is set to the length of the filtered, concatenated results for pagination
-        setResultsCount(res.length);
+        setResultsCount(res.results.length);
       })
       .then(() => setLoading(false));
   };
@@ -251,7 +253,7 @@ export const GetMappingsModal = ({
                           Displaying {resultsCount}
                           &nbsp;of&nbsp;{totalCount}
                         </Tooltip>
-                        {resultsCount !== totalCount && (
+                        {totalCount - filteredResultsCount !== resultsCount && (
                           <span
                             className="view_more_link"
                             onClick={e => {

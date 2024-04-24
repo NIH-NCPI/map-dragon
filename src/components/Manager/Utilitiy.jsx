@@ -14,6 +14,19 @@ export const ellipsisString = (str, num) => {
 export const ontologyFilter = d =>
   d.filter(d => d?.obo_id.split(':')[0] === d?.ontology_prefix);
 
+export const ontologyReducer = d =>
+  d.reduce(
+    (acc, item) => {
+      if (item?.obo_id?.split(':')[0] === item?.ontology_prefix) {
+        acc.results.push(item);
+      } else {
+        acc.filteredResults.push(item);
+      }
+      return acc;
+    },
+    { results: [], filteredResults: [] }
+  );
+
 /* The backend API does not yet have a way to affix the system URL to each ontology. 
   This displays the system for each ontology searched. */
 export const ontologySystems = {

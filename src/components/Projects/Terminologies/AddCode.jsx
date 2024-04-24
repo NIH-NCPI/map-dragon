@@ -46,7 +46,7 @@ export const AddCode = ({
     return (
       <>
         <span>
-          <Button onClick={handleCancel}>Cancel</Button>{' '}
+          <Button onClick={handleCancel}>Cancel</Button>
           <Button onClick={saveNewRow}>Save</Button>
         </span>
       </>

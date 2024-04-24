@@ -4,6 +4,7 @@ import { myContext } from '../../../App';
 import {
   ellipsisString,
   ontologyFilter,
+  ontologyReducer,
   systemsMatch,
 } from '../../Manager/Utilitiy';
 import { ModalSpinner } from '../../Manager/Spinner';
@@ -24,6 +25,8 @@ export const MappingSearch = ({
   const [totalCount, setTotalCount] = useState();
   const [resultsCount, setResultsCount] = useState(); //
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
+  const [filteredResultsCount, setFilteredResultsCount] = useState(0);
+
   let ref = useRef();
 
   // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
@@ -78,20 +81,22 @@ export const MappingSearch = ({
     )
       .then(res => res.json())
       .then(data => {
-        // filters results through the ontologyFilter function (defined in Manager/Utility.jsx)
-        let res = ontologyFilter(data?.response?.docs);
+        // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
+        let res = ontologyReducer(data?.response?.docs);
         // if the page > 0 (i.e. if this is not the first batch of results), the new results
         // are concatenated to the old
         if (page > 0 && results.length > 0) {
-          res = results.concat(res);
+          res.results = results.concat(res.results);
         } else {
           // the total number of search results are set to totalCount for pagination
           setTotalCount(data.response.numFound);
         }
         //the results are set to res (the filtered, concatenated results)
-        setResults(res);
+        setResults(res.results);
+        setFilteredResultsCount(res?.filteredResults?.length);
+
         // resultsCount is set to the length of the filtered, concatenated results for pagination
-        setResultsCount(res.length);
+        setResultsCount(res.results.length);
       })
       .catch(error => {
         if (error) {
@@ -234,7 +239,8 @@ export const MappingSearch = ({
                         Displaying {resultsCount}
                         &nbsp;of&nbsp;{totalCount}
                       </Tooltip>
-                      {resultsCount !== totalCount && viewMorePagination}
+                      {totalCount - filteredResultsCount !== resultsCount &&
+                        viewMorePagination}
                     </div>
                   </div>
                 ) : (

@@ -4,7 +4,7 @@ import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
-import { getById, handleUpdate } from '../../Manager/FetchManager';
+import { getById } from '../../Manager/FetchManager';
 import { Col, Form, notification, Row, Table, Tooltip } from 'antd';
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
@@ -12,6 +12,7 @@ import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from './ClearMappings';
 import { AddCode } from './AddCode';
+import { DeleteCode } from './DeleteCode';
 
 export const EditContext = createContext();
 
@@ -107,6 +108,7 @@ There is then a tooltip that displays the codes on hover.*/
               Get Mappings
             </button>
           ),
+        delete_column: '',
       };
     });
   };
@@ -155,6 +157,18 @@ There is then a tooltip that displays the codes on hover.*/
     { title: 'Display', dataIndex: 'display', width: 430 },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 140 },
     { title: '', dataIndex: 'get_mappings' },
+    {
+      title: '',
+      dataIndex: 'delete_column',
+      render: (_, tableData) =>
+        dataSource.length >= 1 ? (
+          <DeleteCode
+            tableData={tableData}
+            terminology={terminology}
+            setTerminology={setTerminology}
+          />
+        ) : null,
+    },
   ];
 
   return (
