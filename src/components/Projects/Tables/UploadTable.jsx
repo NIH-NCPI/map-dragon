@@ -136,8 +136,8 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
           </Form.Item>
           <Form.Item
             name="csvContents"
-            // rules={[{ required: true, message: 'Please select file.' }]}
-            extra="OPTIONAL. CSV files only in Data Dictionary format."
+            rules={[{ required: true, message: 'Please select file.' }]}
+            extra="CSV files only in Data Dictionary format."
           >
             <Upload
               maxCount={1}
