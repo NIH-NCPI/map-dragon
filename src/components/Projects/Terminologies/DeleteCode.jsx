@@ -1,4 +1,6 @@
 import { message, notification, Popconfirm } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+
 import { handleUpdate } from '../../Manager/FetchManager';
 import { useContext } from 'react';
 import { myContext } from '../../../App';
@@ -28,10 +30,10 @@ export const DeleteCode = ({ tableData, terminology, setTerminology }) => {
 
   return (
     <Popconfirm
-      title="Sure to delete?"
+      title="Are you sure you want to delete the code?"
       onConfirm={() => handleDelete(tableData.key)}
     >
-      <a>Delete</a>
+      <DeleteOutlined className="delete_icon" />
     </Popconfirm>
   );
 };

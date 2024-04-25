@@ -158,3 +158,11 @@ a:hover {
   float: right;
   margin-right: 35px;
 }
+
+.delete_icon {
+  padding: 3px;
+}
+.delete_icon:hover {
+  border-radius: 50%;
+  box-shadow: 0 0 3px 1px rgba(50, 49, 49, 0.2);
+}
