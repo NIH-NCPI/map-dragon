@@ -73,9 +73,8 @@ export const AddCode = ({
     ]);
     console.log('ADD ds', dataSource);
   };
-  console.log('all ds', dataSource);
+
   const handleCancel = () => {
-    console.log('cancel ds', dataSource);
     setDataSource(dataSource);
     setAddRow(false);
   };

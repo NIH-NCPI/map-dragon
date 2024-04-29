@@ -15,6 +15,8 @@ import {
   Table,
   Tooltip,
 } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
+
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
@@ -165,7 +167,7 @@ There is then a tooltip that displays the codes on hover.*/
     {
       title: 'Code',
       dataIndex: 'code',
-      width: 170,
+      width: 180,
       onCell: (text, tableData) => {
         if (editRow === tableData.key) {
           return (
@@ -184,7 +186,7 @@ There is then a tooltip that displays the codes on hover.*/
     {
       title: 'Display',
       dataIndex: 'display',
-      width: 430,
+      width: 460,
       onCell: (text, tableData) => {
         if (editRow === tableData.key) {
           return (
@@ -200,7 +202,7 @@ There is then a tooltip that displays the codes on hover.*/
         }
       },
     },
-    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 100 },
+    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 90 },
     { title: '', dataIndex: 'get_mappings' },
     {
       title: '',
@@ -208,21 +210,22 @@ There is then a tooltip that displays the codes on hover.*/
       render: (_, tableData) => {
         return (
           <>
-            <Button
-              onClick={() => {
-                setEditRow(tableData.key);
-              }}
-            >
-              Edit
-            </Button>
-            {tableData.key === 'newRow' ? (
-              ''
-            ) : (
-              <DeleteCode
-                tableData={tableData}
-                terminology={terminology}
-                setTerminology={setTerminology}
-              />
+            {tableData.key !== 'newRow' && (
+              <>
+                <div className="edit_delete_buttons">
+                  <EditOutlined
+                    className="actions_icon"
+                    onClick={() => {
+                      setEditRow(tableData.key);
+                    }}
+                  />
+                  <DeleteCode
+                    tableData={tableData}
+                    terminology={terminology}
+                    setTerminology={setTerminology}
+                  />
+                </div>
+              </>
             )}
           </>
         );

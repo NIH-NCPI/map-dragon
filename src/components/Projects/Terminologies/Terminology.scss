@@ -1,8 +1,7 @@
 @import '../../Styling/Variables';
 .terminology_container {
   margin: 17vh 10vw 10vh 10vw;
-  // min-height: 73vh;
-  width: 60vw;
+  width: 66vw;
 }
 
 .terminology_sub_nav,
@@ -159,10 +158,15 @@ a:hover {
   margin-right: 35px;
 }
 
-.delete_icon {
+.actions_icon {
   padding: 3px;
 }
-.delete_icon:hover {
+.actions_icon:hover {
   border-radius: 50%;
   box-shadow: 0 0 3px 1px rgba(50, 49, 49, 0.2);
+}
+
+.edit_delete_buttons {
+  display: flex;
+  gap: 6px;
 }
