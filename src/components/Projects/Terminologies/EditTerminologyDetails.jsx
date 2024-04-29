@@ -35,6 +35,7 @@ export const EditTerminologyDetails = ({
     <>
       {' '}
       <Modal
+        forceRender
         open={edit}
         width={'51%'}
         onOk={() =>
