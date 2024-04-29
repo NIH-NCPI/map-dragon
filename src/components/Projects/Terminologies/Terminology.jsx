@@ -155,13 +155,13 @@ There is then a tooltip that displays the codes on hover.*/
   const columns = [
     { title: 'Code', dataIndex: 'code', width: 170 },
     { title: 'Display', dataIndex: 'display', width: 430 },
-    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 140 },
+    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 100 },
     { title: '', dataIndex: 'get_mappings' },
     {
       title: '',
       dataIndex: 'delete_column',
       render: (_, tableData) =>
-        dataSource.length >= 1 ? (
+        dataSource.key !== '0' ? (
           <DeleteCode
             tableData={tableData}
             terminology={terminology}

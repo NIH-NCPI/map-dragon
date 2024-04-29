@@ -71,12 +71,12 @@ export const AddCode = ({
       },
       ...dataSource,
     ]);
+    console.log('ADD ds', dataSource);
   };
-
+  console.log('all ds', dataSource);
   const handleCancel = () => {
-    const dS = dataSource;
-    dS.shift();
-    setDataSource(dS);
+    console.log('cancel ds', dataSource);
+    setDataSource(dataSource);
     setAddRow(false);
   };
 
