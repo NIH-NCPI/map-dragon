@@ -2,7 +2,7 @@ import { Modal, message, notification } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import './Terminology.scss';
 
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { myContext } from '../../../App';
 
 export const ClearMappings = ({ terminologyId }) => {

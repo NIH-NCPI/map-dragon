@@ -33,7 +33,7 @@ export const DeleteCode = ({ tableData, terminology, setTerminology }) => {
       title="Are you sure you want to delete the code?"
       onConfirm={() => handleDelete(tableData.key)}
     >
-      <DeleteOutlined className="delete_icon" />
+      <DeleteOutlined className="actions_icon" />
     </Popconfirm>
   );
 };

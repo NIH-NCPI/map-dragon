@@ -5,7 +5,18 @@ import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
 import { getById } from '../../Manager/FetchManager';
-import { Col, Form, notification, Row, Table, Tooltip } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  notification,
+  Row,
+  Table,
+  Tooltip,
+} from 'antd';
+import { EditOutlined } from '@ant-design/icons';
+
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
@@ -33,7 +44,7 @@ export const Terminology = () => {
   const [loading, setLoading] = useState(true);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
-
+  const [editRow, setEditRow] = useState(null);
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
 The codes in the mappings need to be matched up to each code in the terminology.
 The function maps through the mapping array. For each code, if the mapping code is equal to the 
@@ -46,7 +57,7 @@ There is then a tooltip that displays the codes on hover.*/
           item.code === code.code && item?.mappings?.length > 0 ? (
             <Tooltip
               title={item.mappings.map(code => {
-                return <div>{code.code}</div>;
+                return <div key={index}>{code.code}</div>;
               })}
               key={index}
             >
@@ -153,21 +164,72 @@ There is then a tooltip that displays the codes on hover.*/
 
   // columns for the ant.design table
   const columns = [
-    { title: 'Code', dataIndex: 'code', width: 170 },
-    { title: 'Display', dataIndex: 'display', width: 430 },
-    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 100 },
+    {
+      title: 'Code',
+      dataIndex: 'code',
+      width: 180,
+      onCell: (text, tableData) => {
+        if (editRow === tableData.key) {
+          return (
+            <Form.Item
+              name="code"
+              rules={[{ required: true, message: 'Please enter code name.' }]}
+            >
+              <Input />
+            </Form.Item>
+          );
+        } else {
+          return { text };
+        }
+      },
+    },
+    {
+      title: 'Display',
+      dataIndex: 'display',
+      width: 460,
+      onCell: (text, tableData) => {
+        if (editRow === tableData.key) {
+          return (
+            <Form.Item
+              name="display"
+              rules={[{ required: true, message: 'Please enter code name.' }]}
+            >
+              <Input />
+            </Form.Item>
+          );
+        } else {
+          return { text };
+        }
+      },
+    },
+    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 90 },
     { title: '', dataIndex: 'get_mappings' },
     {
       title: '',
       dataIndex: 'delete_column',
-      render: (_, tableData) =>
-        dataSource.key !== '0' ? (
-          <DeleteCode
-            tableData={tableData}
-            terminology={terminology}
-            setTerminology={setTerminology}
-          />
-        ) : null,
+      render: (_, tableData) => {
+        return (
+          <>
+            {tableData.key !== 'newRow' && (
+              <>
+                <div className="edit_delete_buttons">
+                  <EditOutlined
+                    className="actions_icon"
+                    onClick={() => {
+                      setEditRow(tableData.key);
+                    }}
+                  />
+                  <DeleteCode
+                    tableData={tableData}
+                    terminology={terminology}
+                    setTerminology={setTerminology}
+                  />
+                </div>
+              </>
+            )}
+          </>
+        );
+      },
     },
   ];
 
@@ -226,7 +288,17 @@ There is then a tooltip that displays the codes on hover.*/
             />
 
             {/* ant.design table with columns */}
-            <Table columns={columns} dataSource={dataSource} />
+            <Form>
+              <Table
+                // components={{
+                //   body: {
+                //     cell: EditableCell,
+                //   },
+                // }}
+                columns={columns}
+                dataSource={dataSource}
+              />
+            </Form>
           </div>
           {/* The modals to edit and get mappings with data being passed. */}
           <EditMappingsModal
