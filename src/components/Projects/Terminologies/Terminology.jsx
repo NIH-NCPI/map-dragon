@@ -5,16 +5,7 @@ import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
 import { getById } from '../../Manager/FetchManager';
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  notification,
-  Row,
-  Table,
-  Tooltip,
-} from 'antd';
+import { Col, Form, Input, notification, Row, Table, Tooltip } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 
 import { EditMappingsModal } from './EditMappingModal';
@@ -24,8 +15,6 @@ import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDrop
 import { ClearMappings } from './ClearMappings';
 import { AddCode } from './AddCode';
 import { DeleteCode } from './DeleteCode';
-
-export const EditContext = createContext();
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -162,13 +151,14 @@ There is then a tooltip that displays the codes on hover.*/
       .finally(() => setLoading(false));
   }, []);
 
+  console.log(editRow);
   // columns for the ant.design table
   const columns = [
     {
       title: 'Code',
       dataIndex: 'code',
       width: 180,
-      onCell: (text, tableData) => {
+      render: (text, tableData) => {
         if (editRow === tableData.key) {
           return (
             <Form.Item
@@ -179,7 +169,7 @@ There is then a tooltip that displays the codes on hover.*/
             </Form.Item>
           );
         } else {
-          return { text };
+          return <p>{text}</p>;
         }
       },
     },
@@ -187,18 +177,20 @@ There is then a tooltip that displays the codes on hover.*/
       title: 'Display',
       dataIndex: 'display',
       width: 460,
-      onCell: (text, tableData) => {
+      render: (text, tableData) => {
         if (editRow === tableData.key) {
           return (
             <Form.Item
               name="display"
-              rules={[{ required: true, message: 'Please enter code name.' }]}
+              rules={[
+                { required: true, message: 'Please enter code display.' },
+              ]}
             >
               <Input />
             </Form.Item>
           );
         } else {
-          return { text };
+          return <p>{text}</p>;
         }
       },
     },
@@ -214,10 +206,14 @@ There is then a tooltip that displays the codes on hover.*/
               <>
                 <div className="edit_delete_buttons">
                   <EditOutlined
-                    className="actions_icon"
                     onClick={() => {
                       setEditRow(tableData.key);
+                      form.setFieldsValue({
+                        code: tableData.code,
+                        display: tableData.display,
+                      });
                     }}
+                    className="actions_icon"
                   />
                   <DeleteCode
                     tableData={tableData}
@@ -288,16 +284,8 @@ There is then a tooltip that displays the codes on hover.*/
             />
 
             {/* ant.design table with columns */}
-            <Form>
-              <Table
-                // components={{
-                //   body: {
-                //     cell: EditableCell,
-                //   },
-                // }}
-                columns={columns}
-                dataSource={dataSource}
-              />
+            <Form form={form}>
+              <Table columns={columns} dataSource={dataSource} />
             </Form>
           </div>
           {/* The modals to edit and get mappings with data being passed. */}
