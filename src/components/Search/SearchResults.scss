@@ -2,7 +2,6 @@
 @import '../Styling/BackgroundImage.scss';
 
 .results_page_container {
-  // min-height: 80.7vh;
   margin: 0 30vw 0 5vw;
 }
 
@@ -14,6 +13,7 @@
     cursor: default;
   }
 }
+
 .search_button_results:hover:not(.disabled_results) {
   @include button_hover;
 }
@@ -39,7 +39,7 @@
 }
 
 #search_input_results {
-  background-image: url('./assets/magnifying_glass.png');
+  background-image: url('../../assets/magnifying_glass.png');
   background-repeat: no-repeat;
   background-position: right center;
   background-size: 30px;

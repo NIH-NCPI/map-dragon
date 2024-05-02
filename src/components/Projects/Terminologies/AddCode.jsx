@@ -30,22 +30,26 @@ export const AddCode = ({
   // Takes the newRowDTO function above and adds it to the body of the PUT request to add new codes to the codes array
   const saveNewRow = () => {
     newCodeRef.current.input.defaultValue === '' ||
-    newDisplayRef.current.input.defaultValue === ''
-      ? message.error('The code and display cannot be left blank.')
-      : handleUpdate(vocabUrl, 'Terminology', terminology, {
-          ...terminology,
-          codes: newRowDTO(),
-        })
-          .then(data => setTerminology(data))
-          .then(() => setAddRow(false))
-          // Displays a self-closing message that the udpates have been successfully saved.
-          .then(() => message.success('Code added successfully.'));
+    newDisplayRef.current.input.defaultValue === '' ? (
+      <div className="error_message">
+        {message.error('Please fill out the code and display.')}
+      </div>
+    ) : (
+      handleUpdate(vocabUrl, 'Terminology', terminology, {
+        ...terminology,
+        codes: newRowDTO(),
+      })
+        .then(data => setTerminology(data))
+        .then(() => setAddRow(false))
+        // Displays a self-closing message that the udpates have been successfully saved.
+        .then(() => message.success('Code added successfully.'))
+    );
   };
 
   const rowButtons = () => {
     return (
       <>
-        <span>
+        <span className="add_row_buttons">
           <Button onClick={handleCancel}>Cancel</Button>
           <Button onClick={saveNewRow}>Save</Button>
         </span>
@@ -71,7 +75,6 @@ export const AddCode = ({
       },
       ...dataSource,
     ]);
-    console.log('ADD ds', dataSource);
   };
 
   const handleCancel = () => {
@@ -87,6 +90,7 @@ export const AddCode = ({
         style={{
           marginBottom: 16,
         }}
+        disabled={addRow}
       >
         Add code
       </Button>

@@ -30,7 +30,7 @@ export const DeleteCode = ({ tableData, terminology, setTerminology }) => {
 
   return (
     <Popconfirm
-      title="Are you sure you want to delete the code?"
+      title="Are you sure you want to delete this row?"
       onConfirm={() => handleDelete(tableData.key)}
     >
       <DeleteOutlined className="actions_icon" />
