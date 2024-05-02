@@ -1,12 +1,16 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
-import { getById } from '../../Manager/FetchManager';
+import { getById, handleUpdate } from '../../Manager/FetchManager';
 import { Col, Form, Input, notification, Row, Table, Tooltip } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  CloseOutlined,
+  CloudUploadOutlined,
+} from '@ant-design/icons';
 
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
@@ -151,7 +155,6 @@ There is then a tooltip that displays the codes on hover.*/
       .finally(() => setLoading(false));
   }, []);
 
-  console.log(editRow);
   // columns for the ant.design table
   const columns = [
     {
@@ -205,21 +208,46 @@ There is then a tooltip that displays the codes on hover.*/
             {tableData.key !== 'newRow' && (
               <>
                 <div className="edit_delete_buttons">
-                  <EditOutlined
-                    onClick={() => {
-                      setEditRow(tableData.key);
-                      form.setFieldsValue({
-                        code: tableData.code,
-                        display: tableData.display,
-                      });
-                    }}
-                    className="actions_icon"
-                  />
-                  <DeleteCode
-                    tableData={tableData}
-                    terminology={terminology}
-                    setTerminology={setTerminology}
-                  />
+                  {editRow !== tableData.key ? (
+                    <>
+                      <Tooltip title="Edit">
+                        {' '}
+                        <EditOutlined
+                          onClick={() => {
+                            setEditRow(tableData.key);
+                            form.setFieldsValue({
+                              code: tableData.code,
+                              display: tableData.display,
+                            });
+                          }}
+                          className="actions_icon"
+                        />
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <DeleteCode
+                          tableData={tableData}
+                          terminology={terminology}
+                          setTerminology={setTerminology}
+                        />{' '}
+                      </Tooltip>
+                    </>
+                  ) : (
+                    <>
+                      {' '}
+                      <Tooltip title="Cancel">
+                        <CloseOutlined
+                          className="actions_icon"
+                          onClick={() => setEditRow('')}
+                        />
+                      </Tooltip>
+                      <Tooltip title="Save">
+                        <CloudUploadOutlined
+                          className="actions_icon"
+                          onClick={() => onFinish(tableData.key)}
+                        />
+                      </Tooltip>
+                    </>
+                  )}
                 </div>
               </>
             )}
@@ -228,6 +256,41 @@ There is then a tooltip that displays the codes on hover.*/
       },
     },
   ];
+
+  // const onFinish = values => {
+  //   console.log(values);
+  //   // const updatedDataSource = [...dataSource];
+  //   // updatedDataSource.splice(editRow, 1, { ...values, key: editRow });
+  //   // setDataSource(updatedDataSource);
+  //   // setEditRow(null);
+  // };
+
+  const onFinish = async key => {
+    const row = await form.validateFields();
+    const newData = [...dataSource];
+    const index = newData.findIndex(item => key === item.key);
+    if (index > -1) {
+      const item = newData[index];
+      newData.splice(index, 1, {
+        ...item,
+        ...row,
+      });
+      setDataSource(newData);
+      setEditRow('');
+    }
+    const updatedData = newData.map(item => {
+      return { code: item.code, display: item.display };
+    });
+
+    const terminologyDTO = { ...terminology, codes: updatedData };
+    console.log(terminologyDTO);
+    handleUpdate(vocabUrl, 'Terminology', terminology, terminologyDTO)
+      .then(data => setTerminology(data))
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Changes saved successfully.'));
+  };
+
+  // console.log(onFinish(key));
 
   return (
     <>
@@ -284,7 +347,7 @@ There is then a tooltip that displays the codes on hover.*/
             />
 
             {/* ant.design table with columns */}
-            <Form form={form}>
+            <Form form={form} onFinish={onFinish}>
               <Table columns={columns} dataSource={dataSource} />
             </Form>
           </div>

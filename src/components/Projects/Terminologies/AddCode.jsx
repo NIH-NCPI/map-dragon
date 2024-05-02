@@ -90,6 +90,7 @@ export const AddCode = ({
         style={{
           marginBottom: 16,
         }}
+        disabled={addRow}
       >
         Add code
       </Button>
