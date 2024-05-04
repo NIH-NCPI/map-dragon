@@ -6,11 +6,6 @@ import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
 import { getById } from '../../Manager/FetchManager';
 import { Col, Form, Input, notification, Row, Table, Tooltip } from 'antd';
-import {
-  EditOutlined,
-  CloseOutlined,
-  CloudUploadOutlined,
-} from '@ant-design/icons';
 
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
@@ -18,7 +13,6 @@ import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from './ClearMappings';
 import { AddCode } from './AddCode';
-import { DeleteCode } from './DeleteCode';
 import { EditCode } from './EditCode';
 
 export const Terminology = () => {
@@ -47,19 +41,19 @@ and returns the length of the mapping array (i.e. returns the number of codes ma
 There is then a tooltip that displays the codes on hover.*/
   const matchCode = code =>
     mapping?.length > 0
-      ? mapping?.map((item, index) =>
-          item.code === code.code && item?.mappings?.length > 0 ? (
-            <Tooltip
-              title={item.mappings.map(code => {
-                return <div key={index}>{code.code}</div>;
-              })}
-              key={index}
-            >
-              {item.mappings.length}
-            </Tooltip>
-          ) : (
-            ''
-          )
+      ? mapping?.map(
+          (item, index) =>
+            item.code === code.code &&
+            item?.mappings?.length > 0 && (
+              <Tooltip
+                title={item.mappings.map(code => {
+                  return <div key={index}>{code.code}</div>;
+                })}
+                key={index}
+              >
+                {item.mappings.length}
+              </Tooltip>
+            )
         )
       : '';
 

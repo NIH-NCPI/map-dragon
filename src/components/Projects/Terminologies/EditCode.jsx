@@ -4,7 +4,7 @@ import {
   CloseOutlined,
   CloudUploadOutlined,
 } from '@ant-design/icons';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { DeleteCode } from './DeleteCode';
 import { handleUpdate } from '../../Manager/FetchManager';
@@ -19,19 +19,18 @@ export const EditCode = ({
   setDataSource,
   form,
 }) => {
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, mapping, setMapping } = useContext(myContext);
 
   /* Submit function to edit a row. The input field is validated to ensure it is not empty.
-  A copy of the dataSource with a spread operator is set to newData. The index of the row is
-  found in the newData by the key of the selected row in the dataSource. The element at that
-  index is set to the index variable. If the index exists, item is set to the element at that
-  index. The data at the index of the row is replaced with the newData. The newData is mapped 
-  through and the object is returned in the accepted terminology format. That object is placed
-  a terminologyDTO variable and placed in the body of the PUT call. */
+     The index of the row being edited is found by the key of the row in the dataSource. 
+     The element at that index is set to the index variable. If the index exists, item is set to 
+     the element at that index. The data at the index of the row is replaced with the newData. 
+     The data is mapped through and the object is returned in the accepted terminology format. 
+     That object is placed in a terminologyDTO variable and placed in the body of the PUT call. */
   const onFinish = async key => {
     const row = await form.validateFields();
+    const index = dataSource.findIndex(item => key === item.key);
     const newData = [...dataSource];
-    const index = newData.findIndex(item => key === item.key);
     if (index > -1) {
       const item = newData[index];
       newData.splice(index, 1, {
@@ -40,6 +39,17 @@ export const EditCode = ({
       });
       setEditRow('');
     }
+    const updateMapping = () => {
+      const updatedCopy = mapping.map(item =>
+        item.code === dataSource[index].code
+          ? { ...item, code: row.code }
+          : item
+      );
+      setMapping(updatedCopy);
+      return updatedCopy;
+    };
+
+    console.log(updateMapping());
     const updatedData = newData.map(item => {
       return { code: item.code, display: item.display };
     });
@@ -51,6 +61,7 @@ export const EditCode = ({
         setDataSource(updatedData);
         message.success('Changes saved successfully.');
       })
+
       .catch(error => {
         if (error) {
           notification.error({
@@ -61,6 +72,32 @@ export const EditCode = ({
         }
         return error;
       });
+    fetch(`${vocabUrl}/Terminology/${terminology.id}/mapping`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateMapping()),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => {
+        setMapping(data.codes);
+      });
+    //   .catch(error => {
+    //     if (error) {
+    //       notification.error({
+    //         message: 'Error',
+    //         description: 'An error occurred. Please try again.',
+    //       });
+    //     }
+    //     return error;
+    //   })
   };
 
   return (
