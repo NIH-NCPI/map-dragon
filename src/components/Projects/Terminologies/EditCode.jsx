@@ -39,17 +39,15 @@ export const EditCode = ({
       });
       setEditRow('');
     }
-    const updateMapping = () => {
-      const updatedCopy = mapping.map(item =>
-        item.code === dataSource[index].code
-          ? { ...item, code: row.code }
-          : item
-      );
-      setMapping(updatedCopy);
-      return updatedCopy;
-    };
-
-    console.log(updateMapping());
+    // const updateMapping = () => {
+    //   const updatedCopy = mapping.map(item =>
+    //     item.code === dataSource[index].code
+    //       ? { ...item, code: row.code }
+    //       : item
+    //   );
+    //   setMapping(updatedCopy);
+    //   return updatedCopy;
+    // };
     const updatedData = newData.map(item => {
       return { code: item.code, display: item.display };
     });
@@ -72,23 +70,17 @@ export const EditCode = ({
         }
         return error;
       });
-    fetch(`${vocabUrl}/Terminology/${terminology.id}/mapping`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updateMapping()),
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(data => {
-        setMapping(data.codes);
-      });
+    // fetch(`${vocabUrl}/Terminology/${terminology.id}/mapping`, {
+    //   method: 'PUT',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(updateMapping()),
+    // })
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     setMapping(data.codes);
+    //   });
     //   .catch(error => {
     //     if (error) {
     //       notification.error({
