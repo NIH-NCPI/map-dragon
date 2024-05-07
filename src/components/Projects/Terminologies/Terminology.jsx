@@ -20,20 +20,21 @@ import { ClearMappings } from './ClearMappings';
 import { AddCode } from './AddCode';
 import { DeleteCode } from './DeleteCode';
 import { EditCode } from './EditCode';
+import { MappingContext } from '../../../MappingContext';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
 
   const { terminologyId } = useParams();
+  const { vocabUrl } = useContext(myContext);
   const {
-    vocabUrl,
     editMappings,
     setEditMappings,
     getMappings,
     setGetMappings,
     mapping,
     setMapping,
-  } = useContext(myContext);
+  } = useContext(MappingContext);
 
   const [loading, setLoading] = useState(true);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
