@@ -38,31 +38,33 @@ export const DDDetails = () => {
   const [loading, setLoading] = useState(true);
   const [addTable, setAddTable] = useState(false);
 
-  /* function that maps through the tables array inside the given data dictionary (DD) and splits the 'reference' value at the '/'
-for each table to get an array of table ids*/
-  const arrayOfIds = dataDictionary?.tables?.map(r => {
-    return r.reference.split('/')[1];
-  });
-
-  /* Function that maps through the arrayOfIds function above.
-  For each table, it pushes an API GET request to get that table to the tablePromises array.
+  /* Function that maps through the tables array in a DD.
+  For each table, it makes a fetch call to the id of the table.
   Promise.all fulfills all of the fetch calls. The response is set to tablesDD  */
-  const getDDTables = () => {
-    let tablePromises = [];
-    arrayOfIds?.forEach(id =>
-      tablePromises.push(getById(vocabUrl, 'Table', id))
+  const getDDTables = async newDD => {
+    const tablePromises = newDD?.tables?.map(r =>
+      getById(vocabUrl, 'Table', r.reference.split('/')[1])
     );
-    Promise.all(tablePromises)
-      .then(data => setTablesDD(data))
-      .finally(() => setLoading(false));
+    const data = await Promise.all(tablePromises);
+    setTablesDD(data);
+    setLoading(false);
   };
 
-  // fetches the specified DD. Sets response to 'dataDictionary' and loading to false.
+  // fetches the specified DD. Sets response to 'dataDictionary'.
+  // if a DD was fetched, calls the getDDTables function to fetch the tables.
+  // otherwise sets loading to false.
 
   useEffect(() => {
     setLoading(true);
     getById(vocabUrl, 'DataDictionary', DDId)
-      .then(data => setDataDictionary(data))
+      .then(data => {
+        setDataDictionary(data);
+        if (data) {
+          getDDTables(data);
+        } else {
+          setLoading(false);
+        }
+      })
       .catch(error => {
         if (error) {
           notification.error({
@@ -72,22 +74,11 @@ for each table to get an array of table ids*/
         }
         return error;
       });
-  }, []);
-
-  // calls the getDDTables function and sets loading to false
-
-  useEffect(() => {
-    setLoading(true);
-    getDDTables();
-  }, [dataDictionary]);
-
-  useEffect(
-    () => () => {
+    return () => {
       setTablesDD([]);
       setDataDictionary({});
-    },
-    []
-  );
+    };
+  }, []);
 
   return (
     <>
