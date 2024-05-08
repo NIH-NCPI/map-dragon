@@ -6,11 +6,6 @@ import { Spinner } from '../../Manager/Spinner';
 import Background from '../../../assets/Background.png';
 import { getById } from '../../Manager/FetchManager';
 import { Col, Form, Input, notification, Row, Table, Tooltip } from 'antd';
-import {
-  EditOutlined,
-  CloseOutlined,
-  CloudUploadOutlined,
-} from '@ant-design/icons';
 
 import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
@@ -18,7 +13,6 @@ import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from './ClearMappings';
 import { AddCode } from './AddCode';
-import { DeleteCode } from './DeleteCode';
 import { EditCode } from './EditCode';
 import { MappingContext } from '../../../MappingContext';
 

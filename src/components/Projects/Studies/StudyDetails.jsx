@@ -32,54 +32,45 @@ export const StudyDetails = () => {
   const [addDD, setAddDD] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  /* function that maps through the datadictionary (DD) array inside the given study and splits the 'reference' value at the '/'
-for each DD to get an array of DD ids*/
-  const arrayOfIds = study?.datadictionary?.map(r => {
-    return r.reference.split('/')[1];
-  });
-
-  /* Function that maps through the arrayOfIds function above.
-  For each DD, it pushes an API GET request to get that DD to the dDPromises array.
+  /* Function that maps through the datadictionary array in a study.
+  For each DD, it makes a fetch call to the id of the DD.
   Promise.all fulfills all of the fetch calls. The response is set to studyDDs  */
-  const getStudyDDs = () => {
-    let dDPromises = [];
-    arrayOfIds?.forEach(id =>
-      dDPromises.push(getById(vocabUrl, 'DataDictionary', id))
+  const getStudyDDs = async newStudy => {
+    const dDPromises = newStudy?.datadictionary?.map(r =>
+      getById(vocabUrl, 'DataDictionary', r.reference.split('/')[1])
     );
-    Promise.all(dDPromises)
-      .then(data => setStudyDDs(data))
-      .finally(() => setLoading(false));
+    const data = await Promise.all(dDPromises);
+    setStudyDDs(data);
+    setLoading(false);
   };
 
-  // fetches the specified study. Sets response to 'study' and loading to false.
+  // fetches the specified study. Sets response to 'study'.
+  // If a study was fetched, calls the getStudyDDs function to fetch the DDs
+  // otherwise, sets loading to false.
   useEffect(() => {
     getById(vocabUrl, 'Study', studyId)
-      .then(data => setStudy(data))
-      .finally(() => setLoading(false))
+      .then(data => {
+        setStudy(data);
+        if (data) {
+          getStudyDDs(data);
+        } else {
+          setLoading(false);
+        }
+      })
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
             description: 'An error occurred. Please try again.',
           });
+          setLoading(false);
         }
         return error;
       });
-  }, []);
-
-  // calls the getStudyDDs function and sets loading to false
-  useEffect(() => {
-    getStudyDDs();
-  }, [study]);
-
-  // resets the study to an empty object on dismount
-  // ensures the state is blank and the study data from the previous study is not displayed on load
-  useEffect(
-    () => () => {
+    return () => {
       setStudy({});
-    },
-    []
-  );
+    };
+  }, []);
 
   // Submit function for the modal to edit the study name, description, and url.
   // The function adds the variables and filename to the body of the PUT request to retain the complete
