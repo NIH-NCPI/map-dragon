@@ -10,7 +10,6 @@ export const EditMappingsModal = ({
   setEditMappings,
   terminologyId,
   setMapping,
-  mapping,
 }) => {
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
