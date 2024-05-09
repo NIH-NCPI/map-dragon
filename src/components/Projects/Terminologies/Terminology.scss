@@ -153,9 +153,13 @@ a:hover {
   top: 25vh;
 }
 
-.add_row_button {
+.add_row_button,
+.export_button {
   float: right;
   margin-right: 35px;
+}
+.export_button {
+  margin-top: 10px;
 }
 
 .actions_icon {
