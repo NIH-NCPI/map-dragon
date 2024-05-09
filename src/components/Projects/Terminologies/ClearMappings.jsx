@@ -4,11 +4,13 @@ import './Terminology.scss';
 
 import { useContext } from 'react';
 import { myContext } from '../../../App';
+import { MappingContext } from '../../../MappingContext';
 
 export const ClearMappings = ({ terminologyId }) => {
   const { confirm } = Modal;
-  const { vocabUrl, clear, setClear, setMapping, mapping } =
-    useContext(myContext);
+  const { vocabUrl, clear, setClear } = useContext(myContext);
+
+  const { setMapping } = useContext(MappingContext);
 
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.

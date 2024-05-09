@@ -21,6 +21,7 @@ import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
 import { GetMappingsTableModal } from './GetMappingsTableModal';
 import { MappingContext } from '../../../MappingContext';
+import { ExportFile } from './ExportFile';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -122,8 +123,6 @@ There is then a tooltip that displays the codes on hover.*/
   // The enumeration data type includes a reference to a terminology, which includes further codes with the capability to match the
   // terms to ontology codes. If the data type is enumeration, there is a 'view/edit' link that takes the user to specified terminology.
   const dataSource = table?.variables?.map((variable, index) => {
-    console.log(variable);
-
     return {
       key: index,
       name: variable.name,
@@ -264,24 +263,28 @@ There is then a tooltip that displays the codes on hover.*/
             {/* ant.design table displaying the pre-defined columns and data, with expandable rows. 
             The expandable rows currently show the min, max, and units properties with no styling. */}
             {table.variables.length > 0 ? (
-              <Table
-                columns={columns}
-                dataSource={dataSource}
-                expandable={{
-                  expandedRowRender: record => (
-                    <p
-                      style={{
-                        marginLeft: 50,
-                      }}
-                    >
-                      min: {record.min} max: {record.max} units:{record.units}
-                    </p>
-                  ),
-                  rowExpandable: record =>
-                    record.data_type === 'INTEGER' ||
-                    record.data_type === 'QUANTITY',
-                }}
-              />
+              <>
+                <Table
+                  columns={columns}
+                  dataSource={dataSource}
+                  expandable={{
+                    expandedRowRender: record => (
+                      <p
+                        style={{
+                          marginLeft: 50,
+                        }}
+                      >
+                        min: {record.min} max: {record.max} units:{record.units}
+                      </p>
+                    ),
+                    rowExpandable: record =>
+                      record.data_type === 'INTEGER' ||
+                      record.data_type === 'QUANTITY',
+                  }}
+                />
+
+                <ExportFile table={table} />
+              </>
             ) : (
               <Row gutter={[20, 24]}>
                 <Col span={6}>
