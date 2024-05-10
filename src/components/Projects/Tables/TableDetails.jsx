@@ -22,6 +22,7 @@ import { LoadVariables } from './LoadVariables';
 import { GetMappingsTableModal } from './GetMappingsTableModal';
 import { MappingContext } from '../../../MappingContext';
 import { ExportFile } from './ExportFile';
+import { DeleteVariable } from './DeleteVariable';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -32,6 +33,10 @@ export const TableDetails = () => {
   const { DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
+
+  useEffect(() => {
+    setDataSource(tableData(table));
+  }, [table]);
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
@@ -92,6 +97,23 @@ export const TableDetails = () => {
     { title: 'Enumerations', dataIndex: 'enumeration' },
     // { title: 'Mapped Terms', dataIndex: 'mapped_terms' },
     // { title: '', dataIndex: 'get_mappings', width: 164 },
+    {
+      title: '',
+      dataIndex: 'delete_column',
+      render: (_, tableData) => {
+        return (
+          <>
+            <div className="edit_delete_buttons">
+              <DeleteVariable
+                tableData={tableData}
+                table={table}
+                setTable={setTable}
+              />
+            </div>
+          </>
+        );
+      },
+    },
   ];
 
   /* The table may have numerous codes. The API call to fetch the mappings returns all mappings for the table.
@@ -122,57 +144,60 @@ There is then a tooltip that displays the codes on hover.*/
   // The integer and quantity data types include additional details.
   // The enumeration data type includes a reference to a terminology, which includes further codes with the capability to match the
   // terms to ontology codes. If the data type is enumeration, there is a 'view/edit' link that takes the user to specified terminology.
-  const dataSource = table?.variables?.map((variable, index) => {
-    return {
-      key: index,
-      name: variable.name,
-      description: variable.description,
-      data_type: variable.data_type,
-      enumeration: variable.data_type === 'ENUMERATION' && (
-        <Link to={`/${variable.enumerations.reference}`}>View/Edit</Link>
-      ),
-      mapped_terms: 'placeholder' /*matchCode(variable)*/,
-      get_mappings: (
-        //       /* If the mapping array length is greather than 0, we check if there is a matching mapped code
-        // to the terminology code.
-        //               If there is a match for the terminology code in the mapping codes AND if the mappings array for
-        //       that code is > 0, the Edit Mappings button is displayed. On click, a modal with mapping details is opened
-        //     and the terminology code is passed.*/
+  const tableData = table =>
+    table?.variables?.map((variable, index) => {
+      return {
+        key: index,
+        name: variable.name,
+        description: variable.description,
+        data_type: variable.data_type,
+        enumeration: variable.data_type === 'ENUMERATION' && (
+          <Link to={`/${variable.enumerations.reference}`}>View/Edit</Link>
+        ),
+        mapped_terms: 'placeholder' /*matchCode(variable)*/,
+        get_mappings: (
+          //       /* If the mapping array length is greather than 0, we check if there is a matching mapped code
+          // to the terminology code.
+          //               If there is a match for the terminology code in the mapping codes AND if the mappings array for
+          //       that code is > 0, the Edit Mappings button is displayed. On click, a modal with mapping details is opened
+          //     and the terminology code is passed.*/
 
-        //       mapping?.length > 0 ? (
-        //         mapping.some(m => m.code === code.code && m?.mappings?.length > 0) ? (
-        //           <button
-        //             key={code.code}
-        //             className="manage_term_button"
-        //             onClick={() => setEditMappings(code)}
-        //           >
-        //             Edit Mappings
-        //           </button>
-        //         ) : (
-        //           /* If there is NOT a match for the terminology code in the mapping codes, the Get Mappings button
+          //       mapping?.length > 0 ? (
+          //         mapping.some(m => m.code === code.code && m?.mappings?.length > 0) ? (
+          //           <button
+          //             key={code.code}
+          //             className="manage_term_button"
+          //             onClick={() => setEditMappings(code)}
+          //           >
+          //             Edit Mappings
+          //           </button>
+          //         ) : (
+          //           /* If there is NOT a match for the terminology code in the mapping codes, the Get Mappings button
+          //              is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
+          //              code and the terminology code is passed.*/
+          <button
+            className="manage_term_button"
+            onClick={() => setGetMappings(variable)}
+          >
+            Get Mappings
+          </button>
+        ),
+        //         )
+        //       ) : (
+        //         /* If the mapping array length is not greater than 0, the Get Mappings button
         //              is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
         //              code and the terminology code is passed.*/
-        <button
-          className="manage_term_button"
-          onClick={() => setGetMappings(variable)}
-        >
-          Get Mappings
-        </button>
-      ),
-      //         )
-      //       ) : (
-      //         /* If the mapping array length is not greater than 0, the Get Mappings button
-      //              is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-      //              code and the terminology code is passed.*/
-      //         <button
-      //           className="manage_term_button"
-      //           onClick={() => setGetMappings(code)}
-      //         >
-      //           Get Mappings
-      //         </button>
-      //       ),
-    };
-  });
+        //         <button
+        //           className="manage_term_button"
+        //           onClick={() => setGetMappings(code)}
+        //         >
+        //           Get Mappings
+        //         </button>
+        //       ),
+      };
+    });
+
+  const [dataSource, setDataSource] = useState(tableData);
 
   // In progress. Not yet used.
   // Expandable rows for integer and quantity data types to display their additional data.
