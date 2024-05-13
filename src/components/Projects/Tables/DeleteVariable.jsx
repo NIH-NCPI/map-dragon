@@ -5,24 +5,25 @@ import { handleUpdate } from '../../Manager/FetchManager';
 import { useContext } from 'react';
 import { myContext } from '../../../App';
 
-export const DeleteCode = ({ tableData, terminology, setTerminology }) => {
+// Deletes a variable from a Table by splicing the object from the array using its index and updating
+// the variables array for the Table with a PUT call.
+export const DeleteVariable = ({ tableData, table, setTable }) => {
   const { vocabUrl } = useContext(myContext);
-  // Deletes a code from a Terminology by splicing the object from the array using its index and updating
-  // the codes array for the Terminology with a PUT call.
-  const handleDelete = index => {
-    terminology.codes.splice(index, 1);
 
-    handleUpdate(vocabUrl, 'Terminology', terminology, terminology)
+  const handleDelete = index => {
+    table.variables.splice(index, 1);
+
+    handleUpdate(vocabUrl, 'Table', table, table)
       .then(data => {
-        setTerminology(data);
-        message.success('Code deleted successfully.');
+        setTable(data);
+        message.success('Variable deleted successfully.');
       })
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
             description:
-              'An error occurred deleting the code. Please try again.',
+              'An error occurred deleting the variable. Please try again.',
           });
         }
         return error;

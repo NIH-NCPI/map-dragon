@@ -11,7 +11,7 @@ export const ExportFile = ({ table }) => {
   // gets the harmony of mappings, then unparses it to a CSV object. A blob is created
   // containing the csv data. A URL is created to represent the csv as a downloadable resource.
   // A download link is created. The href specifies the location of the file to be downloaded on click.
-  // The download attribute is set to download the file as 'mappings.csv'. The file is downloaded on click.
+  // The download attribute is set to download under '[table name] mappings'. The file is downloaded on click.
   const getHarmony = () => {
     return getById(vocabUrl, 'Table', `${table.id}/harmony`)
       .then(data => {
@@ -20,7 +20,7 @@ export const ExportFile = ({ table }) => {
         const csvURL = window.URL.createObjectURL(csvData);
         const downloadLink = document.createElement('a');
         downloadLink.href = csvURL;
-        downloadLink.setAttribute('download', 'mappings.csv');
+        downloadLink.setAttribute('download', `${table.name} mappings`);
         downloadLink.click();
       })
       .catch(error => {
@@ -36,10 +36,7 @@ export const ExportFile = ({ table }) => {
   };
 
   return (
-    <Popconfirm
-      title="Export mappings for the table?"
-      onConfirm={() => getHarmony()}
-    >
+    <Popconfirm title="Export mappings?" onConfirm={() => getHarmony()}>
       <Button type="primary" className="export_button">
         Export
       </Button>
