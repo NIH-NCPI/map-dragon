@@ -65,17 +65,16 @@ There is then a tooltip that displays the codes on hover.*/
     return terminology?.codes?.map((code, index) => {
       return {
         key: index,
-        delete_column: '',
 
         code: code.code,
         display: code.display,
         mapped_terms: matchCode(code),
         get_mappings:
           /* If the mapping array length is greather than 0, we check if there is a matching mapped code
-  to the terminology code.
-                If there is a match for the terminology code in the mapping codes AND if the mappings array for
+        to the terminology code.
+        If there is a match for the terminology code in the mapping codes AND if the mappings array for
         that code is > 0, the Edit Mappings button is displayed. On click, a modal with mapping details is opened
-      and the terminology code is passed.*/
+        and the terminology code is passed.*/
 
           mapping?.length > 0 ? (
             mapping.some(
@@ -90,8 +89,8 @@ There is then a tooltip that displays the codes on hover.*/
               </button>
             ) : (
               /* If there is NOT a match for the terminology code in the mapping codes, the Get Mappings button
-               is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-               code and the terminology code is passed.*/
+              is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
+              code and the terminology code is passed.*/
               <button
                 className="manage_term_button"
                 onClick={() => setGetMappings(code)}
@@ -101,8 +100,8 @@ There is then a tooltip that displays the codes on hover.*/
             )
           ) : (
             /* If the mapping array length is not greater than 0, the Get Mappings button
-               is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-               code and the terminology code is passed.*/
+            is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
+            code and the terminology code is passed.*/
             <button
               className="manage_term_button"
               onClick={() => setGetMappings(code)}
@@ -110,6 +109,7 @@ There is then a tooltip that displays the codes on hover.*/
               Get Mappings
             </button>
           ),
+        delete_column: '',
       };
     });
   };
@@ -155,36 +155,6 @@ There is then a tooltip that displays the codes on hover.*/
   // columns for the ant.design table
   const columns = [
     {
-      title: '',
-      dataIndex: 'delete_column',
-      render: (_, tableData) => {
-        return (
-          <>
-            {tableData.key !== 'newRow' && (
-              // If the tableData key is not "newRow" (i.e. it is not a newly added input field to add a new row)
-              // The code and delete buttons are displayed with edit/delete functionality
-              <>
-                <div className="edit_delete_buttons">
-                  <EditCode
-                    editRow={editRow}
-                    setEditRow={setEditRow}
-                    terminology={terminology}
-                    setTerminology={setTerminology}
-                    tableData={tableData}
-                    form={form}
-                    dataSource={dataSource}
-                    setDataSource={setDataSource}
-                    loading={loading}
-                    setLoading={setLoading}
-                  />
-                </div>
-              </>
-            )}
-          </>
-        );
-      },
-    },
-    {
       title: 'Code',
       dataIndex: 'code',
       width: 180,
@@ -226,6 +196,36 @@ There is then a tooltip that displays the codes on hover.*/
     },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 90 },
     { title: '', dataIndex: 'get_mappings' },
+    {
+      title: '',
+      dataIndex: 'delete_column',
+      render: (_, tableData) => {
+        return (
+          <>
+            {tableData.key !== 'newRow' && (
+              // If the tableData key is not "newRow" (i.e. it is not a newly added input field to add a new row)
+              // The code and delete buttons are displayed with edit/delete functionality
+              <>
+                <div className="edit_delete_buttons">
+                  <EditCode
+                    editRow={editRow}
+                    setEditRow={setEditRow}
+                    terminology={terminology}
+                    setTerminology={setTerminology}
+                    tableData={tableData}
+                    form={form}
+                    dataSource={dataSource}
+                    setDataSource={setDataSource}
+                    loading={loading}
+                    setLoading={setLoading}
+                  />
+                </div>
+              </>
+            )}
+          </>
+        );
+      },
+    },
   ];
 
   return (

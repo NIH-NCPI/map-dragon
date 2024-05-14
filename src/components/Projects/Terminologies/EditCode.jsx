@@ -8,6 +8,9 @@ import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { DeleteCode } from './DeleteCode';
 import { Spinner } from '../../Manager/Spinner';
+import { getById, handlePatch } from '../../Manager/FetchManager';
+import { useParams } from 'react-router-dom';
+import { MappingContext } from '../../../MappingContext';
 
 export const EditCode = ({
   editRow,
@@ -21,14 +24,15 @@ export const EditCode = ({
   loading,
   setLoading,
 }) => {
-  const { vocabUrl, mapping, setMapping } = useContext(myContext);
+  const { vocabUrl } = useContext(myContext);
+  const { setMapping } = useContext(MappingContext);
+  const { terminologyId } = useParams();
 
   /* Submit function to edit a row. The input field is validated to ensure it is not empty.
      The index of the row being edited is found by the key of the row in the dataSource. 
      The element at that index is set to the index variable. If the index exists, item is set to 
      the element at that index. The data at the index of the row is replaced with the newData. 
-     The data is mapped through and the object is returned in the accepted terminology format. 
-     That object is placed in a terminologyDTO variable and placed in the body of the PUT call. */
+      */
   const onFinish = async key => {
     const row = await form.validateFields();
     const index = dataSource.findIndex(item => key === item.key);
@@ -41,6 +45,9 @@ export const EditCode = ({
       });
       setEditRow('');
     }
+    // Object to put in the body of the PATCH request. Provides the old code
+    // and replaces with the updated code and/or display on the back end.
+    // The code in the associdated mappings is automatically udpated on the back end.
     const updatedRowDTO = {
       code: {
         [`${dataSource[index].code}`]: `${row.code}`,
@@ -50,29 +57,36 @@ export const EditCode = ({
       },
     };
     setLoading(true);
-    fetch(`${vocabUrl}/Terminology/${terminology.id}/rename`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedRowDTO),
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred editing the code. Please try again.',
-          });
-        }
-      })
+    handlePatch(vocabUrl, 'Terminology', terminology, updatedRowDTO)
       .then(data => {
         setTerminology(data);
         setDataSource(newData);
         message.success('Changes saved successfully.');
       })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description:
+              'An error occurred updating the row. Please try again.',
+          });
+        }
+        return error;
+      })
+      .then(() =>
+        getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
+          .then(data => setMapping(data.codes))
+          .catch(error => {
+            if (error) {
+              notification.error({
+                message: 'Error',
+                description:
+                  'An error occurred loading mappings. Please try again.',
+              });
+            }
+            return error;
+          })
+      )
       .finally(() => setLoading(false));
   };
 
