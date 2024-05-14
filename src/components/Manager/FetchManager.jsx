@@ -75,3 +75,19 @@ export const handlePost = (vocabUrl, name, body) => {
     body: JSON.stringify(body),
   }).then(res => res.json());
 };
+
+export const handlePatch = (vocabUrl, name, component, body) => {
+  return fetch(`${vocabUrl}/${name}/${component.id}/rename`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  }).then(res => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error('An unknown error occurred.');
+    }
+  });
+};
