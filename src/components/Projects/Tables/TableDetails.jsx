@@ -91,12 +91,6 @@ export const TableDetails = () => {
 
   // columns for the ant.design table
   const columns = [
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Description', dataIndex: 'description' },
-    { title: 'Data Type', dataIndex: 'data_type' },
-    { title: 'Enumerations', dataIndex: 'enumeration' },
-    // { title: 'Mapped Terms', dataIndex: 'mapped_terms' },
-    // { title: '', dataIndex: 'get_mappings', width: 164 },
     {
       title: '',
       dataIndex: 'delete_column',
@@ -114,6 +108,12 @@ export const TableDetails = () => {
         );
       },
     },
+    { title: 'Name', dataIndex: 'name' },
+    { title: 'Description', dataIndex: 'description' },
+    { title: 'Data Type', dataIndex: 'data_type' },
+    { title: 'Enumerations', dataIndex: 'enumeration' },
+    // { title: 'Mapped Terms', dataIndex: 'mapped_terms' },
+    // { title: '', dataIndex: 'get_mappings', width: 164 },
   ];
 
   /* The table may have numerous codes. The API call to fetch the mappings returns all mappings for the table.

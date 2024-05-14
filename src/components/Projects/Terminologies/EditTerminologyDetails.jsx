@@ -12,9 +12,9 @@ export const EditTerminologyDetails = ({
   // Sets the initial values displayed in the form and esnures they are current
   const changeHandler = () => {
     form.setFieldsValue({
-      name: terminology.name,
-      description: terminology.description,
-      url: terminology.url,
+      name: terminology?.name,
+      description: terminology?.description,
+      url: terminology?.url,
     });
   };
 
@@ -59,7 +59,7 @@ export const EditTerminologyDetails = ({
           preserve={false}
           onChange={changeHandler()}
         >
-          <h2>{terminology.name ? terminology.name : terminology.id}</h2>
+          <h2>{terminology?.name ? terminology?.name : terminology?.id}</h2>
           <Form.Item
             name="name"
             label="Name"
