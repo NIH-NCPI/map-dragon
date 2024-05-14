@@ -65,6 +65,8 @@ There is then a tooltip that displays the codes on hover.*/
     return terminology?.codes?.map((code, index) => {
       return {
         key: index,
+        delete_column: '',
+
         code: code.code,
         display: code.display,
         mapped_terms: matchCode(code),
@@ -108,7 +110,6 @@ There is then a tooltip that displays the codes on hover.*/
               Get Mappings
             </button>
           ),
-        delete_column: '',
       };
     });
   };
@@ -154,6 +155,36 @@ There is then a tooltip that displays the codes on hover.*/
   // columns for the ant.design table
   const columns = [
     {
+      title: '',
+      dataIndex: 'delete_column',
+      render: (_, tableData) => {
+        return (
+          <>
+            {tableData.key !== 'newRow' && (
+              // If the tableData key is not "newRow" (i.e. it is not a newly added input field to add a new row)
+              // The code and delete buttons are displayed with edit/delete functionality
+              <>
+                <div className="edit_delete_buttons">
+                  <EditCode
+                    editRow={editRow}
+                    setEditRow={setEditRow}
+                    terminology={terminology}
+                    setTerminology={setTerminology}
+                    tableData={tableData}
+                    form={form}
+                    dataSource={dataSource}
+                    setDataSource={setDataSource}
+                    loading={loading}
+                    setLoading={setLoading}
+                  />
+                </div>
+              </>
+            )}
+          </>
+        );
+      },
+    },
+    {
       title: 'Code',
       dataIndex: 'code',
       width: 180,
@@ -195,34 +226,6 @@ There is then a tooltip that displays the codes on hover.*/
     },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 90 },
     { title: '', dataIndex: 'get_mappings' },
-    {
-      title: '',
-      dataIndex: 'delete_column',
-      render: (_, tableData) => {
-        return (
-          <>
-            {tableData.key !== 'newRow' && (
-              // If the tableData key is not "newRow" (i.e. it is not a newly added input field to add a new row)
-              // The code and delete buttons are displayed with edit/delete functionality
-              <>
-                <div className="edit_delete_buttons">
-                  <EditCode
-                    editRow={editRow}
-                    setEditRow={setEditRow}
-                    terminology={terminology}
-                    setTerminology={setTerminology}
-                    tableData={tableData}
-                    form={form}
-                    dataSource={dataSource}
-                    setDataSource={setDataSource}
-                  />
-                </div>
-              </>
-            )}
-          </>
-        );
-      },
-    },
   ];
 
   return (
@@ -280,9 +283,13 @@ There is then a tooltip that displays the codes on hover.*/
             />
 
             {/* ant.design table with columns */}
-            <Form form={form}>
-              <Table columns={columns} dataSource={dataSource} />
-            </Form>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <Form form={form}>
+                <Table columns={columns} dataSource={dataSource} />
+              </Form>
+            )}
           </div>
           {/* The modals to edit and get mappings with data being passed. */}
           <EditMappingsModal
