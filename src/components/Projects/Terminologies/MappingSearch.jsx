@@ -27,12 +27,8 @@ export const MappingSearch = ({
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
 
-  const {
-    existingMappings,
-    setExistingMappings,
-    filteredMappings,
-    setFilteredMappings,
-  } = useContext(MappingContext);
+  const { setExistingMappings, setFilteredMappings } =
+    useContext(MappingContext);
 
   let ref = useRef();
 
@@ -85,46 +81,44 @@ export const MappingSearch = ({
     number of results to return per page (entriesPerPage) and a calculation of the first index to start the results
     on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
-    return (
-      fetch(
-        `${searchUrl}q=${editMappings?.code}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+    return fetch(
+      `${searchUrl}q=${editMappings?.code}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+      .then(res => res.json())
+      .then(data => {
+        // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
+        let res = ontologyReducer(data?.response?.docs);
+        // if the page > 0 (i.e. if this is not the first batch of results), the new results
+        // are concatenated to the old
+        if (page > 0 && results.length > 0) {
+          res.results = results.concat(res.results);
+        } else {
+          // the total number of search results are set to totalCount for pagination
+          setTotalCount(data.response.numFound);
         }
-      )
-        .then(res => res.json())
-        .then(data => {
-          // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
-          let res = ontologyReducer(data?.response?.docs);
-          // if the page > 0 (i.e. if this is not the first batch of results), the new results
-          // are concatenated to the old
-          if (page > 0 && results.length > 0) {
-            res.results = results.concat(res.results);
-          } else {
-            // the total number of search results are set to totalCount for pagination
-            setTotalCount(data.response.numFound);
-          }
-          //the results are set to res (the filtered, concatenated results)
-          setResults(res.results);
-          setFilteredResultsCount(res?.filteredResults?.length);
+        //the results are set to res (the filtered, concatenated results)
+        setResults(res.results);
+        setFilteredResultsCount(res?.filteredResults?.length);
 
-          // resultsCount is set to the length of the filtered, concatenated results for pagination
-          setResultsCount(res.results.length);
-        })
-        // .catch(error => {
-        //   if (error) {
-        //     notification.error({
-        //       message: 'Error',
-        //       description: 'An error occurred. Please try again.',
-        //     });
-        //   }
-        //   return error;
-        // })
-        .finally(() => setLoading(false))
-    );
+        // resultsCount is set to the length of the filtered, concatenated results for pagination
+        setResultsCount(res.results.length);
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
   };
 
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
@@ -132,6 +126,19 @@ export const MappingSearch = ({
     e.preventDefault();
     setPage(page + 1);
   };
+
+  const viewMorePagination = (
+    <span
+      className="view_more_link"
+      onClick={e => {
+        handleViewMore(e);
+        // the lastCount being set to resultsCount prior to fetching the next batch of results
+        setLastCount(resultsCount);
+      }}
+    >
+      View More
+    </span>
+  );
 
   // The display for the checkboxes. The index is set to the count of the results before you fetch the new batch of results
   // again + 1, to move the scrollbar to the first result of the new batch.
@@ -164,6 +171,7 @@ export const MappingSearch = ({
     );
   };
 
+  // Display for existing mappings.
   const existingMappingDisplay = (d, index) => {
     return (
       <>
@@ -211,6 +219,7 @@ export const MappingSearch = ({
     return initialMappings;
   };
 
+  // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
   useEffect(() => {
     setExistingMappings(mappingsForSearch);
   }, []);
@@ -223,19 +232,6 @@ export const MappingSearch = ({
     return updatedResults;
   };
   const filteredResultsArray = filteredResults();
-
-  const viewMorePagination = (
-    <span
-      className="view_more_link"
-      onClick={e => {
-        handleViewMore(e);
-        // the lastcount being set to resultsCount prior to fetching the next batch of results
-        setLastCount(resultsCount);
-      }}
-    >
-      View More
-    </span>
-  );
 
   return (
     <>
@@ -259,7 +255,6 @@ export const MappingSearch = ({
                         rules={[
                           {
                             required: false,
-                            message: 'Please make a selection.',
                           },
                         ]}
                       >
@@ -287,8 +282,7 @@ export const MappingSearch = ({
                         valuePropName="value"
                         rules={[
                           {
-                            required: true,
-                            message: 'Please make a selection.',
+                            required: false,
                           },
                         ]}
                       >
