@@ -1,4 +1,4 @@
-import { Checkbox, Form, notification, Tooltip } from 'antd';
+import { Checkbox, Form, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import {
@@ -7,6 +7,7 @@ import {
   systemsMatch,
 } from '../../Manager/Utilitiy';
 import { ModalSpinner } from '../../Manager/Spinner';
+import { MappingContext } from '../../../MappingContext';
 
 export const MappingSearch = ({
   editMappings,
@@ -15,8 +16,6 @@ export const MappingSearch = ({
   mappingsForSearch,
   reset,
   onClose,
-  onExistingChange,
-  onFilteredChange,
 }) => {
   const { searchUrl } = useContext(myContext);
   const [page, setPage] = useState(0);
@@ -28,7 +27,22 @@ export const MappingSearch = ({
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
 
+  const {
+    existingMappings,
+    setExistingMappings,
+    filteredMappings,
+    setFilteredMappings,
+  } = useContext(MappingContext);
+
   let ref = useRef();
+
+  const onExistingChange = checkedValues => {
+    setExistingMappings(checkedValues);
+  };
+
+  const onFilteredChange = checkedvalues => {
+    setFilteredMappings(checkedvalues);
+  };
 
   // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
   // if there is a code being passed, it evaluates to true and runs the search function.
@@ -197,6 +211,10 @@ export const MappingSearch = ({
     return initialMappings;
   };
 
+  useEffect(() => {
+    setExistingMappings(mappingsForSearch);
+  }, []);
+
   // Creates a Set that excludes the mappings that have already been selected.
   // Then filteres the existing mappings out of the results to only display results that have not yet been selected.
   const filteredResults = () => {
@@ -240,7 +258,7 @@ export const MappingSearch = ({
                         valuePropName="value"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: 'Please make a selection.',
                           },
                         ]}

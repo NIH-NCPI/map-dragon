@@ -4,6 +4,7 @@ import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from './MappingSearch';
 import { ResetMappings } from './ResetMappings';
+import { MappingContext } from '../../../MappingContext';
 
 export const EditMappingsModal = ({
   editMappings,
@@ -19,16 +20,8 @@ export const EditMappingsModal = ({
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
-  const [existingMappings, setExistingMappings] = useState([]);
-  const [filteredMappings, setFilteredMappings] = useState([]);
 
-  const onExistingChange = checkedValues => {
-    setExistingMappings(checkedValues);
-  };
-
-  const onFilteredChange = checkedvalues => {
-    setFilteredMappings(checkedvalues);
-  };
+  const { existingMappings, filteredMappings } = useContext(MappingContext);
 
   useEffect(() => {
     fetchMappings();
@@ -172,10 +165,49 @@ export const EditMappingsModal = ({
   };
 
   const editExistingMappings = values => {
-    const combinedMappings = [...existingMappings, ...filteredMappings];
-    console.log(combinedMappings);
-  };
+    const mappingsDTO = () => {
+      const parsedFilteredMappings = [];
+      filteredMappings?.forEach(v =>
+        parsedFilteredMappings.push(JSON.parse(v))
+      );
+      const combinedMappings = [...existingMappings, ...parsedFilteredMappings];
+      return { mappings: combinedMappings };
+    };
 
+    console.log(mappingsDTO());
+
+    fetch(
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO()),
+      }
+    )
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => {
+        setMapping(data.codes);
+        message.success('Mappings updated successfully.');
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
+  };
   return (
     <Modal
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
@@ -271,8 +303,6 @@ export const EditMappingsModal = ({
             form={form}
             reset={reset}
             onClose={form.resetFields}
-            onExistingChange={onExistingChange}
-            onFilteredChange={onFilteredChange}
           />
         )
       )}
