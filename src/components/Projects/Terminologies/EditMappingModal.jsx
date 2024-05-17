@@ -5,6 +5,7 @@ import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from './MappingSearch';
 import { ResetMappings } from './ResetMappings';
 import { MappingContext } from '../../../MappingContext';
+import { MappingReset } from './MappingReset';
 
 export const EditMappingsModal = ({
   editMappings,
@@ -164,17 +165,25 @@ export const EditMappingsModal = ({
       .finally(() => setLoading(false));
   };
 
-  const editExistingMappings = values => {
+  // Function to send a PUT call to update the mappings after code name change.
+  // The existing and new mappings are JSON.parsed and pushed to their respective arrays.
+  // The arrays are combined into one mappings array and passed into the body of the PUT call.
+  const editUpdatedMappings = values => {
     const mappingsDTO = () => {
       const parsedFilteredMappings = [];
-      filteredMappings?.forEach(v =>
+      const parsedExistingMappings = [];
+      values.filtered_mappings?.forEach(v =>
         parsedFilteredMappings.push(JSON.parse(v))
       );
-      const combinedMappings = [...existingMappings, ...parsedFilteredMappings];
+      values.existing_mappings?.forEach(v =>
+        parsedExistingMappings.push(JSON.parse(v))
+      );
+      const combinedMappings = [
+        ...parsedExistingMappings,
+        ...parsedFilteredMappings,
+      ];
       return { mappings: combinedMappings };
     };
-
-    console.log(mappingsDTO());
 
     fetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
@@ -223,7 +232,7 @@ export const EditMappingsModal = ({
             {
               /* Performs the updateMappings PUT call on 'Save' button click */
             }
-            editSearch ? editExistingMappings(values) : updateMappings(values);
+            editSearch ? editUpdatedMappings(values) : updateMappings(values);
             clearData();
             form.resetFields();
             setEditMappings(null);
@@ -290,16 +299,22 @@ export const EditMappingsModal = ({
             </Form.Item>
           </Form>
         </>
+      ) : // If reset or editSearch is true the MappingSearch modal opens to perform the search for the terminology code
+      editSearch ? (
+        <MappingSearch
+          editMappings={editMappings}
+          setEditMappings={setEditMappings}
+          mappingsForSearch={mappingsForSearch}
+          form={form}
+          reset={reset}
+          onClose={form.resetFields}
+        />
       ) : (
-        // If reset or editSearch is true the MappingSearch modal opens to perform the search for the terminology code
-        (editSearch || reset) && (
-          <MappingSearch
-            terminologyId={terminologyId}
+        reset && (
+          <MappingReset
             editMappings={editMappings}
             setEditMappings={setEditMappings}
-            setMapping={setMapping}
             mappingsForSearch={mappingsForSearch}
-            options={options}
             form={form}
             reset={reset}
             onClose={form.resetFields}
