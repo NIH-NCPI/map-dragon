@@ -12,6 +12,7 @@ export const EditMappingsModal = ({
   setEditMappings,
   terminologyId,
   setMapping,
+  mapping,
 }) => {
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
@@ -206,15 +207,15 @@ export const EditMappingsModal = ({
         setMapping(data.codes);
         message.success('Mappings updated successfully.');
       })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred. Please try again.',
-          });
-        }
-        return error;
-      })
+      // .catch(error => {
+      //   if (error) {
+      //     notification.error({
+      //       message: 'Error',
+      //       description: 'An error occurred. Please try again.',
+      //     });
+      //   }
+      //   return error;
+      // })
       .finally(() => setLoading(false));
   };
   return (

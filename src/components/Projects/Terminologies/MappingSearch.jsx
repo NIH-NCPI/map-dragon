@@ -203,16 +203,13 @@ export const MappingSearch = ({
   // That array is returned to use as default checked values separate from the search checkboxes.
   const initialChecked = () => {
     let initialMappings = [];
-    const mappingFilter = mappingsForSearch.map(m =>
-      results.filter(r => r.obo_id === m.code)
-    );
 
-    mappingFilter.forEach((m, index) => {
+    mappingsForSearch.forEach((m, index) => {
       const val = JSON.stringify({
-        code: m?.[0]?.obo_id,
-        display: m?.[0]?.label,
+        code: m?.code,
+        display: m?.display,
         // description: m.description[0],
-        system: systemsMatch(m?.[0]?.obo_id.split(':')[0]),
+        system: m?.system,
       });
       initialMappings.push(val);
     });
