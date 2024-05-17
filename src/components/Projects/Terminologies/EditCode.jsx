@@ -4,7 +4,7 @@ import {
   CloseOutlined,
   CloudUploadOutlined,
 } from '@ant-design/icons';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { myContext } from '../../../App';
 import { DeleteCode } from './DeleteCode';
 import { Spinner } from '../../Manager/Spinner';
@@ -33,8 +33,11 @@ export const EditCode = ({
      The element at that index is set to the index variable. If the index exists, item is set to 
      the element at that index. The data at the index of the row is replaced with the newData. 
       */
+
   const onFinish = async key => {
+    // console.log(row);
     const row = await form.validateFields();
+    console.log(row);
     const index = dataSource.findIndex(item => key === item.key);
     const newData = [...dataSource];
     if (index > -1) {
@@ -45,6 +48,7 @@ export const EditCode = ({
       });
       setEditRow('');
     }
+
     // Object to put in the body of the PATCH request. Provides the old code
     // and replaces with the updated code and/or display on the back end.
     // The code in the associdated mappings is automatically udpated on the back end.
