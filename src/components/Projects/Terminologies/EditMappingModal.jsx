@@ -19,6 +19,16 @@ export const EditMappingsModal = ({
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
+  const [existingMappings, setExistingMappings] = useState([]);
+  const [filteredMappings, setFilteredMappings] = useState([]);
+
+  const onExistingChange = checkedValues => {
+    setExistingMappings(checkedValues);
+  };
+
+  const onFilteredChange = checkedvalues => {
+    setFilteredMappings(checkedvalues);
+  };
 
   useEffect(() => {
     fetchMappings();
@@ -161,6 +171,11 @@ export const EditMappingsModal = ({
       .finally(() => setLoading(false));
   };
 
+  const editExistingMappings = values => {
+    const combinedMappings = [...existingMappings, ...filteredMappings];
+    console.log(combinedMappings);
+  };
+
   return (
     <Modal
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
@@ -176,7 +191,7 @@ export const EditMappingsModal = ({
             {
               /* Performs the updateMappings PUT call on 'Save' button click */
             }
-            updateMappings(values);
+            editSearch ? editExistingMappings(values) : updateMappings(values);
             clearData();
             form.resetFields();
             setEditMappings(null);
@@ -256,6 +271,8 @@ export const EditMappingsModal = ({
             form={form}
             reset={reset}
             onClose={form.resetFields}
+            onExistingChange={onExistingChange}
+            onFilteredChange={onFilteredChange}
           />
         )
       )}

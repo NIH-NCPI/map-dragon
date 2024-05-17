@@ -1,9 +1,8 @@
-import { Checkbox, Form, Tooltip } from 'antd';
+import { Checkbox, Form, notification, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import {
   ellipsisString,
-  ontologyFilter,
   ontologyReducer,
   systemsMatch,
 } from '../../Manager/Utilitiy';
@@ -16,6 +15,8 @@ export const MappingSearch = ({
   mappingsForSearch,
   reset,
   onClose,
+  onExistingChange,
+  onFilteredChange,
 }) => {
   const { searchUrl } = useContext(myContext);
   const [page, setPage] = useState(0);
@@ -70,44 +71,46 @@ export const MappingSearch = ({
     number of results to return per page (entriesPerPage) and a calculation of the first index to start the results
     on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
-    return fetch(
-      `${searchUrl}q=${editMappings?.code}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-      .then(res => res.json())
-      .then(data => {
-        // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
-        let res = ontologyReducer(data?.response?.docs);
-        // if the page > 0 (i.e. if this is not the first batch of results), the new results
-        // are concatenated to the old
-        if (page > 0 && results.length > 0) {
-          res.results = results.concat(res.results);
-        } else {
-          // the total number of search results are set to totalCount for pagination
-          setTotalCount(data.response.numFound);
+    return (
+      fetch(
+        `${searchUrl}q=${editMappings?.code}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-        //the results are set to res (the filtered, concatenated results)
-        setResults(res.results);
-        setFilteredResultsCount(res?.filteredResults?.length);
+      )
+        .then(res => res.json())
+        .then(data => {
+          // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
+          let res = ontologyReducer(data?.response?.docs);
+          // if the page > 0 (i.e. if this is not the first batch of results), the new results
+          // are concatenated to the old
+          if (page > 0 && results.length > 0) {
+            res.results = results.concat(res.results);
+          } else {
+            // the total number of search results are set to totalCount for pagination
+            setTotalCount(data.response.numFound);
+          }
+          //the results are set to res (the filtered, concatenated results)
+          setResults(res.results);
+          setFilteredResultsCount(res?.filteredResults?.length);
 
-        // resultsCount is set to the length of the filtered, concatenated results for pagination
-        setResultsCount(res.results.length);
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred. Please try again.',
-          });
-        }
-        return error;
-      })
-      .finally(() => setLoading(false));
+          // resultsCount is set to the length of the filtered, concatenated results for pagination
+          setResultsCount(res.results.length);
+        })
+        // .catch(error => {
+        //   if (error) {
+        //     notification.error({
+        //       message: 'Error',
+        //       description: 'An error occurred. Please try again.',
+        //     });
+        //   }
+        //   return error;
+        // })
+        .finally(() => setLoading(false))
+    );
   };
 
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
@@ -118,7 +121,7 @@ export const MappingSearch = ({
 
   // The display for the checkboxes. The index is set to the count of the results before you fetch the new batch of results
   // again + 1, to move the scrollbar to the first result of the new batch.
-  const checkBoxDisplay = (d, index) => {
+  const newSearchDisplay = (d, index) => {
     index === lastCount + 1;
     return (
       <>
@@ -140,7 +143,33 @@ export const MappingSearch = ({
                 </a>
               </div>
             </div>
-            <div>{ellipsisString(d?.description[0], '100')}</div>
+            <div>{ellipsisString(d?.description?.[0], '100')}</div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const existingMappingDisplay = (d, index) => {
+    return (
+      <>
+        <div
+          key={index}
+          // prettier-ignore
+          className="modal_search_result"
+        >
+          <div>
+            <div className="modal_term_ontology">
+              <div>
+                <b>{d.display}</b>
+              </div>
+              <div>
+                {/* <a href={d.iri} target="_blank"> */}
+                {d.code}
+                {/* </a> */}
+              </div>
+            </div>
+            <div>{ellipsisString(d?.description?.[0], '100')}</div>
           </div>
         </div>
       </>
@@ -149,7 +178,7 @@ export const MappingSearch = ({
 
   // Maps through the array of previously selected mappings and filters the mappings id to the terminology code
   // for a match. For each of the matches, it returns a JSON stringified object that is pushed to a separate array.
-  // That array is returned to use as default checked values for the checkboxes in the search.
+  // That array is returned to use as default checked values separate from the search checkboxes.
   const initialChecked = () => {
     let initialMappings = [];
     const mappingFilter = mappingsForSearch.map(m =>
@@ -159,7 +188,7 @@ export const MappingSearch = ({
     mappingFilter.forEach((m, index) => {
       const val = JSON.stringify({
         code: m?.[0]?.obo_id,
-        display: m?.[0].label,
+        display: m?.[0]?.label,
         // description: m.description[0],
         system: systemsMatch(m?.[0]?.obo_id.split(':')[0]),
       });
@@ -167,6 +196,15 @@ export const MappingSearch = ({
     });
     return initialMappings;
   };
+
+  // Creates a Set that excludes the mappings that have already been selected.
+  // Then filteres the existing mappings out of the results to only display results that have not yet been selected.
+  const filteredResults = () => {
+    const codesToExclude = new Set(mappingsForSearch.map(m => m.code));
+    const updatedResults = results.filter(r => !codesToExclude.has(r.obo_id));
+    return updatedResults;
+  };
+  const filteredResultsArray = filteredResults();
 
   const viewMorePagination = (
     <span
@@ -198,7 +236,7 @@ export const MappingSearch = ({
                       <Form.Item
                         // If it is NOT in reset state (i.e. edit mode), default values are checked. If reset is set, default values are blank, since all values were deleted.
                         initialValue={!reset ? initialChecked() : null}
-                        name={['mappings']}
+                        name={['existing_mappings']}
                         valuePropName="value"
                         rules={[
                           {
@@ -207,23 +245,53 @@ export const MappingSearch = ({
                           },
                         ]}
                       >
-                        {results?.length > 0 ? (
+                        {mappingsForSearch?.length > 0 && (
                           <Checkbox.Group
                             className="mappings_checkbox"
-                            options={results?.map((d, index) => {
+                            options={mappingsForSearch?.map((d, index) => {
+                              return {
+                                value: JSON.stringify({
+                                  code: d.code,
+                                  display: d.display,
+                                  // description: d.description[0],
+                                  system: d.system,
+                                }),
+                                label: existingMappingDisplay(d, index),
+                              };
+                            })}
+                            onChange={onExistingChange}
+                          />
+                        )}
+                      </Form.Item>
+
+                      <Form.Item
+                        name={['filtered_mappings']}
+                        valuePropName="value"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please make a selection.',
+                          },
+                        ]}
+                      >
+                        {filteredResultsArray?.length > 0 && (
+                          <Checkbox.Group
+                            className="mappings_checkbox"
+                            options={filteredResultsArray?.map((d, index) => {
                               return {
                                 value: JSON.stringify({
                                   code: d.obo_id,
                                   display: d.label,
                                   // description: d.description[0],
-                                  system: systemsMatch(d?.obo_id.split(':')[0]),
+                                  system: systemsMatch(
+                                    d?.obo_id?.split(':')[0]
+                                  ),
                                 }),
-                                label: checkBoxDisplay(d, index),
+                                label: newSearchDisplay(d, index),
                               };
                             })}
+                            onChange={onFilteredChange}
                           />
-                        ) : (
-                          ''
                         )}
                       </Form.Item>
                     </Form>
