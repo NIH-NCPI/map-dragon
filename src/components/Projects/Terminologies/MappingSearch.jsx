@@ -198,9 +198,8 @@ export const MappingSearch = ({
     );
   };
 
-  // Maps through the array of previously selected mappings and filters the mappings id to the terminology code
-  // for a match. For each of the matches, it returns a JSON stringified object that is pushed to a separate array.
-  // That array is returned to use as default checked values separate from the search checkboxes.
+  // Iteratesw through the array of previously selected mappings. Returns a JSON stringified object that is pushed to a separate array.
+  // That array is returned to use as default checked values separate from the search results.
   const initialChecked = () => {
     let initialMappings = [];
 

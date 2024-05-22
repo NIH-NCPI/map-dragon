@@ -8,7 +8,6 @@ import { Spinner } from '../../Manager/Spinner';
 import { getAll, handlePost } from '../../Manager/FetchManager';
 import { Form, Row, Col, Card, notification, Skeleton } from 'antd';
 import { AddStudy } from './AddStudy';
-import Background from '../../../assets/Background.png';
 import { ellipsisString } from '../../Manager/Utilitiy';
 const { Meta } = Card;
 
@@ -41,10 +40,6 @@ export const StudyList = () => {
           <Spinner />
         ) : (
           <>
-            <div className="image_container">
-              {/* background image */}
-              <img className="background_image_results" src={Background} />
-            </div>
             <div className="projects_sub_nav">
               <h2>My Studies</h2>
             </div>
