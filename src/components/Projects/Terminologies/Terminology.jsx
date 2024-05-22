@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
-import Background from '../../../assets/Background.png';
 import { getById } from '../../Manager/FetchManager';
 import { Col, Form, Input, notification, Row, Table, Tooltip } from 'antd';
 
@@ -235,9 +234,6 @@ There is then a tooltip that displays the codes on hover.*/
         <Spinner />
       ) : (
         <div className="terminology_container">
-          <div className="image_container">
-            <img className="background_image_results" src={Background} />
-          </div>
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>

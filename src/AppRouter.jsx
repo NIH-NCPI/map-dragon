@@ -10,7 +10,8 @@ import { StudyDetails } from './components/Projects/Studies/StudyDetails';
 import { StudyList } from './components/Projects/Studies/StudyList';
 
 import './App.scss';
-import { MappingContext, MappingContextRoot } from './MappingContext';
+import { MappingContextRoot } from './MappingContext';
+import { PageLayout } from './components/Styling/PageLayout';
 
 export const AppRouter = () => {
   return (
@@ -30,20 +31,25 @@ export const AppRouter = () => {
         }
       >
         <Route index element={<OntologySearch />} />
-        <Route path="/search/:query" element={<SearchResults />} />
-        <Route path="/studies" element={<StudyList />} />
-        <Route element={<MappingContextRoot />}>
-          <Route path="/Terminology/:terminologyId" element={<Terminology />} />
-          {/* <Route path="/Table/:tableId" element={<TableDetails />} /> */}
-          <Route path="/DataDictionary/:DDId">
-            <Route index element={<DDDetails />} />
+        <Route element={<PageLayout />}>
+          <Route path="/search/:query" element={<SearchResults />} />
+          <Route path="/studies" element={<StudyList />} />
+          <Route element={<MappingContextRoot />}>
             <Route
-              path="/DataDictionary/:DDId/Table/:tableId"
-              element={<TableDetails />}
+              path="/Terminology/:terminologyId"
+              element={<Terminology />}
             />
+            {/* <Route path="/Table/:tableId" element={<TableDetails />} /> */}
+            <Route path="/DataDictionary/:DDId">
+              <Route index element={<DDDetails />} />
+              <Route
+                path="/DataDictionary/:DDId/Table/:tableId"
+                element={<TableDetails />}
+              />
+            </Route>
           </Route>
+          <Route path="/Study/:studyId" element={<StudyDetails />} />
         </Route>
-        <Route path="/Study/:studyId" element={<StudyDetails />} />
       </Route>
     </Routes>
   );

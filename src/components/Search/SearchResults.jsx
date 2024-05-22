@@ -3,7 +3,6 @@ import { Pagination, notification } from 'antd';
 import { myContext } from '../../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
-import Background from '../../assets/Background.png';
 import { SearchSpinner } from '../Manager/Spinner';
 
 export const SearchResults = () => {
@@ -85,10 +84,6 @@ The user is then redirected to the search page, which completes the search for t
     <>
       <div className="results_page_container">
         <div className="search_field_container">
-          {/* background image */}
-          <div className="image_container">
-            <img className="background_image_results" src={Background} />
-          </div>
           <div className="search_field_results">
             <div className="text_input_results">
               <input

@@ -4,7 +4,7 @@ import {
   CloseOutlined,
   CloudUploadOutlined,
 } from '@ant-design/icons';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { myContext } from '../../../App';
 import { DeleteCode } from './DeleteCode';
 import { Spinner } from '../../Manager/Spinner';
@@ -34,10 +34,16 @@ export const EditCode = ({
      the element at that index. The data at the index of the row is replaced with the newData. 
       */
 
+  useEffect(() => {
+    if (editRow !== null && dataSource[editRow]) {
+      const { code, display } = dataSource[editRow];
+      form.setFieldsValue({ code, display });
+    }
+  }, [editRow]);
+
   const onFinish = async key => {
     // console.log(row);
     const row = await form.validateFields();
-    console.log(row);
     const index = dataSource.findIndex(item => key === item.key);
     const newData = [...dataSource];
     if (index > -1) {
@@ -107,10 +113,10 @@ export const EditCode = ({
                   /* editRow is set to the key of the of the row. The form values are set 
                 to the code and display of the tableData.*/
                   setEditRow(tableData.key);
-                  form.setFieldsValue({
-                    code: tableData.code,
-                    display: tableData.display,
-                  });
+                  // form.setFieldsValue({
+                  //   code: tableData.code,
+                  //   display: tableData.display,
+                  // });
                 }}
                 className="actions_icon"
               />
