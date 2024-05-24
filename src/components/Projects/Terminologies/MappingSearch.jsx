@@ -16,6 +16,7 @@ export const MappingSearch = ({
   mappingsForSearch,
   reset,
   onClose,
+  searchProp,
 }) => {
   const { searchUrl } = useContext(myContext);
   const [page, setPage] = useState(0);
@@ -82,7 +83,7 @@ export const MappingSearch = ({
     on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
     return fetch(
-      `${searchUrl}q=${editMappings?.code}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
+      `${searchUrl}q=${searchProp}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
       {
         method: 'GET',
         headers: {

@@ -6,19 +6,19 @@ import { myContext } from '../../../App';
 import { useNavigate } from 'react-router-dom';
 import { handleDelete } from '../../Manager/FetchManager';
 
-export const DeleteTable = ({ DDId, studyId }) => {
+export const DeleteDD = ({ studyId }) => {
   const { confirm } = Modal;
-  const { vocabUrl, deleteState, setDeleteState, table } =
+  const { vocabUrl, deleteState, setDeleteState, dataDictionary } =
     useContext(myContext);
   const navigate = useNavigate();
 
-  const deleteTable = evt =>
-    handleDelete(evt, vocabUrl, 'Table', table).then(() => {
-      message.success('Table deleted successfully.');
-      navigate(`/Study/${studyId}/DataDictionary/${DDId}`);
+  const deleteDD = evt =>
+    handleDelete(evt, vocabUrl, 'DataDictionary', dataDictionary).then(() => {
+      message.success('Data Dictionary deleted successfully.');
+      navigate(`/Study/${studyId}`);
     });
 
-  // Confirm modal. Deletes table on 'ok' click.
+  // Confirm modal. Deletes DD on 'ok' click.
   const showConfirm = () => {
     confirm({
       className: 'delete_table_confirm',
@@ -27,16 +27,16 @@ export const DeleteTable = ({ DDId, studyId }) => {
       content: (
         <>
           <div>
-            Deleting the table will permanently delete it and remove it from all
-            Data Dictionaries.
+            Deleting the data dictionary will permanently delete it and remove
+            it from all Studies.
           </div>
           <div>
-            <b>Are you sure you want to delete the Table?</b>
+            <b>Are you sure you want to delete the Data Dictionary?</b>
           </div>
         </>
       ),
       onOk() {
-        deleteTable();
+        deleteDD();
         setDeleteState(false);
       },
       onCancel() {

@@ -42,7 +42,6 @@ export const EditCode = ({
   }, [editRow]);
 
   const onFinish = async key => {
-    // console.log(row);
     const row = await form.validateFields();
     const index = dataSource.findIndex(item => key === item.key);
     const newData = [...dataSource];

@@ -20,6 +20,7 @@ import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { EditDDDetails } from './EditDDDetails';
 import { UploadTable } from '../Tables/UploadTable';
 import { RemoveTableDD } from './RemoveTableDD';
+import { DeleteDD } from './DeleteDD';
 
 export const DDDetails = () => {
   const [form] = Form.useForm();
@@ -32,7 +33,7 @@ export const DDDetails = () => {
     dataDictionary,
     setDataDictionary,
   } = useContext(myContext);
-  const { DDId } = useParams();
+  const { studyId, DDId } = useParams();
 
   const [loading, setLoading] = useState(true);
   const [addTable, setAddTable] = useState(false);
@@ -160,7 +161,9 @@ export const DDDetails = () => {
                     actions={[
                       // Button to remove a table from a DD
                       <RemoveTableDD DDId={DDId} table={table} />,
-                      <Link to={`/DataDictionary/${DDId}/Table/${table?.id}`}>
+                      <Link
+                        to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${table?.id}`}
+                      >
                         <button className="manage_term_button">
                           View / Edit
                         </button>
@@ -216,6 +219,7 @@ export const DDDetails = () => {
         dataDictionary={dataDictionary}
         setDataDictionary={setDataDictionary}
       />
+      <DeleteDD studyId={studyId} />
     </>
   );
 };
