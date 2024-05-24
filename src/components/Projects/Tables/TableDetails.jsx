@@ -13,6 +13,7 @@ import {
   message,
   notification,
   Card,
+  Tooltip,
 } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
@@ -22,20 +23,27 @@ import { GetMappingsTableModal } from './GetMappingsTableModal';
 import { MappingContext } from '../../../MappingContext';
 import { ExportFile } from './ExportFile';
 import { DeleteVariable } from './DeleteVariable';
+import { EditMappingsTableModal } from './EditMappingsTableModal';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
 
   const { vocabUrl, edit, setEdit, table, setTable } = useContext(myContext);
-  const { getMappings, setGetMappings, mapping, setMapping } =
-    useContext(MappingContext);
+  const {
+    getMappings,
+    setGetMappings,
+    mapping,
+    setMapping,
+    setEditMappings,
+    editMappings,
+  } = useContext(MappingContext);
   const { DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
 
   useEffect(() => {
     setDataSource(tableData(table));
-  }, [table]);
+  }, [table, mapping]);
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
@@ -50,19 +58,19 @@ export const TableDetails = () => {
           });
         }
         return error;
+      });
+    getById(vocabUrl, 'Table', `${tableId}/mapping`)
+      .then(data => setMapping(data.codes))
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description:
+              'An error occurred loading mappings. Please try again.',
+          });
+        }
+        return error;
       })
-      // getById(vocabUrl, 'Table', `${tableId}/mapping`)
-      //   .then(data => setMapping(data.codes))
-      //   .catch(error => {
-      //     if (error) {
-      //       notification.error({
-      //         message: 'Error',
-      //         description:
-      //           'An error occurred loading mappings. Please try again.',
-      //       });
-      //     }
-      //     return error;
-      //   })
       .finally(() => setLoading(false));
   }, []);
 
@@ -94,8 +102,8 @@ export const TableDetails = () => {
     { title: 'Description', dataIndex: 'description' },
     { title: 'Data Type', dataIndex: 'data_type' },
     { title: 'Enumerations', dataIndex: 'enumeration' },
-    // { title: 'Mapped Terms', dataIndex: 'mapped_terms' },
-    // { title: '', dataIndex: 'get_mappings', width: 164 },
+    { title: 'Mapped Terms', dataIndex: 'mapped_terms' },
+    { title: '', dataIndex: 'get_mappings', width: 168 },
     {
       title: '',
       dataIndex: 'delete_column',
@@ -121,23 +129,22 @@ The function maps through the mapping array. For each code, if the mapping code 
 code in the table, AND the mappings array length for the code is > 0, the mappings array is mapped through
 and returns the length of the mapping array (i.e. returns the number of codes mapped to the table code). 
 There is then a tooltip that displays the codes on hover.*/
-  const matchCode = code =>
-    mapping?.length > 0
-      ? mapping?.map((item, index) =>
-          item.code === code.code && item?.mappings?.length > 0 ? (
-            <Tooltip
-              title={item.mappings.map(code => {
-                return <div key={index}>{code.code}</div>;
-              })}
-              key={index}
-            >
-              {item.mappings.length}
-            </Tooltip>
-          ) : (
-            ''
-          )
+  const matchCode = variable =>
+    mapping?.length > 0 &&
+    mapping?.map(
+      (item, index) =>
+        item.code === variable.name &&
+        item?.mappings?.length > 0 && (
+          <Tooltip
+            title={item.mappings.map(code => {
+              return <div key={index}>{code.code}</div>;
+            })}
+            key={index}
+          >
+            {item?.mappings?.length}
+          </Tooltip>
         )
-      : '';
+    );
 
   // data for the table columns. Each table has an array of variables. Each variable has a name, description, and data type.
   // The integer and quantity data types include additional details.
@@ -153,46 +160,47 @@ There is then a tooltip that displays the codes on hover.*/
         enumeration: variable.data_type === 'ENUMERATION' && (
           <Link to={`/${variable.enumerations.reference}`}>View/Edit</Link>
         ),
-        mapped_terms: 'placeholder' /*matchCode(variable)*/,
-        get_mappings: (
-          //       /* If the mapping array length is greather than 0, we check if there is a matching mapped code
-          // to the terminology code.
-          //               If there is a match for the terminology code in the mapping codes AND if the mappings array for
-          //       that code is > 0, the Edit Mappings button is displayed. On click, a modal with mapping details is opened
-          //     and the terminology code is passed.*/
+        mapped_terms: matchCode(variable),
+        get_mappings:
+          /* If the mapping array length is greather than 0, we check if there is a matching mapped code
+      to the terminology code.
+      If there is a match for the terminology code in the mapping codes AND if the mappings array for
+      that code is > 0, the Edit Mappings button is displayed. On click, a modal with mapping details is opened
+      and the terminology code is passed.*/
 
-          //       mapping?.length > 0 ? (
-          //         mapping.some(m => m.code === code.code && m?.mappings?.length > 0) ? (
-          //           <button
-          //             key={code.code}
-          //             className="manage_term_button"
-          //             onClick={() => setEditMappings(code)}
-          //           >
-          //             Edit Mappings
-          //           </button>
-          //         ) : (
-          //           /* If there is NOT a match for the terminology code in the mapping codes, the Get Mappings button
-          //              is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-          //              code and the terminology code is passed.*/
-          <button
-            className="manage_term_button"
-            onClick={() => setGetMappings(variable)}
-          >
-            Get Mappings
-          </button>
-        ),
-        //         )
-        //       ) : (
-        //         /* If the mapping array length is not greater than 0, the Get Mappings button
-        //              is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-        //              code and the terminology code is passed.*/
-        //         <button
-        //           className="manage_term_button"
-        //           onClick={() => setGetMappings(code)}
-        //         >
-        //           Get Mappings
-        //         </button>
-        //       ),
+          mapping?.length > 0 ? (
+            mapping?.some(
+              m => m?.code === variable.name && m?.mappings?.length > 0
+            ) ? (
+              <button
+                key={variable.name}
+                className="manage_term_button"
+                onClick={() => setEditMappings(variable)}
+              >
+                Edit Mappings
+              </button>
+            ) : (
+              /* If there is NOT a match for the terminology code in the mapping codes, the Get Mappings button
+            is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
+            code and the terminology code is passed.*/
+              <button
+                className="manage_term_button"
+                onClick={() => setGetMappings(variable)}
+              >
+                Get Mappings
+              </button>
+            )
+          ) : (
+            /* If the mapping array length is not greater than 0, the Get Mappings button
+          is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
+          code and the terminology code is passed.*/
+            <button
+              className="manage_term_button"
+              onClick={() => setGetMappings(variable)}
+            >
+              Get Mappings
+            </button>
+          ),
       };
     });
 
@@ -357,6 +365,12 @@ There is then a tooltip that displays the codes on hover.*/
       </Modal>
       <DeleteTable DDId={DDId} />
       <LoadVariables load={load} setLoad={setLoad} />
+      <EditMappingsTableModal
+        editMappings={editMappings}
+        setEditMappings={setEditMappings}
+        tableId={tableId}
+        setMapping={setMapping}
+      />
       <GetMappingsTableModal
         table={table}
         setTable={setTable}

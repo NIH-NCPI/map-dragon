@@ -40,22 +40,21 @@ code in the terminology, AND the mappings array length for the code is > 0, the 
 and returns the length of the mapping array (i.e. returns the number of codes mapped to the terminology code). 
 There is then a tooltip that displays the codes on hover.*/
   const matchCode = code =>
-    mapping?.length > 0
-      ? mapping?.map(
-          (item, index) =>
-            item.code === code.code &&
-            item?.mappings?.length > 0 && (
-              <Tooltip
-                title={item.mappings.map(code => {
-                  return <div key={index}>{code.code}</div>;
-                })}
-                key={index}
-              >
-                {item.mappings.length}
-              </Tooltip>
-            )
+    mapping?.length > 0 &&
+    mapping?.map(
+      (item, index) =>
+        item.code === code.code &&
+        item?.mappings?.length > 0 && (
+          <Tooltip
+            title={item.mappings.map(code => {
+              return <div key={index}>{code.code}</div>;
+            })}
+            key={index}
+          >
+            {item.mappings.length}
+          </Tooltip>
         )
-      : '';
+    );
 
   // data for each column in the table.
   // Map through the codes in the terminology and display the code, display, number of mapped terms,
