@@ -2,21 +2,21 @@ import { Checkbox, Modal, Form, Button, notification, message } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
-import { MappingSearch } from './MappingSearch';
-import { ResetMappings } from './ResetMappings';
 import { MappingContext } from '../../../MappingContext';
-import { MappingReset } from './MappingReset';
+import { MappingSearch } from '../Terminologies/MappingSearch';
+import { MappingReset } from '../Terminologies/MappingReset';
+import { ResetMappings } from '../Terminologies/ResetMappings';
 
-export const EditMappingsModal = ({
+export const EditMappingsTableModal = ({
   editMappings,
   setEditMappings,
-  terminologyId,
+  tableId,
   setMapping,
 }) => {
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
-  const { vocabUrl, terminology } = useContext(myContext);
+  const { vocabUrl, table } = useContext(myContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
@@ -34,13 +34,13 @@ export const EditMappingsModal = ({
   };
 
   const fetchMappings = () => {
-    /* The terminology code was passed through the editMappings prop.
-    If there is a code, the mappings for the code in the terminology are fetched.
+    /* The table code was passed through the editMappings prop.
+    If there is a code, the mappings for the code in the table are fetched.
     */
     if (editMappings) {
       setLoading(true);
       return fetch(
-        `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
+        `${vocabUrl}/Table/${tableId}/mapping/${editMappings.name}`,
         {
           method: 'GET',
           headers: {
@@ -132,16 +132,13 @@ export const EditMappingsModal = ({
       values?.mappings?.forEach(v => mappings.push(JSON.parse(v)));
       return { mappings: mappings };
     };
-    fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(mappingsDTO()),
-      }
-    )
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.name}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mappingsDTO()),
+    })
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -185,16 +182,13 @@ export const EditMappingsModal = ({
       return { mappings: combinedMappings };
     };
 
-    fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(mappingsDTO()),
-      }
-    )
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.name}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mappingsDTO()),
+    })
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -259,10 +253,10 @@ export const EditMappingsModal = ({
             in the MappingSearch modal below. The edit/add button sets editSearch to true and opens 
             the modal to perform the search in MappingSearch below. */}
             <div className="reset_edit_buttons">
-              {!reset && !editSearch && (
+              {/* {!reset && !editSearch && (
                 <>
                   <ResetMappings
-                    terminologyId={terminologyId}
+                    tableId={tableId}
                     editMappings={editMappings}
                     setReset={setReset}
                   />
@@ -270,7 +264,7 @@ export const EditMappingsModal = ({
                     Edit / Add
                   </Button>
                 </>
-              )}
+              )} */}
             </div>
             <div className="cancel_ok_buttons">
               {!reset && <CancelBtn />}
@@ -299,7 +293,7 @@ export const EditMappingsModal = ({
             </Form.Item>
           </Form>
         </>
-      ) : // If reset or editSearch is true the MappingSearch modal opens to perform the search for the terminology code
+      ) : // If reset or editSearch is true the MappingSearch modal opens to perform the search for the table code
       editSearch ? (
         <MappingSearch
           editMappings={editMappings}

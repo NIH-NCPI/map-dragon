@@ -10,9 +10,11 @@ import { ModalSpinner } from '../../Manager/Spinner';
 
 export const GetMappingsTableModal = ({
   table,
+  setTable,
   getMappings,
   setGetMappings,
   setMapping,
+  tableId,
 }) => {
   const [form] = Form.useForm();
   const { searchUrl, vocabUrl } = useContext(myContext);
@@ -66,7 +68,7 @@ export const GetMappingsTableModal = ({
       values?.mappings?.forEach(v => mappings.push(JSON.parse(v)));
       return { mappings: mappings };
     };
-    fetch(`${vocabUrl}/Table/${table.id}/mapping/${getMappings.code}`, {
+    fetch(`${vocabUrl}/Table/${table.id}/mapping/${getMappings.name}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
