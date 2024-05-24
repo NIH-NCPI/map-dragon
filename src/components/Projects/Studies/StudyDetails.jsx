@@ -163,7 +163,7 @@ export const StudyDetails = () => {
                       height: '42vh',
                     }}
                     actions={[
-                      <Link to={`/DataDictionary/${dd?.id}`}>
+                      <Link to={`/Study/${studyId}/DataDictionary/${dd?.id}`}>
                         <button className="manage_term_button">
                           View / Edit
                         </button>

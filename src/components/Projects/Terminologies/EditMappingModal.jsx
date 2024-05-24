@@ -308,6 +308,7 @@ export const EditMappingsModal = ({
           form={form}
           reset={reset}
           onClose={form.resetFields}
+          searchProp={editMappings.code}
         />
       ) : (
         reset && (

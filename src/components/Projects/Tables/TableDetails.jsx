@@ -37,7 +37,7 @@ export const TableDetails = () => {
     setEditMappings,
     editMappings,
   } = useContext(MappingContext);
-  const { DDId, tableId } = useParams();
+  const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
 
@@ -363,7 +363,7 @@ There is then a tooltip that displays the codes on hover.*/
         {/* Displays the edit form */}
         <EditTableDetails form={form} table={table} />
       </Modal>
-      <DeleteTable DDId={DDId} />
+      <DeleteTable studyId={studyId} DDId={DDId} />
       <LoadVariables load={load} setLoad={setLoad} />
       <EditMappingsTableModal
         editMappings={editMappings}

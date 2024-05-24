@@ -253,7 +253,7 @@ export const EditMappingsTableModal = ({
             in the MappingSearch modal below. The edit/add button sets editSearch to true and opens 
             the modal to perform the search in MappingSearch below. */}
             <div className="reset_edit_buttons">
-              {/* {!reset && !editSearch && (
+              {!reset && !editSearch && (
                 <>
                   <ResetMappings
                     tableId={tableId}
@@ -264,7 +264,7 @@ export const EditMappingsTableModal = ({
                     Edit / Add
                   </Button>
                 </>
-              )} */}
+              )}
             </div>
             <div className="cancel_ok_buttons">
               {!reset && <CancelBtn />}
@@ -302,6 +302,7 @@ export const EditMappingsTableModal = ({
           form={form}
           reset={reset}
           onClose={form.resetFields}
+          searchProp={editMappings.name}
         />
       ) : (
         reset && (
