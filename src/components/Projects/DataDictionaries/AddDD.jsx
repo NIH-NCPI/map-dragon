@@ -3,10 +3,11 @@ import { myContext } from '../../../App';
 import { Form, Input, notification, message, Modal } from 'antd';
 import './DDStyling.scss';
 import { handlePost, handleUpdate } from '../../Manager/FetchManager';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const AddDD = ({ addDD, setAddDD, study }) => {
   const [form] = Form.useForm();
+  const { studyId } = useParams();
   const { vocabUrl, setDataDictionary } = useContext(myContext);
 
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
         });
         message.success('Data Dictionary added successfully.');
 
-        navigate(`/DataDictionary/${data.id}`);
+        navigate(`/Study/${studyId}/DataDictionary/${data.id}`);
       })
       .catch(error => {
         if (error) {

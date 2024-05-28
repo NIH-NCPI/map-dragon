@@ -10,7 +10,7 @@ import {
 import { ModalSpinner } from '../../Manager/Spinner';
 
 export const MappingReset = ({
-  editMappings,
+  searchProp,
   setEditMappings,
   form,
   mappingsForSearch,
@@ -33,10 +33,10 @@ export const MappingReset = ({
   // if there is a code being passed, it evaluates to true and runs the search function.
   // The function is run when the page changes and when the code changes.
   useEffect(() => {
-    if (!!editMappings) {
+    if (!!searchProp) {
       fetchResults(page);
     }
-  }, [page, editMappings]);
+  }, [page, searchProp]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -61,7 +61,7 @@ export const MappingReset = ({
 
   // The function that makes the API call to search for the passed code.
   const fetchResults = page => {
-    if (!!!editMappings) {
+    if (!!!searchProp) {
       return undefined;
     }
     setLoading(true);
@@ -71,7 +71,7 @@ export const MappingReset = ({
     on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
     return fetch(
-      `${searchUrl}q=${editMappings?.code}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
+      `${searchUrl}q=${searchProp}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
       {
         method: 'GET',
         headers: {
@@ -168,7 +168,7 @@ export const MappingReset = ({
             <>
               <div className="modal_search_results">
                 <div className="modal_search_results_header">
-                  <h3>Search results for: {editMappings?.code}</h3>
+                  <h3>Search results for: {searchProp}</h3>
                 </div>
                 {/* ant.design form displaying the checkboxes with the search results.  */}
                 {results?.length > 0 ? (

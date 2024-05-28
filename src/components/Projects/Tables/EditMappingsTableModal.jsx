@@ -5,7 +5,7 @@ import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingContext } from '../../../MappingContext';
 import { MappingSearch } from '../Terminologies/MappingSearch';
 import { MappingReset } from '../Terminologies/MappingReset';
-import { ResetMappings } from '../Terminologies/ResetMappings';
+import { ResetTableMappings } from './ResetTableMappings';
 
 export const EditMappingsTableModal = ({
   editMappings,
@@ -255,7 +255,7 @@ export const EditMappingsTableModal = ({
             <div className="reset_edit_buttons">
               {!reset && !editSearch && (
                 <>
-                  <ResetMappings
+                  <ResetTableMappings
                     tableId={tableId}
                     editMappings={editMappings}
                     setReset={setReset}
@@ -280,7 +280,7 @@ export const EditMappingsTableModal = ({
         <>
           {/* If reset is false, the mappings for the code are displayed with checkboxes */}
           <div className="modal_search_results_header">
-            <h3>Mappings for: {editMappings?.code}</h3>
+            <h3>Mappings for: {editMappings?.name}</h3>
           </div>
           <Form form={form} layout="vertical" preserve={false}>
             <Form.Item
@@ -307,7 +307,7 @@ export const EditMappingsTableModal = ({
       ) : (
         reset && (
           <MappingReset
-            editMappings={editMappings}
+            searchProp={editMappings.name}
             setEditMappings={setEditMappings}
             mappingsForSearch={mappingsForSearch}
             form={form}
