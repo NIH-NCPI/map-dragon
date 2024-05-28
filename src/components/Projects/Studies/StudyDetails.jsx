@@ -164,7 +164,11 @@ export const StudyDetails = () => {
                       height: '42vh',
                     }}
                     actions={[
-                      <RemoveStudyDD studyId={studyId} dd={dd} />,
+                      <RemoveStudyDD
+                        studyId={studyId}
+                        dd={dd}
+                        getStudyDDs={getStudyDDs}
+                      />,
                       <Link to={`/Study/${studyId}/DataDictionary/${dd?.id}`}>
                         <button className="manage_term_button">
                           View / Edit

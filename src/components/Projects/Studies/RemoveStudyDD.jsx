@@ -5,7 +5,7 @@ import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 const { confirm } = Modal;
 
-export const RemoveStudyDD = ({ studyId, dd }) => {
+export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
   const { vocabUrl, setStudy } = useContext(myContext);
   const [remove, setRemove] = useState(false);
 
@@ -29,7 +29,12 @@ export const RemoveStudyDD = ({ studyId, dd }) => {
       .then(res => res.json())
       .then(data => {
         setStudy(data);
-        message.success('DD removed successfully.');
+        if (data) {
+          getStudyDDs(data);
+        } else {
+          setLoading(false);
+        }
+        message.success('Data Dictionary removed successfully.');
       })
       .catch(error => {
         if (error) {

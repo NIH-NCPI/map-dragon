@@ -160,7 +160,11 @@ export const DDDetails = () => {
                     }}
                     actions={[
                       // Button to remove a table from a DD
-                      <RemoveTableDD DDId={DDId} table={table} />,
+                      <RemoveTableDD
+                        DDId={DDId}
+                        table={table}
+                        getDDTables={getDDTables}
+                      />,
                       <Link
                         to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${table?.id}`}
                       >
