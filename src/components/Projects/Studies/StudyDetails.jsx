@@ -21,6 +21,7 @@ import { SettingsDropdownStudy } from '../../Manager/Dropdown/SettingsDropdownSt
 import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
 import { AddDD } from '../DataDictionaries/AddDD';
+import { RemoveStudyDD } from './RemoveStudyDD';
 const { Meta } = Card;
 
 export const StudyDetails = () => {
@@ -163,6 +164,7 @@ export const StudyDetails = () => {
                       height: '42vh',
                     }}
                     actions={[
+                      <RemoveStudyDD studyId={studyId} dd={dd} />,
                       <Link to={`/Study/${studyId}/DataDictionary/${dd?.id}`}>
                         <button className="manage_term_button">
                           View / Edit

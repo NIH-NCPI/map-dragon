@@ -313,7 +313,7 @@ export const EditMappingsModal = ({
       ) : (
         reset && (
           <MappingReset
-            editMappings={editMappings}
+            searchProp={editMappings.code}
             setEditMappings={setEditMappings}
             mappingsForSearch={mappingsForSearch}
             form={form}
