@@ -5,7 +5,7 @@ import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 const { confirm } = Modal;
 
-export const RemoveTableDD = ({ DDId, table }) => {
+export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
   const { vocabUrl, setDataDictionary } = useContext(myContext);
   const [remove, setRemove] = useState(false);
 
@@ -30,6 +30,11 @@ export const RemoveTableDD = ({ DDId, table }) => {
       .then(res => res.json())
       .then(data => {
         setDataDictionary(data);
+        if (data) {
+          getDDTables(data);
+        } else {
+          setLoading(false);
+        }
         message.success('Table removed successfully.');
       })
       .catch(error => {
