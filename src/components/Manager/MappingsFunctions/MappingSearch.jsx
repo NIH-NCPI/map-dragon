@@ -234,7 +234,7 @@ export const MappingSearch = ({
             <>
               <div className="modal_search_results">
                 <div className="modal_search_results_header">
-                  <h3>Search results for: {editMappings?.code}</h3>
+                  <h3>Search results for: {searchProp}</h3>
                 </div>
                 {/* ant.design form displaying the checkboxes with the search results.  */}
                 {results?.length > 0 ? (

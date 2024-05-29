@@ -5,26 +5,27 @@ import { Link, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
 import {
-  Table,
-  Row,
-  Col,
-  Modal,
-  Form,
-  message,
-  notification,
   Card,
+  Col,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Row,
+  Table,
   Tooltip,
 } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
-import { GetMappingsTableModal } from './GetMappingsTableModal';
 import { MappingContext } from '../../../MappingContext';
 import { ExportFile } from './ExportFile';
-import { DeleteVariable } from './DeleteVariable';
 import { EditMappingsTableModal } from './EditMappingsTableModal';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
+import { EditVariable } from './EditVariable';
+import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -41,6 +42,7 @@ export const TableDetails = () => {
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
+  const [editRow, setEditRow] = useState(null);
 
   useEffect(() => {
     setDataSource(tableData(table));
@@ -105,8 +107,49 @@ export const TableDetails = () => {
 
   // columns for the ant.design table
   const columns = [
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Description', dataIndex: 'description' },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      render: (text, tableData) => {
+        if (editRow === tableData.key) {
+          return (
+            <Form.Item
+              name="name"
+              rules={[
+                { required: true, message: 'Please enter variable name.' },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          );
+        } else {
+          return <p>{text}</p>;
+        }
+      },
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      render: (text, tableData) => {
+        if (editRow === tableData.key) {
+          return (
+            <Form.Item
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter variable description.',
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          );
+        } else {
+          return <p>{text}</p>;
+        }
+      },
+    },
     { title: 'Data Type', dataIndex: 'data_type' },
     { title: 'Enumerations', dataIndex: 'enumeration' },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms' },
@@ -117,25 +160,38 @@ export const TableDetails = () => {
       render: (_, tableData) => {
         return (
           <>
-            <div className="edit_delete_buttons">
-              <DeleteVariable
-                tableData={tableData}
-                table={table}
-                setTable={setTable}
-              />
-            </div>
+            {tableData.key !== 'newRow' && (
+              // If the tableData key is not "newRow" (i.e. it is not a newly added input field to add a new row)
+              // The edit and delete buttons are displayed with edit/delete functionality
+              <>
+                <div className="edit_delete_buttons">
+                  <EditVariable
+                    editRow={editRow}
+                    setEditRow={setEditRow}
+                    table={table}
+                    setTable={setTable}
+                    tableData={tableData}
+                    form={form}
+                    dataSource={dataSource}
+                    setDataSource={setDataSource}
+                    loading={loading}
+                    setLoading={setLoading}
+                  />
+                </div>
+              </>
+            )}
           </>
         );
       },
     },
   ];
 
-  /* The table may have numerous codes. The API call to fetch the mappings returns all mappings for the table.
-The codes in the mappings need to be matched up to each code in the table.
-The function maps through the mapping array. For each code, if the mapping code is equal to the 
-code in the table, AND the mappings array length for the code is > 0, the mappings array is mapped through
-and returns the length of the mapping array (i.e. returns the number of codes mapped to the table code). 
-There is then a tooltip that displays the codes on hover.*/
+  /* The table may have numerous variables. The API call to fetch the mappings returns all mappings for the table.
+The variables in the mappings need to be matched up to each variable in the table.
+The function maps through the mapping array. For each variable, if the mapping variable is equal to the 
+variable in the table, AND the mappings array length for the variable is > 0, the mappings array is mapped through
+and returns the length of the mapping array (i.e. returns the number of variables mapped to the table variable). 
+There is then a tooltip that displays the variables on hover.*/
   const matchCode = variable =>
     mapping?.length > 0 &&
     mapping?.map(
@@ -170,10 +226,10 @@ There is then a tooltip that displays the codes on hover.*/
         mapped_terms: matchCode(variable),
         get_mappings:
           /* If the mapping array length is greather than 0, we check if there is a matching mapped code
-      to the terminology code.
-      If there is a match for the terminology code in the mapping codes AND if the mappings array for
+      to the table variable.
+      If there is a match for the table variable in the mapping codes AND if the mappings array for
       that code is > 0, the Edit Mappings button is displayed. On click, a modal with mapping details is opened
-      and the terminology code is passed.*/
+      and the table variable is passed.*/
 
           mapping?.length > 0 ? (
             mapping?.some(
@@ -187,9 +243,9 @@ There is then a tooltip that displays the codes on hover.*/
                 Edit Mappings
               </button>
             ) : (
-              /* If there is NOT a match for the terminology code in the mapping codes, the Get Mappings button
+              /* If there is NOT a match for the terminology variable in the mapping variables, the Get Mappings button
             is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-            code and the terminology code is passed.*/
+            variable and the terminology variable is passed.*/
               <button
                 className="manage_term_button"
                 onClick={() => setGetMappings(variable)}
@@ -199,8 +255,8 @@ There is then a tooltip that displays the codes on hover.*/
             )
           ) : (
             /* If the mapping array length is not greater than 0, the Get Mappings button
-          is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-          code and the terminology code is passed.*/
+          is displayed. On click, a modal opens that automatically performs a search in OLS for the table
+          variable and the table variable is passed.*/
             <button
               className="manage_term_button"
               onClick={() => setGetMappings(variable)}
@@ -299,25 +355,28 @@ There is then a tooltip that displays the codes on hover.*/
             The expandable rows currently show the min, max, and units properties with no styling. */}
             {table.variables.length > 0 ? (
               <>
-                <Table
-                  columns={columns}
-                  dataSource={dataSource}
-                  expandable={{
-                    expandedRowRender: record => (
-                      <p
-                        style={{
-                          marginLeft: 50,
-                        }}
-                      >
-                        min: {record.min} max: {record.max} units:{record.units}
-                      </p>
-                    ),
-                    rowExpandable: record =>
-                      record.data_type === 'INTEGER' ||
-                      record.data_type === 'QUANTITY',
-                  }}
-                />
-
+                <Form form={form}>
+                  <Table
+                    columns={columns}
+                    dataSource={dataSource}
+                    expandable={{
+                      expandedRowRender: record => (
+                        <p
+                          style={{
+                            marginLeft: 50,
+                          }}
+                        >
+                          min: {record.min} max: {record.max} units:
+                          {record.units}
+                        </p>
+                      ),
+                      rowExpandable: record =>
+                        record.data_type === 'INTEGER' ||
+                        record.data_type === 'QUANTITY',
+                    }}
+                  />
+                </Form>
+                n
                 <ExportFile table={table} />
               </>
             ) : (
@@ -378,10 +437,11 @@ There is then a tooltip that displays the codes on hover.*/
         tableId={tableId}
         setMapping={setMapping}
       />
-      <GetMappingsTableModal
-        table={table}
+      <GetMappingsModal
+        component={table}
+        componentString={'Table'}
         setTable={setTable}
-        getMappings={getMappings}
+        searchProp={getMappings?.name}
         setGetMappings={setGetMappings}
         setMapping={setMapping}
         tableId={tableId}

@@ -7,13 +7,13 @@ import { getById } from '../../Manager/FetchManager';
 import { Col, Form, Input, notification, Row, Table, Tooltip } from 'antd';
 
 import { EditMappingsModal } from './EditMappingModal';
-import { GetMappingsModal } from './GetMappingsModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { AddCode } from './AddCode';
 import { EditCode } from './EditCode';
 import { MappingContext } from '../../../MappingContext';
+import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -303,9 +303,10 @@ There is then a tooltip that displays the codes on hover.*/
             setMapping={setMapping}
           />
           <GetMappingsModal
-            terminology={terminology}
+            componentString={'Terminology'}
+            component={terminology}
             setTerminology={setTerminology}
-            getMappings={getMappings}
+            searchProp={getMappings?.code}
             setGetMappings={setGetMappings}
             setMapping={setMapping}
             terminologyId={terminologyId}
