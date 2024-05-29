@@ -10,7 +10,7 @@ import { EditMappingsModal } from './EditMappingModal';
 import { GetMappingsModal } from './GetMappingsModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
-import { ClearMappings } from './ClearMappings';
+import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { AddCode } from './AddCode';
 import { EditCode } from './EditCode';
 import { MappingContext } from '../../../MappingContext';
@@ -33,6 +33,7 @@ export const Terminology = () => {
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
   const [editRow, setEditRow] = useState(null);
+
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
 The codes in the mappings need to be matched up to each code in the terminology.
 The function maps through the mapping array. For each code, if the mapping code is equal to the 
@@ -124,7 +125,25 @@ There is then a tooltip that displays the codes on hover.*/
   useEffect(() => {
     setLoading(true);
     getById(vocabUrl, 'Terminology', terminologyId)
-      .then(data => setTerminology(data))
+      .then(data => {
+        setTerminology(data);
+        if (data) {
+          getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
+            .then(data => setMapping(data.codes))
+            .catch(error => {
+              if (error) {
+                notification.error({
+                  message: 'Error',
+                  description:
+                    'An error occurred loading mappings. Please try again.',
+                });
+              }
+              return error;
+            });
+        } else {
+          setLoading(false);
+        }
+      })
       .catch(error => {
         if (error) {
           notification.error({
@@ -134,19 +153,8 @@ There is then a tooltip that displays the codes on hover.*/
           });
         }
         return error;
-      });
-    getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
-      .then(data => setMapping(data.codes))
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred loading mappings. Please try again.',
-          });
-        }
-        return error;
       })
+
       .finally(() => setLoading(false));
   }, []);
 
@@ -309,7 +317,7 @@ There is then a tooltip that displays the codes on hover.*/
             terminology={terminology}
             setTerminology={setTerminology}
           />
-          <ClearMappings terminologyId={terminologyId} />
+          <ClearMappings propId={terminologyId} component={'Terminology'} />
         </div>
       )}
     </>
