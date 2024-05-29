@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import './TableStyling.scss';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
 import {
@@ -16,7 +16,6 @@ import {
   Tooltip,
 } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
-import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
 import { GetMappingsTableModal } from './GetMappingsTableModal';
@@ -24,6 +23,8 @@ import { MappingContext } from '../../../MappingContext';
 import { ExportFile } from './ExportFile';
 import { DeleteVariable } from './DeleteVariable';
 import { EditMappingsTableModal } from './EditMappingsTableModal';
+import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
+import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -49,24 +50,30 @@ export const TableDetails = () => {
   useEffect(() => {
     setLoading(true);
     getById(vocabUrl, 'Table', tableId)
-      .then(data => setTable(data))
+      .then(data => {
+        setTable(data);
+        if (data) {
+          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+            .then(data => setMapping(data.codes))
+            .catch(error => {
+              if (error) {
+                notification.error({
+                  message: 'Error',
+                  description:
+                    'An error occurred loading mappings. Please try again.',
+                });
+              }
+              return error;
+            });
+        } else {
+          setLoading(false);
+        }
+      })
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
             description: 'An error occurred. Please try again.',
-          });
-        }
-        return error;
-      });
-    getById(vocabUrl, 'Table', `${tableId}/mapping`)
-      .then(data => setMapping(data.codes))
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred loading mappings. Please try again.',
           });
         }
         return error;
@@ -270,7 +277,7 @@ There is then a tooltip that displays the codes on hover.*/
                 <div className="study_details_right">
                   <div className="study_dropdown">
                     {/* ant.design dropdown for edit. */}
-                    <SettingsDropdown />
+                    <SettingsDropdownTerminology />
                   </div>
                 </div>
               </Col>
@@ -379,6 +386,7 @@ There is then a tooltip that displays the codes on hover.*/
         setMapping={setMapping}
         tableId={tableId}
       />
+      <ClearMappings propId={tableId} component={'Table'} />
     </>
   );
 };

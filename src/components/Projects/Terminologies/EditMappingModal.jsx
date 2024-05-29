@@ -2,10 +2,10 @@ import { Checkbox, Modal, Form, Button, notification, message } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
-import { MappingSearch } from './MappingSearch';
+import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetMappings } from './ResetMappings';
 import { MappingContext } from '../../../MappingContext';
-import { MappingReset } from './MappingReset';
+import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 
 export const EditMappingsModal = ({
   editMappings,

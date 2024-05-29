@@ -1,22 +1,22 @@
 import { Modal, message, notification } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import './Terminology.scss';
+import './MappingsFunctions.scss';
 
 import { useContext } from 'react';
 import { myContext } from '../../../App';
 import { MappingContext } from '../../../MappingContext';
 
-export const ClearMappings = ({ terminologyId }) => {
+export const ClearMappings = ({ propId, component }) => {
   const { confirm } = Modal;
   const { vocabUrl, clear, setClear } = useContext(myContext);
 
   const { setMapping } = useContext(MappingContext);
 
-  // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
+  // The mappings for the code in a component are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
   // setReset is set to true to open the modal that performs the search for the code again.
   const handleDelete = evt => {
-    return fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping`, {
+    return fetch(`${vocabUrl}/${component}/${propId}/mapping`, {
       method: 'DELETE',
     })
       .then(res => {

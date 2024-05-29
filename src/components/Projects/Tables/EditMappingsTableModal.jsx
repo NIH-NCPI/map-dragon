@@ -3,8 +3,8 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingContext } from '../../../MappingContext';
-import { MappingSearch } from '../Terminologies/MappingSearch';
-import { MappingReset } from '../Terminologies/MappingReset';
+import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
+import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ResetTableMappings } from './ResetTableMappings';
 
 export const EditMappingsTableModal = ({
