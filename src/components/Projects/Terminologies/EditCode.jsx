@@ -41,6 +41,10 @@ export const EditCode = ({
     }
   }, [editRow]);
 
+  message.config({
+    top: '25vh',
+  });
+
   const onFinish = async key => {
     const row = await form.validateFields();
     const index = dataSource.findIndex(item => key === item.key);
@@ -51,9 +55,7 @@ export const EditCode = ({
         ...item,
         ...row,
       });
-      setEditRow('');
     }
-
     // Object to put in the body of the PATCH request. Provides the old code
     // and replaces with the updated code and/or display on the back end.
     // The code in the associdated mappings is automatically udpated on the back end.
@@ -66,38 +68,54 @@ export const EditCode = ({
       },
     };
 
-    setLoading(true);
-    handlePatch(vocabUrl, 'Terminology', terminology, updatedRowDTO)
-      .then(data => {
-        setTerminology(data);
-        setDataSource(newData);
-        message.success('Changes saved successfully.');
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred updating the row. Please try again.',
-          });
-        }
-        return error;
-      })
-      .then(() =>
-        getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
-          .then(data => setMapping(data.codes))
-          .catch(error => {
-            if (error) {
-              notification.error({
-                message: 'Error',
-                description:
-                  'An error occurred loading mappings. Please try again.',
-              });
-            }
-            return error;
-          })
+    // If the new code already exists in the terminolgoy and does not match the index being edited,
+    // an error message displays that the code already exists. Otherwise the PUT call is run.
+    if (
+      terminology.codes.some(
+        item =>
+          item.code.toLowerCase() === row.code.toLowerCase() &&
+          dataSource[index].code.toLowerCase() !== row.code.toLowerCase()
       )
-      .finally(() => setLoading(false));
+    ) {
+      // errorMessage(row);
+      message.error(
+        `"${row.code}" already exists in the Table. Please choose a different name.`
+      );
+    } else {
+      setLoading(true);
+      handlePatch(vocabUrl, 'Terminology', terminology, updatedRowDTO)
+        .then(data => {
+          setTerminology(data);
+          setDataSource(newData);
+          setEditRow('');
+          message.success('Changes saved successfully.');
+        })
+        .catch(error => {
+          if (error) {
+            notification.error({
+              message: 'Error',
+              description:
+                'An error occurred updating the row. Please try again.',
+            });
+          }
+          return error;
+        })
+        .then(() =>
+          getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
+            .then(data => setMapping(data.codes))
+            .catch(error => {
+              if (error) {
+                notification.error({
+                  message: 'Error',
+                  description:
+                    'An error occurred loading mappings. Please try again.',
+                });
+              }
+              return error;
+            })
+        )
+        .finally(() => setLoading(false));
+    }
   };
 
   return (
