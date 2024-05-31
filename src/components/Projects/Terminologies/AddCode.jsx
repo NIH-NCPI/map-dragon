@@ -30,20 +30,24 @@ export const AddCode = ({
   // Takes the newRowDTO function above and adds it to the body of the PUT request to add new codes to the codes array
   const saveNewRow = () => {
     newCodeRef.current.input.defaultValue === '' ||
-    newDisplayRef.current.input.defaultValue === '' ? (
-      <div className="error_message">
-        {message.error('Please fill out the code and display.')}
-      </div>
-    ) : (
-      handleUpdate(vocabUrl, 'Terminology', terminology, {
-        ...terminology,
-        codes: newRowDTO(),
-      })
-        .then(data => setTerminology(data))
-        .then(() => setAddRow(false))
-        // Displays a self-closing message that the udpates have been successfully saved.
-        .then(() => message.success('Code added successfully.'))
-    );
+    newDisplayRef.current.input.defaultValue === ''
+      ? message.error('Please fill out the code and display.')
+      : terminology.codes.some(
+          item =>
+            item.code.toLowerCase() ===
+            newCodeRef.current.input.defaultValue.toLowerCase()
+        )
+      ? message.error(
+          `"${newCodeRef.current.input.defaultValue}" already exists in the Terminology. Please choose a different name.`
+        )
+      : handleUpdate(vocabUrl, 'Terminology', terminology, {
+          ...terminology,
+          codes: newRowDTO(),
+        })
+          .then(data => setTerminology(data))
+          .then(() => setAddRow(false))
+          // Displays a self-closing message that the udpates have been successfully saved.
+          .then(() => message.success('Code added successfully.'));
   };
 
   const rowButtons = () => {
@@ -60,10 +64,6 @@ export const AddCode = ({
   // Sets the data source for the table to input fields with respective refs.
   // A save button in the end that calls the saveNewRow PUT request function on click.
   const handleAdd = () => {
-    if (addRow) {
-      message.info('One row at a time, please.');
-      return;
-    }
     setAddRow(true);
     setDataSource([
       {

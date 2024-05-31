@@ -91,20 +91,6 @@ export const TableDetails = () => {
     []
   );
 
-  // Submit function for the modal to edit the table name, description, and url.
-  // The function adds the variables and filename to the body of the PUT request to retain the complete
-  // table object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
-  const handleSubmit = values => {
-    handleUpdate(vocabUrl, 'Table', table, {
-      ...values,
-      filename: table.filename,
-      variables: table?.variables,
-    })
-      .then(data => setTable(data))
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Changes saved successfully.'));
-  };
-
   // columns for the ant.design table
   const columns = [
     {
@@ -376,7 +362,7 @@ There is then a tooltip that displays the variables on hover.*/
                     }}
                   />
                 </Form>
-                n
+
                 <ExportFile table={table} />
               </>
             ) : (
@@ -408,27 +394,15 @@ There is then a tooltip that displays the variables on hover.*/
       )}
 
       {/* Modal to edit details */}
-      <Modal
-        open={edit}
-        width={'51%'}
-        onOk={() =>
-          form.validateFields().then(values => {
-            form.resetFields();
-            setEdit(false);
-            handleSubmit(values);
-          })
-        }
-        onCancel={() => {
-          form.resetFields();
-          setEdit(false);
-        }}
-        maskClosable={false}
-        closeIcon={false}
-        destroyOnClose={true}
-      >
-        {/* Displays the edit form */}
-        <EditTableDetails form={form} table={table} />
-      </Modal>
+
+      {/* Displays the edit form */}
+      <EditTableDetails
+        form={form}
+        table={table}
+        setTable={setTable}
+        edit={edit}
+        setEdit={setEdit}
+      />
       <DeleteTable studyId={studyId} DDId={DDId} />
       <LoadVariables load={load} setLoad={setLoad} />
       <EditMappingsTableModal

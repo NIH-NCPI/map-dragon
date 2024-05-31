@@ -6,18 +6,18 @@ import {
 } from '@ant-design/icons';
 import { useContext, useEffect } from 'react';
 import { myContext } from '../../../App';
-import { DeleteCode } from './DeleteCode';
 import { Spinner } from '../../Manager/Spinner';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../MappingContext';
+import { DeleteVariable } from './DeleteVariable';
 
-export const EditCode = ({
+export const EditVariable = ({
   editRow,
   setEditRow,
   tableData,
-  terminology,
-  setTerminology,
+  table,
+  setTable,
   dataSource,
   setDataSource,
   form,
@@ -26,7 +26,7 @@ export const EditCode = ({
 }) => {
   const { vocabUrl } = useContext(myContext);
   const { setMapping } = useContext(MappingContext);
-  const { terminologyId } = useParams();
+  const { tableId } = useParams();
 
   /* Submit function to edit a row. The input field is validated to ensure it is not empty.
      The index of the row being edited is found by the key of the row in the dataSource. 
@@ -36,8 +36,8 @@ export const EditCode = ({
 
   useEffect(() => {
     if (editRow !== null && dataSource[editRow]) {
-      const { code, display } = dataSource[editRow];
-      form.setFieldsValue({ code, display });
+      const { name, description } = dataSource[editRow];
+      form.setFieldsValue({ name, description });
     }
   }, [editRow]);
 
@@ -54,22 +54,21 @@ export const EditCode = ({
       setEditRow('');
     }
 
-    // Object to put in the body of the PATCH request. Provides the old code
-    // and replaces with the updated code and/or display on the back end.
-    // The code in the associdated mappings is automatically udpated on the back end.
+    // Object to put in the body of the PATCH request. Provides the old variable
+    // and replaces with the updated variable and/or description on the back end.
+    // The variable in the associdated mappings is automatically udpated on the back end.
     const updatedRowDTO = {
-      code: {
-        [`${dataSource[index].code}`]: `${row.code}`,
+      variable: {
+        [`${dataSource[index].name}`]: `${row.name}`,
       },
-      display: {
-        [dataSource[index].code]: row.display,
+      description: {
+        [dataSource[index].name]: row.description,
       },
     };
-
     setLoading(true);
-    handlePatch(vocabUrl, 'Terminology', terminology, updatedRowDTO)
+    handlePatch(vocabUrl, 'Table', table, updatedRowDTO)
       .then(data => {
-        setTerminology(data);
+        setTable(data);
         setDataSource(newData);
         message.success('Changes saved successfully.');
       })
@@ -84,7 +83,7 @@ export const EditCode = ({
         return error;
       })
       .then(() =>
-        getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
+        getById(vocabUrl, 'Table', `${tableId}/mapping`)
           .then(data => setMapping(data.codes))
           .catch(error => {
             if (error) {
@@ -110,22 +109,17 @@ export const EditCode = ({
               {' '}
               <EditOutlined
                 onClick={() => {
-                  /* editRow is set to the key of the of the row. The form values are set 
-                to the code and display of the tableData.*/
+                  /* editRow is set to the key of the of the row.*/
                   setEditRow(tableData.key);
-                  // form.setFieldsValue({
-                  //   code: tableData.code,
-                  //   display: tableData.display,
-                  // });
                 }}
                 className="actions_icon"
               />
             </Tooltip>
             <Tooltip title="Delete">
-              <DeleteCode
+              <DeleteVariable
                 tableData={tableData}
-                terminology={terminology}
-                setTerminology={setTerminology}
+                table={table}
+                setTable={setTable}
               />{' '}
             </Tooltip>
           </>
