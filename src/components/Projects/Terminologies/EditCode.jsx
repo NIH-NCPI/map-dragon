@@ -41,10 +41,6 @@ export const EditCode = ({
     }
   }, [editRow]);
 
-  message.config({
-    top: '25vh',
-  });
-
   const onFinish = async key => {
     const row = await form.validateFields();
     const index = dataSource.findIndex(item => key === item.key);
@@ -77,9 +73,8 @@ export const EditCode = ({
           dataSource[index].code.toLowerCase() !== row.code.toLowerCase()
       )
     ) {
-      // errorMessage(row);
       message.error(
-        `"${row.code}" already exists in the Table. Please choose a different name.`
+        `"${row.code}" already exists in the Terminology. Please choose a different name.`
       );
     } else {
       setLoading(true);

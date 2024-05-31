@@ -51,7 +51,6 @@ export const EditVariable = ({
         ...item,
         ...row,
       });
-      setEditRow('');
     }
 
     // Object to put in the body of the PATCH request. Provides the old variable
@@ -65,38 +64,52 @@ export const EditVariable = ({
         [dataSource[index].name]: row.description,
       },
     };
-    setLoading(true);
-    handlePatch(vocabUrl, 'Table', table, updatedRowDTO)
-      .then(data => {
-        setTable(data);
-        setDataSource(newData);
-        message.success('Changes saved successfully.');
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred updating the row. Please try again.',
-          });
-        }
-        return error;
-      })
-      .then(() =>
-        getById(vocabUrl, 'Table', `${tableId}/mapping`)
-          .then(data => setMapping(data.codes))
-          .catch(error => {
-            if (error) {
-              notification.error({
-                message: 'Error',
-                description:
-                  'An error occurred loading mappings. Please try again.',
-              });
-            }
-            return error;
-          })
+
+    if (
+      table.variables.some(
+        item =>
+          item.name.toLowerCase() === row.name.toLowerCase() &&
+          dataSource[index].name.toLowerCase() !== row.name.toLowerCase()
       )
-      .finally(() => setLoading(false));
+    ) {
+      message.error(
+        `"${row.name}" already exists in the Table. Please choose a different name.`
+      );
+    } else {
+      setLoading(true);
+      handlePatch(vocabUrl, 'Table', table, updatedRowDTO)
+        .then(data => {
+          setTable(data);
+          setDataSource(newData);
+          setEditRow('');
+          message.success('Changes saved successfully.');
+        })
+        .catch(error => {
+          if (error) {
+            notification.error({
+              message: 'Error',
+              description:
+                'An error occurred updating the row. Please try again.',
+            });
+          }
+          return error;
+        })
+        .then(() =>
+          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+            .then(data => setMapping(data.codes))
+            .catch(error => {
+              if (error) {
+                notification.error({
+                  message: 'Error',
+                  description:
+                    'An error occurred loading mappings. Please try again.',
+                });
+              }
+              return error;
+            })
+        )
+        .finally(() => setLoading(false));
+    }
   };
 
   return (
