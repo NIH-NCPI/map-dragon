@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { useState, createContext } from 'react';
 import { AppRouter } from './AppRouter';
 
@@ -26,6 +27,11 @@ function App() {
     url: '',
   }; //initial state of study
   const [study, setStudy] = useState(initialStudy);
+
+  message.config({
+    top: '25vh',
+  });
+
   return (
     <myContext.Provider
       value={{
