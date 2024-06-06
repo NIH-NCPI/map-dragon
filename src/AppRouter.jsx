@@ -10,7 +10,7 @@ import { StudyDetails } from './components/Projects/Studies/StudyDetails';
 import { StudyList } from './components/Projects/Studies/StudyList';
 
 import './App.scss';
-import { MappingContext, MappingContextRoot } from './MappingContext';
+import { MappingContextRoot } from './MappingContext';
 
 export const AppRouter = () => {
   return (

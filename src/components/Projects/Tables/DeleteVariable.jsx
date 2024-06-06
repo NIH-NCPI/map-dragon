@@ -1,4 +1,4 @@
-import { message, notification, Popconfirm } from 'antd';
+import { Button, message, notification, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import { handleUpdate } from '../../Manager/FetchManager';
@@ -35,7 +35,12 @@ export const DeleteVariable = ({ tableData, table, setTable }) => {
       title="Are you sure you want to delete this row?"
       onConfirm={() => handleDelete(tableData.key)}
     >
-      <DeleteOutlined className="actions_icon" />
+      <Button
+        size="small"
+        shape="circle"
+        icon={<DeleteOutlined />}
+        className="actions_icon"
+      />
     </Popconfirm>
   );
 };

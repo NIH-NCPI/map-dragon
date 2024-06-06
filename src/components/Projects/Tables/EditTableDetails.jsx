@@ -3,7 +3,8 @@ import { useContext } from 'react';
 import { myContext } from '../../../App';
 import { handleUpdate } from '../../Manager/FetchManager';
 
-export const EditTableDetails = ({ form, table, setTable, edit, setEdit }) => {
+export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
+  const [form] = Form.useForm();
   const { vocabUrl } = useContext(myContext);
   // Sets the initial values displayed in the form and esnures they are current
   const changeHandler = () => {

@@ -26,6 +26,7 @@ import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDrop
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { EditVariable } from './EditVariable';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
+import { AddVariable } from './AddVariable';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -337,6 +338,13 @@ There is then a tooltip that displays the variables on hover.*/
           <div className="terminology_details">{table?.url}</div>
           <div className="terminology_details terminology_desc"></div>
           <div className="table_container">
+            <AddVariable
+              table={table}
+              setTable={setTable}
+              dataSource={dataSource}
+              setDataSource={setDataSource}
+              form={form}
+            />
             {/* ant.design table displaying the pre-defined columns and data, with expandable rows. 
             The expandable rows currently show the min, max, and units properties with no styling. */}
             {table.variables.length > 0 ? (
@@ -397,7 +405,6 @@ There is then a tooltip that displays the variables on hover.*/
 
       {/* Displays the edit form */}
       <EditTableDetails
-        form={form}
         table={table}
         setTable={setTable}
         edit={edit}
