@@ -1,4 +1,4 @@
-import { message, notification, Tooltip } from 'antd';
+import { Button, message, notification, Tooltip } from 'antd';
 import {
   EditOutlined,
   CloseOutlined,
@@ -120,12 +120,15 @@ export const EditVariable = ({
           <>
             <Tooltip title="Edit">
               {' '}
-              <EditOutlined
+              <Button
+                shape="circle"
+                size="small"
+                icon={<EditOutlined />}
+                className="actions_icon"
                 onClick={() => {
                   /* editRow is set to the key of the of the row.*/
                   setEditRow(tableData.key);
                 }}
-                className="actions_icon"
               />
             </Tooltip>
             <Tooltip title="Delete">
@@ -141,13 +144,22 @@ export const EditVariable = ({
           <>
             {' '}
             <Tooltip title="Cancel">
-              <CloseOutlined
+              <Button
+                size="small"
+                shape="circle"
+                icon={<CloseOutlined />}
                 className="actions_icon"
-                onClick={() => setEditRow('')}
+                onClick={() => {
+                  /* editRow is set to the key of the of the row.*/
+                  setEditRow('');
+                }}
               />
             </Tooltip>
             <Tooltip title="Save">
-              <CloudUploadOutlined
+              <Button
+                size="small"
+                shape="circle"
+                icon={<CloudUploadOutlined />}
                 className="actions_icon"
                 onClick={() => onFinish(tableData.key)}
               />

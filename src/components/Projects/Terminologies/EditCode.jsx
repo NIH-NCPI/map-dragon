@@ -1,4 +1,4 @@
-import { message, notification, Tooltip } from 'antd';
+import { Button, message, notification, Tooltip } from 'antd';
 import {
   EditOutlined,
   CloseOutlined,
@@ -121,17 +121,15 @@ export const EditCode = ({
           <>
             <Tooltip title="Edit">
               {' '}
-              <EditOutlined
-                onClick={() => {
-                  /* editRow is set to the key of the of the row. The form values are set 
-                to the code and display of the tableData.*/
-                  setEditRow(tableData.key);
-                  // form.setFieldsValue({
-                  //   code: tableData.code,
-                  //   display: tableData.display,
-                  // });
-                }}
+              <Button
+                shape="circle"
+                size="small"
+                icon={<EditOutlined />}
                 className="actions_icon"
+                onClick={() => {
+                  /* editRow is set to the key of the of the row.*/
+                  setEditRow(tableData.key);
+                }}
               />
             </Tooltip>
             <Tooltip title="Delete">
@@ -147,13 +145,22 @@ export const EditCode = ({
           <>
             {' '}
             <Tooltip title="Cancel">
-              <CloseOutlined
+              <Button
+                size="small"
+                shape="circle"
+                icon={<CloseOutlined />}
                 className="actions_icon"
-                onClick={() => setEditRow('')}
+                onClick={() => {
+                  /* editRow is set to the key of the of the row.*/
+                  setEditRow('');
+                }}
               />
             </Tooltip>
             <Tooltip title="Save">
-              <CloudUploadOutlined
+              <Button
+                size="small"
+                shape="circle"
+                icon={<CloudUploadOutlined />}
                 className="actions_icon"
                 onClick={() => onFinish(tableData.key)}
               />
