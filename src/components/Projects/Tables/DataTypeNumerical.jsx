@@ -16,7 +16,7 @@ export const DataTypeNumerical = () => {
             flex: 1,
           }}
           label="Min"
-          name={['newRow', 'min']}
+          name={['min']}
           rules={[
             {
               required: true,
@@ -35,7 +35,7 @@ export const DataTypeNumerical = () => {
         <Form.Item
           preserve={false}
           label="Max"
-          name={['newRow', 'max']}
+          name={['max']}
           rules={[
             {
               required: true,
@@ -53,7 +53,7 @@ export const DataTypeNumerical = () => {
         <Form.Item
           preserve={false}
           label="Units"
-          name={['newRow', 'units']}
+          name={['units']}
           rules={[
             {
               required: true,

@@ -1,49 +1,25 @@
-import { useContext, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { Button, Form, Input, message, Select, Space, Tooltip } from 'antd';
-import { CloseOutlined, CloudUploadOutlined } from '@ant-design/icons';
-import { handleUpdate } from '../../Manager/FetchManager';
+import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
 import DataTypeSubForm from './DataTypeSubForm';
 
-export const AddVariable = ({
-  table,
-  setTable,
-  dataSource,
-  setDataSource,
-  form,
-}) => {
+export const AddVariable = ({ table, setTable }) => {
   const { vocabUrl } = useContext(myContext);
   const [addRow, setAddRow] = useState(false);
   const [type, setType] = useState('');
   const { TextArea } = Input;
+  const [form] = Form.useForm();
 
-  // allVars set to the terminology codes array. Then the refs from the code and display
-  // input fields are pushed to the allVars array to be attached to the body of the PUT request.
-  //   const newRowDTO = () => {
-  //     return {
-  //       name: newVarRef.current.input.defaultValue,
-  //       description: newDescRef.current.input.defaultValue,
-  //       data_type: type,
-  //     };
-  // let allVars = table.variables;
-  // allVars.push({
-  //   name: newVarRef.current.input.defaultValue,
-  //   description: newDescRef.current.input.defaultValue,
-  // });
-  // return allVars;
-  //   };
-
-  // Takes the newRowDTO function above and adds it to the body of the PUT request to add new codes to the codes array
-
-  const saveNewRow = values => {
-    console.log(values);
+  const handleSubmit = values => {
+    // Checks if the variable being added already exists in the variables array.
+    // Displays error message if it does.
     table.variables.some(
       item => item.name.toLowerCase() === values.name.toLowerCase()
     )
       ? message.error(
           `"${values.name}" already exists in the Table. Please choose a different name.`
         )
-      : fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}}`, {
+      : fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -63,122 +39,100 @@ export const AddVariable = ({
           .then(() => message.success('Variable added successfully.'));
   };
 
-  const rowButtons = () => {
-    return (
-      <>
-        <span className="add_row_buttons">
-          <Tooltip title="Cancel">
-            <Button
-              shape="circle"
-              size="small"
-              icon={<CloseOutlined />}
-              className="actions_icon"
-              onClick={handleCancel}
-            />
-          </Tooltip>
-          <Tooltip title="Save">
-            <Button
-              shape="circle"
-              size="small"
-              icon={<CloudUploadOutlined />}
-              className="actions_icon"
-              htmlType="submit"
-            />
-          </Tooltip>
-        </span>
-      </>
-    );
-  };
-
-  // Sets the data source for the table to input fields with respective refs.
-  // A save button in the end that calls the saveNewRow PUT request function on click.
-  const handleAdd = () => {
-    setAddRow(true);
-    setDataSource([
-      {
-        key: 'newRow',
-        name: (
-          <Form.Item
-            name={['name']}
-            rules={[{ required: true, message: 'Input variable name' }]}
-          >
-            <Input
-              style={{
-                width: '6.5vw',
-              }}
-              autoFocus
-            />
-          </Form.Item>
-        ),
-        description: (
-          <Form.Item
-            name={['description']}
-            rules={[{ required: true, message: 'Input variable description' }]}
-          >
-            <TextArea
-              rows={1}
-              style={{
-                width: '13.6vw',
-              }}
-            />
-          </Form.Item>
-        ),
-        data_type: (
-          <Form.Item
-            name={['data_type']}
-            rules={[{ required: true, message: 'Select data type.' }]}
-          >
-            <Select
-              style={{ width: '7.5vw' }}
-              placeholder="Data type"
-              onChange={value => {
-                setType(value);
-              }}
-              options={[
-                { value: 'STRING', label: 'String' },
-                { value: 'INTEGER', label: 'Integer' },
-                { value: 'QUANTITY', label: 'Quantity' },
-                { value: 'ENUMERATION', label: 'Enumeration' },
-              ]}
-            />
-          </Form.Item>
-        ),
-        get_mappings: rowButtons(),
-        // delete_column: '',
-      },
-
-      ...dataSource,
-    ]);
-  };
-
-  const handleCancel = () => {
-    setDataSource(dataSource);
-    setAddRow(false);
-  };
-
   return (
-    <div className="add_row_button">
-      <Form form={form} onFinish={saveNewRow}>
-        <Space
+    <>
+      <div className="add_row_button">
+        <Button
+          onClick={() => setAddRow(true)}
+          type="primary"
           style={{
-            display: 'flex',
-            marginBottom: 3,
+            marginBottom: 16,
           }}
-          align="baseline"
+          // disabled={addRow}
         >
-          <Button
-            onClick={handleAdd}
-            type="primary"
+          Add variable
+        </Button>
+      </div>
+      <Modal
+        open={addRow}
+        width={'70%'}
+        onOk={() =>
+          form.validateFields().then(values => {
+            handleSubmit(values);
+            form.resetFields();
+            setType('');
+          })
+        }
+        onCancel={() => {
+          form.resetFields();
+          setAddRow(false);
+          setType('');
+        }}
+        maskClosable={false}
+      >
+        <Form form={form} layout="vertical">
+          <Space
             style={{
-              marginBottom: 16,
+              display: 'flex',
+              marginBottom: 3,
             }}
-            disabled={addRow}
+            align="baseline"
           >
-            Add variable
-          </Button>
+            <Form.Item
+              name={['name']}
+              label="Variable name"
+              rules={[{ required: true, message: 'Input variable name' }]}
+            >
+              <Input
+                style={{
+                  width: '15vw',
+                }}
+                autoFocus
+              />
+            </Form.Item>
+            <Form.Item
+              name={['description']}
+              label="Variable description"
+              rules={[
+                { required: true, message: 'Input variable description' },
+              ]}
+            >
+              <TextArea
+                rows={1}
+                style={{
+                  width: '39vw',
+                }}
+                autoFocus
+              />
+            </Form.Item>
+            <Form.Item
+              label="Data Type"
+              name={['data_type']}
+              rules={[
+                {
+                  required: true,
+                  message: 'Select data type.',
+                },
+              ]}
+            >
+              <Select
+                style={{ width: '10vw' }}
+                placeholder="Select data type"
+                onChange={value => {
+                  setType(value);
+                }}
+                options={[
+                  { value: 'STRING', label: 'String' },
+                  { value: 'INTEGER', label: 'Integer' },
+                  { value: 'QUANTITY', label: 'Quantity' },
+                  { value: 'ENUMERATION', label: 'Enumeration' },
+                ]}
+              />
+            </Form.Item>
+          </Space>
           <DataTypeSubForm type={type} />
-        </Space>
-      </Form>
-    </div>
+        </Form>
+      </Modal>
+    </>
   );
 };
