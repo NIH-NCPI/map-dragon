@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { Form, Select } from 'antd';
 import { DataTypeNumerical } from './DataTypeNumerical';
+import { getAll } from '../../Manager/FetchManager';
 
 function DataTypeSubForm({ type }) {
   const { vocabUrl } = useContext(myContext);
@@ -18,10 +19,7 @@ function DataTypeSubForm({ type }) {
         <DataTypeNumerical />
       ) : (
         type === 'ENUMERATION' && (
-          <Form.Item
-            label="Terminology"
-            name={[name, 'enumerations', 'reference']}
-          >
+          <Form.Item label="Terminology" name={['enumerations', 'reference']}>
             <Select
               showSearch
               style={{

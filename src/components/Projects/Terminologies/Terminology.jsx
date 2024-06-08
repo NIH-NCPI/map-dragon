@@ -281,8 +281,6 @@ There is then a tooltip that displays the codes on hover.*/
             <AddCode
               terminology={terminology}
               setTerminology={setTerminology}
-              dataSource={dataSource}
-              setDataSource={setDataSource}
             />
 
             {/* ant.design table with columns */}
