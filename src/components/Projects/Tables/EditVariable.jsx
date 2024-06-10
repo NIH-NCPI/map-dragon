@@ -73,7 +73,7 @@ export const EditVariable = ({
       )
     ) {
       message.error(
-        `"${row.name}" already exists in the Table. Please choose a different name.`
+        `"${row.name}" already exists. Please choose a different name.`
       );
     } else {
       setLoading(true);
