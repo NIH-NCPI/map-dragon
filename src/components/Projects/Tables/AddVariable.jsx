@@ -11,32 +11,38 @@ export const AddVariable = ({ table, setTable }) => {
   const [form] = Form.useForm();
 
   const handleSubmit = values => {
-    // Checks if the variable being added already exists in the variables array.
-    // Displays error message if it does.
-    table.variables.some(
-      item => item.name.toLowerCase() === values.name.toLowerCase()
-    )
-      ? message.error(
-          `"${values.name}" already exists in the Table. Please choose a different name.`
-        )
-      : fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(values),
-        })
-          .then(res => {
-            if (res.ok) {
-              return res.json();
-            } else {
-              throw new Error('An unknown error occurred.');
-            }
-          })
-          .then(data => setTable(data))
-          .then(() => setAddRow(false))
-          // Displays a self-closing message that the udpates have been successfully saved.
-          .then(() => message.success('Variable added successfully.'));
+    fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => setTable(data))
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Variable added successfully.'));
+  };
+
+  const validateUnique = (_, value) => {
+    // Validator function for form. Checks if the term being added already exists.
+    const isUnique = !table.variables.some(
+      item => item.name.toLowerCase() === value.toLowerCase()
+    );
+
+    if (isUnique) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject(
+        new Error(`"${value}" already exists. Please choose a different name.`)
+      );
+    }
   };
 
   return (
@@ -56,13 +62,14 @@ export const AddVariable = ({ table, setTable }) => {
       <Modal
         open={addRow}
         width={'70%'}
-        onOk={() =>
+        onOk={() => {
           form.validateFields().then(values => {
             handleSubmit(values);
             form.resetFields();
+            setAddRow(false);
             setType('');
-          })
-        }
+          });
+        }}
         onCancel={() => {
           form.resetFields();
           setAddRow(false);
@@ -81,7 +88,10 @@ export const AddVariable = ({ table, setTable }) => {
             <Form.Item
               name={['name']}
               label="Variable name"
-              rules={[{ required: true, message: 'Input variable name' }]}
+              rules={[
+                { required: true, message: 'Variable name is required.' },
+                { validator: validateUnique },
+              ]}
             >
               <Input
                 style={{
@@ -94,7 +104,10 @@ export const AddVariable = ({ table, setTable }) => {
               name={['description']}
               label="Variable description"
               rules={[
-                { required: true, message: 'Input variable description' },
+                {
+                  required: true,
+                  message: 'Variable description is required.',
+                },
               ]}
             >
               <TextArea

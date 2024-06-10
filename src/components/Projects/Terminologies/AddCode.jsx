@@ -9,33 +9,39 @@ export const AddCode = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
 
   const handleSubmit = values => {
-    // Checks if the code being added already exists in the code array.
-    // Displays error message if it does.
-    terminology?.codes?.some(
-      item => item.code.toLowerCase() === values.code.toLowerCase()
-    )
-      ? message.error(
-          `"${values.code}" already exists in the terminology. Please choose a different name.`
-        )
-      : fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${values.code}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(values),
-        })
-          .then(res => {
-            if (res.ok) {
-              return res.json();
-            } else {
-              throw new Error('An unknown error occurred.');
-            }
-          })
-          .then(data => setTerminology(data))
-          .then(() => setAddRow(false))
-          // Displays a self-closing message that the udpates have been successfully saved.
-          .then(() => message.success('Code added successfully.'));
+    fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${values.code}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => setTerminology(data))
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Code added successfully.'));
     console.log(values);
+  };
+
+  const validateUnique = (_, value) => {
+    // Validator function for form. Checks if the term being added already exists.
+    const isUnique = !terminology.codes.some(
+      item => item.code.toLowerCase() === value.toLowerCase()
+    );
+
+    if (isUnique) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject(
+        new Error(`"${value}" already exists. Please choose a different name.`)
+      );
+    }
   };
 
   return (
@@ -59,6 +65,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
           form.validateFields().then(values => {
             handleSubmit(values);
             form.resetFields();
+            setAddRow(false);
           })
         }
         onCancel={() => {
@@ -78,7 +85,10 @@ export const AddCode = ({ terminology, setTerminology }) => {
             <Form.Item
               name={['code']}
               label="Code name"
-              rules={[{ required: true, message: 'Input code name' }]}
+              rules={[
+                { required: true, message: 'Input code name' },
+                { validator: validateUnique },
+              ]}
             >
               <Input
                 style={{
