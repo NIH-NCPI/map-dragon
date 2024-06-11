@@ -68,3 +68,9 @@ input::file-selector-button:hover {
 .delete_table_confirm {
   top: 25vh;
 }
+
+.expanded_row {
+  display: flex;
+  gap: 10px;
+  margin-left: 5cqmax;
+}

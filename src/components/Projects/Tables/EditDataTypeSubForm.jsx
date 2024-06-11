@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { Form, Select } from 'antd';
-import { DataTypeNumerical } from './DataTypeNumerical';
 import { getAll } from '../../Manager/FetchManager';
+import { EditDataTypeNumerical } from './EditDataTypeNumerical';
 
-function DataTypeSubFormEdit({ type }) {
+function EditDataTypeSubForm({ type, form, editRow, tableData, setType }) {
   const { vocabUrl } = useContext(myContext);
   const [terminologies, setTerminologies] = useState([]);
 
@@ -13,14 +13,31 @@ function DataTypeSubFormEdit({ type }) {
       getAll(vocabUrl, 'Terminology').then(data => setTerminologies(data));
   }, [type]);
 
+  useEffect(() => {
+    if (editRow === tableData.key && type === 'ENUMERATION') {
+      form.setFieldsValue({
+        enumerations: {
+          reference: tableData.enumeration.props.to.slice(1),
+        },
+      });
+
+      console.log(tableData.enumeration.props.to.slice(1));
+    }
+  }, [editRow, tableData, form]);
+
+  // console.log(tableData);
   return (
     <>
       {type === 'INTEGER' || type === 'QUANTITY' ? (
-        <DataTypeNumerical />
+        <EditDataTypeNumerical />
       ) : (
         type === 'ENUMERATION' && (
           <Form.Item label="Terminology" name={['enumerations', 'reference']}>
             <Select
+              value={form.getFieldValue(['enumerations', 'reference'])}
+              onChange={() =>
+                console.log(form.getFieldValue(['enumerations', 'reference']))
+              }
               showSearch
               style={{
                 width: '50%',
@@ -49,4 +66,4 @@ function DataTypeSubFormEdit({ type }) {
   );
 }
 
-export default DataTypeSubForm;
+export default EditDataTypeSubForm;

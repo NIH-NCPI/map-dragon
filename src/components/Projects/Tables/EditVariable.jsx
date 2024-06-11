@@ -9,11 +9,7 @@ import {
   Space,
   Tooltip,
 } from 'antd';
-import {
-  EditOutlined,
-  CloseOutlined,
-  CloudUploadOutlined,
-} from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { Spinner } from '../../Manager/Spinner';
@@ -21,7 +17,7 @@ import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../MappingContext';
 import { DeleteVariable } from './DeleteVariable';
-import DataTypeSubForm from './DataTypeSubForm';
+import EditDataTypeSubForm from './EditDataTypeSubForm';
 
 export const EditVariable = ({
   editRow,
@@ -47,12 +43,27 @@ export const EditVariable = ({
      the element at that index. The data at the index of the row is replaced with the newData. 
       */
 
+  // useEffect(() => {
+  //   if (editRow !== null && dataSource[editRow]) {
+  //     const { name, description } = dataSource[editRow];
+  //     form.setFieldsValue({ name, description });
+  //   }
+  // }, [editRow]);
+
   useEffect(() => {
-    if (editRow !== null && dataSource[editRow]) {
-      const { name, description } = dataSource[editRow];
-      form.setFieldsValue({ name, description });
+    if (editRow === tableData.key) {
+      form.setFieldsValue({
+        name: tableData.name,
+        description: tableData.description,
+        data_type: tableData.data_type,
+        min: tableData?.min,
+        max: tableData?.max,
+        units: tableData?.units,
+        enumerations: { reference: tableData?.enumerations?.reference },
+      });
+      setType(tableData.data_type);
     }
-  }, [editRow]);
+  }, [editRow, tableData, form, setType]);
 
   const validateUnique = (_, value) => {
     // Validator function for form. Checks if the term being added already exists.
@@ -189,15 +200,10 @@ export const EditVariable = ({
                 setType('');
               }}
               maskClosable={false}
+              destroyOnClose={true}
             >
               {' '}
-              <Form
-                form={form}
-                layout="vertical"
-                initialValues={{
-                  data_type: tableData.data_type,
-                }}
-              >
+              <Form form={form} layout="vertical" preserve={false}>
                 <Space
                   style={{
                     display: 'flex',
@@ -266,7 +272,13 @@ export const EditVariable = ({
                     />
                   </Form.Item>
                 </Space>
-                <DataTypeSubForm type={type} />
+                <EditDataTypeSubForm
+                  type={type}
+                  setType={setType}
+                  form={form}
+                  editRow={editRow}
+                  tableData={tableData}
+                />
               </Form>
             </Modal>
           </>
