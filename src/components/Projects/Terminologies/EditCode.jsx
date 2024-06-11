@@ -74,7 +74,7 @@ export const EditCode = ({
       )
     ) {
       message.error(
-        `"${row.code}" already exists. Please choose a different name.`
+        `"${row.code}" already exists in the Terminology. Please choose a different name.`
       );
     } else {
       setLoading(true);

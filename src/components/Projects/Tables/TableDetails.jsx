@@ -97,45 +97,45 @@ export const TableDetails = () => {
     {
       title: 'Name',
       dataIndex: 'name',
-      render: (text, tableData) => {
-        if (editRow === tableData.key) {
-          return (
-            <Form.Item
-              name="name"
-              rules={[
-                { required: true, message: 'Please enter variable name.' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          );
-        } else {
-          return <p>{text}</p>;
-        }
-      },
+      // render: (text, tableData) => {
+      //   if (editRow === tableData.key) {
+      //     return (
+      //       <Form.Item
+      //         name="name"
+      //         rules={[
+      //           { required: true, message: 'Please enter variable name.' },
+      //         ]}
+      //       >
+      //         <Input />
+      //       </Form.Item>
+      //     );
+      //   } else {
+      //     return <p>{text}</p>;
+      //   }
+      // },
     },
     {
       title: 'Description',
       dataIndex: 'description',
-      render: (text, tableData) => {
-        if (editRow === tableData.key) {
-          return (
-            <Form.Item
-              name="description"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please enter variable description.',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          );
-        } else {
-          return <p>{text}</p>;
-        }
-      },
+      // render: (text, tableData) => {
+      //   if (editRow === tableData.key) {
+      //     return (
+      //       <Form.Item
+      //         name="description"
+      //         rules={[
+      //           {
+      //             required: true,
+      //             message: 'Please enter variable description.',
+      //           },
+      //         ]}
+      //       >
+      //         <Input />
+      //       </Form.Item>
+      //     );
+      //   } else {
+      //     return <p>{text}</p>;
+      //   }
+      // },
     },
     { title: 'Data Type', dataIndex: 'data_type' },
     { title: 'Enumerations', dataIndex: 'enumeration' },
