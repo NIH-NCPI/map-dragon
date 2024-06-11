@@ -81,76 +81,101 @@ export const EditVariable = ({
       );
     }
   };
-  const handleSubmit = values => {
-    console.log(values);
-    // const row = await form.validateFields();
-    // const index = dataSource.findIndex(item => key === item.key);
-    // const newData = [...dataSource];
-    // if (index > -1) {
-    //   const item = newData[index];
-    //   newData.splice(index, 1, {
-    //     ...item,
-    //     ...row,
-    //   });
-    // }
-
+  const handleSubmit = async values => {
     // // Object to put in the body of the PATCH request. Provides the old variable
-    // // and replaces with the updated variable and/or description on the back end.
-    // // The variable in the associdated mappings is automatically udpated on the back end.
-    // const updatedRowDTO = {
-    //   variable: {
-    //     [`${dataSource[index].name}`]: `${row.name}`,
-    //   },
-    //   description: {
-    //     [dataSource[index].name]: row.description,
-    //   },
-    // };
+    // // and replaces with the updated variable on the back end.
+    // // The variable in the associated mappings is automatically udpated on the back end.
+    const updatedName = {
+      variable: {
+        [`${tableData.name}`]: `${values.name}`,
+      },
+    };
 
-    // if (
-    //   table.variables.some(
-    //     item =>
-    //       item.name.toLowerCase() === row.name.toLowerCase() &&
-    //       dataSource[index].name.toLowerCase() !== row.name.toLowerCase()
-    //   )
-    // ) {
-    //   message.error(
-    //     `"${row.name}" already exists. Please choose a different name.`
-    //   );
-    // } else {
-    //   setLoading(true);
-    //   handlePatch(vocabUrl, 'Table', table, updatedRowDTO)
-    //     .then(data => {
-    //       setTable(data);
-    //       setDataSource(newData);
-    //       setEditRow('');
-    //       message.success('Changes saved successfully.');
-    //     })
-    //     .catch(error => {
-    //       if (error) {
-    //         notification.error({
-    //           message: 'Error',
-    //           description:
-    //             'An error occurred updating the row. Please try again.',
-    //         });
-    //       }
-    //       return error;
-    //     })
-    //     .then(() =>
-    //       getById(vocabUrl, 'Table', `${tableId}/mapping`)
-    //         .then(data => setMapping(data.codes))
-    //         .catch(error => {
-    //           if (error) {
-    //             notification.error({
-    //               message: 'Error',
-    //               description:
-    //                 'An error occurred loading mappings. Please try again.',
-    //             });
-    //           }
-    //           return error;
-    //         })
-    //     )
-    //     .finally(() => setLoading(false));
-    // }
+    if (
+      !table.variables.some(
+        item => item.name.toLowerCase() === values.name.toLowerCase()
+      )
+    ) {
+      handlePatch(vocabUrl, 'Table', table, updatedName)
+        .catch(error => {
+          if (error) {
+            notification.error({
+              message: 'Error',
+              description: 'An error occurred updating the name.',
+            });
+          }
+          return error;
+        })
+        .then(() =>
+          fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(values),
+          })
+            .then(res => {
+              if (res.ok) {
+                return res.json();
+              } else {
+                throw new Error('An unknown error occurred.');
+              }
+            })
+            .then(data => {
+              setTable(data);
+              message.success('Changes saved successfully.');
+            })
+        )
+        .then(() =>
+          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+            .then(data => setMapping(data.codes))
+            .catch(error => {
+              if (error) {
+                notification.error({
+                  message: 'Error',
+                  description:
+                    'An error occurred loading mappings. Please try again.',
+                });
+              }
+              return error;
+            })
+        );
+      // .finally(() => setLoading(false));
+    } else {
+      fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      })
+        .then(res => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw new Error('An unknown error occurred.');
+          }
+        })
+        .then(data => {
+          setTable(data);
+          message.success('Changes saved successfully.');
+        })
+
+        .then(() =>
+          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+            .then(data => setMapping(data.codes))
+            .catch(error => {
+              if (error) {
+                notification.error({
+                  message: 'Error',
+                  description:
+                    'An error occurred loading mappings. Please try again.',
+                });
+              }
+              return error;
+            })
+        );
+    }
   };
 
   return (
