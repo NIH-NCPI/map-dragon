@@ -5,10 +5,11 @@ import { getAll } from '../../Manager/FetchManager';
 import { EditDataTypeNumerical } from './EditDataTypeNumerical';
 import { ModalSpinner } from '../../Manager/Spinner';
 
-function EditDataTypeSubForm({ type, form, editRow, tableData, setType }) {
+function EditDataTypeSubForm({ type, form, editRow, tableData }) {
   const { vocabUrl } = useContext(myContext);
   const [terminologies, setTerminologies] = useState([]);
   const [terminologyLoading, setTerminologyLoading] = useState(false);
+
   useEffect(() => {
     if (type) {
       if (type === 'ENUMERATION') {
@@ -26,7 +27,7 @@ function EditDataTypeSubForm({ type, form, editRow, tableData, setType }) {
   }, [type]);
 
   const setEnumFieldValue = () => {
-    if (editRow === tableData.key && type === 'ENUMERATION') {
+    if (editRow === tableData.key && tableData.data_type === 'ENUMERATION') {
       form.setFieldsValue({
         enumerations: {
           reference: tableData.enumeration.props.to.slice(1),
@@ -34,17 +35,6 @@ function EditDataTypeSubForm({ type, form, editRow, tableData, setType }) {
       });
     }
   };
-
-  // useEffect(() => {
-  //   if (editRow === tableData.key && type === 'ENUMERATION') {
-  //     const referenceValue = tableData.enumeration.props.to.slice(1);
-  //     form.setFieldsValue({
-  //       enumerations: {
-  //         reference: referenceValue,
-  //       },
-  //     });
-  //   }
-  // }, [editRow, tableData, form, type]);
 
   return (
     <>
@@ -88,7 +78,5 @@ function EditDataTypeSubForm({ type, form, editRow, tableData, setType }) {
     </>
   );
 }
-
-const ModalContents = () => {};
 
 export default EditDataTypeSubForm;

@@ -35,19 +35,6 @@ export const EditVariable = ({
   const { tableId } = useParams();
   const [type, setType] = useState('');
 
-  /* Submit function to edit a row. The input field is validated to ensure it is not empty.
-     The index of the row being edited is found by the key of the row in the dataSource. 
-     The element at that index is set to the index variable. If the index exists, item is set to 
-     the element at that index. The data at the index of the row is replaced with the newData. 
-      */
-
-  // useEffect(() => {
-  //   if (editRow !== null && dataSource[editRow]) {
-  //     const { name, description } = dataSource[editRow];
-  //     form.setFieldsValue({ name, description });
-  //   }
-  // }, [editRow]);
-
   useEffect(() => {
     if (editRow === tableData.key) {
       form.setFieldsValue({
@@ -79,6 +66,7 @@ export const EditVariable = ({
       );
     }
   };
+
   const handleSubmit = async values => {
     // // Object to put in the body of the PATCH request. Provides the old variable
     // // and replaces with the updated variable on the back end.
@@ -143,7 +131,6 @@ export const EditVariable = ({
               return error;
             })
         );
-      // .finally(() => setLoading(false));
     } else {
       fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
         method: 'PUT',
