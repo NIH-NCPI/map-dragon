@@ -25,8 +25,6 @@ export const EditVariable = ({
   tableData,
   table,
   setTable,
-  dataSource,
-  setDataSource,
   form,
   loading,
   setLoading,
@@ -91,6 +89,11 @@ export const EditVariable = ({
       },
     };
 
+    //If there is a change in the variable name, the name is first sent to the 'rename' endpoint
+    // with a PATCH request to update the name and the code name for the associated mappings.
+    // All the values from the form are then sent for editing with a PUT request.
+    // Else if there is not a change in the name, all the form values are  sent to the variable.name
+    // endpoint with a PUT request to edit the data for the variable.
     if (
       !table.variables.some(
         item => item.name.toLowerCase() === values.name.toLowerCase()
@@ -298,6 +301,7 @@ export const EditVariable = ({
                   </Form.Item>
                 </Space>
                 <EditDataTypeSubForm
+                  setLoading={setLoading}
                   type={type}
                   setType={setType}
                   form={form}

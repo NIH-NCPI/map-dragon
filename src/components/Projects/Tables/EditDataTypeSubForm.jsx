@@ -3,41 +3,62 @@ import { myContext } from '../../../App';
 import { Form, Select } from 'antd';
 import { getAll } from '../../Manager/FetchManager';
 import { EditDataTypeNumerical } from './EditDataTypeNumerical';
+import { ModalSpinner } from '../../Manager/Spinner';
 
 function EditDataTypeSubForm({ type, form, editRow, tableData, setType }) {
   const { vocabUrl } = useContext(myContext);
   const [terminologies, setTerminologies] = useState([]);
-
+  const [terminologyLoading, setTerminologyLoading] = useState(false);
   useEffect(() => {
-    type === 'ENUMERATION' &&
-      getAll(vocabUrl, 'Terminology').then(data => setTerminologies(data));
+    if (type) {
+      if (type === 'ENUMERATION') {
+        setTerminologyLoading(true);
+        getAll(vocabUrl, 'Terminology')
+          .then(data => setTerminologies(data))
+          .then(() => {
+            setEnumFieldValue();
+          })
+          .then(() => {
+            setTerminologyLoading(false);
+          });
+      }
+    }
   }, [type]);
 
-  useEffect(() => {
+  const setEnumFieldValue = () => {
     if (editRow === tableData.key && type === 'ENUMERATION') {
       form.setFieldsValue({
         enumerations: {
           reference: tableData.enumeration.props.to.slice(1),
         },
       });
-
-      console.log(tableData.enumeration.props.to.slice(1));
     }
-  }, [editRow, tableData, form]);
+  };
 
-  // console.log(tableData);
+  // useEffect(() => {
+  //   if (editRow === tableData.key && type === 'ENUMERATION') {
+  //     const referenceValue = tableData.enumeration.props.to.slice(1);
+  //     form.setFieldsValue({
+  //       enumerations: {
+  //         reference: referenceValue,
+  //       },
+  //     });
+  //   }
+  // }, [editRow, tableData, form, type]);
+
   return (
     <>
       {type === 'INTEGER' || type === 'QUANTITY' ? (
         <EditDataTypeNumerical />
       ) : (
-        type === 'ENUMERATION' && (
+        type === 'ENUMERATION' &&
+        (!terminologyLoading ? (
           <Form.Item label="Terminology" name={['enumerations', 'reference']}>
             <Select
               value={form.getFieldValue(['enumerations', 'reference'])}
-              onChange={() =>
-                console.log(form.getFieldValue(['enumerations', 'reference']))
-              }
+              onChange={value => {
+                form.setFieldsValue({ enumerations: { reference: value } });
+              }}
               showSearch
               style={{
                 width: '50%',
@@ -60,10 +81,14 @@ function EditDataTypeSubForm({ type, form, editRow, tableData, setType }) {
               })}
             />
           </Form.Item>
-        )
+        ) : (
+          <ModalSpinner />
+        ))
       )}
     </>
   );
 }
+
+const ModalContents = () => {};
 
 export default EditDataTypeSubForm;

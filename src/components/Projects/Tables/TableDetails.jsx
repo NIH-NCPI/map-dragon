@@ -124,8 +124,6 @@ export const TableDetails = () => {
                     setTable={setTable}
                     tableData={tableData}
                     form={form}
-                    dataSource={dataSource}
-                    setDataSource={setDataSource}
                     loading={loading}
                     setLoading={setLoading}
                   />
@@ -342,8 +340,6 @@ There is then a tooltip that displays the variables on hover.*/
           </div>
         </div>
       )}
-
-      {/* Modal to edit details */}
 
       {/* Displays the edit form */}
       <EditTableDetails
