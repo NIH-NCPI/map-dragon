@@ -97,45 +97,10 @@ export const TableDetails = () => {
     {
       title: 'Name',
       dataIndex: 'name',
-      render: (text, tableData) => {
-        if (editRow === tableData.key) {
-          return (
-            <Form.Item
-              name="name"
-              rules={[
-                { required: true, message: 'Please enter variable name.' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          );
-        } else {
-          return <p>{text}</p>;
-        }
-      },
     },
     {
       title: 'Description',
       dataIndex: 'description',
-      render: (text, tableData) => {
-        if (editRow === tableData.key) {
-          return (
-            <Form.Item
-              name="description"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please enter variable description.',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          );
-        } else {
-          return <p>{text}</p>;
-        }
-      },
     },
     { title: 'Data Type', dataIndex: 'data_type' },
     { title: 'Enumerations', dataIndex: 'enumeration' },
@@ -159,8 +124,6 @@ export const TableDetails = () => {
                     setTable={setTable}
                     tableData={tableData}
                     form={form}
-                    dataSource={dataSource}
-                    setDataSource={setDataSource}
                     loading={loading}
                     setLoading={setLoading}
                   />
@@ -207,6 +170,9 @@ There is then a tooltip that displays the variables on hover.*/
         name: variable.name,
         description: variable.description,
         data_type: variable.data_type,
+        min: variable.min,
+        max: variable.max,
+        units: variable.units,
         enumeration: variable.data_type === 'ENUMERATION' && (
           <Link to={`/${variable.enumerations.reference}`}>View/Edit</Link>
         ),
@@ -260,30 +226,13 @@ There is then a tooltip that displays the variables on hover.*/
   // Expandable rows for integer and quantity data types to display their additional data.
   // The additional elements include min, max, and units properties.
   const expandedRowRender = record => {
-    const columns = [
-      {
-        title: 'Min',
-        dataIndex: 'min',
-        key: 'min',
-      },
-      {
-        title: 'Max',
-        dataIndex: 'max',
-        key: 'max',
-      },
-      {
-        title: 'Units',
-        dataIndex: 'units',
-        key: 'units',
-      },
-    ];
-
-    const data = {
-      min: record.min,
-      max: record.max,
-      units: record.units,
-    };
-    return <Table columns={columns} dataSource={data} pagination={false} />;
+    return (
+      <div className="expanded_row">
+        <div>Min: {record.min}</div>
+        <div>Max: {record.max}</div>
+        <div>Units: {record.units}</div>
+      </div>
+    );
   };
 
   return (
@@ -354,16 +303,7 @@ There is then a tooltip that displays the variables on hover.*/
                     columns={columns}
                     dataSource={dataSource}
                     expandable={{
-                      expandedRowRender: record => (
-                        <p
-                          style={{
-                            marginLeft: 50,
-                          }}
-                        >
-                          min: {record.min} max: {record.max} units:
-                          {record.units}
-                        </p>
-                      ),
+                      expandedRowRender,
                       rowExpandable: record =>
                         record.data_type === 'INTEGER' ||
                         record.data_type === 'QUANTITY',
@@ -400,8 +340,6 @@ There is then a tooltip that displays the variables on hover.*/
           </div>
         </div>
       )}
-
-      {/* Modal to edit details */}
 
       {/* Displays the edit form */}
       <EditTableDetails
