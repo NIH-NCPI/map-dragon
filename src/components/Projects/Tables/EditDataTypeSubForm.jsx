@@ -39,7 +39,7 @@ function EditDataTypeSubForm({ type, form, editRow, tableData }) {
   return (
     <>
       {type === 'INTEGER' || type === 'QUANTITY' ? (
-        <EditDataTypeNumerical />
+        <EditDataTypeNumerical form={form} />
       ) : (
         type === 'ENUMERATION' &&
         (!terminologyLoading ? (
