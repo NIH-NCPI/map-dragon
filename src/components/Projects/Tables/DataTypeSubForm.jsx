@@ -16,7 +16,7 @@ function DataTypeSubForm({ form, type }) {
   return (
     <>
       {type === 'INTEGER' || type === 'QUANTITY' ? (
-        <DataTypeNumerical form={form} />
+        <DataTypeNumerical form={form} type={type} />
       ) : (
         type === 'ENUMERATION' && (
           <Form.Item label="Terminology" name={['enumerations', 'reference']}>

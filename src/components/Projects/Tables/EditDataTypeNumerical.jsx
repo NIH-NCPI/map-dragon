@@ -1,6 +1,6 @@
-import { Form, Input, Space } from 'antd';
+import { Form, Input, InputNumber, Space } from 'antd';
 
-export const EditDataTypeNumerical = ({ form }) => {
+export const EditDataTypeNumerical = ({ type, form }) => {
   // Validation function to ensure values are numbers and min is less than max
   const validateMinMax = () => {
     const min = parseFloat(form.getFieldValue('min'));
@@ -18,6 +18,16 @@ export const EditDataTypeNumerical = ({ form }) => {
   const handleFieldChange = () => {
     form.validateFields(['min', 'max']);
   };
+
+  // If the type is not an integer, the input field will allow up to 10 decimal places
+  // and will not display the trailing zeros.
+  const formatter = value => {
+    if (type !== 'INTEGER' && typeof value === 'number' && !isNaN(value)) {
+      return value.toFixed(10).replace(/\.?0+$/, '');
+    }
+    return value;
+  };
+
   return (
     <>
       <Space
@@ -40,14 +50,15 @@ export const EditDataTypeNumerical = ({ form }) => {
             },
           ]}
         >
-          <Input
-            type="number"
+          <InputNumber
             style={{
               width: '15vw',
             }}
             placeholder="Min"
             autoFocus
             onChange={handleFieldChange}
+            precision={type === 'INTEGER' ? 0 : 10}
+            formatter={formatter}
           />
         </Form.Item>
         <Form.Item
@@ -60,13 +71,14 @@ export const EditDataTypeNumerical = ({ form }) => {
             },
           ]}
         >
-          <Input
-            type="number"
+          <InputNumber
             style={{
               width: '15vw',
             }}
             placeholder="Max"
             onChange={handleFieldChange}
+            precision={type === 'INTEGER' ? 0 : 10}
+            formatter={formatter}
           />
         </Form.Item>
         <Form.Item preserve={false} label="Units" name={['units']}>
