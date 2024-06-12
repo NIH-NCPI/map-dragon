@@ -4,7 +4,7 @@ import { Form, Select } from 'antd';
 import { DataTypeNumerical } from './DataTypeNumerical';
 import { getAll } from '../../Manager/FetchManager';
 
-function DataTypeSubForm({ type }) {
+function DataTypeSubForm({ form, type }) {
   const { vocabUrl } = useContext(myContext);
   const [terminologies, setTerminologies] = useState([]);
 
@@ -16,7 +16,7 @@ function DataTypeSubForm({ type }) {
   return (
     <>
       {type === 'INTEGER' || type === 'QUANTITY' ? (
-        <DataTypeNumerical />
+        <DataTypeNumerical form={form} type={type} />
       ) : (
         type === 'ENUMERATION' && (
           <Form.Item label="Terminology" name={['enumerations', 'reference']}>

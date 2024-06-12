@@ -27,6 +27,7 @@ import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { EditVariable } from './EditVariable';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { AddVariable } from './AddVariable';
+import { ExpandedRowTable } from './ExpandedRowTable';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -227,11 +228,12 @@ There is then a tooltip that displays the variables on hover.*/
   // The additional elements include min, max, and units properties.
   const expandedRowRender = record => {
     return (
-      <div className="expanded_row">
-        <div>Min: {record.min}</div>
-        <div>Max: {record.max}</div>
-        <div>Units: {record.units}</div>
-      </div>
+      <ExpandedRowTable record={record} />
+      // <div className="expanded_row">
+      //   <div>Min: {record.min}</div>
+      //   <div>Max: {record.max}</div>
+      //   <div>Units: {record.units}</div>
+      // </div>
     );
   };
 
@@ -303,6 +305,7 @@ There is then a tooltip that displays the variables on hover.*/
                     columns={columns}
                     dataSource={dataSource}
                     expandable={{
+                      expandRowByClick: 'true',
                       expandedRowRender,
                       rowExpandable: record =>
                         record.data_type === 'INTEGER' ||
