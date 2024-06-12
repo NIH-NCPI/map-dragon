@@ -143,7 +143,7 @@ export const AddVariable = ({ table, setTable }) => {
               />
             </Form.Item>
           </Space>
-          <DataTypeSubForm type={type} />
+          <DataTypeSubForm form={form} type={type} />
         </Form>
       </Modal>
     </>

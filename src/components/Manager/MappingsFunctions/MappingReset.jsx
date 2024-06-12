@@ -1,20 +1,13 @@
 import { Checkbox, Form, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import {
-  ellipsisString,
-  ontologyFilter,
-  ontologyReducer,
-  systemsMatch,
-} from '../Utilitiy';
+import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
 
 export const MappingReset = ({
   searchProp,
   setEditMappings,
   form,
-  mappingsForSearch,
-  reset,
   onClose,
 }) => {
   const { searchUrl } = useContext(myContext);

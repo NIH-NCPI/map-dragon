@@ -1,6 +1,21 @@
 import { Form, Input, Space } from 'antd';
 
-export const DataTypeNumerical = () => {
+export const DataTypeNumerical = ({ form }) => {
+  const validateMin = () => {
+    // Validator function for form. Checks if the term being added already exists.
+    const min = form.getFieldValue('min');
+    const max = form.getFieldValue('max');
+
+    if (min !== undefined && max !== undefined && min >= max) {
+      return Promise.reject(
+        new Error('Min value must be less than max value.')
+      );
+    }
+    return Promise.resolve();
+  };
+
+  // const validateNumber = ()
+
   return (
     <>
       <Space
@@ -18,10 +33,11 @@ export const DataTypeNumerical = () => {
           label="Min"
           name={['min']}
           rules={[
-            {
-              required: true,
-              message: 'Min value is required.',
-            },
+            { validator: validateMin },
+            // {
+            //   required: true,
+            //   message: 'Min value is required.',
+            // },
           ]}
         >
           <Input
@@ -37,10 +53,12 @@ export const DataTypeNumerical = () => {
           label="Max"
           name={['max']}
           rules={[
-            {
-              required: true,
-              message: 'Max value is required.',
-            },
+            { validator: validateMin },
+
+            // {
+            //   required: true,
+            //   message: 'Max value is required.',
+            // },
           ]}
         >
           <Input
@@ -54,12 +72,12 @@ export const DataTypeNumerical = () => {
           preserve={false}
           label="Units"
           name={['units']}
-          rules={[
-            {
-              required: true,
-              message: 'Units are required.',
-            },
-          ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: 'Units are required.',
+          //   },
+          // ]}
         >
           <Input
             style={{

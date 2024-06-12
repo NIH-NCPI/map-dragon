@@ -1,4 +1,4 @@
-import { Checkbox, Modal, Form, Tooltip } from 'antd';
+import { Checkbox, message, Modal, Form, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
@@ -80,7 +80,10 @@ export const GetMappingsModal = ({
           throw new Error('An unknown error occurred.');
         }
       })
-      .then(data => setMapping(data.codes));
+      .then(data => {
+        setMapping(data.codes);
+        message.success('Changes saved successfully.');
+      });
   };
 
   // The function that makes the API call to search for the passed code.

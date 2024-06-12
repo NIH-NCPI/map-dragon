@@ -17,12 +17,12 @@ export const EditDataTypeNumerical = () => {
           }}
           label="Min"
           name={['min']}
-          rules={[
-            {
-              required: true,
-              message: 'Min value is required.',
-            },
-          ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: 'Min value is required.',
+          //   },
+          // ]}
         >
           <Input
             style={{
@@ -36,12 +36,12 @@ export const EditDataTypeNumerical = () => {
           preserve={false}
           label="Max"
           name={['max']}
-          rules={[
-            {
-              required: true,
-              message: 'Max value is required.',
-            },
-          ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: 'Max value is required.',
+          //   },
+          // ]}
         >
           <Input
             style={{
@@ -54,12 +54,12 @@ export const EditDataTypeNumerical = () => {
           preserve={false}
           label="Units"
           name={['units']}
-          rules={[
-            {
-              required: true,
-              message: 'Units are required.',
-            },
-          ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: 'Units are required.',
+          //   },
+          // ]}
         >
           <Input
             style={{
