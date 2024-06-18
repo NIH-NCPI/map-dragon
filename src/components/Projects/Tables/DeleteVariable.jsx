@@ -1,7 +1,6 @@
 import { Button, message, notification, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
-import { handleUpdate } from '../../Manager/FetchManager';
 import { useContext } from 'react';
 import { myContext } from '../../../App';
 
@@ -10,10 +9,21 @@ import { myContext } from '../../../App';
 export const DeleteVariable = ({ tableData, table, setTable }) => {
   const { vocabUrl } = useContext(myContext);
 
-  const handleDelete = index => {
-    table.variables.splice(index, 1);
-
-    handleUpdate(vocabUrl, 'Table', table, table)
+  const handleVarDelete = varName => {
+    fetch(`${vocabUrl}/Table/${table.id}/variable/${varName}`, {
+      method: 'DELETE',
+    })
+      .then(response => response.json())
+      .then(() => {
+        return fetch(`${vocabUrl}/Table/${table.id}`);
+      })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
       .then(data => {
         setTable(data);
         message.success('Variable deleted successfully.');
@@ -33,7 +43,7 @@ export const DeleteVariable = ({ tableData, table, setTable }) => {
   return (
     <Popconfirm
       title="Are you sure you want to delete this row?"
-      onConfirm={() => handleDelete(tableData.key)}
+      onConfirm={() => handleVarDelete(tableData.name)}
     >
       <Button
         size="small"
