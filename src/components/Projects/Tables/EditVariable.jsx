@@ -97,7 +97,7 @@ export const EditVariable = ({
           }
           return error;
         })
-        .then(() =>
+        .then(() => {
           fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
             method: 'PUT',
             headers: {
@@ -115,8 +115,8 @@ export const EditVariable = ({
             .then(data => {
               setTable(data);
               message.success('Changes saved successfully.');
-            })
-        )
+            });
+        })
         .then(() =>
           getById(vocabUrl, 'Table', `${tableId}/mapping`)
             .then(data => setMapping(data.codes))
