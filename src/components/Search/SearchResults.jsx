@@ -145,7 +145,12 @@ The user is then redirected to the search page, which completes the search for t
                             <div>
                               <b>{d.label}</b>
                             </div>
-                            <div>{d.obo_id}</div>
+                            <div>
+                              {' '}
+                              <a href={d.iri} target="_blank">
+                                {d.obo_id}
+                              </a>
+                            </div>
                           </div>
                           <div>{d.description}</div>
                           <div>Ontology: {d.ontology_prefix}</div>

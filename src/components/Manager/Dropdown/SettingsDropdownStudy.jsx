@@ -12,10 +12,10 @@ export const SettingsDropdownStudy = () => {
       label: 'Edit',
       key: '0',
     },
-    {
-      label: 'Invite collaborators',
-      key: '1',
-    },
+    // {
+    //   label: 'Invite collaborators',
+    //   key: '1',
+    // },
     {
       label: 'Delete',
       key: '2',

@@ -20,7 +20,7 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   const [fileList, setFileList] = useState([]);
   const { vocabUrl, dataDictionary, setDataDictionary, setTable, table } =
     useContext(myContext);
-  const { DDId } = useParams();
+  const { studyId, DDId } = useParams();
   const navigate = useNavigate();
 
   //POST call to create a new table in a data dictionary (DD)
@@ -41,7 +41,9 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
             setDataDictionary(updatedData);
             message.success('Table uploaded successfully.');
 
-            navigate(`/DataDictionary/${DDId}/Table/${data.id}`);
+            navigate(
+              `/Study/${studyId}/DataDictionary/${DDId}/Table/${data.id}`
+            );
           })
           .catch(error => {
             if (error) {

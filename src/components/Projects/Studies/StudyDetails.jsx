@@ -100,7 +100,7 @@ export const StudyDetails = () => {
                     {/* Displays study name if there is one. If no name, displays study id */}
                     <h2>{study?.name ? study?.name : study?.id}</h2>
                   </div>
-                  <div className="study_">{study?.title}</div>
+                  <div className="study_desc">{study?.title}</div>
                   <div className="study_desc">
                     {/* Displays the study description if there is one.
                     If there is no description, 'No description provided' is displayed in a gray font */}

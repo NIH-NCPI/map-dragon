@@ -227,14 +227,7 @@ There is then a tooltip that displays the variables on hover.*/
   // Expandable rows for integer and quantity data types to display their additional data.
   // The additional elements include min, max, and units properties.
   const expandedRowRender = record => {
-    return (
-      <ExpandedRowTable record={record} />
-      // <div className="expanded_row">
-      //   <div>Min: {record.min}</div>
-      //   <div>Max: {record.max}</div>
-      //   <div>Units: {record.units}</div>
-      // </div>
-    );
+    return <ExpandedRowTable record={record} />;
   };
 
   return (
