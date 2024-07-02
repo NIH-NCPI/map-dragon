@@ -92,7 +92,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
             >
               <Input
                 style={{
-                  width: '15vw',
+                  width: '13vw',
                 }}
                 autoFocus
               />
@@ -102,10 +102,19 @@ export const AddCode = ({ terminology, setTerminology }) => {
               label="Code display"
               rules={[{ required: true, message: 'Input variable display' }]}
             >
+              <Input
+                rows={1}
+                style={{
+                  width: '13vw',
+                }}
+                autoFocus
+              />
+            </Form.Item>
+            <Form.Item name={['description']} label="Code description">
               <TextArea
                 rows={1}
                 style={{
-                  width: '39vw',
+                  width: '30vw',
                 }}
                 autoFocus
               />
