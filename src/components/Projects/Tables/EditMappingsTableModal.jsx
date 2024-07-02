@@ -40,7 +40,7 @@ export const EditMappingsTableModal = ({
     if (editMappings) {
       setLoading(true);
       return fetch(
-        `${vocabUrl}/Table/${tableId}/mapping/${editMappings.name}`,
+        `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`,
         {
           method: 'GET',
           headers: {
@@ -132,7 +132,7 @@ export const EditMappingsTableModal = ({
       values?.mappings?.forEach(v => mappings.push(JSON.parse(v)));
       return { mappings: mappings };
     };
-    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.name}`, {
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ export const EditMappingsTableModal = ({
       return { mappings: combinedMappings };
     };
 
-    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.name}`, {
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

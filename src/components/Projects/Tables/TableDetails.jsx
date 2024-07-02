@@ -147,7 +147,7 @@ There is then a tooltip that displays the variables on hover.*/
     mapping?.length > 0 &&
     mapping?.map(
       (item, index) =>
-        item.code === variable.name &&
+        item.code === variable.code &&
         item?.mappings?.length > 0 && (
           <Tooltip
             title={item.mappings.map(code => {
@@ -187,10 +187,10 @@ There is then a tooltip that displays the variables on hover.*/
 
           mapping?.length > 0 ? (
             mapping?.some(
-              m => m?.code === variable.name && m?.mappings?.length > 0
+              m => m?.code === variable.code && m?.mappings?.length > 0
             ) ? (
               <button
-                key={variable.name}
+                key={variable.code}
                 className="manage_term_button"
                 onClick={() => setEditMappings(variable)}
               >
@@ -360,6 +360,7 @@ There is then a tooltip that displays the variables on hover.*/
         setGetMappings={setGetMappings}
         setMapping={setMapping}
         tableId={tableId}
+        mappingProp={getMappings?.code}
       />
       <ClearMappings propId={tableId} component={'Table'} />
     </>

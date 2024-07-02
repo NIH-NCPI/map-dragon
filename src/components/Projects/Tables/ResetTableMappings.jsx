@@ -13,7 +13,7 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
   // setReset is set to true to open the modal that performs the search for the code again.
   const handleDelete = evt => {
-    return fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.name}`, {
+    return fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'DELETE',
     })
       .then(response => response.json())

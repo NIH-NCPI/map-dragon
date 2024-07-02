@@ -36,8 +36,8 @@ export const EditCode = ({
 
   useEffect(() => {
     if (editRow !== null && dataSource[editRow]) {
-      const { code, display } = dataSource[editRow];
-      form.setFieldsValue({ code, display });
+      const { code, display, description } = dataSource[editRow];
+      form.setFieldsValue({ code, display, description });
     }
   }, [editRow]);
 
@@ -61,6 +61,9 @@ export const EditCode = ({
       },
       display: {
         [dataSource[index].code]: row.display,
+      },
+      description: {
+        [dataSource[index].code]: row.description,
       },
     };
 

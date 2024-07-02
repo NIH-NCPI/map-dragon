@@ -67,6 +67,7 @@ There is then a tooltip that displays the codes on hover.*/
 
         code: code.code,
         display: code.display,
+        description: code.description,
         mapped_terms: matchCode(code),
         get_mappings:
           /* If the mapping array length is greather than 0, we check if there is a matching mapped code
@@ -182,7 +183,7 @@ There is then a tooltip that displays the codes on hover.*/
     {
       title: 'Display',
       dataIndex: 'display',
-      width: 460,
+      width: 180,
       render: (text, tableData) => {
         if (editRow === tableData.key) {
           return (
@@ -192,6 +193,22 @@ There is then a tooltip that displays the codes on hover.*/
                 { required: true, message: 'Please enter code display.' },
               ]}
             >
+              <Input />
+            </Form.Item>
+          );
+        } else {
+          return <p>{text}</p>;
+        }
+      },
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      width: 305,
+      render: (text, tableData) => {
+        if (editRow === tableData.key) {
+          return (
+            <Form.Item name="description">
               <Input />
             </Form.Item>
           );
@@ -308,6 +325,7 @@ There is then a tooltip that displays the codes on hover.*/
             setGetMappings={setGetMappings}
             setMapping={setMapping}
             terminologyId={terminologyId}
+            mappingProp={getMappings?.code}
           />
 
           {/* Displays the edit form */}

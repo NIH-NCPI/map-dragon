@@ -10,6 +10,7 @@ export const GetMappingsModal = ({
   setMapping,
   searchProp,
   component,
+  mappingProp,
 }) => {
   const [form] = Form.useForm();
   const { searchUrl, vocabUrl } = useContext(myContext);
@@ -64,7 +65,7 @@ export const GetMappingsModal = ({
       return { mappings: mappings };
     };
     fetch(
-      `${vocabUrl}/${componentString}/${component.id}/mapping/${searchProp}`,
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
       {
         method: 'PUT',
         headers: {
