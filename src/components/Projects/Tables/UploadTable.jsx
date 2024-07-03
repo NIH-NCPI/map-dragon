@@ -29,7 +29,33 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   // tables array is set to the copy with the new table in the PUT call (handleUpdate function)
   const tableUpload = values => {
     const newTableArray = [...dataDictionary?.tables];
-    handlePost(vocabUrl, 'LoadTable', values)
+    fetch(`${vocabUrl}/LoadTable`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then(error => {
+            if (res.status === 400) {
+              notification.error({
+                message: 'Error',
+                description: `${JSON.parse(error.message_to_user)}`,
+                duration: 10,
+              });
+            } else {
+              notification.error({
+                message: 'Error',
+                description: `An error occurred uploading the table.`,
+              });
+            }
+          });
+        }
+      })
       .then(data => {
         setTable(data);
         newTableArray.push({ 'reference': `Table/${data.id}` });
@@ -55,16 +81,6 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
             }
             return error;
           });
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred uploading the table. Please try again.',
-          });
-        }
-        return error;
       });
   };
 
