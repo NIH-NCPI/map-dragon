@@ -4,7 +4,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { myContext } from '../../../App';
 
 export const SettingsDropdownTerminology = () => {
-  const { clear, setEdit, setClear } = useContext(myContext);
+  const { setEdit, setClear, setDeleteState } = useContext(myContext);
 
   const items = [
     {
@@ -31,6 +31,8 @@ export const SettingsDropdownTerminology = () => {
         return setEdit(true);
       case '1':
         return setClear(true);
+      case '2':
+        return setDeleteState(true);
     }
   };
 

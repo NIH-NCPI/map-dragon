@@ -32,8 +32,7 @@ export const DeleteVariable = ({ tableData, table, setTable }) => {
         if (error) {
           notification.error({
             message: 'Error',
-            description:
-              'An error occurred deleting the variable. Please try again.',
+            description: 'An error occurred deleting the variable.',
           });
         }
         return error;

@@ -27,8 +27,7 @@ export const DeleteTable = ({ DDId, studyId }) => {
       content: (
         <>
           <div>
-            Deleting the table will permanently delete it and remove it from all
-            Data Dictionaries.
+            This will delete the table and remove it from all Data Dictionaries.
           </div>
           <div>
             <b>Are you sure you want to delete the Table?</b>
