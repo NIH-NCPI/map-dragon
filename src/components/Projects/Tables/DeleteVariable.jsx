@@ -13,29 +13,32 @@ export const DeleteVariable = ({ tableData, table, setTable }) => {
     fetch(`${vocabUrl}/Table/${table.id}/variable/${varName}`, {
       method: 'DELETE',
     })
-      .then(response => response.json())
-      .then(() => {
-        return fetch(`${vocabUrl}/Table/${table.id}`);
-      })
       .then(res => {
         if (res.ok) {
-          return res.json();
+          return res.json().then(data => {
+            message.success('Variable deleted successfully.');
+          });
         } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(data => {
-        setTable(data);
-        message.success('Variable deleted successfully.');
-      })
-      .catch(error => {
-        if (error) {
           notification.error({
             message: 'Error',
             description: 'An error occurred deleting the variable.',
           });
         }
-        return error;
+      })
+      .then(() => {
+        return fetch(`${vocabUrl}/Table/${table.id}`);
+      })
+      .then(res => {
+        if (res.ok) {
+          return res.json().then(data => {
+            setTable(data);
+          });
+        } else {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred loading the Table.',
+          });
+        }
       });
   };
 
