@@ -135,10 +135,10 @@ export const AddVariable = ({ table, setTable }) => {
                   setType(value);
                 }}
                 options={[
-                  { value: 'STRING', label: 'String' },
+                  { value: 'ENUMERATION', label: 'Enumeration' },
                   { value: 'INTEGER', label: 'Integer' },
                   { value: 'QUANTITY', label: 'Quantity' },
-                  { value: 'ENUMERATION', label: 'Enumeration' },
+                  { value: 'STRING', label: 'String' },
                 ]}
               />
             </Form.Item>

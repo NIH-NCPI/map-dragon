@@ -168,6 +168,7 @@ There is then a tooltip that displays the variables on hover.*/
     table?.variables?.map((variable, index) => {
       return {
         key: index,
+        code: variable.code,
         name: variable.name,
         description: variable.description,
         data_type: variable.data_type,
