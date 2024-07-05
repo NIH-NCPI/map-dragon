@@ -15,7 +15,13 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
     return fetch(`${vocabUrl}/DataDictionary/${DDId}/Table/${table.id}`, {
       method: 'DELETE',
     })
-      .then(response => response.json())
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
       .catch(error => {
         if (error) {
           notification.error({

@@ -3,14 +3,18 @@ import { myContext } from '../../../App';
 import { Form, Select } from 'antd';
 import { DataTypeNumerical } from './DataTypeNumerical';
 import { getAll } from '../../Manager/FetchManager';
+import { useNavigate } from 'react-router-dom';
 
 function DataTypeSubForm({ form, type }) {
   const { vocabUrl } = useContext(myContext);
   const [terminologies, setTerminologies] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     type === 'ENUMERATION' &&
-      getAll(vocabUrl, 'Terminology').then(data => setTerminologies(data));
+      getAll(vocabUrl, 'Terminology', navigate).then(data =>
+        setTerminologies(data)
+      );
   }, [type]);
 
   return (
