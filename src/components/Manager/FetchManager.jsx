@@ -19,27 +19,31 @@ export const getAll = (vocabUrl, name, navigate) => {
 };
 
 // Fetches one element by its id
-export const getById = (vocabUrl, name, id, navigate) => {
+export const getById = async (vocabUrl, name, id, navigate) => {
   return fetch(`${vocabUrl}/${name}/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then(res => {
-    if (res.ok) {
-      return res.json();
-    } else if (res.status === 404) {
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else if (res.status === 404) {
+        navigate('/404');
+      } else {
+        return res.json().then(error => {
+          throw new Error(error);
+        });
+      }
+    })
+    .catch(err => {
       navigate('/404');
-    } else {
-      return res.json().then(error => {
-        throw new Error(error);
-      });
-    }
-  });
+    });
 };
 
 // Deletes one element by its id
-export const handleDelete = (evt, vocabUrl, name, component, navigate) => {
+export const handleDelete = (evt, vocabUrl, name, component) => {
   return fetch(`${vocabUrl}/${name}/${component.id}`, {
     method: 'DELETE',
   })
@@ -59,7 +63,7 @@ export const handleDelete = (evt, vocabUrl, name, component, navigate) => {
 };
 
 // Updates one element by its id.
-export const handleUpdate = (vocabUrl, name, component, values, navigate) => {
+export const handleUpdate = (vocabUrl, name, component, values) => {
   return fetch(`${vocabUrl}/${name}/${component.id}`, {
     method: 'PUT',
     headers: {
@@ -78,7 +82,7 @@ export const handleUpdate = (vocabUrl, name, component, values, navigate) => {
 };
 
 // Posts a new element to an endpoint.
-export const handlePost = (vocabUrl, name, body, navigate) => {
+export const handlePost = (vocabUrl, name, body) => {
   return fetch(`${vocabUrl}/${name}`, {
     method: 'POST',
     headers: {
@@ -96,7 +100,7 @@ export const handlePost = (vocabUrl, name, body, navigate) => {
   });
 };
 
-export const handlePatch = (vocabUrl, name, component, body, navigate) => {
+export const handlePatch = (vocabUrl, name, component, body) => {
   return fetch(`${vocabUrl}/${name}/${component.id}/rename`, {
     method: 'PATCH',
     headers: {

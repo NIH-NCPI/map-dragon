@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 const { Meta } = Card;
 import {
@@ -38,6 +38,7 @@ export const DDDetails = () => {
   const [loading, setLoading] = useState(true);
   const [addTable, setAddTable] = useState(false);
 
+  const navigate = useNavigate();
   /* Function that maps through the tables array in a DD.
   For each table, it makes a fetch call to the id of the table.
   Promise.all fulfills all of the fetch calls. The response is set to tablesDD  */
@@ -58,11 +59,15 @@ export const DDDetails = () => {
     setLoading(true);
     getById(vocabUrl, 'DataDictionary', DDId)
       .then(data => {
-        setDataDictionary(data);
-        if (data) {
-          getDDTables(data);
+        if (data === null) {
+          navigate('/404');
         } else {
-          setLoading(false);
+          setDataDictionary(data);
+          if (data) {
+            getDDTables(data);
+          } else {
+            setLoading(false);
+          }
         }
       })
       .catch(error => {

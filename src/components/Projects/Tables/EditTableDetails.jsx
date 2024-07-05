@@ -9,9 +9,9 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
   // Sets the initial values displayed in the form and esnures they are current
   const changeHandler = () => {
     form.setFieldsValue({
-      name: table.name,
-      description: table.description,
-      url: table.url,
+      name: table?.name,
+      description: table?.description,
+      url: table?.url,
     });
   };
 
@@ -55,7 +55,7 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
           preserve={false}
           onChange={changeHandler()}
         >
-          <h2>{table.name ? table.name : table.id}</h2>
+          <h2>{table?.name ? table?.name : table?.id}</h2>
           <Form.Item
             name="name"
             label="Name"

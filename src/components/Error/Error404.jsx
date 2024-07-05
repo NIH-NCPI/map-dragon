@@ -4,7 +4,7 @@ import ErrorFrog from '../../assets/does_not_compute.jpg';
 export const Error404 = () => {
   return (
     <div className="error_container">
-      <div className="error_status_code">404</div>
+      <div className="error_status_code">Not Found</div>
       <img className="error_frog" alt="Sad Locu" src={ErrorFrog} />
       <div className="sad_locu">
         Locu is very sad that they don't understand your request.
