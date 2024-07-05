@@ -44,13 +44,14 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
             if (res.status === 400) {
               notification.error({
                 message: 'Error',
-                description: `${JSON.parse(error.message_to_user)}`,
-                duration: 10,
+                description: `${JSON.parse(
+                  error.message_to_user
+                )}, duration: 10`,
               });
             } else {
               notification.error({
                 message: 'Error',
-                description: `An error occurred uploading the table.`,
+                description: 'An error occurred uploading the table',
               });
             }
           });

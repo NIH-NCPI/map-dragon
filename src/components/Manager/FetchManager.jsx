@@ -1,5 +1,5 @@
 // Fetches all elements at an endpoint
-export const getAll = (vocabUrl, name) => {
+export const getAll = (vocabUrl, name, navigate) => {
   return fetch(`${vocabUrl}/${name}`, {
     method: 'GET',
     headers: {
@@ -8,26 +8,38 @@ export const getAll = (vocabUrl, name) => {
   }).then(res => {
     if (res.ok) {
       return res.json();
+    } else if (res.status === 404) {
+      navigate('/404');
     } else {
-      throw new Error('An unknown error occurred.');
+      return res.json().then(error => {
+        throw new Error(error);
+      });
     }
   });
 };
 
 // Fetches one element by its id
-export const getById = (vocabUrl, name, id) => {
+export const getById = async (vocabUrl, name, id, navigate) => {
   return fetch(`${vocabUrl}/${name}/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then(res => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      throw new Error('An unknown error occurred.');
-    }
-  });
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else if (res.status === 404) {
+        navigate('/404');
+      } else {
+        return res.json().then(error => {
+          throw new Error(error);
+        });
+      }
+    })
+    .catch(err => {
+      navigate('/404');
+    });
 };
 
 // Deletes one element by its id
@@ -43,7 +55,9 @@ export const handleDelete = (evt, vocabUrl, name, component) => {
       if (res.ok) {
         return res.json();
       } else {
-        throw new Error('An unknown error occurred.');
+        return res.json().then(error => {
+          throw new Error(error);
+        });
       }
     });
 };
@@ -60,7 +74,9 @@ export const handleUpdate = (vocabUrl, name, component, values) => {
     if (res.ok) {
       return res.json();
     } else {
-      throw new Error('An unknown error occurred.');
+      return res.json().then(error => {
+        throw new Error(error);
+      });
     }
   });
 };
@@ -73,7 +89,15 @@ export const handlePost = (vocabUrl, name, body) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
-  }).then(res => res.json());
+  }).then(res => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      return res.json().then(error => {
+        throw new Error(error);
+      });
+    }
+  });
 };
 
 export const handlePatch = (vocabUrl, name, component, body) => {
@@ -87,7 +111,9 @@ export const handlePatch = (vocabUrl, name, component, body) => {
     if (res.ok) {
       return res.json();
     } else {
-      throw new Error('An unknown error occurred.');
+      return res.json().then(error => {
+        throw new Error(error);
+      });
     }
   });
 };

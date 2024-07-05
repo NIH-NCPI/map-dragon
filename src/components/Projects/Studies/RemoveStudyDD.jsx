@@ -15,7 +15,13 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
     return fetch(`${vocabUrl}/Study/${studyId}/dd/${dd.id}`, {
       method: 'DELETE',
     })
-      .then(response => response.json())
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
       .catch(error => {
         if (error) {
           notification.error({

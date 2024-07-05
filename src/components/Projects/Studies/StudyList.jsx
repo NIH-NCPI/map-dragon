@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import './StudyStyling.scss';
 import '../../Manager/AddNewCard.scss';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { myContext } from '../../../App';
 import { Spinner } from '../../Manager/Spinner';
 import { getAll, handlePost } from '../../Manager/FetchManager';
@@ -15,11 +15,12 @@ export const StudyList = () => {
   const { addStudy, setAddStudy, vocabUrl } = useContext(myContext);
   const [studies, setStudies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // API call to fetch all studies. Sets response to 'studies' then sets loading to false
   useEffect(() => {
     setLoading(true);
-    getAll(vocabUrl, 'Study')
+    getAll(vocabUrl, 'Study', navigate)
       .then(data => setStudies(data))
       .catch(error => {
         if (error) {

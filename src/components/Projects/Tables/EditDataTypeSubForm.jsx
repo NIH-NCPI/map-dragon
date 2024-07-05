@@ -4,17 +4,19 @@ import { Form, Select } from 'antd';
 import { getAll } from '../../Manager/FetchManager';
 import { EditDataTypeNumerical } from './EditDataTypeNumerical';
 import { ModalSpinner } from '../../Manager/Spinner';
+import { useNavigate } from 'react-router-dom';
 
 function EditDataTypeSubForm({ type, form, editRow, tableData }) {
   const { vocabUrl } = useContext(myContext);
   const [terminologies, setTerminologies] = useState([]);
   const [terminologyLoading, setTerminologyLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (type) {
       if (type === 'ENUMERATION') {
         setTerminologyLoading(true);
-        getAll(vocabUrl, 'Terminology')
+        getAll(vocabUrl, 'Terminology', navigate)
           .then(data => setTerminologies(data))
           .then(() => {
             setEnumFieldValue();

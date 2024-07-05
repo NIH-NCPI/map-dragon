@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import './StudyStyling.scss';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
@@ -31,6 +31,7 @@ export const StudyDetails = () => {
   const { studyId } = useParams();
   const [addDD, setAddDD] = useState(false);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   /* Function that maps through the datadictionary array in a study.
   For each DD, it makes a fetch call to the id of the DD.
@@ -50,11 +51,15 @@ export const StudyDetails = () => {
   useEffect(() => {
     getById(vocabUrl, 'Study', studyId)
       .then(data => {
-        setStudy(data);
-        if (data) {
-          getStudyDDs(data);
+        if (data === null) {
+          navigate('/404');
         } else {
-          setLoading(false);
+          setStudy(data);
+          if (data) {
+            getStudyDDs(data);
+          } else {
+            setLoading(false);
+          }
         }
       })
       .catch(error => {

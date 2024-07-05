@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
@@ -33,7 +33,7 @@ export const Terminology = () => {
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
   const [editRow, setEditRow] = useState(null);
-
+  const navigate = useNavigate();
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
 The codes in the mappings need to be matched up to each code in the terminology.
 The function maps through the mapping array. For each code, if the mapping code is equal to the 
@@ -125,32 +125,35 @@ There is then a tooltip that displays the codes on hover.*/
   // Sets loading to false
   useEffect(() => {
     setLoading(true);
-    getById(vocabUrl, 'Terminology', terminologyId)
+    getById(vocabUrl, 'Terminology', terminologyId, navigate)
       .then(data => {
-        setTerminology(data);
-        if (data) {
-          getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
-            .then(data => setMapping(data.codes))
-            .catch(error => {
-              if (error) {
-                notification.error({
-                  message: 'Error',
-                  description:
-                    'An error occurred loading mappings. Please try again.',
-                });
-              }
-              return error;
-            });
+        console.log('THEN');
+        if (data === null) {
+          navigate('/404');
         } else {
-          setLoading(false);
+          setTerminology(data);
+          if (data) {
+            getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
+              .then(data => setMapping(data.codes))
+              .catch(error => {
+                if (error) {
+                  notification.error({
+                    message: 'Error',
+                    description: 'An error occurred loading mappings.',
+                  });
+                }
+                return error;
+              });
+          } else {
+            setLoading(false);
+          }
         }
       })
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
-            description:
-              'An error occurred loading the Terminology. Please try again.',
+            description: 'An error occurred loading the Terminology.',
           });
         }
         return error;

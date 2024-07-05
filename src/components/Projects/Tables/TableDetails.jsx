@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import './TableStyling.scss';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
 import {
@@ -45,6 +45,7 @@ export const TableDetails = () => {
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
   const [editRow, setEditRow] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setDataSource(tableData(table));
@@ -55,22 +56,26 @@ export const TableDetails = () => {
     setLoading(true);
     getById(vocabUrl, 'Table', tableId)
       .then(data => {
-        setTable(data);
-        if (data) {
-          getById(vocabUrl, 'Table', `${tableId}/mapping`)
-            .then(data => setMapping(data.codes))
-            .catch(error => {
-              if (error) {
-                notification.error({
-                  message: 'Error',
-                  description:
-                    'An error occurred loading mappings. Please try again.',
-                });
-              }
-              return error;
-            });
+        if (data === null) {
+          navigate('/404');
         } else {
-          setLoading(false);
+          setTable(data);
+          if (data) {
+            getById(vocabUrl, 'Table', `${tableId}/mapping`)
+              .then(data => setMapping(data.codes))
+              .catch(error => {
+                if (error) {
+                  notification.error({
+                    message: 'Error',
+                    description:
+                      'An error occurred loading mappings. Please try again.',
+                  });
+                }
+                return error;
+              });
+          } else {
+            setLoading(false);
+          }
         }
       })
       .catch(error => {
@@ -292,7 +297,7 @@ There is then a tooltip that displays the variables on hover.*/
             />
             {/* ant.design table displaying the pre-defined columns and data, with expandable rows. 
             The expandable rows currently show the min, max, and units properties with no styling. */}
-            {table.variables.length > 0 ? (
+            {table?.variables?.length > 0 ? (
               <>
                 <Form form={form}>
                   <Table
