@@ -25,7 +25,7 @@ export const GetMappingsModal = ({
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
-  const [currentSearchProp, setCurrentSearchProp] = useState(searchProp); //
+  const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
 
   let ref = useRef();
 
