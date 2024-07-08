@@ -1,4 +1,4 @@
-import { Checkbox, message, Modal, Form, Tooltip } from 'antd';
+import { Checkbox, Input, message, Modal, Form, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
@@ -13,6 +13,8 @@ export const GetMappingsModal = ({
   mappingProp,
 }) => {
   const [form] = Form.useForm();
+  const { Search } = Input;
+
   const { searchUrl, vocabUrl } = useContext(myContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
@@ -22,6 +24,7 @@ export const GetMappingsModal = ({
   const [resultsCount, setResultsCount] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
+  const [inputValue, setInputValue] = useState(searchProp);
 
   let ref = useRef();
 
@@ -29,8 +32,9 @@ export const GetMappingsModal = ({
   // if there is a code being passed, it evaluates to true and runs the search function.
   // The function is run when the page changes and when the code changes.
   useEffect(() => {
+    setInputValue(searchProp);
     if (!!searchProp) {
-      fetchResults(page);
+      fetchResults(page, searchProp);
     }
   }, [page, searchProp]);
 
@@ -55,6 +59,9 @@ export const GetMappingsModal = ({
     []
   );
 
+  const onSearch = searchProp => {
+    fetchResults(page, searchProp);
+  };
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
@@ -89,7 +96,7 @@ export const GetMappingsModal = ({
 
   // The function that makes the API call to search for the passed code.
 
-  const fetchResults = page => {
+  const fetchResults = (page, searchProp) => {
     if (!!!searchProp) {
       return undefined;
     }
@@ -168,7 +175,9 @@ export const GetMappingsModal = ({
       </>
     );
   };
-
+  const handleChange = e => {
+    setInputValue(e.target.value);
+  };
   return (
     <>
       <Modal
@@ -203,10 +212,16 @@ export const GetMappingsModal = ({
               <>
                 <div className="modal_search_results">
                   <div className="modal_search_results_header">
-                    <h3>Search results for: {searchProp}</h3>
+                    <h3>Search results for: </h3>
+                    <div className="mappings_search_bar">
+                      <Search
+                        onSearch={onSearch}
+                        value={inputValue}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
                   {/* ant.design form displaying the checkboxes with the search results.  */}
-
                   {results?.length > 0 ? (
                     <div className="result_container">
                       <Form form={form} layout="vertical">
