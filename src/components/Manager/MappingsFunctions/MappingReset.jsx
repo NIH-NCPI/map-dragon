@@ -1,4 +1,4 @@
-import { Checkbox, Form, Tooltip } from 'antd';
+import { Checkbox, Form, Input, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
@@ -19,17 +19,33 @@ export const MappingReset = ({
   const [resultsCount, setResultsCount] = useState(); //
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
+  const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
+  const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
 
   let ref = useRef();
+  const { Search } = Input;
 
-  // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
-  // if there is a code being passed, it evaluates to true and runs the search function.
-  // The function is run when the page changes and when the code changes.
+  // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
+  // if there is a searchProp being passed, it evaluates to true and runs the search function.
+  // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
+  // The function is run when the code changes.
   useEffect(() => {
+    setInputValue(searchProp);
+    setCurrentSearchProp(searchProp);
+    setPage(0);
     if (!!searchProp) {
-      fetchResults(page);
+      fetchResults(0, searchProp);
     }
-  }, [page, searchProp]);
+  }, [searchProp]);
+
+  // The '!!' forces currentSearchProp to be evaluated as a boolean.
+  // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
+  // The function is run when the code and when the page changes.
+  useEffect(() => {
+    if (!!currentSearchProp) {
+      fetchResults(page, currentSearchProp);
+    }
+  }, [page, currentSearchProp]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -52,9 +68,15 @@ export const MappingReset = ({
     []
   );
 
+  // Sets currentSearchProp to the value of the search bar and sets page to 0.
+  const handleSearch = query => {
+    setCurrentSearchProp(query);
+    setPage(0);
+  };
+
   // The function that makes the API call to search for the passed code.
-  const fetchResults = page => {
-    if (!!!searchProp) {
+  const fetchResults = (page, query) => {
+    if (!!!query) {
       return undefined;
     }
     setLoading(true);
@@ -64,7 +86,7 @@ export const MappingReset = ({
     on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
     return fetch(
-      `${searchUrl}q=${searchProp}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
+      `${searchUrl}q=${query}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
       {
         method: 'GET',
         headers: {
@@ -106,7 +128,7 @@ export const MappingReset = ({
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
   const handleViewMore = e => {
     e.preventDefault();
-    setPage(page + 1);
+    setPage(prevPage => prevPage + 1);
   };
 
   // The display for the checkboxes. The index is set to the count of the results before you fetch the new batch of results
@@ -140,19 +162,9 @@ export const MappingReset = ({
     );
   };
 
-  const viewMorePagination = (
-    <span
-      className="view_more_link"
-      onClick={e => {
-        handleViewMore(e);
-        // the lastcount being set to resultsCount prior to fetching the next batch of results
-        setLastCount(resultsCount);
-      }}
-    >
-      View More
-    </span>
-  );
-
+  const handleChange = e => {
+    setInputValue(e.target.value);
+  };
   return (
     <>
       <div className="results_modal_container">
@@ -161,7 +173,14 @@ export const MappingReset = ({
             <>
               <div className="modal_search_results">
                 <div className="modal_search_results_header">
-                  <h3>Search results for: {searchProp}</h3>
+                  <h3>Search results for: </h3>
+                  <div className="mappings_search_bar">
+                    <Search
+                      onSearch={handleSearch}
+                      value={inputValue}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
                 {/* ant.design form displaying the checkboxes with the search results.  */}
                 {results?.length > 0 ? (
@@ -209,8 +228,17 @@ export const MappingReset = ({
                         Displaying {resultsCount}
                         &nbsp;of&nbsp;{totalCount}
                       </Tooltip>
-                      {totalCount - filteredResultsCount !== resultsCount &&
-                        viewMorePagination}
+                      {totalCount - filteredResultsCount !== resultsCount && (
+                        <span
+                          className="view_more_link"
+                          onClick={e => {
+                            handleViewMore(e);
+                            setLastCount(resultsCount);
+                          }}
+                        >
+                          View More
+                        </span>
+                      )}
                     </div>
                   </div>
                 ) : (
