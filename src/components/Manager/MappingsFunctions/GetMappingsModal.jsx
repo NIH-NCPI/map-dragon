@@ -260,7 +260,7 @@ export const GetMappingsModal = ({
                                   value: JSON.stringify({
                                     code: d.obo_id,
                                     display: d.label,
-                                    // description: d.description[0],
+                                    description: d.description[0],
                                     system: systemsMatch(
                                       d?.obo_id.split(':')[0]
                                     ),

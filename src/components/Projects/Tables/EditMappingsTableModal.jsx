@@ -1,4 +1,12 @@
-import { Checkbox, Modal, Form, Button, notification, message } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Form,
+  message,
+  Modal,
+  notification,
+  Tooltip,
+} from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
@@ -6,6 +14,7 @@ import { MappingContext } from '../../../MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ResetTableMappings } from './ResetTableMappings';
+import { ellipsisString } from '../../Manager/Utilitiy';
 
 export const EditMappingsTableModal = ({
   editMappings,
@@ -73,7 +82,7 @@ export const EditMappingsTableModal = ({
             const val = JSON.stringify({
               code: m.code,
               display: m.display,
-              // description: m.description[0],
+              description: m.description,
               system: m?.system,
             });
 
@@ -116,7 +125,19 @@ export const EditMappingsTableModal = ({
                 {/* </a> */}
               </div>
             </div>
-            {/* <div>{ellipsisString(item?.description[0], '100')}</div> */}
+            <div>
+              {item?.description?.length > 100 ? (
+                <Tooltip
+                  mouseEnterDelay={0.5}
+                  title={item?.description}
+                  placement="topRight"
+                >
+                  {ellipsisString(item?.description, '100')}
+                </Tooltip>
+              ) : (
+                ellipsisString(item?.description, '100')
+              )}
+            </div>
           </div>
         </div>
       </>
