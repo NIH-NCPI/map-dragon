@@ -229,7 +229,7 @@ export const GetMappingsModal = ({
               <>
                 <div className="modal_search_results">
                   <div className="modal_search_results_header">
-                    <h3>Search results for: </h3>
+                    <h4>{searchProp}</h4>
                     <div className="mappings_search_bar">
                       <Search
                         onSearch={handleSearch}

@@ -1,4 +1,4 @@
-import { Checkbox, Form, Tooltip } from 'antd';
+import { Checkbox, Form, Input, notification, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
@@ -6,7 +6,6 @@ import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../MappingContext';
 
 export const MappingSearch = ({
-  editMappings,
   setEditMappings,
   form,
   mappingsForSearch,
@@ -23,28 +22,42 @@ export const MappingSearch = ({
   const [resultsCount, setResultsCount] = useState(); //
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
+  const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
+  const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
 
-  const { setExistingMappings, setFilteredMappings } =
-    useContext(MappingContext);
+  const {
+    setExistingMappings,
+    setFilteredMappings,
+    selectedMappings,
+    setSelectedMappings,
+    displaySelectedMappings,
+    setDisplaySelectedMappings,
+  } = useContext(MappingContext);
 
   let ref = useRef();
+  const { Search } = Input;
 
-  const onExistingChange = checkedValues => {
-    setExistingMappings(checkedValues);
-  };
-
-  const onFilteredChange = checkedvalues => {
-    setFilteredMappings(checkedvalues);
-  };
-
-  // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
-  // if there is a code being passed, it evaluates to true and runs the search function.
-  // The function is run when the page changes and when the code changes.
+  // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
+  // if there is a searchProp being passed, it evaluates to true and runs the search function.
+  // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
+  // The function is run when the code changes.
   useEffect(() => {
-    if (!!editMappings) {
-      fetchResults(page);
+    setInputValue(searchProp);
+    setCurrentSearchProp(searchProp);
+    setPage(0);
+    if (!!searchProp) {
+      fetchResults(0, searchProp);
     }
-  }, [page, editMappings]);
+  }, [searchProp]);
+
+  // The '!!' forces currentSearchProp to be evaluated as a boolean.
+  // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
+  // The function is run when the code and when the page changes.
+  useEffect(() => {
+    if (!!currentSearchProp) {
+      fetchResults(page, currentSearchProp);
+    }
+  }, [page, currentSearchProp]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -63,13 +76,19 @@ export const MappingSearch = ({
     () => () => {
       onClose();
       setEditMappings(null);
+      setSelectedMappings(null);
     },
     []
   );
 
+  const handleSearch = query => {
+    setCurrentSearchProp(query);
+    setPage(0);
+  };
+
   // The function that makes the API call to search for the passed code.
-  const fetchResults = page => {
-    if (!!!editMappings) {
+  const fetchResults = (page, query) => {
+    if (!!!query) {
       return undefined;
     }
     setLoading(true);
@@ -79,7 +98,7 @@ export const MappingSearch = ({
     on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
     return fetch(
-      `${searchUrl}q=${searchProp}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
+      `${searchUrl}q=${query}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
       {
         method: 'GET',
         headers: {
@@ -121,21 +140,49 @@ export const MappingSearch = ({
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
   const handleViewMore = e => {
     e.preventDefault();
-    setPage(page + 1);
+    setPage(prevPage => prevPage + 1);
   };
 
-  const viewMorePagination = (
-    <span
-      className="view_more_link"
-      onClick={e => {
-        handleViewMore(e);
-        // the lastCount being set to resultsCount prior to fetching the next batch of results
-        setLastCount(resultsCount);
-      }}
-    >
-      View More
-    </span>
-  );
+  // Sets the inputValue to the value of the search bar.
+  const handleChange = e => {
+    setInputValue(e.target.value);
+  };
+
+  const onExistingChange = checkedValues => {
+    setExistingMappings(checkedValues);
+  };
+
+  const onFilteredChange = checkedvalues => {
+    setFilteredMappings(checkedvalues);
+  };
+
+  const onSelectedChange = checkedValues => {
+    const selected = checkedValues.map(value => JSON.parse(value));
+    const selectedIds = new Set(selected.map(item => item.code));
+    const newSelectedMappings = [];
+    const newDisplaySelectedMappings = [];
+
+    // Update selectedMappings and displaySelectedMappings based on checkedValues
+    selected.forEach(item => {
+      const originalItem =
+        results.find(result => result.obo_id === item.code) ||
+        displaySelectedMappings.find(mapping => mapping.obo_id === item.code);
+      if (selectedIds.has(item.code)) {
+        newSelectedMappings.unshift(originalItem);
+        newDisplaySelectedMappings.unshift(originalItem);
+      }
+    });
+
+    // Filter out the selected items from the results and add unchecked items back to results
+    const updatedResults = [
+      ...results.filter(item => !selectedIds.has(item.obo_id)),
+      ...selectedMappings.filter(item => !selectedIds.has(item.obo_id)),
+    ];
+
+    setSelectedMappings(newSelectedMappings);
+    setDisplaySelectedMappings(newDisplaySelectedMappings);
+    setResults(updatedResults);
+  };
 
   // The display for the checkboxes. The index is set to the count of the results before you fetch the new batch of results
   // again + 1, to move the scrollbar to the first result of the new batch.
@@ -162,6 +209,28 @@ export const MappingSearch = ({
               </div>
             </div>
             <div>{ellipsisString(d?.description?.[0], '100')}</div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const selectedTermsDisplay = (d, index) => {
+    return (
+      <>
+        <div key={index} className="modal_search_result" id="scrollbar">
+          <div>
+            <div className="modal_term_ontology">
+              <div>
+                <b>{d?.label}</b>
+              </div>
+              <div>
+                <a href={d?.iri} target="_blank">
+                  {d?.obo_id}
+                </a>
+              </div>
+            </div>
+            <div>{ellipsisString(d?.description, '100')}</div>
           </div>
         </div>
       </>
@@ -216,7 +285,7 @@ export const MappingSearch = ({
       const val = JSON.stringify({
         code: m?.code,
         display: m?.display,
-        // description: m.description[0],
+        description: m?.description,
         system: m?.system,
       });
       initialMappings.push(val);
@@ -231,12 +300,15 @@ export const MappingSearch = ({
 
   // Creates a Set that excludes the mappings that have already been selected.
   // Then filteres the existing mappings out of the results to only display results that have not yet been selected.
-  const filteredResults = () => {
-    const codesToExclude = new Set(mappingsForSearch.map(m => m.code));
-    const updatedResults = results.filter(r => !codesToExclude.has(r.obo_id));
-    return updatedResults;
+  const getFilteredResults = () => {
+    const codesToExclude = new Set([
+      ...mappingsForSearch?.map(m => m?.code),
+      ...selectedMappings?.map(m => m?.code),
+    ]);
+    return results.filter(r => !codesToExclude.has(r.obo_id));
   };
-  const filteredResultsArray = filteredResults();
+
+  const filteredResultsArray = getFilteredResults();
 
   return (
     <>
@@ -246,7 +318,14 @@ export const MappingSearch = ({
             <>
               <div className="modal_search_results">
                 <div className="modal_search_results_header">
-                  <h3>Search results for: {searchProp}</h3>
+                  <h4>{searchProp}</h4>
+                  <div className="mappings_search_bar">
+                    <Search
+                      onSearch={handleSearch}
+                      value={inputValue}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
                 {/* ant.design form displaying the checkboxes with the search results.  */}
                 {results?.length > 0 ? (
@@ -271,7 +350,7 @@ export const MappingSearch = ({
                                 value: JSON.stringify({
                                   code: d.code,
                                   display: d.display,
-                                  // description: d.description[0],
+                                  description: d.description,
                                   system: d.system,
                                 }),
                                 label: existingMappingDisplay(d, index),
@@ -282,6 +361,37 @@ export const MappingSearch = ({
                         )}
                       </Form.Item>
 
+                      {displaySelectedMappings?.length > 0 && (
+                        <Form.Item
+                          name={['selected_mappings']}
+                          valuePropName="value"
+                          rules={[
+                            {
+                              required: false,
+                            },
+                          ]}
+                        >
+                          <Checkbox.Group
+                            className="mappings_checkbox"
+                            options={displaySelectedMappings?.map(
+                              (d, index) => {
+                                return {
+                                  value: JSON.stringify({
+                                    code: d?.obo_id,
+                                    display: d?.label,
+                                    description: d?.description[0],
+                                    system: systemsMatch(
+                                      d?.obo_id?.split(':')[0]
+                                    ),
+                                  }),
+                                  label: selectedTermsDisplay(d, index),
+                                };
+                              }
+                            )}
+                            onChange={onSelectedChange}
+                          />
+                        </Form.Item>
+                      )}
                       <Form.Item
                         name={['filtered_mappings']}
                         valuePropName="value"
@@ -299,7 +409,7 @@ export const MappingSearch = ({
                                 value: JSON.stringify({
                                   code: d.obo_id,
                                   display: d.label,
-                                  // description: d.description[0],
+                                  description: d.description[0],
                                   system: systemsMatch(
                                     d?.obo_id?.split(':')[0]
                                   ),
@@ -307,7 +417,7 @@ export const MappingSearch = ({
                                 label: newSearchDisplay(d, index),
                               };
                             })}
-                            onChange={onFilteredChange}
+                            onChange={onSelectedChange}
                           />
                         )}
                       </Form.Item>
@@ -324,8 +434,17 @@ export const MappingSearch = ({
                         Displaying {resultsCount}
                         &nbsp;of&nbsp;{totalCount}
                       </Tooltip>
-                      {totalCount - filteredResultsCount !== resultsCount &&
-                        viewMorePagination}
+                      {totalCount - filteredResultsCount !== resultsCount && (
+                        <span
+                          className="view_more_link"
+                          onClick={e => {
+                            handleViewMore(e);
+                            setLastCount(resultsCount);
+                          }}
+                        >
+                          View More
+                        </span>
+                      )}
                     </div>
                   </div>
                 ) : (

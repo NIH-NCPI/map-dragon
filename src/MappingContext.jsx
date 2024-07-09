@@ -9,6 +9,8 @@ export function MappingContextRoot() {
   const [mapping, setMapping] = useState({}); // mapped terms for an individual terminologys
   const [existingMappings, setExistingMappings] = useState([]);
   const [filteredMappings, setFilteredMappings] = useState([]);
+  const [selectedMappings, setSelectedMappings] = useState([]);
+  const [displaySelectedMappings, setDisplaySelectedMappings] = useState([]);
 
   const context = {
     editMappings,
@@ -21,6 +23,10 @@ export function MappingContextRoot() {
     setExistingMappings,
     filteredMappings,
     setFilteredMappings,
+    selectedMappings,
+    setSelectedMappings,
+    displaySelectedMappings,
+    setDisplaySelectedMappings,
   };
 
   return (

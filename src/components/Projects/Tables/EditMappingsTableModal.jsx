@@ -31,8 +31,6 @@ export const EditMappingsTableModal = ({
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
 
-  const { existingMappings, filteredMappings } = useContext(MappingContext);
-
   useEffect(() => {
     fetchMappings();
   }, [editMappings]);
