@@ -157,30 +157,28 @@ export const MappingSearch = ({
   };
 
   const onSelectedChange = checkedValues => {
-    const selected = checkedValues.map(value => JSON.parse(value));
-    const selectedIds = new Set(selected.map(item => item.code));
-    const newSelectedMappings = [];
-    const newDisplaySelectedMappings = [];
+    const selected = JSON.parse(checkedValues?.[0]);
+    const selectedMapping = results.filter(
+      result => result.obo_id === selected.code
+    );
 
-    // Update selectedMappings and displaySelectedMappings based on checkedValues
-    selected.forEach(item => {
-      const originalItem =
-        results.find(result => result.obo_id === item.code) ||
-        displaySelectedMappings.find(mapping => mapping.obo_id === item.code);
-      if (selectedIds.has(item.code)) {
-        newSelectedMappings.unshift(originalItem);
-        newDisplaySelectedMappings.unshift(originalItem);
-      }
+    // Find selected items from results
+    const newSelectedItems = selectedMapping.map(selectedItem => {
+      return results.find(result => result.obo_id === selectedItem.code);
     });
 
-    // Filter out the selected items from the results and add unchecked items back to results
-    const updatedResults = [
-      ...results.filter(item => !selectedIds.has(item.obo_id)),
-      ...selectedMappings.filter(item => !selectedIds.has(item.obo_id)),
-    ];
+    // Update selectedMappings and displaySelectedMappings to include the new selected items
+    setSelectedMappings([...selectedMappings, ...newSelectedItems]);
+    setDisplaySelectedMappings([
+      ...displaySelectedMappings,
+      ...selectedMapping,
+    ]);
 
-    setSelectedMappings(newSelectedMappings);
-    setDisplaySelectedMappings(newDisplaySelectedMappings);
+    // Filter out the selected items from the results
+    const updatedResults = results.filter(
+      result => result.obo_id !== selected.code
+    );
+    console.log('NEW REUSLTE!!!', updatedResults);
     setResults(updatedResults);
   };
 
@@ -276,7 +274,7 @@ export const MappingSearch = ({
     );
   };
 
-  // Iteratesw through the array of previously selected mappings. Returns a JSON stringified object that is pushed to a separate array.
+  // Iterates through the array of previously selected mappings. Returns a JSON stringified object that is pushed to a separate array.
   // That array is returned to use as default checked values separate from the search results.
   const initialChecked = () => {
     let initialMappings = [];
@@ -291,6 +289,21 @@ export const MappingSearch = ({
       initialMappings.push(val);
     });
     return initialMappings;
+  };
+
+  const initialCheckedSearch = () => {
+    let initialCheckedMappings = [];
+    console.log('DISPLAY SELECTED ', displaySelectedMappings);
+    displaySelectedMappings.forEach(d => {
+      const val = JSON.stringify({
+        code: d.obo_id,
+        display: d.label,
+        description: d.description?.[0],
+        system: systemsMatch(d.obo_id.split(':')[0]),
+      });
+      initialCheckedMappings.push(val);
+    });
+    return initialCheckedMappings;
   };
 
   // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
@@ -332,8 +345,7 @@ export const MappingSearch = ({
                   <div className="result_container">
                     <Form form={form} layout="vertical">
                       <Form.Item
-                        // If it is NOT in reset state (i.e. edit mode), default values are checked. If reset is set, default values are blank, since all values were deleted.
-                        initialValue={!reset ? initialChecked() : null}
+                        initialValue={initialChecked()}
                         name={['existing_mappings']}
                         valuePropName="value"
                         rules={[
@@ -363,6 +375,7 @@ export const MappingSearch = ({
 
                       {displaySelectedMappings?.length > 0 && (
                         <Form.Item
+                          initialValue={initialCheckedSearch()}
                           name={['selected_mappings']}
                           valuePropName="value"
                           rules={[
@@ -389,6 +402,14 @@ export const MappingSearch = ({
                               }
                             )}
                             onChange={onSelectedChange}
+                            checkedValues={displaySelectedMappings.map(d =>
+                              JSON.stringify({
+                                code: d.obo_id,
+                                display: d.label,
+                                description: d.description[0],
+                                system: systemsMatch(d.obo_id.split(':')[0]),
+                              })
+                            )}
                           />
                         </Form.Item>
                       )}
