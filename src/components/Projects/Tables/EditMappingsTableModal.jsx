@@ -185,18 +185,24 @@ export const EditMappingsTableModal = ({
   // The existing and new mappings are JSON.parsed and pushed to their respective arrays.
   // The arrays are combined into one mappings array and passed into the body of the PUT call.
   const editUpdatedMappings = values => {
+    console.log(values);
     const mappingsDTO = () => {
       const parsedFilteredMappings = [];
       const parsedExistingMappings = [];
+      const parsedSelectedMappings = [];
       values.filtered_mappings?.forEach(v =>
         parsedFilteredMappings.push(JSON.parse(v))
       );
       values.existing_mappings?.forEach(v =>
         parsedExistingMappings.push(JSON.parse(v))
       );
+      values.selected_mappings?.forEach(v =>
+        parsedSelectedMappings.push(JSON.parse(v))
+      );
       const combinedMappings = [
         ...parsedExistingMappings,
         ...parsedFilteredMappings,
+        ...parsedSelectedMappings,
       ];
       return { mappings: combinedMappings };
     };

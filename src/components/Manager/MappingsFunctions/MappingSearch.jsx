@@ -9,7 +9,6 @@ export const MappingSearch = ({
   setEditMappings,
   form,
   mappingsForSearch,
-  reset,
   onClose,
   searchProp,
 }) => {
@@ -24,10 +23,10 @@ export const MappingSearch = ({
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
+  const [selectedBoxes, setSelectedBoxes] = useState([]);
 
   const {
     setExistingMappings,
-    setFilteredMappings,
     selectedMappings,
     setSelectedMappings,
     displaySelectedMappings,
@@ -152,23 +151,22 @@ export const MappingSearch = ({
     setExistingMappings(checkedValues);
   };
 
-  const onFilteredChange = checkedvalues => {
-    setFilteredMappings(checkedvalues);
+  const onCheckboxChange = (event, code) => {
+    if (event.target.checked) {
+      setSelectedBoxes(prevState => [...prevState, code]);
+    } else {
+      setSelectedBoxes(prevState => prevState.filter(val => val !== code));
+    }
   };
-
   const onSelectedChange = checkedValues => {
     const selected = JSON.parse(checkedValues?.[0]);
     const selectedMapping = results.filter(
       result => result.obo_id === selected.code
     );
 
-    // Find selected items from results
-    const newSelectedItems = selectedMapping.map(selectedItem => {
-      return results.find(result => result.obo_id === selectedItem.code);
-    });
-
     // Update selectedMappings and displaySelectedMappings to include the new selected items
-    setSelectedMappings([...selectedMappings, ...newSelectedItems]);
+    setSelectedMappings([...selectedMappings, selectedMapping[0]]);
+    setSelectedBoxes(prevState => [...prevState, selected.code]);
     setDisplaySelectedMappings([
       ...displaySelectedMappings,
       ...selectedMapping,
@@ -293,7 +291,6 @@ export const MappingSearch = ({
 
   const initialCheckedSearch = () => {
     let initialCheckedMappings = [];
-    console.log('DISPLAY SELECTED ', displaySelectedMappings);
     displaySelectedMappings.forEach(d => {
       const val = JSON.stringify({
         code: d.obo_id,
@@ -384,33 +381,15 @@ export const MappingSearch = ({
                             },
                           ]}
                         >
-                          <Checkbox.Group
-                            className="mappings_checkbox"
-                            options={displaySelectedMappings?.map(
-                              (d, index) => {
-                                return {
-                                  value: JSON.stringify({
-                                    code: d?.obo_id,
-                                    display: d?.label,
-                                    description: d?.description[0],
-                                    system: systemsMatch(
-                                      d?.obo_id?.split(':')[0]
-                                    ),
-                                  }),
-                                  label: selectedTermsDisplay(d, index),
-                                };
-                              }
-                            )}
-                            onChange={onSelectedChange}
-                            checkedValues={displaySelectedMappings.map(d =>
-                              JSON.stringify({
-                                code: d.obo_id,
-                                display: d.label,
-                                description: d.description[0],
-                                system: systemsMatch(d.obo_id.split(':')[0]),
-                              })
-                            )}
-                          />
+                          {displaySelectedMappings?.map((sm, i) => (
+                            <Checkbox
+                              key={i}
+                              onChange={e => onCheckboxChange(e, sm.obo_id)}
+                              checked={selectedBoxes.includes(sm.obo_id)}
+                            >
+                              {selectedTermsDisplay(sm, i)}
+                            </Checkbox>
+                          ))}
                         </Form.Item>
                       )}
                       <Form.Item
