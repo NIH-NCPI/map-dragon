@@ -14,7 +14,7 @@ import { MappingContext } from '../../../MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ResetTableMappings } from './ResetTableMappings';
-import { ellipsisString } from '../../Manager/Utilitiy';
+import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 
 export const EditMappingsTableModal = ({
   editMappings,
@@ -186,19 +186,25 @@ export const EditMappingsTableModal = ({
   // The arrays are combined into one mappings array and passed into the body of the PUT call.
   const editUpdatedMappings = values => {
     console.log(values);
+    const selectedMappings = values.selected_mappings.map(item => ({
+      code: item.obo_id,
+      display: item.label,
+      description: item.description[0], // Assuming description is an array
+      system: systemsMatch(item.obo_id.split(':')[0]),
+    }));
     const mappingsDTO = () => {
       const parsedFilteredMappings = [];
       const parsedExistingMappings = [];
       const parsedSelectedMappings = [];
+
       values.filtered_mappings?.forEach(v =>
         parsedFilteredMappings.push(JSON.parse(v))
       );
       values.existing_mappings?.forEach(v =>
         parsedExistingMappings.push(JSON.parse(v))
       );
-      values.selected_mappings?.forEach(v =>
-        parsedSelectedMappings.push(JSON.parse(v))
-      );
+      selectedMappings.forEach(sm => parsedSelectedMappings.push(sm));
+
       const combinedMappings = [
         ...parsedExistingMappings,
         ...parsedFilteredMappings,

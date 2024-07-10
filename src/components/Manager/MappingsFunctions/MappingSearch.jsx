@@ -75,7 +75,8 @@ export const MappingSearch = ({
     () => () => {
       onClose();
       setEditMappings(null);
-      setSelectedMappings(null);
+      setSelectedMappings([]);
+      setDisplaySelectedMappings([]);
     },
     []
   );
@@ -151,32 +152,54 @@ export const MappingSearch = ({
     setExistingMappings(checkedValues);
   };
 
-  const onCheckboxChange = (event, code) => {
+  useEffect(() => {
+    form.setFieldsValue({ selected_mappings: selectedBoxes });
+  }, [selectedBoxes, form]);
+
+  const onCheckboxChange = (event, item) => {
+    const mappingObject = {
+      code: item.obo_id,
+      display: item.label,
+      description: item.description[0],
+      system: systemsMatch(item.obo_id.split(':')[0]),
+    };
     if (event.target.checked) {
-      setSelectedBoxes(prevState => [...prevState, code]);
+      setSelectedBoxes(prevState => {
+        const updated = [...prevState, mappingObject];
+        form.setFieldsValue({ selected_mappings: updated });
+        return updated;
+      });
     } else {
-      setSelectedBoxes(prevState => prevState.filter(val => val !== code));
+      setSelectedBoxes(prevState => {
+        const updated = prevState.filter(
+          val => val.code !== mappingObject.code
+        );
+        form.setFieldsValue({ selected_mappings: updated });
+
+        return updated;
+      });
     }
   };
+
   const onSelectedChange = checkedValues => {
     const selected = JSON.parse(checkedValues?.[0]);
-    const selectedMapping = results.filter(
+    const selectedMapping = results.find(
       result => result.obo_id === selected.code
     );
 
     // Update selectedMappings and displaySelectedMappings to include the new selected items
-    setSelectedMappings([...selectedMappings, selectedMapping[0]]);
-    setSelectedBoxes(prevState => [...prevState, selected.code]);
-    setDisplaySelectedMappings([
-      ...displaySelectedMappings,
-      ...selectedMapping,
-    ]);
+    setSelectedMappings(prevState => [...prevState, selectedMapping]);
+    setSelectedBoxes(prevState => {
+      const updated = [...prevState, selectedMapping];
+      form.setFieldsValue({ selected_mappings: updated });
+      return updated;
+    });
+    setDisplaySelectedMappings(prevState => [...prevState, selectedMapping]);
 
     // Filter out the selected items from the results
     const updatedResults = results.filter(
       result => result.obo_id !== selected.code
     );
-    console.log('NEW REUSLTE!!!', updatedResults);
     setResults(updatedResults);
   };
 
@@ -196,11 +219,11 @@ export const MappingSearch = ({
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d.label}</b>
+                <b>{d?.label}</b>
               </div>
               <div>
-                <a href={d.iri} target="_blank">
-                  {d.obo_id}
+                <a href={d?.iri} target="_blank">
+                  {d?.obo_id}
                 </a>
               </div>
             </div>
@@ -313,9 +336,9 @@ export const MappingSearch = ({
   const getFilteredResults = () => {
     const codesToExclude = new Set([
       ...mappingsForSearch?.map(m => m?.code),
-      ...selectedMappings?.map(m => m?.code),
+      ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude.has(r.obo_id));
+    return results.filter(r => !codesToExclude?.has(r.obo_id));
   };
 
   const filteredResultsArray = getFilteredResults();
@@ -372,20 +395,18 @@ export const MappingSearch = ({
 
                       {displaySelectedMappings?.length > 0 && (
                         <Form.Item
-                          initialValue={initialCheckedSearch()}
-                          name={['selected_mappings']}
+                          name="selected_mappings"
                           valuePropName="value"
-                          rules={[
-                            {
-                              required: false,
-                            },
-                          ]}
+                          rules={[{ required: false }]}
                         >
                           {displaySelectedMappings?.map((sm, i) => (
                             <Checkbox
                               key={i}
-                              onChange={e => onCheckboxChange(e, sm.obo_id)}
-                              checked={selectedBoxes.includes(sm.obo_id)}
+                              onChange={e => onCheckboxChange(e, sm)}
+                              checked={selectedBoxes.some(
+                                box => box.obo_id === sm.obo_id
+                              )}
+                              value={sm}
                             >
                               {selectedTermsDisplay(sm, i)}
                             </Checkbox>
