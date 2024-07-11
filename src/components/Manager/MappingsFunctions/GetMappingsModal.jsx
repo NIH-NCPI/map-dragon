@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
+import { MappingContext } from '../../../MappingContext';
 
 export const GetMappingsModal = ({
   componentString,
@@ -26,7 +27,15 @@ export const GetMappingsModal = ({
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
+  const [isChecked, setIsChecked] = useState([]);
 
+  const {
+    setSelectedMappings,
+    displaySelectedMappings,
+    setDisplaySelectedMappings,
+    selectedBoxes,
+    setSelectedBoxes,
+  } = useContext(MappingContext);
   let ref = useRef();
 
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
@@ -63,11 +72,20 @@ export const GetMappingsModal = ({
     }
   }, [results]);
 
-  // sets the code to null on dismount.
+  // Sets the value of the selected_mappings in the form to the checkboxes that are selected
+  useEffect(() => {
+    form.setFieldsValue({
+      selected_mappings: selectedBoxes,
+    });
+  }, [selectedBoxes, form]);
 
+  // Resets the states when unMounting
   useEffect(
     () => () => {
       setGetMappings(null);
+      setSelectedMappings([]);
+      setDisplaySelectedMappings([]);
+      setSelectedBoxes([]);
     },
     []
   );
@@ -82,10 +100,16 @@ export const GetMappingsModal = ({
   // The mappings are turned into objects in the mappings array.
   const handleSubmit = values => {
     const mappingsDTO = () => {
-      let mappings = [];
-      values?.mappings?.forEach(v => mappings.push(JSON.parse(v)));
-      return { mappings: mappings };
+      const selectedMappings = values?.selected_mappings?.map(item => ({
+        code: item.obo_id,
+        display: item.label,
+        description: item.description[0], // Assuming description is an array
+        system: systemsMatch(item.obo_id.split(':')[0]),
+      }));
+
+      return { mappings: selectedMappings };
     };
+
     fetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
       {
@@ -191,16 +215,84 @@ export const GetMappingsModal = ({
     );
   };
 
+  const selectedTermsDisplay = (d, index) => {
+    return (
+      <>
+        <div key={index} className="modal_search_result" id="scrollbar">
+          <div>
+            <div className="modal_term_ontology">
+              <div>
+                <b>{d?.label}</b>
+              </div>
+              <div>
+                <a href={d?.iri} target="_blank">
+                  {d?.obo_id}
+                </a>
+              </div>
+            </div>
+            <div>{ellipsisString(d?.description, '100')}</div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   // Sets the inputValue to the value of the search bar.
   const handleChange = e => {
     setInputValue(e.target.value);
   };
+
+  // If the checkbox is checked, it adds the object to the selectedBoxes array
+  // If it is unchecked, it filters it out of the selectedBoxes array.
+  const onCheckboxChange = (event, code) => {
+    if (event.target.checked) {
+      setSelectedBoxes(prevState => [...prevState, code]);
+    } else {
+      setSelectedBoxes(prevState => prevState.filter(val => val !== code));
+    }
+  };
+
+  const onSelectedChange = checkedValues => {
+    const selected = JSON.parse(checkedValues?.[0]);
+    const selectedMapping = results.find(
+      result => result.obo_id === selected.code
+    );
+
+    // Updates selectedMappings and displaySelectedMappings to include the new selected items
+    setSelectedMappings(prevState => [...prevState, selectedMapping]);
+
+    // Adds the selectedMappings to the selectedBoxes to ensure they are checked
+    setSelectedBoxes(prevState => {
+      const updated = [...prevState, selectedMapping];
+      form.setFieldsValue({ selected_mappings: updated });
+      return updated;
+    });
+
+    setDisplaySelectedMappings(prevState => [...prevState, selectedMapping]);
+
+    // Filters out the selected checkboxes from the results being displayed
+    const updatedResults = results.filter(
+      result => result.obo_id !== selected.code
+    );
+    setResults(updatedResults);
+  };
+
+  // Creates a Set that excludes the mappings that have already been selected.
+  // Then filteres the existing mappings out of the results to only display results that have not yet been selected.
+  const getFilteredResults = () => {
+    const codesToExclude = new Set([
+      ...displaySelectedMappings?.map(m => m?.code),
+    ]);
+    return results.filter(r => !codesToExclude?.has(r.obo_id));
+  };
+
+  const filteredResultsArray = getFilteredResults();
   return (
     <>
       <Modal
         open={!!searchProp}
         closeIcon={false}
-        width={'51%'}
+        width={'60%'}
         styles={{ body: { height: '60vh', overflowY: 'auto' } }}
         okText="Save"
         onOk={() => {
@@ -211,6 +303,9 @@ export const GetMappingsModal = ({
             setPage(0);
             setResults([]);
             setLoading(true);
+            setSelectedMappings([]);
+            setDisplaySelectedMappings([]);
+            setSelectedBoxes([]);
           });
         }}
         onCancel={() => {
@@ -219,6 +314,9 @@ export const GetMappingsModal = ({
           setPage(0);
           setResults([]);
           setLoading(true);
+          setSelectedMappings([]);
+          setDisplaySelectedMappings([]);
+          setSelectedBoxes([]);
         }}
         maskClosable={false}
         destroyOnClose={true}
@@ -242,20 +340,39 @@ export const GetMappingsModal = ({
                   {results?.length > 0 ? (
                     <div className="result_container">
                       <Form form={form} layout="vertical">
+                        {displaySelectedMappings?.length > 0 && (
+                          <Form.Item
+                            name="selected_mappings"
+                            valuePropName="value"
+                            rules={[{ required: false }]}
+                          >
+                            {displaySelectedMappings?.map((sm, i) => (
+                              <Checkbox
+                                key={i}
+                                checked={selectedBoxes.some(
+                                  box => box.obo_id === sm.obo_id
+                                )}
+                                value={sm}
+                                onChange={e => onCheckboxChange(e, sm, i)}
+                              >
+                                {selectedTermsDisplay(sm, i)}
+                              </Checkbox>
+                            ))}
+                          </Form.Item>
+                        )}
                         <Form.Item
-                          name={['mappings']}
+                          name={['filtered_mappings']}
                           valuePropName="value"
                           rules={[
                             {
-                              required: true,
-                              message: 'Please make a selection.',
+                              required: false,
                             },
                           ]}
                         >
-                          {results?.length > 0 ? (
+                          {filteredResultsArray?.length > 0 ? (
                             <Checkbox.Group
                               className="mappings_checkbox"
-                              options={results?.map((d, index) => {
+                              options={filteredResultsArray?.map((d, index) => {
                                 return {
                                   value: JSON.stringify({
                                     code: d.obo_id,
@@ -268,6 +385,7 @@ export const GetMappingsModal = ({
                                   label: checkBoxDisplay(d, index),
                                 };
                               })}
+                              onChange={onSelectedChange}
                             />
                           ) : (
                             ''

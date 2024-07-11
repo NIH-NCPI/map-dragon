@@ -30,6 +30,8 @@ export const EditMappingsTableModal = ({
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
+  const { setSelectedMappings, setDisplaySelectedMappings } =
+    useContext(MappingContext);
 
   useEffect(() => {
     fetchMappings();
@@ -192,33 +194,13 @@ export const EditMappingsTableModal = ({
       system: systemsMatch(item.obo_id.split(':')[0]),
     }));
     const mappingsDTO = () => {
-      const parsedFilteredMappings = [];
       const parsedExistingMappings = [];
-      const parsedSelectedMappings = [];
 
-      values.filtered_mappings?.forEach(v =>
-        parsedFilteredMappings.push(JSON.parse(v))
-      );
       values.existing_mappings?.forEach(v =>
         parsedExistingMappings.push(JSON.parse(v))
       );
-      selectedMappings?.forEach(sm => parsedSelectedMappings.push(sm));
 
-      // filtered_mappings will sometimes have a duplicate value with selected_mappings
-      // This filters out the filtered_mappings that already exist in selected_mappings
-      const filteredMappingsToInclude = parsedFilteredMappings.filter(
-        filteredItem => {
-          return !parsedSelectedMappings.some(
-            selectedItem => selectedItem.code === filteredItem.code
-          );
-        }
-      );
-
-      const combinedMappings = [
-        ...parsedExistingMappings,
-        ...filteredMappingsToInclude,
-        ...parsedSelectedMappings,
-      ];
+      const combinedMappings = [...parsedExistingMappings, ...selectedMappings];
       return { mappings: combinedMappings };
     };
 
@@ -256,7 +238,7 @@ export const EditMappingsTableModal = ({
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
       // if there is a code being passed, it evaluates to true and opens the modal.
       open={!!editMappings}
-      width={'51%'}
+      width={'60%'}
       styles={{ body: { height: '60vh', overflowY: 'auto' } }}
       okText="Save"
       onOk={() => {
@@ -266,7 +248,9 @@ export const EditMappingsTableModal = ({
             {
               /* Performs the updateMappings PUT call on 'Save' button click */
             }
-            editSearch ? editUpdatedMappings(values) : updateMappings(values);
+            editSearch || reset
+              ? editUpdatedMappings(values)
+              : updateMappings(values);
             clearData();
             form.resetFields();
             setEditMappings(null);
@@ -281,6 +265,8 @@ export const EditMappingsTableModal = ({
         setEditMappings(null);
         setReset(false);
         setEditSearch(false);
+        setSelectedMappings([]);
+        setDisplaySelectedMappings([]);
       }}
       closeIcon={false}
       maskClosable={false}
