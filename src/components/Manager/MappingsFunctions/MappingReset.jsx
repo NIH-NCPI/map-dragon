@@ -67,6 +67,13 @@ export const MappingReset = ({
     }
   }, [results]);
 
+  // Sets the value of the selected_mappings in the form to the checkboxes that are selected
+  useEffect(() => {
+    form.setFieldsValue({
+      selected_mappings: selectedBoxes,
+    });
+  }, [selectedBoxes, form]);
+
   // sets the code to null on dismount.
   useEffect(
     () => () => {
@@ -199,17 +206,14 @@ export const MappingReset = ({
     );
   };
 
+  // If the checkbox is checked, it adds the object to the selectedBoxes array
+  // If it is unchecked, it filters it out of the selectedBoxes array.
   const onCheckboxChange = (event, code) => {
-    const isChecked = event.target.checked;
-    setSelectedBoxes(prevState => {
-      let newSelectedBoxes;
-      if (isChecked) {
-        newSelectedBoxes = [...prevState, code];
-      } else {
-        newSelectedBoxes = prevState.filter(val => val.obo_id !== code.obo_id);
-      }
-      return newSelectedBoxes;
-    });
+    if (event.target.checked) {
+      setSelectedBoxes(prevState => [...prevState, code]);
+    } else {
+      setSelectedBoxes(prevState => prevState.filter(val => val !== code));
+    }
   };
 
   const onSelectedChange = checkedValues => {

@@ -194,33 +194,13 @@ export const EditMappingsTableModal = ({
       system: systemsMatch(item.obo_id.split(':')[0]),
     }));
     const mappingsDTO = () => {
-      const parsedFilteredMappings = [];
       const parsedExistingMappings = [];
-      const parsedSelectedMappings = [];
 
-      values.filtered_mappings?.forEach(v =>
-        parsedFilteredMappings.push(JSON.parse(v))
-      );
       values.existing_mappings?.forEach(v =>
         parsedExistingMappings.push(JSON.parse(v))
       );
-      selectedMappings?.forEach(sm => parsedSelectedMappings.push(sm));
 
-      // filtered_mappings will sometimes have a duplicate value with selected_mappings
-      // This filters out the filtered_mappings that already exist in selected_mappings
-      const filteredMappingsToInclude = parsedFilteredMappings.filter(
-        filteredItem => {
-          return !parsedSelectedMappings.some(
-            selectedItem => selectedItem.code === filteredItem.code
-          );
-        }
-      );
-
-      const combinedMappings = [
-        ...parsedExistingMappings,
-        ...filteredMappingsToInclude,
-        ...parsedSelectedMappings,
-      ];
+      const combinedMappings = [...parsedExistingMappings, ...selectedMappings];
       return { mappings: combinedMappings };
     };
 

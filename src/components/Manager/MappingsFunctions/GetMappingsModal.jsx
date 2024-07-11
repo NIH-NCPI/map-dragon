@@ -27,7 +27,7 @@ export const GetMappingsModal = ({
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
-  const [isChecked, setIsChecked] = useState(true);
+  const [isChecked, setIsChecked] = useState([]);
 
   const {
     setSelectedMappings,
@@ -72,6 +72,13 @@ export const GetMappingsModal = ({
     }
   }, [results]);
 
+  // Sets the value of the selected_mappings in the form to the checkboxes that are selected
+  useEffect(() => {
+    form.setFieldsValue({
+      selected_mappings: selectedBoxes,
+    });
+  }, [selectedBoxes, form]);
+
   // Resets the states when unMounting
   useEffect(
     () => () => {
@@ -92,62 +99,38 @@ export const GetMappingsModal = ({
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
   const handleSubmit = values => {
-    console.log('values', values);
-    const selectedMappings = values?.selected_mappings?.map(item => ({
-      code: item.obo_id,
-      display: item.label,
-      description: item.description[0], // Assuming description is an array
-      system: systemsMatch(item.obo_id.split(':')[0]),
-    }));
     const mappingsDTO = () => {
-      const parsedFilteredMappings = [];
-      const parsedSelectedMappings = [];
+      const selectedMappings = values?.selected_mappings?.map(item => ({
+        code: item.obo_id,
+        display: item.label,
+        description: item.description[0], // Assuming description is an array
+        system: systemsMatch(item.obo_id.split(':')[0]),
+      }));
 
-      values.filtered_mappings?.forEach(v =>
-        parsedFilteredMappings.push(JSON.parse(v))
-      );
-
-      selectedMappings?.forEach(sm => parsedSelectedMappings.push(sm));
-
-      // filtered_mappings will sometimes have a duplicate value with selected_mappings
-      // This filters out the filtered_mappings that already exist in selected_mappings
-      const filteredMappingsToInclude = parsedFilteredMappings.filter(
-        filteredItem => {
-          return !parsedSelectedMappings.some(
-            selectedItem => selectedItem.code === filteredItem.code
-          );
-        }
-      );
-
-      const combinedMappings = [
-        ...filteredMappingsToInclude,
-        ...parsedSelectedMappings,
-      ];
-      return { mappings: combinedMappings };
+      return { mappings: selectedMappings };
     };
-    console.log('DTO', mappingsDTO());
 
-    // fetch(
-    //   `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
-    //   {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(mappingsDTO()),
-    //   }
-    // )
-    //   .then(res => {
-    //     if (res.ok) {
-    //       return res.json();
-    //     } else {
-    //       throw new Error('An unknown error occurred.');
-    //     }
-    //   })
-    //   .then(data => {
-    //     setMapping(data.codes);
-    //     message.success('Changes saved successfully.');
-    //   });
+    fetch(
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO()),
+      }
+    )
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => {
+        setMapping(data.codes);
+        message.success('Changes saved successfully.');
+      });
   };
 
   // The function that makes the API call to search for the passed code.
@@ -259,30 +242,15 @@ export const GetMappingsModal = ({
     setInputValue(e.target.value);
   };
 
+  // If the checkbox is checked, it adds the object to the selectedBoxes array
+  // If it is unchecked, it filters it out of the selectedBoxes array.
   const onCheckboxChange = (event, code) => {
     if (event.target.checked) {
-      console.log('when checking', selectedBoxes);
-
       setSelectedBoxes(prevState => [...prevState, code]);
     } else {
       setSelectedBoxes(prevState => prevState.filter(val => val !== code));
-      console.log('after unchecking', selectedBoxes);
     }
   };
-
-  // const onCheckboxChange = (event, code) => {
-  //   const isChecked = event.target.checked;
-  //   setSelectedBoxes(prevState => {
-  //     let newSelectedBoxes;
-  //     if (isChecked) {
-  //       newSelectedBoxes = [...prevState, code];
-  //     } else {
-  //       newSelectedBoxes = prevState.filter(val => val.obo_id !== code.obo_id);
-  //     }
-  //     console.log('Updated selectedBoxes:', newSelectedBoxes); // Debugging: log the updated state
-  //     return newSelectedBoxes;
-  //   });
-  // };
 
   const onSelectedChange = checkedValues => {
     const selected = JSON.parse(checkedValues?.[0]);
@@ -385,7 +353,7 @@ export const GetMappingsModal = ({
                                   box => box.obo_id === sm.obo_id
                                 )}
                                 value={sm}
-                                onChange={e => onCheckboxChange(e, sm)}
+                                onChange={e => onCheckboxChange(e, sm, i)}
                               >
                                 {selectedTermsDisplay(sm, i)}
                               </Checkbox>
