@@ -1,4 +1,12 @@
-import { Checkbox, Modal, Form, Button, notification, message } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Form,
+  message,
+  Modal,
+  notification,
+  Tooltip,
+} from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
@@ -6,6 +14,7 @@ import { MappingContext } from '../../../MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ResetTableMappings } from './ResetTableMappings';
+import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 
 export const EditMappingsTableModal = ({
   editMappings,
@@ -21,8 +30,6 @@ export const EditMappingsTableModal = ({
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
-
-  const { existingMappings, filteredMappings } = useContext(MappingContext);
 
   useEffect(() => {
     fetchMappings();
@@ -73,7 +80,7 @@ export const EditMappingsTableModal = ({
             const val = JSON.stringify({
               code: m.code,
               display: m.display,
-              // description: m.description[0],
+              description: m.description,
               system: m?.system,
             });
 
@@ -116,7 +123,19 @@ export const EditMappingsTableModal = ({
                 {/* </a> */}
               </div>
             </div>
-            {/* <div>{ellipsisString(item?.description[0], '100')}</div> */}
+            <div>
+              {item?.description?.length > 100 ? (
+                <Tooltip
+                  mouseEnterDelay={0.5}
+                  title={item?.description}
+                  placement="topRight"
+                >
+                  {ellipsisString(item?.description, '100')}
+                </Tooltip>
+              ) : (
+                ellipsisString(item?.description, '100')
+              )}
+            </div>
           </div>
         </div>
       </>
@@ -166,18 +185,39 @@ export const EditMappingsTableModal = ({
   // The existing and new mappings are JSON.parsed and pushed to their respective arrays.
   // The arrays are combined into one mappings array and passed into the body of the PUT call.
   const editUpdatedMappings = values => {
+    const selectedMappings = values?.selected_mappings?.map(item => ({
+      code: item.obo_id,
+      display: item.label,
+      description: item.description[0], // Assuming description is an array
+      system: systemsMatch(item.obo_id.split(':')[0]),
+    }));
     const mappingsDTO = () => {
       const parsedFilteredMappings = [];
       const parsedExistingMappings = [];
+      const parsedSelectedMappings = [];
+
       values.filtered_mappings?.forEach(v =>
         parsedFilteredMappings.push(JSON.parse(v))
       );
       values.existing_mappings?.forEach(v =>
         parsedExistingMappings.push(JSON.parse(v))
       );
+      selectedMappings?.forEach(sm => parsedSelectedMappings.push(sm));
+
+      // filtered_mappings will sometimes have a duplicate value with selected_mappings
+      // This filters out the filtered_mappings that already exist in selected_mappings
+      const filteredMappingsToInclude = parsedFilteredMappings.filter(
+        filteredItem => {
+          return !parsedSelectedMappings.some(
+            selectedItem => selectedItem.code === filteredItem.code
+          );
+        }
+      );
+
       const combinedMappings = [
         ...parsedExistingMappings,
-        ...parsedFilteredMappings,
+        ...filteredMappingsToInclude,
+        ...parsedSelectedMappings,
       ];
       return { mappings: combinedMappings };
     };

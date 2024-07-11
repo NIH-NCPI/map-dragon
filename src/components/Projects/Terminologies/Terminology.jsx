@@ -127,7 +127,6 @@ There is then a tooltip that displays the codes on hover.*/
     setLoading(true);
     getById(vocabUrl, 'Terminology', terminologyId, navigate)
       .then(data => {
-        console.log('THEN');
         if (data === null) {
           navigate('/404');
         } else {
