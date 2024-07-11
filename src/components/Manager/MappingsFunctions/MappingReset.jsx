@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
+import { MappingContext } from '../../../MappingContext';
 
 export const MappingReset = ({
   searchProp,
@@ -22,6 +23,13 @@ export const MappingReset = ({
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
 
+  const {
+    setSelectedMappings,
+    displaySelectedMappings,
+    setDisplaySelectedMappings,
+    selectedBoxes,
+    setSelectedBoxes,
+  } = useContext(MappingContext);
   let ref = useRef();
   const { Search } = Input;
 
@@ -64,6 +72,9 @@ export const MappingReset = ({
     () => () => {
       onClose();
       setEditMappings(null);
+      setSelectedMappings([]);
+      setDisplaySelectedMappings([]);
+      setSelectedBoxes([]);
     },
     []
   );
@@ -165,6 +176,77 @@ export const MappingReset = ({
   const handleChange = e => {
     setInputValue(e.target.value);
   };
+
+  const selectedTermsDisplay = (d, index) => {
+    return (
+      <>
+        <div key={index} className="modal_search_result" id="scrollbar">
+          <div>
+            <div className="modal_term_ontology">
+              <div>
+                <b>{d?.label}</b>
+              </div>
+              <div>
+                <a href={d?.iri} target="_blank">
+                  {d?.obo_id}
+                </a>
+              </div>
+            </div>
+            <div>{ellipsisString(d?.description, '100')}</div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const onCheckboxChange = (event, code) => {
+    const isChecked = event.target.checked;
+    setSelectedBoxes(prevState => {
+      let newSelectedBoxes;
+      if (isChecked) {
+        newSelectedBoxes = [...prevState, code];
+      } else {
+        newSelectedBoxes = prevState.filter(val => val.obo_id !== code.obo_id);
+      }
+      return newSelectedBoxes;
+    });
+  };
+
+  const onSelectedChange = checkedValues => {
+    const selected = JSON.parse(checkedValues?.[0]);
+    const selectedMapping = results.find(
+      result => result.obo_id === selected.code
+    );
+
+    // Updates selectedMappings and displaySelectedMappings to include the new selected items
+    setSelectedMappings(prevState => [...prevState, selectedMapping]);
+
+    // Adds the selectedMappings to the selectedBoxes to ensure they are checked
+    setSelectedBoxes(prevState => {
+      const updated = [...prevState, selectedMapping];
+      form.setFieldsValue({ selected_mappings: updated });
+      return updated;
+    });
+
+    setDisplaySelectedMappings(prevState => [...prevState, selectedMapping]);
+
+    // Filters out the selected checkboxes from the results being displayed
+    const updatedResults = results.filter(
+      result => result.obo_id !== selected.code
+    );
+    setResults(updatedResults);
+  };
+
+  // Creates a Set that excludes the mappings that have already been selected.
+  // Then filteres the existing mappings out of the results to only display results that have not yet been selected.
+  const getFilteredResults = () => {
+    const codesToExclude = new Set([
+      ...displaySelectedMappings?.map(m => m?.code),
+    ]);
+    return results.filter(r => !codesToExclude?.has(r.obo_id));
+  };
+
+  const filteredResultsArray = getFilteredResults();
   return (
     <>
       <div className="results_modal_container">
@@ -186,8 +268,28 @@ export const MappingReset = ({
                 {results?.length > 0 ? (
                   <div className="result_container">
                     <Form form={form} layout="vertical">
+                      {displaySelectedMappings?.length > 0 && (
+                        <Form.Item
+                          name="selected_mappings"
+                          valuePropName="value"
+                          rules={[{ required: false }]}
+                        >
+                          {displaySelectedMappings?.map((sm, i) => (
+                            <Checkbox
+                              key={i}
+                              onChange={e => onCheckboxChange(e, sm)}
+                              checked={selectedBoxes.some(
+                                box => box.obo_id === sm.obo_id
+                              )}
+                              value={sm}
+                            >
+                              {selectedTermsDisplay(sm, i)}
+                            </Checkbox>
+                          ))}
+                        </Form.Item>
+                      )}
                       <Form.Item
-                        name={['mappings']}
+                        name={['filtered_mappings']}
                         valuePropName="value"
                         rules={[
                           {
@@ -196,10 +298,10 @@ export const MappingReset = ({
                           },
                         ]}
                       >
-                        {results?.length > 0 ? (
+                        {filteredResultsArray?.length > 0 ? (
                           <Checkbox.Group
                             className="mappings_checkbox"
-                            options={results?.map((d, index) => {
+                            options={filteredResultsArray?.map((d, index) => {
                               return {
                                 value: JSON.stringify({
                                   code: d.obo_id,
@@ -210,6 +312,7 @@ export const MappingReset = ({
                                 label: checkBoxDisplay(d, index),
                               };
                             })}
+                            onChange={onSelectedChange}
                           />
                         ) : (
                           ''

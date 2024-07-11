@@ -243,7 +243,7 @@ export const EditMappingsModal = ({
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
       // if there is a code being passed, it evaluates to true and opens the modal.
       open={!!editMappings}
-      width={'51%'}
+      width={'60%'}
       styles={{ body: { height: '60vh', overflowY: 'auto' } }}
       okText="Save"
       onOk={() => {

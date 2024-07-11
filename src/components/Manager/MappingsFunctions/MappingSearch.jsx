@@ -23,14 +23,14 @@ export const MappingSearch = ({
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
-  const [selectedBoxes, setSelectedBoxes] = useState([]);
 
   const {
     setExistingMappings,
-    selectedMappings,
     setSelectedMappings,
     displaySelectedMappings,
     setDisplaySelectedMappings,
+    selectedBoxes,
+    setSelectedBoxes,
   } = useContext(MappingContext);
 
   let ref = useRef();
@@ -77,6 +77,7 @@ export const MappingSearch = ({
       setEditMappings(null);
       setSelectedMappings([]);
       setDisplaySelectedMappings([]);
+      setSelectedBoxes([]);
     },
     []
   );
@@ -155,11 +156,16 @@ export const MappingSearch = ({
   // If the checkbox is checked, it adds the object to the selectedBoxes array.
   // Else, it filters out the boxes that are unchecked from the array.
   const onCheckboxChange = (event, code) => {
-    if (event.target.checked) {
-      setSelectedBoxes(prevState => [...prevState, code]);
-    } else {
-      setSelectedBoxes(prevState => prevState.filter(val => val !== code));
-    }
+    const isChecked = event.target.checked;
+    setSelectedBoxes(prevState => {
+      let newSelectedBoxes;
+      if (isChecked) {
+        newSelectedBoxes = [...prevState, code];
+      } else {
+        newSelectedBoxes = prevState.filter(val => val.obo_id !== code.obo_id);
+      }
+      return newSelectedBoxes;
+    });
   };
 
   const onSelectedChange = checkedValues => {
@@ -294,20 +300,6 @@ export const MappingSearch = ({
       initialMappings.push(val);
     });
     return initialMappings;
-  };
-
-  const initialCheckedSearch = () => {
-    let initialCheckedMappings = [];
-    displaySelectedMappings.forEach(d => {
-      const val = JSON.stringify({
-        code: d.obo_id,
-        display: d.label,
-        description: d.description?.[0],
-        system: systemsMatch(d.obo_id.split(':')[0]),
-      });
-      initialCheckedMappings.push(val);
-    });
-    return initialCheckedMappings;
   };
 
   // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.

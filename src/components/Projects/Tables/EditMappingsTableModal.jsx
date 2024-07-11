@@ -30,6 +30,8 @@ export const EditMappingsTableModal = ({
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
+  const { setSelectedMappings, setDisplaySelectedMappings } =
+    useContext(MappingContext);
 
   useEffect(() => {
     fetchMappings();
@@ -256,7 +258,7 @@ export const EditMappingsTableModal = ({
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
       // if there is a code being passed, it evaluates to true and opens the modal.
       open={!!editMappings}
-      width={'51%'}
+      width={'60%'}
       styles={{ body: { height: '60vh', overflowY: 'auto' } }}
       okText="Save"
       onOk={() => {
@@ -266,7 +268,9 @@ export const EditMappingsTableModal = ({
             {
               /* Performs the updateMappings PUT call on 'Save' button click */
             }
-            editSearch ? editUpdatedMappings(values) : updateMappings(values);
+            editSearch || reset
+              ? editUpdatedMappings(values)
+              : updateMappings(values);
             clearData();
             form.resetFields();
             setEditMappings(null);
@@ -281,6 +285,8 @@ export const EditMappingsTableModal = ({
         setEditMappings(null);
         setReset(false);
         setEditSearch(false);
+        setSelectedMappings([]);
+        setDisplaySelectedMappings([]);
       }}
       closeIcon={false}
       maskClosable={false}

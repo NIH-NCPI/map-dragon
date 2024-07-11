@@ -11,6 +11,7 @@ export function MappingContextRoot() {
   const [filteredMappings, setFilteredMappings] = useState([]);
   const [selectedMappings, setSelectedMappings] = useState([]);
   const [displaySelectedMappings, setDisplaySelectedMappings] = useState([]);
+  const [selectedBoxes, setSelectedBoxes] = useState([]);
 
   const context = {
     editMappings,
@@ -27,6 +28,8 @@ export function MappingContextRoot() {
     setSelectedMappings,
     displaySelectedMappings,
     setDisplaySelectedMappings,
+    selectedBoxes,
+    setSelectedBoxes,
   };
 
   return (
