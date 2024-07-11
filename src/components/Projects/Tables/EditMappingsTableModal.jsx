@@ -185,8 +185,7 @@ export const EditMappingsTableModal = ({
   // The existing and new mappings are JSON.parsed and pushed to their respective arrays.
   // The arrays are combined into one mappings array and passed into the body of the PUT call.
   const editUpdatedMappings = values => {
-    console.log(values);
-    const selectedMappings = values.selected_mappings.map(item => ({
+    const selectedMappings = values?.selected_mappings?.map(item => ({
       code: item.obo_id,
       display: item.label,
       description: item.description[0], // Assuming description is an array
@@ -203,11 +202,21 @@ export const EditMappingsTableModal = ({
       values.existing_mappings?.forEach(v =>
         parsedExistingMappings.push(JSON.parse(v))
       );
-      selectedMappings.forEach(sm => parsedSelectedMappings.push(sm));
+      selectedMappings?.forEach(sm => parsedSelectedMappings.push(sm));
+
+      // filtered_mappings will sometimes have a duplicate value with selected_mappings
+      // This filters out the filtered_mappings that already exist in selected_mappings
+      const filteredMappingsToInclude = parsedFilteredMappings.filter(
+        filteredItem => {
+          return !parsedSelectedMappings.some(
+            selectedItem => selectedItem.code === filteredItem.code
+          );
+        }
+      );
 
       const combinedMappings = [
         ...parsedExistingMappings,
-        ...parsedFilteredMappings,
+        ...filteredMappingsToInclude,
         ...parsedSelectedMappings,
       ];
       return { mappings: combinedMappings };

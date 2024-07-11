@@ -152,32 +152,13 @@ export const MappingSearch = ({
     setExistingMappings(checkedValues);
   };
 
-  useEffect(() => {
-    form.setFieldsValue({ selected_mappings: selectedBoxes });
-  }, [selectedBoxes, form]);
-
-  const onCheckboxChange = (event, item) => {
-    const mappingObject = {
-      code: item.obo_id,
-      display: item.label,
-      description: item.description[0],
-      system: systemsMatch(item.obo_id.split(':')[0]),
-    };
+  // If the checkbox is checked, it adds the object to the selectedBoxes array.
+  // Else, it filters out the boxes that are unchecked from the array.
+  const onCheckboxChange = (event, code) => {
     if (event.target.checked) {
-      setSelectedBoxes(prevState => {
-        const updated = [...prevState, mappingObject];
-        form.setFieldsValue({ selected_mappings: updated });
-        return updated;
-      });
+      setSelectedBoxes(prevState => [...prevState, code]);
     } else {
-      setSelectedBoxes(prevState => {
-        const updated = prevState.filter(
-          val => val.code !== mappingObject.code
-        );
-        form.setFieldsValue({ selected_mappings: updated });
-
-        return updated;
-      });
+      setSelectedBoxes(prevState => prevState.filter(val => val !== code));
     }
   };
 
@@ -187,16 +168,19 @@ export const MappingSearch = ({
       result => result.obo_id === selected.code
     );
 
-    // Update selectedMappings and displaySelectedMappings to include the new selected items
+    // Updates selectedMappings and displaySelectedMappings to include the new selected items
     setSelectedMappings(prevState => [...prevState, selectedMapping]);
+
+    // Adds the selectedMappings to the selectedBoxes to ensure they are checked
     setSelectedBoxes(prevState => {
       const updated = [...prevState, selectedMapping];
       form.setFieldsValue({ selected_mappings: updated });
       return updated;
     });
+
     setDisplaySelectedMappings(prevState => [...prevState, selectedMapping]);
 
-    // Filter out the selected items from the results
+    // Filters out the selected checkboxes from the results being displayed
     const updatedResults = results.filter(
       result => result.obo_id !== selected.code
     );
