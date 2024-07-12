@@ -254,7 +254,9 @@ export const EditMappingsModal = ({
             {
               /* Performs the updateMappings PUT call on 'Save' button click */
             }
-            editSearch ? editUpdatedMappings(values) : updateMappings(values);
+            editSearch || reset
+              ? editUpdatedMappings(values)
+              : updateMappings(values);
             clearData();
             form.resetFields();
             setEditMappings(null);

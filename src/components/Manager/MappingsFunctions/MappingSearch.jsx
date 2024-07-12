@@ -118,6 +118,13 @@ export const MappingSearch = ({
       .then(data => {
         // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
         let res = ontologyReducer(data?.response?.docs);
+
+        // Filters out results that have already been selected in previous search if there is a change to the search term
+        if (selectedBoxes) {
+          res.results = res.results.filter(
+            d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
+          );
+        }
         // if the page > 0 (i.e. if this is not the first batch of results), the new results
         // are concatenated to the old
         if (page > 0 && results.length > 0) {
