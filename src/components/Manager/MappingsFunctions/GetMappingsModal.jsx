@@ -162,11 +162,19 @@ export const GetMappingsModal = ({
         // are concatenated to the old
         if (page > 0 && results.length > 0) {
           res.results = results.concat(res.results);
-        } else {
-          // the total number of search results are set to totalCount for pagination
 
+          // Apply filtering to remove results with obo_id in selectedBoxes
+          // if (selectedBoxes) {
+          //   res.results = res.results.filter(
+          //     d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
+          //   );
+          // }
+        } else {
+          // Set the total number of search results for pagination
           setTotalCount(data.response.numFound);
         }
+
+        console.log(res.results);
         //the results are set to res (the filtered, concatenated results)
 
         setResults(res.results);
@@ -230,7 +238,7 @@ export const GetMappingsModal = ({
                 </a>
               </div>
             </div>
-            <div>{ellipsisString(d?.description, '100')}</div>
+            <div>{ellipsisString(d?.description[0], '100')}</div>
           </div>
         </div>
       </>

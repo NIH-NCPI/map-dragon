@@ -199,7 +199,17 @@ export const MappingReset = ({
                 </a>
               </div>
             </div>
-            <div>{ellipsisString(d?.description, '100')}</div>
+            {d?.description?.length > 100 ? (
+              <Tooltip
+                mouseEnterDelay={0.5}
+                title={d?.description}
+                placement="topRight"
+              >
+                {ellipsisString(d?.description, '100')}
+              </Tooltip>
+            ) : (
+              ellipsisString(d?.description, '100')
+            )}{' '}
           </div>
         </div>
       </>
