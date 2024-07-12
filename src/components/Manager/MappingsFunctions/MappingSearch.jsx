@@ -219,7 +219,17 @@ export const MappingSearch = ({
                 </a>
               </div>
             </div>
-            <div>{ellipsisString(d?.description?.[0], '100')}</div>
+            {d?.description?.length > 100 ? (
+              <Tooltip
+                mouseEnterDelay={0.5}
+                title={d?.description}
+                placement="topRight"
+              >
+                {ellipsisString(d?.description[0], '100')}
+              </Tooltip>
+            ) : (
+              ellipsisString(d?.description[0], '100')
+            )}{' '}
           </div>
         </div>
       </>
@@ -241,7 +251,7 @@ export const MappingSearch = ({
                 </a>
               </div>
             </div>
-            <div>{ellipsisString(d?.description, '100')}</div>
+            <div>{ellipsisString(d?.description[0], '100')}</div>
           </div>
         </div>
       </>

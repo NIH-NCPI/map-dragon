@@ -15,6 +15,7 @@ import { ResetMappings } from './ResetMappings';
 import { MappingContext } from '../../../MappingContext';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ellipsisString } from '../../Manager/Utilitiy';
+import { getById } from '../../Manager/FetchManager';
 
 export const EditMappingsModal = ({
   editMappings,
@@ -268,6 +269,10 @@ export const EditMappingsModal = ({
         setEditMappings(null);
         setReset(false);
         setEditSearch(false);
+        reset &&
+          getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`).then(
+            data => setMapping(data.codes)
+          );
       }}
       closeIcon={false}
       maskClosable={false}
@@ -294,7 +299,7 @@ export const EditMappingsModal = ({
               )}
             </div>
             <div className="cancel_ok_buttons">
-              {!reset && <CancelBtn />}
+              <CancelBtn />
               <OkBtn />
             </div>
           </div>
