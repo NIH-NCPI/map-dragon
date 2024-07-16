@@ -25,7 +25,7 @@ export const EditMappingsTableModal = ({
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
-  const { vocabUrl, table } = useContext(myContext);
+  const { vocabUrl, setSelectedKey } = useContext(myContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
@@ -37,9 +37,13 @@ export const EditMappingsTableModal = ({
     fetchMappings();
   }, [editMappings]);
 
-  const clearData = () => {
+  const onClose = () => {
     setTermMappings([]);
     setOptions([]);
+    form.resetFields();
+    setEditMappings(null);
+    setReset(false);
+    setEditSearch(false);
   };
 
   const fetchMappings = () => {
@@ -251,22 +255,18 @@ export const EditMappingsTableModal = ({
             editSearch || reset
               ? editUpdatedMappings(values)
               : updateMappings(values);
-            clearData();
-            form.resetFields();
-            setEditMappings(null);
-            setReset(false);
-            setEditSearch(false);
+            onClose();
           })
-          .then(data => setMapping(data));
+          .then(data => {
+            setMapping(data);
+            setSelectedKey(null);
+          });
       }}
       onCancel={() => {
-        clearData();
-        form.resetFields();
-        setEditMappings(null);
-        setReset(false);
-        setEditSearch(false);
+        onClose();
         setSelectedMappings([]);
         setDisplaySelectedMappings([]);
+        setSelectedKey(null);
       }}
       closeIcon={false}
       maskClosable={false}

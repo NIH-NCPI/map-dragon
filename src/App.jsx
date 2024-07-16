@@ -27,6 +27,7 @@ function App() {
     url: '',
   }; //initial state of study
   const [study, setStudy] = useState(initialStudy);
+  const [selectedKey, setSelectedKey] = useState(null);
 
   message.config({
     top: '25vh',
@@ -57,6 +58,8 @@ function App() {
         setDataDictionary,
         study,
         setStudy,
+        selectedKey,
+        setSelectedKey,
       }}
     >
       <AppRouter />

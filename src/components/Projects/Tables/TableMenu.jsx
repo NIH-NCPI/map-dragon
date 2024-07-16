@@ -19,12 +19,11 @@ export const TableMenu = ({
   setMapping,
 }) => {
   const { confirm } = Modal;
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, selectedKey, setSelectedKey } = useContext(myContext);
   const { variable } = tableData;
 
   const [editRow, setEditRow] = useState(null);
   const [deleteRow, setDeleteRow] = useState(null);
-  const [selectedKey, setSelectedKey] = useState(null);
 
   useEffect(() => {
     if (deleteRow) {
@@ -94,26 +93,32 @@ export const TableMenu = ({
       key: 'main-menu',
       icon: <MoreOutlined style={{ fontSize: '20px' }} />,
       children: [
-        { key: 1, label: 'Edit' },
-        { key: 2, label: 'Delete' },
-        { key: 3, label: showEditMappings ? 'Edit Mappings' : 'Get Mappings' },
+        { key: `${tableData.key}-1`, label: 'Edit' },
+        { key: `${tableData.key}-2`, label: 'Delete' },
+        {
+          key: `${tableData.key}-3`,
+          label: showEditMappings ? 'Edit Mappings' : 'Get Mappings',
+        },
       ],
     },
   ];
 
-  const onClick = ({ key }) => {
+  const onClick = thing => {
+    const key = thing.key;
+    console.log('THING!!!!!!!!!', thing);
     setSelectedKey(key);
     switch (key) {
-      case '1':
+      case `${tableData.key}-1`:
         return setEditRow(tableData.key);
-      case '2':
+      case `${tableData.key}-2`:
         return setDeleteRow(true);
-      case '3':
+      case `${tableData.key}-3`:
         return showEditMappings
           ? setEditMappings(variable)
           : setGetMappings(variable);
     }
   };
+  console.log('SELECTED!!!!!!!!!', selectedKey);
 
   return (
     <>
@@ -123,6 +128,7 @@ export const TableMenu = ({
           onClick={onClick}
           selectedKeys={[selectedKey]}
           mode="horizontal"
+          //   onDeselect={() => setSelectedKey(null)}
         />
       </div>
       <EditVariable
