@@ -3,19 +3,8 @@ import { myContext } from '../../../App';
 import './TableStyling.scss';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
-import { getById, handleUpdate } from '../../Manager/FetchManager';
-import {
-  Card,
-  Col,
-  Form,
-  Input,
-  message,
-  Modal,
-  notification,
-  Row,
-  Table,
-  Tooltip,
-} from 'antd';
+import { getById } from '../../Manager/FetchManager';
+import { Card, Col, Form, Menu, notification, Row, Table, Tooltip } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
@@ -28,6 +17,7 @@ import { EditVariable } from './EditVariable';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { AddVariable } from './AddVariable';
 import { ExpandedRowTable } from './ExpandedRowTable';
+import { TableMenu } from './TableMenu';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -44,7 +34,7 @@ export const TableDetails = () => {
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
-  const [editRow, setEditRow] = useState(null);
+  // const [editRow, setEditRow] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -123,9 +113,7 @@ export const TableDetails = () => {
               // The edit and delete buttons are displayed with edit/delete functionality
               <>
                 <div className="edit_delete_buttons">
-                  <EditVariable
-                    editRow={editRow}
-                    setEditRow={setEditRow}
+                  <TableMenu
                     table={table}
                     setTable={setTable}
                     tableData={tableData}
@@ -133,6 +121,16 @@ export const TableDetails = () => {
                     loading={loading}
                     setLoading={setLoading}
                   />
+                  {/* <EditVariable
+                      editRow={editRow}
+                      setEditRow={setEditRow}
+                      table={table}
+                      setTable={setTable}
+                      tableData={tableData}
+                      form={form}
+                      loading={loading}
+                      setLoading={setLoading}
+                    /> */}
                 </div>
               </>
             )}

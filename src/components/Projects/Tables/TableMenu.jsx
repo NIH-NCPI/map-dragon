@@ -1,19 +1,28 @@
-import { Button, message, notification, Popconfirm } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
-
-import { useContext } from 'react';
+import { Menu, message, Modal, notification } from 'antd';
+import { MoreOutlined, ExclamationCircleFilled } from '@ant-design/icons';
+import { useContext, useEffect, useState } from 'react';
+import { EditVariable } from './EditVariable';
 import { myContext } from '../../../App';
 
-// Deletes a variable from a Table by splicing the object from the array using its index and updating
-// the variables array for the Table with a PUT call.
-export const DeleteVariable = ({
+export const TableMenu = ({
   tableData,
   table,
   setTable,
-  deleteRow,
-  setDeleteRow,
+  form,
+  loading,
+  setLoading,
 }) => {
+  const { confirm } = Modal;
   const { vocabUrl } = useContext(myContext);
+
+  const [editRow, setEditRow] = useState(null);
+  const [deleteRow, setDeleteRow] = useState(null);
+
+  useEffect(() => {
+    if (deleteRow) {
+      showConfirm();
+    }
+  }, [deleteRow]);
 
   const handleVarDelete = varName => {
     fetch(`${vocabUrl}/Table/${table.id}/variable/${varName}`, {
@@ -66,5 +75,29 @@ export const DeleteVariable = ({
       },
     });
   };
-  return deleteRow && showConfirm;
+
+  const items = [
+    {
+      key: 'main-menu',
+      icon: <MoreOutlined />,
+      children: [
+        { key: 1, label: 'Edit' },
+        { key: 2, label: 'Delete' },
+        { key: 3, label: 'Mappings' },
+      ],
+    },
+  ];
+
+  const onClick = ({ key }) => {
+    switch (key) {
+      case '0':
+        return setEdit(true);
+      case '1':
+        return setEditRow(true);
+      case '2':
+        return setDeleteRow(true);
+    }
+  };
+
+  return <Menu items={items} onClick={onClick} mode="horizontal" />;
 };
