@@ -1,14 +1,4 @@
-import {
-  Button,
-  Form,
-  Input,
-  message,
-  Modal,
-  notification,
-  Select,
-  Space,
-  Tooltip,
-} from 'antd';
+import { Form, Input, message, Modal, notification, Select, Space } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
@@ -16,7 +6,6 @@ import { Spinner } from '../../Manager/Spinner';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../MappingContext';
-import { DeleteVariable } from './DeleteVariable';
 import EditDataTypeSubForm from './EditDataTypeSubForm';
 
 export const EditVariable = ({
@@ -28,6 +17,7 @@ export const EditVariable = ({
   form,
   loading,
   setLoading,
+  setSelectedKey,
 }) => {
   const { TextArea } = Input;
   const { vocabUrl } = useContext(myContext);
@@ -171,133 +161,108 @@ export const EditVariable = ({
   return (
     <>
       {!loading ? (
-        editRow !== tableData.key ? (
-          /* if the row is not being edited, the edit and delete icons are displayed*/
-          <>
-            <Tooltip title="Edit">
-              {' '}
-              <Button
-                shape="circle"
-                size="small"
-                icon={<EditOutlined />}
-                className="actions_icon"
-                onClick={() => {
-                  /* editRow is set to the key of the of the row.*/
-                  setEditRow(tableData.key);
-                }}
-              />
-            </Tooltip>
-            <Tooltip title="Delete">
-              <DeleteVariable
-                tableData={tableData}
-                table={table}
-                setTable={setTable}
-              />{' '}
-            </Tooltip>
-          </>
-        ) : (
-          //if the row is being edited, the cancel and save icons are displayed
-          <>
-            <Modal
-              open={editRow === tableData.key}
-              width={'70%'}
-              onOk={() => {
-                form.validateFields().then(values => {
-                  handleSubmit(values);
-                  form.resetFields();
-                  setEditRow('');
-                  setType('');
-                });
-              }}
-              onCancel={() => {
+        editRow === tableData.key && (
+          <Modal
+            open={editRow === tableData.key}
+            width={'70%'}
+            onOk={() => {
+              form.validateFields().then(values => {
+                handleSubmit(values);
                 form.resetFields();
                 setEditRow('');
                 setType('');
-              }}
-              maskClosable={false}
-              destroyOnClose={true}
-            >
-              {' '}
-              <Form form={form} layout="vertical" preserve={false}>
-                <Space
-                  style={{
-                    display: 'flex',
-                    marginBottom: 3,
-                  }}
-                  align="baseline"
+                setSelectedKey(null);
+              });
+            }}
+            onCancel={() => {
+              form.resetFields();
+              setEditRow(null);
+              setType('');
+              setSelectedKey(null);
+            }}
+            maskClosable={false}
+            destroyOnClose={true}
+          >
+            {' '}
+            <Form form={form} layout="vertical" preserve={false}>
+              <Space
+                style={{
+                  display: 'flex',
+                  marginBottom: 3,
+                }}
+                align="baseline"
+              >
+                <Form.Item
+                  name={['name']}
+                  label="Variable name"
+                  rules={[
+                    { required: true, message: 'Variable name is required.' },
+                    { validator: validateUnique },
+                  ]}
                 >
-                  <Form.Item
-                    name={['name']}
-                    label="Variable name"
-                    rules={[
-                      { required: true, message: 'Variable name is required.' },
-                      { validator: validateUnique },
+                  <TextArea
+                    autoSize={true}
+                    style={{
+                      width: '15vw',
+                    }}
+                    autoFocus
+                  />
+                </Form.Item>
+                <Form.Item
+                  name={['description']}
+                  label="Variable description"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Variable description is required.',
+                    },
+                  ]}
+                >
+                  <TextArea
+                    autoSize={true}
+                    style={{
+                      width: '39vw',
+                    }}
+                    autoFocus
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Data Type"
+                  name={['data_type']}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Select data type.',
+                    },
+                  ]}
+                >
+                  <Select
+                    value={form.getFieldValue('data_type')}
+                    style={{ width: '10vw' }}
+                    placeholder="Select data type"
+                    onChange={value => {
+                      form.setFieldsValue({ data_type: value });
+                      setType(value);
+                    }}
+                    options={[
+                      { value: 'STRING', label: 'String' },
+                      { value: 'INTEGER', label: 'Integer' },
+                      { value: 'QUANTITY', label: 'Quantity' },
+                      { value: 'ENUMERATION', label: 'Enumeration' },
                     ]}
-                  >
-                    <TextArea
-                      autoSize={true}
-                      style={{
-                        width: '15vw',
-                      }}
-                      autoFocus
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name={['description']}
-                    label="Variable description"
-                    rules={[
-                      {
-                        required: true,
-                        message: 'Variable description is required.',
-                      },
-                    ]}
-                  >
-                    <TextArea
-                      autoSize={true}
-                      style={{
-                        width: '39vw',
-                      }}
-                      autoFocus
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Data Type"
-                    name={['data_type']}
-                    rules={[
-                      {
-                        required: true,
-                        message: 'Select data type.',
-                      },
-                    ]}
-                  >
-                    <Select
-                      value={form.getFieldValue('data_type')}
-                      style={{ width: '10vw' }}
-                      placeholder="Select data type"
-                      onChange={value => {
-                        form.setFieldsValue({ data_type: value });
-                        setType(value);
-                      }}
-                      options={[
-                        { value: 'STRING', label: 'String' },
-                        { value: 'INTEGER', label: 'Integer' },
-                        { value: 'QUANTITY', label: 'Quantity' },
-                        { value: 'ENUMERATION', label: 'Enumeration' },
-                      ]}
-                    />
-                  </Form.Item>
-                </Space>
-                <EditDataTypeSubForm
-                  setLoading={setLoading}
-                  type={type}
-                  setType={setType}
-                  form={form}
-                  editRow={editRow}
-                  tableData={tableData}
-                />
-              </Form>
-            </Modal>
-          </>
+                  />
+                </Form.Item>
+              </Space>
+              <EditDataTypeSubForm
+                setLoading={setLoading}
+                type={type}
+                setType={setType}
+                form={form}
+                editRow={editRow}
+                tableData={tableData}
+              />
+            </Form>
+          </Modal>
         )
       ) : (
         <Spinner />

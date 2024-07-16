@@ -3,19 +3,8 @@ import { myContext } from '../../../App';
 import './TableStyling.scss';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
-import { getById, handleUpdate } from '../../Manager/FetchManager';
-import {
-  Card,
-  Col,
-  Form,
-  Input,
-  message,
-  Modal,
-  notification,
-  Row,
-  Table,
-  Tooltip,
-} from 'antd';
+import { getById } from '../../Manager/FetchManager';
+import { Card, Col, Form, Menu, notification, Row, Table, Tooltip } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
@@ -24,10 +13,10 @@ import { ExportFile } from './ExportFile';
 import { EditMappingsTableModal } from './EditMappingsTableModal';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
-import { EditVariable } from './EditVariable';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { AddVariable } from './AddVariable';
 import { ExpandedRowTable } from './ExpandedRowTable';
+import { TableMenu } from './TableMenu';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -44,7 +33,6 @@ export const TableDetails = () => {
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
-  const [editRow, setEditRow] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -111,7 +99,6 @@ export const TableDetails = () => {
     { title: 'Data Type', dataIndex: 'data_type' },
     { title: 'Enumerations', dataIndex: 'enumeration' },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms' },
-    { title: '', dataIndex: 'get_mappings', width: 168 },
     {
       title: '',
       dataIndex: 'delete_column',
@@ -122,18 +109,18 @@ export const TableDetails = () => {
               // If the tableData key is not "newRow" (i.e. it is not a newly added input field to add a new row)
               // The edit and delete buttons are displayed with edit/delete functionality
               <>
-                <div className="edit_delete_buttons">
-                  <EditVariable
-                    editRow={editRow}
-                    setEditRow={setEditRow}
-                    table={table}
-                    setTable={setTable}
-                    tableData={tableData}
-                    form={form}
-                    loading={loading}
-                    setLoading={setLoading}
-                  />
-                </div>
+                {/* <div className="edit_delete_buttons"> */}
+                <TableMenu
+                  table={table}
+                  setTable={setTable}
+                  tableData={tableData}
+                  form={form}
+                  loading={loading}
+                  setLoading={setLoading}
+                  setEditMappings={setEditMappings}
+                  setGetMappings={setGetMappings}
+                  mapping={mapping}
+                />
               </>
             )}
           </>
@@ -173,6 +160,7 @@ There is then a tooltip that displays the variables on hover.*/
     table?.variables?.map((variable, index) => {
       return {
         key: index,
+        variable,
         code: variable.code,
         name: variable.name,
         description: variable.description,
@@ -184,46 +172,6 @@ There is then a tooltip that displays the variables on hover.*/
           <Link to={`/${variable.enumerations.reference}`}>View/Edit</Link>
         ),
         mapped_terms: matchCode(variable),
-        get_mappings:
-          /* If the mapping array length is greather than 0, we check if there is a matching mapped code
-      to the table variable.
-      If there is a match for the table variable in the mapping codes AND if the mappings array for
-      that code is > 0, the Edit Mappings button is displayed. On click, a modal with mapping details is opened
-      and the table variable is passed.*/
-
-          mapping?.length > 0 ? (
-            mapping?.some(
-              m => m?.code === variable.code && m?.mappings?.length > 0
-            ) ? (
-              <button
-                key={variable.code}
-                className="manage_term_button"
-                onClick={() => setEditMappings(variable)}
-              >
-                Edit Mappings
-              </button>
-            ) : (
-              /* If there is NOT a match for the terminology variable in the mapping variables, the Get Mappings button
-            is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-            variable and the terminology variable is passed.*/
-              <button
-                className="manage_term_button"
-                onClick={() => setGetMappings(variable)}
-              >
-                Get Mappings
-              </button>
-            )
-          ) : (
-            /* If the mapping array length is not greater than 0, the Get Mappings button
-          is displayed. On click, a modal opens that automatically performs a search in OLS for the table
-          variable and the table variable is passed.*/
-            <button
-              className="manage_term_button"
-              onClick={() => setGetMappings(variable)}
-            >
-              Get Mappings
-            </button>
-          ),
       };
     });
 

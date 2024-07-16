@@ -6,7 +6,13 @@ import { myContext } from '../../../App';
 
 // Deletes a variable from a Table by splicing the object from the array using its index and updating
 // the variables array for the Table with a PUT call.
-export const DeleteVariable = ({ tableData, table, setTable }) => {
+export const DeleteVariable = ({
+  tableData,
+  table,
+  setTable,
+  deleteRow,
+  setDeleteRow,
+}) => {
   const { vocabUrl } = useContext(myContext);
 
   const handleVarDelete = varName => {
@@ -42,17 +48,23 @@ export const DeleteVariable = ({ tableData, table, setTable }) => {
       });
   };
 
-  return (
-    <Popconfirm
-      title="Are you sure you want to delete this row?"
-      onConfirm={() => handleVarDelete(tableData.name)}
-    >
-      <Button
-        size="small"
-        shape="circle"
-        icon={<DeleteOutlined />}
-        className="actions_icon"
-      />
-    </Popconfirm>
-  );
+  const showConfirm = () => {
+    confirm({
+      className: 'delete_table_confirm',
+      title: 'Alert',
+      icon: <ExclamationCircleFilled />,
+      content: (
+        <>
+          <div>Are you sure you want to delete this row? </div>
+        </>
+      ),
+      onOk() {
+        handleVarDelete(tableData.name);
+      },
+      onCancel() {
+        setDeleteRow(false);
+      },
+    });
+  };
+  return deleteRow && showConfirm;
 };

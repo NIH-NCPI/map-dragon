@@ -16,7 +16,7 @@ export const GetMappingsModal = ({
   const [form] = Form.useForm();
   const { Search } = Input;
 
-  const { searchUrl, vocabUrl } = useContext(myContext);
+  const { searchUrl, vocabUrl, setSelectedKey } = useContext(myContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,6 @@ export const GetMappingsModal = ({
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
-  const [isChecked, setIsChecked] = useState([]);
 
   const {
     setSelectedMappings,
@@ -89,6 +88,18 @@ export const GetMappingsModal = ({
     },
     []
   );
+
+  const onClose = () => {
+    form.resetFields();
+    setGetMappings(null);
+    setPage(0);
+    setResults([]);
+    setLoading(true);
+    setSelectedMappings([]);
+    setDisplaySelectedMappings([]);
+    setSelectedBoxes([]);
+    setSelectedKey(null);
+  };
 
   // Sets currentSearchProp to the value of the search bar and sets page to 0.
   const handleSearch = query => {
@@ -306,25 +317,11 @@ export const GetMappingsModal = ({
         onOk={() => {
           form.validateFields().then(values => {
             handleSubmit(values);
-            form.resetFields();
-            setGetMappings(null);
-            setPage(0);
-            setResults([]);
-            setLoading(true);
-            setSelectedMappings([]);
-            setDisplaySelectedMappings([]);
-            setSelectedBoxes([]);
+            onClose();
           });
         }}
         onCancel={() => {
-          form.resetFields();
-          setGetMappings(null);
-          setPage(0);
-          setResults([]);
-          setLoading(true);
-          setSelectedMappings([]);
-          setDisplaySelectedMappings([]);
-          setSelectedBoxes([]);
+          onClose();
         }}
         maskClosable={false}
         destroyOnClose={true}
