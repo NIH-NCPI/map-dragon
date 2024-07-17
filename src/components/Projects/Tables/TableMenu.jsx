@@ -3,7 +3,6 @@ import { MoreOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { EditVariable } from './EditVariable';
 import { myContext } from '../../../App';
-import { EditMappingsTableModal } from './EditMappingsTableModal';
 
 export const TableMenu = ({
   tableData,
@@ -13,10 +12,8 @@ export const TableMenu = ({
   loading,
   setLoading,
   mapping,
-  editMappings,
   setEditMappings,
   setGetMappings,
-  setMapping,
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, selectedKey, setSelectedKey } = useContext(myContext);
@@ -133,7 +130,6 @@ export const TableMenu = ({
           onClick={onClick}
           selectedKeys={[selectedKey]}
           mode="horizontal"
-          //   onDeselect={() => setSelectedKey(null)}
         />
       </div>
       <EditVariable
