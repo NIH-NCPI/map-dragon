@@ -15,6 +15,7 @@ import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ResetTableMappings } from './ResetTableMappings';
 import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
+import { getById } from '../../Manager/FetchManager';
 
 export const EditMappingsTableModal = ({
   editMappings,
@@ -267,6 +268,10 @@ export const EditMappingsTableModal = ({
         setSelectedMappings([]);
         setDisplaySelectedMappings([]);
         setSelectedKey(null);
+        reset &&
+          getById(vocabUrl, 'Table', `${tableId}/mapping`).then(data =>
+            setMapping(data.codes)
+          );
       }}
       closeIcon={false}
       maskClosable={false}
@@ -293,7 +298,7 @@ export const EditMappingsTableModal = ({
               )}
             </div>
             <div className="cancel_ok_buttons">
-              {!reset && <CancelBtn />}
+              <CancelBtn />
               <OkBtn />
             </div>
           </div>
