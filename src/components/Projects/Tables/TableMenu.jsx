@@ -3,7 +3,6 @@ import { MoreOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { EditVariable } from './EditVariable';
 import { myContext } from '../../../App';
-import { EditMappingsTableModal } from './EditMappingsTableModal';
 
 export const TableMenu = ({
   tableData,
@@ -13,28 +12,23 @@ export const TableMenu = ({
   loading,
   setLoading,
   mapping,
-  editMappings,
   setEditMappings,
   setGetMappings,
-  setMapping,
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, selectedKey, setSelectedKey } = useContext(myContext);
   const { variable } = tableData;
-
   const [editRow, setEditRow] = useState(null);
   const [deleteRow, setDeleteRow] = useState(null);
 
+  // Opens the delete dialog box when Delete is selected in the menu
   useEffect(() => {
     if (deleteRow) {
       showConfirm();
     }
   }, [deleteRow]);
 
-  const showEditMappings =
-    mapping?.length > 0 &&
-    mapping?.some(m => m?.code === variable.code && m?.mappings?.length > 0);
-
+  // Deletes individual variable
   const handleVarDelete = varName => {
     fetch(`${vocabUrl}/Table/${table.id}/variable/${varName}`, {
       method: 'DELETE',
@@ -68,6 +62,7 @@ export const TableMenu = ({
       });
   };
 
+  // Delete dialog box
   const showConfirm = () => {
     confirm({
       className: 'delete_table_confirm',
@@ -88,6 +83,12 @@ export const TableMenu = ({
     });
   };
 
+  // Matches the code in the tableData to the code in the mappings to see if a variable has mappings
+  const showEditMappings =
+    mapping?.length > 0 &&
+    mapping?.some(m => m?.code === variable.code && m?.mappings?.length > 0);
+
+  // Menu items
   const items = [
     {
       key: 'main-menu',
@@ -103,9 +104,9 @@ export const TableMenu = ({
     },
   ];
 
-  const onClick = thing => {
-    const key = thing.key;
-    console.log('THING!!!!!!!!!', thing);
+  // onClick function for Menu.
+  const onClick = obj => {
+    const key = obj.key;
     setSelectedKey(key);
     switch (key) {
       case `${tableData.key}-1`:
@@ -114,11 +115,12 @@ export const TableMenu = ({
         return setDeleteRow(true);
       case `${tableData.key}-3`:
         return showEditMappings
-          ? setEditMappings(variable)
-          : setGetMappings(variable);
+          ? // If mappings exist for a variable, sets editMappings to the variable and opens EditMappingsTableModal in turn
+            setEditMappings(variable)
+          : // If mappings do not exist for a variable, sets getMappings to the variable and opens GetMappingsModal in turn
+            setGetMappings(variable);
     }
   };
-  console.log('SELECTED!!!!!!!!!', selectedKey);
 
   return (
     <>
@@ -128,7 +130,6 @@ export const TableMenu = ({
           onClick={onClick}
           selectedKeys={[selectedKey]}
           mode="horizontal"
-          //   onDeselect={() => setSelectedKey(null)}
         />
       </div>
       <EditVariable

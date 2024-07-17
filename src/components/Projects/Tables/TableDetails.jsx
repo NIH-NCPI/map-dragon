@@ -107,7 +107,7 @@ export const TableDetails = () => {
           <>
             {tableData.key !== 'newRow' && (
               // If the tableData key is not "newRow" (i.e. it is not a newly added input field to add a new row)
-              // The edit and delete buttons are displayed with edit/delete functionality
+              // The actions/mappings menu is displayed
               <>
                 {/* <div className="edit_delete_buttons"> */}
                 <TableMenu

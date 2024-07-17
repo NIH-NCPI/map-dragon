@@ -36,7 +36,10 @@ export const ExportFile = ({ table }) => {
   };
 
   return (
-    <Popconfirm title="Export mappings?" onConfirm={() => getHarmony()}>
+    <Popconfirm
+      title="Export mappings as Harmony?"
+      onConfirm={() => getHarmony()}
+    >
       <Button type="primary" className="export_button">
         Export
       </Button>
