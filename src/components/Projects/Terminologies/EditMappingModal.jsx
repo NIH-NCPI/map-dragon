@@ -12,7 +12,6 @@ import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetMappings } from './ResetMappings';
-import { MappingContext } from '../../../MappingContext';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
@@ -31,7 +30,6 @@ export const EditMappingsModal = ({
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
-  const { existingMappings, filteredMappings } = useContext(MappingContext);
 
   useEffect(() => {
     fetchMappings();
