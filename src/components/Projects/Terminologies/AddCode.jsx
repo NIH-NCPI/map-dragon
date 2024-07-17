@@ -26,7 +26,6 @@ export const AddCode = ({ terminology, setTerminology }) => {
       .then(data => setTerminology(data))
       // Displays a self-closing message that the udpates have been successfully saved.
       .then(() => message.success('Code added successfully.'));
-    console.log(values);
   };
 
   const validateUnique = (_, value) => {

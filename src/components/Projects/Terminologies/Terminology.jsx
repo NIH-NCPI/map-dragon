@@ -132,12 +132,12 @@ There is then a tooltip that displays the codes on hover.*/
     {
       title: 'Description',
       dataIndex: 'description',
-      width: 305,
     },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 90 },
     {
       title: '',
       dataIndex: 'delete_column',
+      width: 10,
       render: (_, tableData) => {
         return (
           <>

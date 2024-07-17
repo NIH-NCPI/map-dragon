@@ -58,7 +58,7 @@ export const EditCode = ({
     // Object to put in the body of the PATCH request. Provides the old code
     // and replaces with the updated code and/or display on the back end.
     // The code in the associdated mappings is automatically udpated on the back end.
-    const updatedRow = {
+    const updatedRowDTO = {
       code: {
         [`${tableData.code}`]: `${values.code}`,
       },
@@ -69,96 +69,38 @@ export const EditCode = ({
         [tableData.code]: values.description,
       },
     };
+    // // If the new code already exists in the terminolgoy and does not match the index being edited,
+    // // an error message displays that the code already exists. Otherwise the PUT call is run.
 
-    // If the new code already exists in the terminolgoy and does not match the index being edited,
-    // an error message displays that the code already exists. Otherwise the PUT call is run.
-    if (
-      !terminology.codes.some(
-        item => item.code.toLowerCase() === values.code.toLowerCase()
-      )
-    ) {
-      handlePatch(vocabUrl, 'Terminology', terminology, updatedRow)
-        .catch(error => {
-          if (error) {
-            notification.error({
-              message: 'Error',
-              description: 'An error occurred updating the code.',
-            });
-          }
-          return error;
-        })
-        .then(() => {
-          fetch(
-            `${vocabUrl}/Terminology/${terminology.id}/code/${values.code}`,
-            {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(values),
-            }
-          )
-            .then(res => {
-              if (res.ok) {
-                return res.json();
-              } else {
-                throw new Error('An unknown error occurred.');
-              }
-            })
-            .then(data => {
-              setTerminology(data);
-              message.success('Changes saved successfully.');
-            });
-        })
-        .then(() =>
-          getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
-            .then(data => setMapping(data.codes))
-            .catch(error => {
-              if (error) {
-                notification.error({
-                  message: 'Error',
-                  description:
-                    'An error occurred loading mappings. Please try again.',
-                });
-              }
-              return error;
-            })
-        );
-    } else {
-      fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${values.code}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
+    handlePatch(vocabUrl, 'Terminology', terminology, updatedRowDTO)
+      .then(data => {
+        setTerminology(data);
+        message.success('Changes saved successfully.');
       })
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            throw new Error('An unknown error occurred.');
-          }
-        })
-        .then(data => {
-          setTerminology(data);
-          message.success('Changes saved successfully.');
-        })
-
-        .then(() =>
-          getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
-            .then(data => setMapping(data.codes))
-            .catch(error => {
-              if (error) {
-                notification.error({
-                  message: 'Error',
-                  description:
-                    'An error occurred loading mappings. Please try again.',
-                });
-              }
-              return error;
-            })
-        );
-    }
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description:
+              'An error occurred updating the row. Please try again.',
+          });
+        }
+        return error;
+      })
+      .then(() =>
+        getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
+          .then(data => setMapping(data.codes))
+          .catch(error => {
+            if (error) {
+              notification.error({
+                message: 'Error',
+                description:
+                  'An error occurred loading mappings. Please try again.',
+              });
+            }
+            return error;
+          })
+      );
   };
 
   return (

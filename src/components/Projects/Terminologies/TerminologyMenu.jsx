@@ -36,7 +36,7 @@ export const TerminologyMenu = ({
       .then(res => {
         if (res.ok) {
           return res.json().then(data => {
-            message.success('code deleted successfully.');
+            message.success('Code deleted successfully.');
           });
         } else {
           notification.error({
@@ -90,7 +90,6 @@ export const TerminologyMenu = ({
       return m?.code === item?.code && m?.mappings?.length > 0;
     });
 
-  console.log(item);
   // Menu items
   const items = [
     {
