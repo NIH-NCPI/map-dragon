@@ -1,5 +1,4 @@
 import { Form, Input, message, Modal, notification, Select, Space } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { Spinner } from '../../Manager/Spinner';
@@ -223,7 +222,6 @@ export const EditVariable = ({
                     style={{
                       width: '39vw',
                     }}
-                    autoFocus
                   />
                 </Form.Item>
                 <Form.Item

@@ -5,15 +5,14 @@ import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
 import { Col, Form, Input, notification, Row, Table, Tooltip } from 'antd';
-
 import { EditMappingsModal } from './EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { AddCode } from './AddCode';
-import { EditCode } from './EditCode';
 import { MappingContext } from '../../../MappingContext';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
+import { TerminologyMenu } from './TerminologyMenu';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -32,7 +31,6 @@ export const Terminology = () => {
   const [loading, setLoading] = useState(true);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
-  const [editRow, setEditRow] = useState(null);
   const navigate = useNavigate();
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
 The codes in the mappings need to be matched up to each code in the terminology.
@@ -60,59 +58,17 @@ There is then a tooltip that displays the codes on hover.*/
   // data for each column in the table.
   // Map through the codes in the terminology and display the code, display, number of mapped terms,
   // and an edit or get mappings button depending on the condition.
-  const tableData = terminology => {
-    return terminology?.codes?.map((code, index) => {
+  const tableData = terminology =>
+    terminology?.codes?.map((item, index) => {
       return {
         key: index,
-
-        code: code.code,
-        display: code.display,
-        description: code.description,
-        mapped_terms: matchCode(code),
-        get_mappings:
-          /* If the mapping array length is greather than 0, we check if there is a matching mapped code
-        to the terminology code.
-        If there is a match for the terminology code in the mapping codes AND if the mappings array for
-        that code is > 0, the Edit Mappings button is displayed. On click, a modal with mapping details is opened
-        and the terminology code is passed.*/
-
-          mapping?.length > 0 ? (
-            mapping.some(
-              m => m.code === code.code && m?.mappings?.length > 0
-            ) ? (
-              <button
-                key={code.code}
-                className="manage_term_button"
-                onClick={() => setEditMappings(code)}
-              >
-                Edit Mappings
-              </button>
-            ) : (
-              /* If there is NOT a match for the terminology code in the mapping codes, the Get Mappings button
-              is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-              code and the terminology code is passed.*/
-              <button
-                className="manage_term_button"
-                onClick={() => setGetMappings(code)}
-              >
-                Get Mappings
-              </button>
-            )
-          ) : (
-            /* If the mapping array length is not greater than 0, the Get Mappings button
-            is displayed. On click, a modal opens that automatically performs a search in OLS for the terminology
-            code and the terminology code is passed.*/
-            <button
-              className="manage_term_button"
-              onClick={() => setGetMappings(code)}
-            >
-              Get Mappings
-            </button>
-          ),
-        delete_column: '',
+        item,
+        code: item.code,
+        display: item.display,
+        description: item.description,
+        mapped_terms: matchCode(item),
       };
     });
-  };
 
   const [dataSource, setDataSource] = useState(tableData);
 
@@ -167,60 +123,18 @@ There is then a tooltip that displays the codes on hover.*/
       title: 'Code',
       dataIndex: 'code',
       width: 180,
-      render: (text, tableData) => {
-        if (editRow === tableData.key) {
-          return (
-            <Form.Item
-              name="code"
-              rules={[{ required: true, message: 'Please enter code name.' }]}
-            >
-              <Input />
-            </Form.Item>
-          );
-        } else {
-          return <p>{text}</p>;
-        }
-      },
     },
     {
       title: 'Display',
       dataIndex: 'display',
       width: 180,
-      render: (text, tableData) => {
-        if (editRow === tableData.key) {
-          return (
-            <Form.Item
-              name="display"
-              rules={[
-                { required: true, message: 'Please enter code display.' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          );
-        } else {
-          return <p>{text}</p>;
-        }
-      },
     },
     {
       title: 'Description',
       dataIndex: 'description',
       width: 305,
-      render: (text, tableData) => {
-        if (editRow === tableData.key) {
-          return (
-            <Form.Item name="description">
-              <Input />
-            </Form.Item>
-          );
-        } else {
-          return <p>{text}</p>;
-        }
-      },
     },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 90 },
-    { title: '', dataIndex: 'get_mappings' },
     {
       title: '',
       dataIndex: 'delete_column',
@@ -231,20 +145,17 @@ There is then a tooltip that displays the codes on hover.*/
               // If the tableData key is not "newRow" (i.e. it is not a newly added input field to add a new row)
               // The code and delete buttons are displayed with edit/delete functionality
               <>
-                <div className="edit_delete_buttons">
-                  <EditCode
-                    editRow={editRow}
-                    setEditRow={setEditRow}
-                    terminology={terminology}
-                    setTerminology={setTerminology}
-                    tableData={tableData}
-                    form={form}
-                    dataSource={dataSource}
-                    setDataSource={setDataSource}
-                    loading={loading}
-                    setLoading={setLoading}
-                  />
-                </div>
+                <TerminologyMenu
+                  terminology={terminology}
+                  setTerminology={setTerminology}
+                  tableData={tableData}
+                  form={form}
+                  loading={loading}
+                  setLoading={setLoading}
+                  setEditMappings={setEditMappings}
+                  setGetMappings={setGetMappings}
+                  mapping={mapping}
+                />
               </>
             )}
           </>
