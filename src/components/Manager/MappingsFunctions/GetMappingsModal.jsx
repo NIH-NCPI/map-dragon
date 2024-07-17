@@ -283,6 +283,7 @@ export const GetMappingsModal = ({
     // Adds the selectedMappings to the selectedBoxes to ensure they are checked
     setSelectedBoxes(prevState => {
       const updated = [...prevState, selectedMapping];
+      // Sets the values for the form to the selectedMappings checkboxes that are checked
       form.setFieldsValue({ selected_mappings: updated });
       return updated;
     });
