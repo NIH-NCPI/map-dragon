@@ -236,17 +236,17 @@ There is then a tooltip that displays the variables on hover.*/
           <div className="terminology_details">{table?.url}</div>
           <div className="terminology_details terminology_desc"></div>
           <div className="table_container">
-            <AddVariable
-              table={table}
-              setTable={setTable}
-              dataSource={dataSource}
-              setDataSource={setDataSource}
-              form={form}
-            />
             {/* ant.design table displaying the pre-defined columns and data, with expandable rows. 
             The expandable rows currently show the min, max, and units properties with no styling. */}
             {table?.variables?.length > 0 ? (
               <>
+                <AddVariable
+                  table={table}
+                  setTable={setTable}
+                  dataSource={dataSource}
+                  setDataSource={setDataSource}
+                  form={form}
+                />
                 <Form form={form}>
                   <Table
                     columns={columns}
