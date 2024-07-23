@@ -37,25 +37,21 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
       body: JSON.stringify(values),
     })
       .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
+        if (res.status === 400) {
           return res.json().then(error => {
-            if (res.status === 400) {
-              notification.error({
-                message: 'Error',
-                description: `${JSON.parse(
-                  error.message_to_user
-                )}, duration: 10`,
-              });
-            } else {
-              notification.error({
-                message: 'Error',
-                description: 'An error occurred uploading the table',
-              });
-            }
+            notification.error({
+              message: 'Error',
+              description: `${error.message_to_user}`,
+              duration: 10,
+            });
+            throw new Error('400 error');
+          });
+        } else if (!res.ok) {
+          return res.json().then(error => {
+            throw new Error(error.message_to_user || 'An error occurred');
           });
         }
+        return res.json();
       })
       .then(data => {
         setTable(data);
@@ -73,14 +69,12 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
             );
           })
           .catch(error => {
-            if (error) {
+            if (error.message !== '400 error') {
               notification.error({
                 message: 'Error',
-                description:
-                  'An error occurred updating the data dictionary. Please try again.',
+                description: 'An error occurred uploading the table',
               });
             }
-            return error;
           });
       });
   };
@@ -155,7 +149,6 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
           </Form.Item>
           <Form.Item
             name="csvContents"
-            rules={[{ required: true, message: 'Please select file.' }]}
             extra="CSV files only in Data Dictionary format."
           >
             <Upload

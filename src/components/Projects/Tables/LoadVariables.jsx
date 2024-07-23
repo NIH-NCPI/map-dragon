@@ -13,20 +13,41 @@ export const LoadVariables = ({ load, setLoad }) => {
   const { vocabUrl, setTable, table } = useContext(myContext);
 
   const tableUpload = values => {
-    handleUpdate(vocabUrl, 'LoadTable', table, values)
+    fetch(`${vocabUrl}/LoadTable/${table.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    })
+      .then(res => {
+        if (res.status === 400) {
+          return res.json().then(error => {
+            notification.error({
+              message: 'Error',
+              description: `${error.message_to_user}`,
+              duration: 10,
+            });
+            throw new Error('400 error');
+          });
+        } else if (!res.ok) {
+          return res.json().then(error => {
+            throw new Error(error.message_to_user || 'An error occurred');
+          });
+        }
+        return res.json();
+      })
       .then(updatedData => {
         setTable(updatedData);
         message.success('Variables uploaded successfully.');
       })
       .catch(error => {
-        if (error) {
+        if (error.message !== '400 error') {
           notification.error({
             message: 'Error',
-            description:
-              'An error occurred updating the data dictionary. Please try again.',
+            description: 'An error occurred uploading the table',
           });
         }
-        return error;
       });
   };
 
@@ -53,7 +74,7 @@ export const LoadVariables = ({ load, setLoad }) => {
           load is set to false to close the modal */}
       <Modal
         open={load}
-        width={'70%'}
+        width={'50%'}
         onOk={() =>
           form.validateFields().then(values => {
             handleUpload(values);
