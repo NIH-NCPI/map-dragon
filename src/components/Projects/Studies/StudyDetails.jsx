@@ -22,6 +22,7 @@ import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
 import { AddDD } from '../DataDictionaries/AddDD';
 import { RemoveStudyDD } from './RemoveStudyDD';
+import { Submenu } from '../../Manager/Submenu';
 const { Meta } = Card;
 
 export const StudyDetails = () => {
@@ -97,6 +98,7 @@ export const StudyDetails = () => {
         <Spinner />
       ) : (
         <div className="studies_container">
+          <Submenu prop={study} />
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>

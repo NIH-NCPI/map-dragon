@@ -11,12 +11,13 @@ import { LoadVariables } from './LoadVariables';
 import { MappingContext } from '../../../MappingContext';
 import { ExportFile } from './ExportFile';
 import { EditMappingsTableModal } from './EditMappingsTableModal';
-import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { AddVariable } from './AddVariable';
 import { ExpandedRowTable } from './ExpandedRowTable';
 import { TableMenu } from './TableMenu';
+import { Submenu } from '../../Manager/Submenu';
+import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -192,6 +193,7 @@ There is then a tooltip that displays the variables on hover.*/
         <Spinner />
       ) : (
         <div className="table_id_container">
+          <Submenu prop={table} />
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>
@@ -218,7 +220,7 @@ There is then a tooltip that displays the variables on hover.*/
                 <div className="study_details_right">
                   <div className="study_dropdown">
                     {/* ant.design dropdown for edit. */}
-                    <SettingsDropdownTerminology />
+                    <SettingsDropdownTable />
                   </div>
                 </div>
               </Col>
