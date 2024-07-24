@@ -6,13 +6,16 @@ import { handlePost, handleUpdate } from '../../Manager/FetchManager';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ModalSpinner } from '../../Manager/Spinner';
 
 export const LoadVariables = ({ load, setLoad }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const { vocabUrl, setTable, table } = useContext(myContext);
+  const [loading, setLoading] = useState(false);
 
   const tableUpload = values => {
+    setLoading(true);
     fetch(`${vocabUrl}/LoadTable/${table.id}`, {
       method: 'PUT',
       headers: {
@@ -38,6 +41,7 @@ export const LoadVariables = ({ load, setLoad }) => {
         return res.json();
       })
       .then(updatedData => {
+        setLoad(false);
         setTable(updatedData);
         message.success('Variables uploaded successfully.');
       })
@@ -48,7 +52,8 @@ export const LoadVariables = ({ load, setLoad }) => {
             description: 'An error occurred uploading the table',
           });
         }
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   /* Function for upload. If a file was uploaded, it takes the values from the form, parses the uploaded file's content
@@ -65,6 +70,7 @@ export const LoadVariables = ({ load, setLoad }) => {
       },
     });
   };
+
   return (
     <>
       {/* ant.design modal with the form to add a table */}
@@ -79,7 +85,6 @@ export const LoadVariables = ({ load, setLoad }) => {
           form.validateFields().then(values => {
             handleUpload(values);
             form.resetFields();
-            setLoad(false);
           })
         }
         onCancel={() => {
@@ -87,33 +92,39 @@ export const LoadVariables = ({ load, setLoad }) => {
           setLoad(false);
           setFileList([]);
         }}
+        cancelButtonProps={{ disabled: loading }}
+        okButtonProps={{ disabled: loading }}
         maskClosable={false}
       >
-        <Form form={form} layout="vertical" name="form_in_modal">
-          <h2>Upload Variables</h2>
-          <Form.Item
-            name="csvContents"
-            rules={[{ required: true, message: 'Please select file.' }]}
-            extra="CSV files only, in Data Dictionary format."
-          >
-            <Upload
-              maxCount={1}
-              onRemove={file => {
-                const index = fileList.indexOf(file);
-                const newFileList = fileList.slice();
-                newFileList.splice(index, 1);
-                setFileList(newFileList);
-              }}
-              beforeUpload={file => {
-                setFileList([...fileList, file]);
-                return false;
-              }}
-              accept=".csv"
+        {loading ? (
+          <ModalSpinner />
+        ) : (
+          <Form form={form} layout="vertical" name="form_in_modal">
+            <h2>Upload Variables</h2>
+            <Form.Item
+              name="csvContents"
+              rules={[{ required: true, message: 'Please select file.' }]}
+              extra="CSV files only, in Data Dictionary format."
             >
-              <Button icon={<UploadOutlined />}>Select File</Button>
-            </Upload>
-          </Form.Item>
-        </Form>
+              <Upload
+                maxCount={1}
+                onRemove={file => {
+                  const index = fileList.indexOf(file);
+                  const newFileList = fileList.slice();
+                  newFileList.splice(index, 1);
+                  setFileList(newFileList);
+                }}
+                beforeUpload={file => {
+                  setFileList([...fileList, file]);
+                  return false;
+                }}
+                accept=".csv"
+              >
+                <Button icon={<UploadOutlined />}>Select File</Button>
+              </Upload>
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </>
   );
