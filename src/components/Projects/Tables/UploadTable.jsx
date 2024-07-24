@@ -14,10 +14,12 @@ import { handlePost, handleUpdate } from '../../Manager/FetchManager';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ModalSpinner } from '../../Manager/Spinner';
 
 export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { vocabUrl, dataDictionary, setDataDictionary, setTable, table } =
     useContext(myContext);
   const { studyId, DDId } = useParams();
@@ -28,6 +30,7 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   // copy of the tables array in the DD. The value of the
   // tables array is set to the copy with the new table in the PUT call (handleUpdate function)
   const tableUpload = values => {
+    setLoading(true);
     const newTableArray = [...dataDictionary?.tables];
     fetch(`${vocabUrl}/LoadTable`, {
       method: 'POST',
@@ -54,6 +57,8 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
         return res.json();
       })
       .then(data => {
+        setAddTable(false);
+        form.resetFields();
         setTable(data);
         newTableArray.push({ 'reference': `Table/${data.id}` });
         handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
@@ -76,7 +81,8 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
               });
             }
           });
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   /* Function for upload. If a file was uploaded, it takes the values from the form, parses the uploaded file's content
@@ -113,8 +119,6 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
         onOk={() =>
           form.validateFields().then(values => {
             handleUpload(values);
-            form.resetFields();
-            setAddTable(false);
           })
         }
         onCancel={() => {
@@ -122,53 +126,59 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
           setAddTable(false);
           setFileList([]);
         }}
+        cancelButtonProps={{ disabled: loading }}
+        okButtonProps={{ disabled: loading }}
         maskClosable={false}
       >
-        <Form form={form} layout="vertical" name="form_in_modal">
-          <h2>Upload Table</h2>
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true, message: 'Please input Table name.' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: false }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="url"
-            label="URL"
-            rules={[{ required: true, message: 'Please input Table URL.' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="csvContents"
-            extra="CSV files only in Data Dictionary format."
-          >
-            <Upload
-              maxCount={1}
-              onRemove={file => {
-                const index = fileList.indexOf(file);
-                const newFileList = fileList.slice();
-                newFileList.splice(index, 1);
-                setFileList(newFileList);
-              }}
-              beforeUpload={file => {
-                setFileList([...fileList, file]);
-                return false;
-              }}
-              accept=".csv"
+        {loading ? (
+          <ModalSpinner />
+        ) : (
+          <Form form={form} layout="vertical" name="form_in_modal">
+            <h2>Upload Table</h2>
+            <Form.Item
+              name="name"
+              label="Name"
+              rules={[{ required: true, message: 'Please input Table name.' }]}
             >
-              <Button icon={<UploadOutlined />}>Select File</Button>
-            </Upload>
-          </Form.Item>
-        </Form>
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[{ required: false }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="url"
+              label="URL"
+              rules={[{ required: true, message: 'Please input Table URL.' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="csvContents"
+              extra="CSV files only in Data Dictionary format."
+            >
+              <Upload
+                maxCount={1}
+                onRemove={file => {
+                  const index = fileList.indexOf(file);
+                  const newFileList = fileList.slice();
+                  newFileList.splice(index, 1);
+                  setFileList(newFileList);
+                }}
+                beforeUpload={file => {
+                  setFileList([...fileList, file]);
+                  return false;
+                }}
+                accept=".csv"
+              >
+                <Button icon={<UploadOutlined />}>Select File</Button>
+              </Upload>
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </>
   );
