@@ -13,6 +13,7 @@ import { AddCode } from './AddCode';
 import { MappingContext } from '../../../MappingContext';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { TerminologyMenu } from './TerminologyMenu';
+import { Submenu } from '../../Manager/Submenu';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -171,6 +172,7 @@ There is then a tooltip that displays the codes on hover.*/
         <Spinner />
       ) : (
         <div className="terminology_container">
+          <Submenu prop={terminology} />
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>

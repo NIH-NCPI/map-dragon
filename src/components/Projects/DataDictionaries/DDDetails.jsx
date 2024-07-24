@@ -21,6 +21,7 @@ import { EditDDDetails } from './EditDDDetails';
 import { UploadTable } from '../Tables/UploadTable';
 import { RemoveTableDD } from './RemoveTableDD';
 import { DeleteDD } from './DeleteDD';
+import { Submenu } from '../../Manager/Submenu';
 
 export const DDDetails = () => {
   const [form] = Form.useForm();
@@ -92,6 +93,7 @@ export const DDDetails = () => {
         <Spinner />
       ) : (
         <div className="studies_container">
+          <Submenu prop={dataDictionary} />
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>

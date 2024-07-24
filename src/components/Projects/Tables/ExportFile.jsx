@@ -1,12 +1,13 @@
-import { Button } from 'antd';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { getById } from '../../Manager/FetchManager';
 import { myContext } from '../../../App';
-import { message, notification, Popconfirm } from 'antd';
+import { Modal, notification, Popconfirm } from 'antd';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import Papa from 'papaparse';
 
 export const ExportFile = ({ table }) => {
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, exportState, setExportState } = useContext(myContext);
+  const { confirm } = Modal;
 
   // gets the harmony of mappings, then unparses it to a CSV object. A blob is created
   // containing the csv data. A URL is created to represent the csv as a downloadable resource.
@@ -35,14 +36,20 @@ export const ExportFile = ({ table }) => {
       });
   };
 
-  return (
-    <Popconfirm
-      title="Export mappings as Harmony?"
-      onConfirm={() => getHarmony()}
-    >
-      <Button type="primary" className="export_button">
-        Export
-      </Button>
-    </Popconfirm>
-  );
+  const showConfirm = () => {
+    confirm({
+      className: 'delete_table_confirm',
+      icon: <ExclamationCircleFilled />,
+      content: 'Are you sure you want to export mappings as Harmony?',
+      onOk() {
+        getHarmony();
+        setExportState(false);
+      },
+      onCancel() {
+        setExportState(false);
+      },
+    });
+  };
+
+  return exportState && showConfirm();
 };
