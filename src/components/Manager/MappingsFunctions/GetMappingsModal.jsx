@@ -110,15 +110,14 @@ export const GetMappingsModal = ({
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
   const handleSubmit = values => {
-    const mappingsDTO = () => {
-      const selectedMappings = values?.selected_mappings?.map(item => ({
-        code: item.obo_id,
-        display: item.label,
-        description: item.description[0], // Assuming description is an array
-        system: systemsMatch(item.obo_id.split(':')[0]),
-      }));
-
-      return { mappings: selectedMappings };
+    const selectedMappings = values?.selected_mappings?.map(item => ({
+      code: item.obo_id,
+      display: item.label,
+      description: item.description[0],
+      system: systemsMatch(item.obo_id.split(':')[0]),
+    }));
+    const mappingsDTO = {
+      mappings: selectedMappings,
     };
 
     fetch(
@@ -128,7 +127,7 @@ export const GetMappingsModal = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(mappingsDTO()),
+        body: JSON.stringify(mappingsDTO),
       }
     )
       .then(res => {

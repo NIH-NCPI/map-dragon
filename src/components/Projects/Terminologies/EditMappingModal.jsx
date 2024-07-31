@@ -146,10 +146,8 @@ export const EditMappingsModal = ({
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
   const updateMappings = values => {
-    const mappingsDTO = () => {
-      let mappings = [];
-      values?.mappings?.forEach(v => mappings.push(JSON.parse(v)));
-      return { mappings: mappings };
+    const mappingsDTO = {
+      mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
     };
     fetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
@@ -158,7 +156,7 @@ export const EditMappingsModal = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(mappingsDTO()),
+        body: JSON.stringify(mappingsDTO),
       }
     )
       .then(res => {
@@ -188,20 +186,11 @@ export const EditMappingsModal = ({
   // The existing and new mappings are JSON.parsed and pushed to their respective arrays.
   // The arrays are combined into one mappings array and passed into the body of the PUT call.
   const editUpdatedMappings = values => {
-    const mappingsDTO = () => {
-      const parsedFilteredMappings = [];
-      const parsedExistingMappings = [];
-      values.filtered_mappings?.forEach(v =>
-        parsedFilteredMappings.push(JSON.parse(v))
-      );
-      values.existing_mappings?.forEach(v =>
-        parsedExistingMappings.push(JSON.parse(v))
-      );
-      const combinedMappings = [
-        ...parsedExistingMappings,
-        ...parsedFilteredMappings,
-      ];
-      return { mappings: combinedMappings };
+    const mappingsDTO = {
+      mappings: [
+        ...(values.existing_mappings?.map(v => JSON.parse(v)) ?? []),
+        ...(values.filtered_mappings?.map(v => JSON.parse(v)) ?? []),
+      ],
     };
 
     fetch(
@@ -211,7 +200,7 @@ export const EditMappingsModal = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(mappingsDTO()),
+        body: JSON.stringify(mappingsDTO),
       }
     )
       .then(res => {

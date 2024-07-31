@@ -306,20 +306,14 @@ export const MappingSearch = ({
 
   // Iterates through the array of previously selected mappings. Returns a JSON stringified object that is pushed to a separate array.
   // That array is returned to use as default checked values separate from the search results.
-  const initialChecked = () => {
-    let initialMappings = [];
-
-    mappingsForSearch.forEach((m, index) => {
-      const val = JSON.stringify({
-        code: m?.code,
-        display: m?.display,
-        description: m?.description,
-        system: m?.system,
-      });
-      initialMappings.push(val);
-    });
-    return initialMappings;
-  };
+  const initialChecked = mappingsForSearch.map(m =>
+    JSON.stringify({
+      code: m?.code,
+      display: m?.display,
+      description: m?.description,
+      system: m?.system,
+    })
+  );
 
   // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
   useEffect(() => {
@@ -360,7 +354,7 @@ export const MappingSearch = ({
                   <div className="result_container">
                     <Form form={form} layout="vertical">
                       <Form.Item
-                        initialValue={initialChecked()}
+                        initialValue={initialChecked}
                         name={['existing_mappings']}
                         valuePropName="value"
                         rules={[

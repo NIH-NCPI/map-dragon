@@ -153,17 +153,15 @@ export const EditMappingsTableModal = ({
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
   const updateMappings = values => {
-    const mappingsDTO = () => {
-      let mappings = [];
-      values?.mappings?.forEach(v => mappings.push(JSON.parse(v)));
-      return { mappings: mappings };
+    const mappingsDTO = {
+      mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
     };
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(mappingsDTO()),
+      body: JSON.stringify(mappingsDTO),
     })
       .then(res => {
         if (res.ok) {
@@ -195,18 +193,14 @@ export const EditMappingsTableModal = ({
     const selectedMappings = values?.selected_mappings?.map(item => ({
       code: item.obo_id,
       display: item.label,
-      description: item.description[0], // Assuming description is an array
+      description: item.description[0],
       system: systemsMatch(item.obo_id.split(':')[0]),
     }));
-    const mappingsDTO = () => {
-      const parsedExistingMappings = [];
-
-      values.existing_mappings?.forEach(v =>
-        parsedExistingMappings.push(JSON.parse(v))
-      );
-
-      const combinedMappings = [...parsedExistingMappings, ...selectedMappings];
-      return { mappings: combinedMappings };
+    const mappingsDTO = {
+      mappings: [
+        ...(values.existing_mappings?.map(v => JSON.parse(v)) ?? []),
+        ...(selectedMappings ?? []),
+      ],
     };
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
@@ -214,7 +208,7 @@ export const EditMappingsTableModal = ({
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(mappingsDTO()),
+      body: JSON.stringify(mappingsDTO),
     })
       .then(res => {
         if (res.ok) {
