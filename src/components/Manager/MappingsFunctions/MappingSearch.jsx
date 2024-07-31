@@ -304,8 +304,7 @@ export const MappingSearch = ({
     );
   };
 
-  // Iterates through the array of previously selected mappings. Returns a JSON stringified object that is pushed to a separate array.
-  // That array is returned to use as default checked values separate from the search results.
+  // Iterates through the array of previously selected mappings. Returns a JSON stringified object to use as default checked values separate from the search results.
   const initialChecked = mappingsForSearch.map(m =>
     JSON.stringify({
       code: m?.code,
