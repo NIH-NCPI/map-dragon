@@ -143,8 +143,7 @@ export const EditMappingsModal = ({
   };
 
   // Function to send a PUT call to update the mappings.
-  // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
-  // The mappings are turned into objects in the mappings array.
+  // Each mapping in the mappings array being edited is JSON.parsed and mappings are turned into objects in the mappings array.
   const updateMappings = values => {
     const mappingsDTO = {
       mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
@@ -183,8 +182,7 @@ export const EditMappingsModal = ({
   };
 
   // Function to send a PUT call to update the mappings after code name change.
-  // The existing and new mappings are JSON.parsed and pushed to their respective arrays.
-  // The arrays are combined into one mappings array and passed into the body of the PUT call.
+  // The existing and new mappings are JSON.parsed combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
     const mappingsDTO = {
       mappings: [
