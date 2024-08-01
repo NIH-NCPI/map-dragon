@@ -72,6 +72,14 @@ nav {
   box-shadow: 0 5px 15px rgba(178, 182, 92, 0.8);
 }
 
+.login {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 100px 0 0;
+}
+
 footer {
   margin-top: auto;
   bottom: 0;

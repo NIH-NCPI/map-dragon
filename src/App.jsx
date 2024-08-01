@@ -1,12 +1,15 @@
 import { message } from 'antd';
 import { useState, createContext } from 'react';
 import { AppRouter } from './AppRouter';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export const myContext = createContext();
 
 function App() {
   const searchUrl = import.meta.env.VITE_SEARCH_ENDPOINT;
   const vocabUrl = import.meta.env.VITE_VOCAB_ENDPOINT;
+  const clientId = import.meta.env.VITE_CLIENT_ID;
+
   const [results, setResults] = useState({}); //search results for mappings
   const [tablesDD, setTablesDD] = useState([]); //the tables in a data dictionary
   const [studyDDs, setStudyDDs] = useState([]); //the data dictionaries in a study
@@ -29,44 +32,49 @@ function App() {
   }; //initial state of study
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
+  const [user, setUser] = useState(null);
 
   message.config({
     top: '25vh',
   });
 
   return (
-    <myContext.Provider
-      value={{
-        results,
-        setResults,
-        searchUrl,
-        vocabUrl,
-        tablesDD,
-        setTablesDD,
-        studyDDs,
-        setStudyDDs,
-        addStudy,
-        setAddStudy,
-        edit,
-        setEdit,
-        clear,
-        setClear,
-        deleteState,
-        setDeleteState,
-        table,
-        setTable,
-        dataDictionary,
-        setDataDictionary,
-        study,
-        setStudy,
-        selectedKey,
-        setSelectedKey,
-        exportState,
-        setExportState,
-      }}
-    >
-      <AppRouter />
-    </myContext.Provider>
+    <GoogleOAuthProvider clientId={clientId}>
+      <myContext.Provider
+        value={{
+          results,
+          setResults,
+          searchUrl,
+          vocabUrl,
+          tablesDD,
+          setTablesDD,
+          studyDDs,
+          setStudyDDs,
+          addStudy,
+          setAddStudy,
+          edit,
+          setEdit,
+          clear,
+          setClear,
+          deleteState,
+          setDeleteState,
+          table,
+          setTable,
+          dataDictionary,
+          setDataDictionary,
+          study,
+          setStudy,
+          selectedKey,
+          setSelectedKey,
+          exportState,
+          setExportState,
+          user,
+          setUser,
+        }}
+      >
+        <AppRouter />
+      </myContext.Provider>
+    </GoogleOAuthProvider>
   );
 }
 
