@@ -1,5 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import './NavBar.scss';
+import { Login } from '../Auth/Login';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export const NavBar = () => {
   return (
@@ -28,6 +30,9 @@ export const NavBar = () => {
             <NavLink to="/about">
               <li className="nav_link">About</li>
             </NavLink>
+          </div>
+          <div className="login">
+            <Login />
           </div>
         </ul>
       </nav>
