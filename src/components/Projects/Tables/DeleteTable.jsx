@@ -1,4 +1,4 @@
-import { Modal, message } from 'antd';
+import { Modal, message, notification } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { useContext } from 'react';
@@ -8,15 +8,23 @@ import { handleDelete } from '../../Manager/FetchManager';
 
 export const DeleteTable = ({ DDId, studyId }) => {
   const { confirm } = Modal;
-  const { vocabUrl, deleteState, setDeleteState, table } =
+  const { vocabUrl, deleteState, setDeleteState, table, user } =
     useContext(myContext);
   const navigate = useNavigate();
 
-  const deleteTable = evt =>
-    handleDelete(evt, vocabUrl, 'Table', table).then(() => {
-      message.success('Table deleted successfully.');
-      navigate(`/Study/${studyId}/DataDictionary/${DDId}`);
-    });
+  const deleteTable = evt => {
+    return handleDelete(evt, vocabUrl, 'Table', table, user)
+      .then(data => {
+        message.success('Table deleted successfully.');
+        navigate(`/Study/${studyId}/DataDictionary/${DDId}`);
+      })
+      .catch(error => {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred deleting the table.',
+        });
+      });
+  };
 
   // Confirm modal. Deletes table on 'ok' click.
   const showConfirm = () => {

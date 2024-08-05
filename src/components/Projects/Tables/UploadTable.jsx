@@ -20,7 +20,7 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { vocabUrl, dataDictionary, setDataDictionary, setTable, table } =
+  const { vocabUrl, dataDictionary, setDataDictionary, setTable, table, user } =
     useContext(myContext);
   const { studyId, DDId } = useParams();
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify({ ...values, editor: user.email }),
     })
       .then(res => {
         if (res.status === 400) {

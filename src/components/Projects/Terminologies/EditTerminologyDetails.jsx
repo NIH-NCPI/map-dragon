@@ -8,7 +8,7 @@ export const EditTerminologyDetails = ({
   terminology,
   setTerminology,
 }) => {
-  const { edit, setEdit, vocabUrl } = useContext(myContext);
+  const { edit, setEdit, vocabUrl, user } = useContext(myContext);
   // Sets the initial values displayed in the form and esnures they are current
   const changeHandler = () => {
     form.setFieldsValue({

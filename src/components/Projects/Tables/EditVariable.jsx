@@ -19,7 +19,7 @@ export const EditVariable = ({
   setSelectedKey,
 }) => {
   const { TextArea } = Input;
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, user } = useContext(myContext);
   const { setMapping } = useContext(MappingContext);
   const { tableId } = useParams();
   const [type, setType] = useState('');
@@ -76,7 +76,10 @@ export const EditVariable = ({
         item => item.name.toLowerCase() === values.name.toLowerCase()
       )
     ) {
-      handlePatch(vocabUrl, 'Table', table, updatedName)
+      handlePatch(vocabUrl, 'Table', table, {
+        ...updatedName,
+        editor: user.email,
+      })
         .catch(error => {
           if (error) {
             notification.error({
@@ -92,7 +95,7 @@ export const EditVariable = ({
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(values),
+            body: JSON.stringify({ ...values, editor: user.email }),
           })
             .then(res => {
               if (res.ok) {
@@ -126,7 +129,7 @@ export const EditVariable = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, editor: user.email }),
       })
         .then(res => {
           if (res.ok) {

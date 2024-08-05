@@ -7,7 +7,7 @@ import { myContext } from '../../../App';
 
 export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
   const { confirm } = Modal;
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, user } = useContext(myContext);
 
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
@@ -15,6 +15,10 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
   const handleDelete = evt => {
     return fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ editor: user.email }),
     })
       .then(response => response.json())
       .then(() => {

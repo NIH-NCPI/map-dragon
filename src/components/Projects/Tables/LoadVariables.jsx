@@ -11,7 +11,7 @@ import { ModalSpinner } from '../../Manager/Spinner';
 export const LoadVariables = ({ load, setLoad }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
-  const { vocabUrl, setTable, table } = useContext(myContext);
+  const { vocabUrl, setTable, table, user } = useContext(myContext);
   const [loading, setLoading] = useState(false);
 
   const tableUpload = values => {
@@ -21,7 +21,7 @@ export const LoadVariables = ({ load, setLoad }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify({ ...values, editor: user.email }),
     })
       .then(res => {
         if (res.status === 400) {

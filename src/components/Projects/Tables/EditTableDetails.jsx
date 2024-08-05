@@ -5,7 +5,7 @@ import { handleUpdate } from '../../Manager/FetchManager';
 
 export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
   const [form] = Form.useForm();
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, user } = useContext(myContext);
   // Sets the initial values displayed in the form and esnures they are current
   const changeHandler = () => {
     form.setFieldsValue({
@@ -23,6 +23,7 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
       ...values,
       filename: table.filename,
       variables: table?.variables,
+      editor: user.email,
     })
       .then(data => setTable(data))
       // Displays a self-closing message that the udpates have been successfully saved.

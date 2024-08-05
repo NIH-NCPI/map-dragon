@@ -17,7 +17,7 @@ export const EditCode = ({
   setSelectedKey,
 }) => {
   const { TextArea } = Input;
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, user } = useContext(myContext);
   const { setMapping } = useContext(MappingContext);
   const { terminologyId } = useParams();
 
@@ -72,7 +72,10 @@ export const EditCode = ({
     // // If the new code already exists in the terminolgoy and does not match the index being edited,
     // // an error message displays that the code already exists. Otherwise the PUT call is run.
 
-    handlePatch(vocabUrl, 'Terminology', terminology, updatedRowDTO)
+    handlePatch(vocabUrl, 'Terminology', terminology, {
+      ...updatedRowDTO,
+      editor: user.email,
+    })
       .then(data => {
         setTerminology(data);
         message.success('Changes saved successfully.');

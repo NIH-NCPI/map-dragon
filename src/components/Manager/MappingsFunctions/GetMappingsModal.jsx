@@ -16,7 +16,7 @@ export const GetMappingsModal = ({
   const [form] = Form.useForm();
   const { Search } = Input;
 
-  const { searchUrl, vocabUrl, setSelectedKey } = useContext(myContext);
+  const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
   const [loading, setLoading] = useState(true);
@@ -118,6 +118,7 @@ export const GetMappingsModal = ({
     }));
     const mappingsDTO = {
       mappings: selectedMappings,
+      editor: user.email,
     };
 
     fetch(

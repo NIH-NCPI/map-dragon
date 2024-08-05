@@ -16,11 +16,11 @@ export const SettingsDropdownTerminology = () => {
       key: '1',
       danger: true,
     },
-    {
-      label: 'Delete',
-      key: '2',
-      danger: true,
-    },
+    // {
+    //   label: 'Delete',
+    //   key: '2',
+    //   danger: true,
+    // },
   ];
 
   // onClick for dropdown. Sets states to true depending on their key.
@@ -31,8 +31,8 @@ export const SettingsDropdownTerminology = () => {
         return setEdit(true);
       case '1':
         return setClear(true);
-      case '2':
-        return setDeleteState(true);
+      // case '2':
+      //   return setDeleteState(true);
     }
   };
 

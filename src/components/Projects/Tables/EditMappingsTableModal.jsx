@@ -26,7 +26,7 @@ export const EditMappingsTableModal = ({
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
-  const { vocabUrl, setSelectedKey } = useContext(myContext);
+  const { vocabUrl, setSelectedKey, user } = useContext(myContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
@@ -154,6 +154,7 @@ export const EditMappingsTableModal = ({
   const updateMappings = values => {
     const mappingsDTO = {
       mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
+      editor: user.email,
     };
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'PUT',
@@ -199,6 +200,7 @@ export const EditMappingsTableModal = ({
         ...(values.existing_mappings?.map(v => JSON.parse(v)) ?? []),
         ...(selectedMappings ?? []),
       ],
+      editor: user.email,
     };
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
