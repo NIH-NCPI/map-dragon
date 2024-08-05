@@ -25,7 +25,7 @@ export const EditMappingsModal = ({
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
-  const { vocabUrl, terminology } = useContext(myContext);
+  const { vocabUrl, terminology, user } = useContext(myContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
@@ -147,6 +147,7 @@ export const EditMappingsModal = ({
   const updateMappings = values => {
     const mappingsDTO = {
       mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
+      editor: user.email,
     };
     fetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
@@ -189,6 +190,7 @@ export const EditMappingsModal = ({
         ...(values.existing_mappings?.map(v => JSON.parse(v)) ?? []),
         ...(values.filtered_mappings?.map(v => JSON.parse(v)) ?? []),
       ],
+      editor: user.email,
     };
 
     fetch(

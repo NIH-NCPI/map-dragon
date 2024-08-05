@@ -7,8 +7,9 @@ import { myContext } from '../../../App';
 
 export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
   const { confirm } = Modal;
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, user } = useContext(myContext);
 
+  console.log(editMappings);
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
   // setReset is set to true to open the modal that performs the search for the code again.
@@ -17,6 +18,10 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
       {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ editor: user.email }),
       }
     )
       .then(response => response.json())

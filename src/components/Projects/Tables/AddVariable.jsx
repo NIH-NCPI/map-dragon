@@ -4,7 +4,7 @@ import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
 import DataTypeSubForm from './DataTypeSubForm';
 
 export const AddVariable = ({ table, setTable }) => {
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, user } = useContext(myContext);
   const [addRow, setAddRow] = useState(false);
   const [type, setType] = useState('');
   const { TextArea } = Input;
@@ -16,7 +16,7 @@ export const AddVariable = ({ table, setTable }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify({ ...values, editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

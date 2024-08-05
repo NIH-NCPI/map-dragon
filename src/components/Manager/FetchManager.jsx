@@ -43,22 +43,36 @@ export const getById = async (vocabUrl, name, id, navigate) => {
 };
 
 // Deletes one element by its id
-export const handleDelete = (evt, vocabUrl, name, component) => {
-  return fetch(`${vocabUrl}/${name}/${component.id}`, {
-    method: 'DELETE',
-  })
-    .then(response => response.json())
+export const handleDelete = (evt, vocabUrl, name, component, user) => {
+  const options = { method: 'DELETE' };
+
+  if (name === 'Table' || name === 'Terminology') {
+    options.headers = {
+      'Content-Type': 'application/json',
+    };
+    options.body = JSON.stringify({ editor: user.email });
+  }
+  return fetch(`${vocabUrl}/${name}/${component.id}`, options)
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(error => {
+          throw new Error(error.message || 'An error occurred.');
+        });
+      }
+      return response.json();
+    })
     .then(() => {
       return fetch(`${vocabUrl}/${name}`);
     })
     .then(res => {
-      if (res.ok) {
-        return res.json();
-      } else {
+      if (!res.ok) {
         return res.json().then(error => {
-          throw new Error(error);
+          throw new Error(
+            error.message || 'Error occurred while fetching updated data'
+          );
         });
       }
+      return res.json();
     });
 };
 

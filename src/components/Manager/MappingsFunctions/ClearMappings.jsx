@@ -8,7 +8,7 @@ import { MappingContext } from '../../../MappingContext';
 
 export const ClearMappings = ({ propId, component }) => {
   const { confirm } = Modal;
-  const { vocabUrl, clear, setClear } = useContext(myContext);
+  const { vocabUrl, clear, setClear, user } = useContext(myContext);
 
   const { setMapping } = useContext(MappingContext);
 
@@ -18,6 +18,10 @@ export const ClearMappings = ({ propId, component }) => {
   const handleDelete = evt => {
     return fetch(`${vocabUrl}/${component}/${propId}/mapping`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

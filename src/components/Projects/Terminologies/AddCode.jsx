@@ -3,7 +3,7 @@ import { myContext } from '../../../App';
 import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
 
 export const AddCode = ({ terminology, setTerminology }) => {
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, user } = useContext(myContext);
   const [addRow, setAddRow] = useState(false);
   const { TextArea } = Input;
   const [form] = Form.useForm();
@@ -14,7 +14,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify({ ...values, editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

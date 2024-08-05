@@ -16,10 +16,11 @@ export const TableMenu = ({
   setGetMappings,
 }) => {
   const { confirm } = Modal;
-  const { vocabUrl, selectedKey, setSelectedKey } = useContext(myContext);
+  const { vocabUrl, selectedKey, setSelectedKey, user } = useContext(myContext);
   const { variable } = tableData;
   const [editRow, setEditRow] = useState(null);
   const [deleteRow, setDeleteRow] = useState(null);
+  const [showHistory, setShowHistory] = useState(null);
 
   // Opens the delete dialog box when Delete is selected in the menu
   useEffect(() => {
@@ -32,6 +33,10 @@ export const TableMenu = ({
   const handleVarDelete = varName => {
     fetch(`${vocabUrl}/Table/${table.id}/variable/${varName}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {
@@ -98,7 +103,11 @@ export const TableMenu = ({
         { key: `${tableData.key}-2`, label: 'Delete' },
         {
           key: `${tableData.key}-3`,
-          label: showEditMappings ? 'Edit Mappings' : 'Get Mappings',
+          label: showEditMappings ? 'Mappings' : 'Get Mappings',
+        },
+        {
+          key: `${tableData.key}-4`,
+          label: 'History',
         },
       ],
     },
@@ -119,6 +128,8 @@ export const TableMenu = ({
             setEditMappings(variable)
           : // If mappings do not exist for a variable, sets getMappings to the variable and opens GetMappingsModal in turn
             setGetMappings(variable);
+      case `${tableData.key}-4`:
+        return setShowHistory(true);
     }
   };
 
