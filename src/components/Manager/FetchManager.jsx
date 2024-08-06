@@ -131,3 +131,20 @@ export const handlePatch = (vocabUrl, name, component, body) => {
     }
   });
 };
+
+export const getProvenanceByCode = async (vocabUrl, name, id, code) => {
+  return fetch(`${vocabUrl}/Provenance/${name}/${id}/code/${code}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then(res => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      return res.json().then(error => {
+        throw new Error(error);
+      });
+    }
+  });
+};

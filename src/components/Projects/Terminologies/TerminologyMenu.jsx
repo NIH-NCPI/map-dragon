@@ -3,6 +3,7 @@ import { MoreOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { EditCode } from './EditCode';
+import { ShowHistory } from '../../Manager/ShowHistory';
 
 export const TerminologyMenu = ({
   tableData,
@@ -20,6 +21,7 @@ export const TerminologyMenu = ({
   const { item } = tableData;
   const [deleteRow, setDeleteRow] = useState(null);
   const [editRow, setEditRow] = useState(null);
+  const [showHistory, setShowHistory] = useState(null);
 
   // Opens the delete dialog box when Delete is selected in the menu
   useEffect(() => {
@@ -106,6 +108,10 @@ export const TerminologyMenu = ({
           key: `${tableData.key}-3`,
           label: showEditMappings ? 'Mappings' : 'Get Mappings',
         },
+        {
+          key: `${tableData.key}-4`,
+          label: 'History',
+        },
       ],
     },
   ];
@@ -125,6 +131,8 @@ export const TerminologyMenu = ({
             setEditMappings(item)
           : // If mappings do not exist for a code, sets getMappings to the code and opens GetMappingsModal in turn
             setGetMappings(item);
+      case `${tableData.key}-4`:
+        return setShowHistory(tableData.key);
     }
   };
 
@@ -149,6 +157,15 @@ export const TerminologyMenu = ({
         loading={loading}
         setLoading={setLoading}
         setSelectedKey={setSelectedKey}
+      />
+      <ShowHistory
+        showHistory={showHistory}
+        setShowHistory={setShowHistory}
+        component={terminology}
+        componentName="Terminology"
+        tableData={tableData}
+        setSelectedKey={setSelectedKey}
+        code={tableData.code}
       />
     </>
   );
