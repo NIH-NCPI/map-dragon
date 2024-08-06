@@ -9,7 +9,6 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
   const { confirm } = Modal;
   const { vocabUrl, user } = useContext(myContext);
 
-  console.log(editMappings);
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
   // setReset is set to true to open the modal that performs the search for the code again.

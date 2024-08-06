@@ -3,6 +3,7 @@ import { MoreOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { EditVariable } from './EditVariable';
 import { myContext } from '../../../App';
+import { ShowHistory } from '../../Manager/ShowHistory';
 
 export const TableMenu = ({
   tableData,
@@ -129,7 +130,7 @@ export const TableMenu = ({
           : // If mappings do not exist for a variable, sets getMappings to the variable and opens GetMappingsModal in turn
             setGetMappings(variable);
       case `${tableData.key}-4`:
-        return setShowHistory(true);
+        return setShowHistory(tableData.key);
     }
   };
 
@@ -153,6 +154,15 @@ export const TableMenu = ({
         loading={loading}
         setLoading={setLoading}
         setSelectedKey={setSelectedKey}
+      />
+      <ShowHistory
+        showHistory={showHistory}
+        setShowHistory={setShowHistory}
+        component={table}
+        componentName="Table"
+        tableData={tableData}
+        setSelectedKey={setSelectedKey}
+        code={tableData.name}
       />
     </>
   );
