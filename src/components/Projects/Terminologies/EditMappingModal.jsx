@@ -13,7 +13,7 @@ import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetMappings } from './ResetMappings';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
-import { ellipsisString } from '../../Manager/Utilitiy';
+import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
 
 export const EditMappingsModal = ({
@@ -185,10 +185,16 @@ export const EditMappingsModal = ({
   // Function to send a PUT call to update the mappings after code name change.
   // The existing and new mappings are JSON.parsed combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
+    const selectedMappings = values?.selected_mappings?.map(item => ({
+      code: item.obo_id,
+      display: item.label,
+      description: item.description[0],
+      system: systemsMatch(item.obo_id.split(':')[0]),
+    }));
     const mappingsDTO = {
       mappings: [
         ...(values.existing_mappings?.map(v => JSON.parse(v)) ?? []),
-        ...(values.filtered_mappings?.map(v => JSON.parse(v)) ?? []),
+        ...(selectedMappings ?? []),
       ],
       editor: user.email,
     };
