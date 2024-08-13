@@ -1,4 +1,4 @@
-import { Button, Modal } from 'antd';
+import { Button, Modal, notification } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 // import './Terminology.scss';
 
@@ -20,7 +20,13 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
       },
       body: JSON.stringify({ editor: user.email }),
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to delete the mapping.');
+        }
+      })
       .then(() => {
         return fetch(`${vocabUrl}/Table/${tableId}/mapping`);
       })
@@ -31,7 +37,13 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
           throw new Error('An unknown error occurred.');
         }
       })
-      .then(() => setReset(true));
+      .then(() => setReset(true))
+      .catch(error => {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred deleting the mapping(s).',
+        });
+      });
   };
 
   // Confirm modal. Deletes mappings on 'ok' click.
