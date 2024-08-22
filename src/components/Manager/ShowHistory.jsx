@@ -68,8 +68,8 @@ export const ShowHistory = ({
   ];
 
   const handleOk = () => {
-    setShowHistory('');
     setSelectedKey(null);
+    setShowHistory('');
   };
 
   const dataSource =

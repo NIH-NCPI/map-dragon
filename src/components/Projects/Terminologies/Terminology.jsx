@@ -236,7 +236,9 @@ There is then a tooltip that displays the codes on hover.*/
             componentString={'Terminology'}
             component={terminology}
             setTerminology={setTerminology}
-            searchProp={getMappings?.code}
+            searchProp={
+              getMappings?.display ? getMappings.display : getMappings?.code
+            }
             setGetMappings={setGetMappings}
             setMapping={setMapping}
             terminologyId={terminologyId}
