@@ -25,7 +25,7 @@ export const EditMappingsModal = ({
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
-  const { vocabUrl, terminology, user } = useContext(myContext);
+  const { vocabUrl, setSelectedKey, user } = useContext(myContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
@@ -38,6 +38,7 @@ export const EditMappingsModal = ({
   const clearData = () => {
     setTermMappings([]);
     setOptions([]);
+    setSelectedKey(null);
   };
 
   const fetchMappings = () => {
@@ -306,7 +307,12 @@ export const EditMappingsModal = ({
         <>
           {/* If reset is false, the mappings for the code are displayed with checkboxes */}
           <div className="modal_search_results_header">
-            <h3>Mappings for: {editMappings?.code}</h3>
+            <h3>
+              Mappings for:{' '}
+              {editMappings?.display
+                ? editMappings.display
+                : editMappings?.code}
+            </h3>
           </div>
           <Form form={form} layout="vertical" preserve={false}>
             <Form.Item
@@ -328,12 +334,16 @@ export const EditMappingsModal = ({
           form={form}
           reset={reset}
           onClose={form.resetFields}
-          searchProp={editMappings.code}
+          searchProp={
+            editMappings?.display ? editMappings.display : editMappings?.code
+          }
         />
       ) : (
         reset && (
           <MappingReset
-            searchProp={editMappings.code}
+            searchProp={
+              editMappings?.display ? editMappings.display : editMappings?.code
+            }
             setEditMappings={setEditMappings}
             mappingsForSearch={mappingsForSearch}
             form={form}
