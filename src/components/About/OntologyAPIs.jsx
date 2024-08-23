@@ -3,7 +3,8 @@ import './OntologyInfo.scss';
 import { getOntologies } from '../Manager/FetchManager';
 import { myContext } from '../../App';
 import { Spinner } from '../Manager/Spinner';
-import { Table } from 'antd';
+import { Button, Input, Space, Table } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 export const OntologyInfo = () => {
   const { vocabUrl } = useContext(myContext);
@@ -28,25 +29,50 @@ export const OntologyInfo = () => {
       setActive(ontologies[0]?.api_id);
     }
   }, [ontologies]);
-  console.log(
-    ontologies
-      .filter(api => api.api_id === active)
-      .map(item =>
-        Object.values(item?.ontologies || {}).map((ont, i) => ({
-          key: i,
-          ontology: ont.ontology_title,
-          curie: ont.curie,
-          version: ont.version,
-        }))
-      )
-  );
 
   const columns = [
     {
       title: 'Ontology',
       dataIndex: 'ontology',
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }) => (
+        <div style={{ padding: 8 }}>
+          <Input
+            placeholder={`Search Ontology`}
+            value={selectedKeys[0]}
+            onChange={e => {
+              setSelectedKeys(e.target.value ? [e.target.value] : []);
+              confirm({ closeDropdown: false });
+            }}
+            style={{ display: 'block', marginBottom: 8 }}
+          />
+          <Space>
+            <Button
+              onClick={() => {
+                clearFilters();
+                setSelectedKeys([]);
+                confirm({ closeDropdown: false });
+              }}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Reset
+            </Button>
+          </Space>
+        </div>
+      ),
+      onFilter: (value, record) =>
+        record.ontology.toString().toLowerCase().includes(value.toLowerCase()),
+      filterIcon: filtered => (
+        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+      ),
       width: 400,
     },
+
     {
       title: 'Curie',
       dataIndex: 'curie',
@@ -62,7 +88,7 @@ export const OntologyInfo = () => {
   const dataSource = ontologies
     .filter(api => api.api_id === active)
     .flatMap(item =>
-      Object.values(item?.ontologies || {}).map((ont, i) => ({
+      Object.values(item?.ontologies).map((ont, i) => ({
         key: i,
         ontology: ont.ontology_title,
         curie: ont.curie,
