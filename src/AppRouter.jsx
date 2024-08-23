@@ -12,6 +12,7 @@ import { StudyList } from './components/Projects/Studies/StudyList';
 import './App.scss';
 import { MappingContextRoot } from './MappingContext';
 import { Error404 } from './components/Error/Error404';
+import { OntologyInfo } from './components/About/OntologyAPIs';
 
 export const AppRouter = () => {
   return (
@@ -34,6 +35,7 @@ export const AppRouter = () => {
           <Route index element={<OntologySearch />} />
           <Route path="/search/:query" element={<SearchResults />} />
           <Route path="/404" element={<Error404 />} />
+          <Route path="/about" element={<OntologyInfo />} />
           <Route element={<MappingContextRoot />}>
             <Route path="/studies" element={<StudyList />} />
             <Route path="/Study/:studyId">

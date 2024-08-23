@@ -1,0 +1,43 @@
+@import '../Styling/Variables';
+
+.about_container {
+  margin: 17vh 10vw 10vh 10vw;
+  line-height: 1.5rem;
+}
+
+.ontology_container {
+  display: flex;
+  flex-direction: row;
+}
+
+.api_list {
+  width: 12vw;
+  height: fit-content;
+  position: fixed;
+  display: flex;
+  flex-flow: column wrap;
+  gap: 2px;
+}
+
+.inactive_api {
+  line-height: 3rem;
+  padding: 0 10px;
+  background-color: $lightBlue;
+  cursor: pointer;
+}
+
+.active_api {
+  line-height: 3rem;
+  padding: 0 10px;
+  background-color: $darkBlue;
+  cursor: pointer;
+  color: white;
+}
+.ontology_list {
+  margin: 0 0 0 15vw;
+  position: fixed;
+  top: 20vh;
+  height: 20%;
+  //   overflow-y: auto;
+  width: 70vw;
+}
