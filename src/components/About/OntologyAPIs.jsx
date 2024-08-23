@@ -78,6 +78,7 @@ export const OntologyInfo = () => {
 
       <div className="ontology_container">
         <div className="api_list">
+          <div className="api_label">APIs</div>
           {ontologies.map((api, index) => (
             <div
               key={index}
