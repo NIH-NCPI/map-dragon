@@ -31,3 +31,13 @@ export const SearchSpinner = () => {
     </div>
   );
 };
+
+export const SmallSpinner = () => {
+  return (
+    <div className="small_spinner_container">
+      <div className="small_spinner">
+        <Spin />
+      </div>
+    </div>
+  );
+};

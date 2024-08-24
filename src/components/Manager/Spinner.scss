@@ -24,3 +24,21 @@
   background-color: rgb(79, 79, 79, 0.1);
   border: 1px solid rgb(79, 79, 79, 0.4);
 }
+
+.small_spinner_container {
+  margin-top: $navHeight;
+  // height: calc(100vh - $navHeight);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.small_spinner {
+  vertical-align: center;
+  text-align: center;
+  padding: 1vw;
+  width: 100px;
+  background-color: rgb(79, 79, 79, 0.1);
+  border: 1px solid rgb(79, 79, 79, 0.4);
+}
