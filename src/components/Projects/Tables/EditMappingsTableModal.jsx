@@ -41,8 +41,6 @@ export const EditMappingsTableModal = ({
   const onClose = () => {
     setTermMappings([]);
     setOptions([]);
-    form.resetFields();
-    setEditMappings(null);
     setReset(false);
     setEditSearch(false);
   };
@@ -152,6 +150,7 @@ export const EditMappingsTableModal = ({
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and turned into objects in the mappings array.
   const updateMappings = values => {
+    setLoading(true);
     const mappingsDTO = {
       mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
       editor: user.email,
@@ -172,6 +171,8 @@ export const EditMappingsTableModal = ({
       })
       .then(data => {
         setMapping(data.codes);
+        setEditMappings(null);
+        form.resetFields();
         message.success('Mappings updated successfully.');
       })
       .catch(error => {
@@ -189,6 +190,7 @@ export const EditMappingsTableModal = ({
   // Function to send a PUT call to update the mappings after code name change.
   // The existing and new mappings are JSON.parsed and combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
+    setLoading(true);
     const selectedMappings = values?.selected_mappings?.map(item => ({
       code: item.obo_id,
       display: item.label,
@@ -218,6 +220,8 @@ export const EditMappingsTableModal = ({
         }
       })
       .then(data => {
+        setEditMappings(null);
+        form.resetFields();
         setMapping(data.codes);
         message.success('Mappings updated successfully.');
       })
@@ -259,6 +263,7 @@ export const EditMappingsTableModal = ({
       }}
       onCancel={() => {
         onClose();
+        form.resetFields();
         setSelectedMappings([]);
         setDisplaySelectedMappings([]);
         setSelectedKey(null);
@@ -298,6 +303,8 @@ export const EditMappingsTableModal = ({
           </div>
         </>
       )}
+      cancelButtonProps={{ disabled: loading }}
+      okButtonProps={{ disabled: loading }}
     >
       {loading ? (
         <ModalSpinner />

@@ -1,9 +1,11 @@
 import { Form, Input, message, Modal } from 'antd';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { handleUpdate } from '../../Manager/FetchManager';
+import { ModalSpinner } from '../../Manager/Spinner';
 
 export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const { vocabUrl, user } = useContext(myContext);
   // Sets the initial values displayed in the form and esnures they are current
@@ -19,15 +21,21 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
   // The function adds the variables and filename to the body of the PUT request to retain the complete
   // table object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
   const handleSubmit = values => {
+    setLoading(true);
     handleUpdate(vocabUrl, 'Table', table, {
       ...values,
       filename: table.filename,
       variables: table?.variables,
       editor: user.email,
     })
-      .then(data => setTable(data))
+      .then(data => {
+        setTable(data);
+        setEdit(false);
+        form.resetFields();
+      })
       // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Changes saved successfully.'));
+      .then(() => message.success('Changes saved successfully.'))
+      .finally(() => setLoading(false));
   };
   return (
     <>
@@ -37,8 +45,6 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
         width={'51%'}
         onOk={() =>
           form.validateFields().then(values => {
-            form.resetFields();
-            setEdit(false);
             handleSubmit(values);
           })
         }
@@ -46,39 +52,45 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
           form.resetFields();
           setEdit(false);
         }}
+        cancelButtonProps={{ disabled: loading }}
+        okButtonProps={{ disabled: loading }}
         maskClosable={false}
         closeIcon={false}
         destroyOnClose={true}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          preserve={false}
-          onChange={changeHandler()}
-        >
-          <h2>{table?.name ? table?.name : table?.id}</h2>
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true, message: 'Please input Table name.' }]}
+        {loading ? (
+          <ModalSpinner />
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            preserve={false}
+            onChange={changeHandler()}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: false }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="url"
-            label="URL"
-            rules={[{ required: true, message: 'Please input Table URL.' }]}
-          >
-            <Input />
-          </Form.Item>{' '}
-        </Form>
+            <h2>{table?.name ? table?.name : table?.id}</h2>
+            <Form.Item
+              name="name"
+              label="Name"
+              rules={[{ required: true, message: 'Please input Table name.' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[{ required: false }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="url"
+              label="URL"
+              rules={[{ required: true, message: 'Please input Table URL.' }]}
+            >
+              <Input />
+            </Form.Item>{' '}
+          </Form>
+        )}
       </Modal>
     </>
   );

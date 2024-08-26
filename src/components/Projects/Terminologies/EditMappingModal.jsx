@@ -146,6 +146,7 @@ export const EditMappingsModal = ({
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and mappings are turned into objects in the mappings array.
   const updateMappings = values => {
+    setLoading(true);
     const mappingsDTO = {
       mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
       editor: user.email,
@@ -169,6 +170,9 @@ export const EditMappingsModal = ({
       })
       .then(data => {
         setMapping(data.codes);
+        form.resetFields();
+        setEditMappings(null);
+
         message.success('Mappings updated successfully.');
       })
       .catch(error => {
@@ -186,6 +190,7 @@ export const EditMappingsModal = ({
   // Function to send a PUT call to update the mappings after code name change.
   // The existing and new mappings are JSON.parsed combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
+    setLoading(true);
     const selectedMappings = values?.selected_mappings?.map(item => ({
       code: item.obo_id,
       display: item.label,
@@ -219,6 +224,8 @@ export const EditMappingsModal = ({
       })
       .then(data => {
         setMapping(data.codes);
+        form.resetFields();
+        setEditMappings(null);
         message.success('Mappings updated successfully.');
       })
       .catch(error => {
@@ -251,8 +258,6 @@ export const EditMappingsModal = ({
               ? editUpdatedMappings(values)
               : updateMappings(values);
             clearData();
-            form.resetFields();
-            setEditMappings(null);
             setReset(false);
             setEditSearch(false);
           })
@@ -269,6 +274,8 @@ export const EditMappingsModal = ({
             data => setMapping(data.codes)
           );
       }}
+      cancelButtonProps={{ disabled: loading }}
+      okButtonProps={{ disabled: loading }}
       closeIcon={false}
       maskClosable={false}
       destroyOnClose={true}
