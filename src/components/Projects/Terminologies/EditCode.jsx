@@ -1,7 +1,7 @@
 import { Form, Input, message, Modal, notification, Space } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner, Spinner } from '../../Manager/Spinner';
+import { ModalSpinner } from '../../Manager/Spinner';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../MappingContext';

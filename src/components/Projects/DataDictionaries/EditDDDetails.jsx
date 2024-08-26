@@ -1,7 +1,8 @@
 import { Form, Input, Modal, notification, message } from 'antd';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { handleUpdate } from '../../Manager/FetchManager';
+import { ModalSpinner } from '../../Manager/Spinner';
 
 export const EditDDDetails = ({
   form,
@@ -10,6 +11,7 @@ export const EditDDDetails = ({
   edit,
   setEdit,
 }) => {
+  const [loading, setLoading] = useState(false);
   const { vocabUrl } = useContext(myContext);
   // Sets the initial values displayed in the form and esnures they are current
   const changeHandler = () => {
@@ -23,12 +25,15 @@ export const EditDDDetails = ({
   // The function adds the variables and filename to the body of the PUT request to retain the complete
   // study object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
   const handleSubmit = values => {
+    setLoading(true);
     handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
       ...values,
       tables: dataDictionary?.tables,
     })
       .then(data => {
         setDataDictionary(data);
+        form.resetFields();
+        setEdit(false);
         message.success('Changes saved successfully.');
       })
       .catch(error => {
@@ -40,7 +45,8 @@ export const EditDDDetails = ({
           });
         }
         return error;
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -50,8 +56,6 @@ export const EditDDDetails = ({
         width={'51%'}
         onOk={() =>
           form.validateFields().then(values => {
-            form.resetFields();
-            setEdit(false);
             handleSubmit(values);
           })
         }
@@ -62,33 +66,42 @@ export const EditDDDetails = ({
         maskClosable={false}
         closeIcon={false}
         destroyOnClose={true}
+        cancelButtonProps={{ disabled: loading }}
+        okButtonProps={{ disabled: loading }}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          preserve={false}
-          onChange={changeHandler()}
-        >
-          <h2>
-            {dataDictionary.name ? dataDictionary.name : dataDictionary.id}
-          </h2>
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[
-              { required: true, message: 'Please input Data Dictionary name.' },
-            ]}
+        {loading ? (
+          <ModalSpinner />
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            preserve={false}
+            onChange={changeHandler()}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: false }]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
+            <h2>
+              {dataDictionary.name ? dataDictionary.name : dataDictionary.id}
+            </h2>
+            <Form.Item
+              name="name"
+              label="Name"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input Data Dictionary name.',
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[{ required: false }]}
+            >
+              <Input />
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </>
   );

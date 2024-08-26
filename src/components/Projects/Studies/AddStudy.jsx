@@ -1,10 +1,12 @@
-import { React, useContext } from 'react';
+import { React, useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import './StudyStyling.scss';
 import { Form, Input, message, notification, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { ModalSpinner } from '../../Manager/Spinner';
 
 export const AddStudy = ({ addStudy, setAddStudy }) => {
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const { vocabUrl, setStudy } = useContext(myContext);
 
@@ -13,6 +15,7 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
   // The funciton to make the POST request is called with the values to put into the body of the request.
   // The user is then redirected to the new study created.
   const handleSubmit = values => {
+    setLoading(true);
     fetch(`${vocabUrl}/Study`, {
       method: 'POST',
       headers: {
@@ -36,9 +39,12 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
       })
       .then(data => {
         setStudy(data);
+        form.resetFields();
+        setAddStudy(false);
         message.success('Study added successfully.');
         navigate(`/study/${data.id}`);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   // ant.design Form is returned where the user can manually input a new study
@@ -51,8 +57,6 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
       onOk={() =>
         form.validateFields().then(values => {
           handleSubmit(values);
-          form.resetFields();
-          setAddStudy(false);
         })
       }
       onCancel={() => {
@@ -60,51 +64,57 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
         setAddStudy(false);
       }}
       maskClosable={false}
+      cancelButtonProps={{ disabled: loading }}
+      okButtonProps={{ disabled: loading }}
     >
-      <Form form={form} layout="vertical" name="form_in_modal">
-        <h2>Create Study</h2>
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[{ required: true, message: 'Please input Study name.' }]}
-        >
-          <Input />
-        </Form.Item>
+      {loading ? (
+        <ModalSpinner />
+      ) : (
+        <Form form={form} layout="vertical" name="form_in_modal">
+          <h2>Create Study</h2>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, message: 'Please input Study name.' }]}
+          >
+            <Input />
+          </Form.Item>
 
-        <Form.Item
-          name="description"
-          label="Description"
-          rules={[{ required: false }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="title"
-          label="Title"
-          rules={[{ required: true, message: 'Please input Study title.' }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="identifier_prefix"
-          label="Identifier Prefix"
-          rules={[
-            {
-              required: true,
-              message: 'Please input Study identifier prefix.',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="url"
-          label="URL"
-          rules={[{ required: true, message: 'Please input Study URL.' }]}
-        >
-          <Input />
-        </Form.Item>
-      </Form>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: false }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="title"
+            label="Title"
+            rules={[{ required: true, message: 'Please input Study title.' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="identifier_prefix"
+            label="Identifier Prefix"
+            rules={[
+              {
+                required: true,
+                message: 'Please input Study identifier prefix.',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="url"
+            label="URL"
+            rules={[{ required: true, message: 'Please input Study URL.' }]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      )}
     </Modal>
   );
 };

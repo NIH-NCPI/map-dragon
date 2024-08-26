@@ -4,7 +4,7 @@ import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
-import { Col, Form, Input, notification, Row, Table, Tooltip } from 'antd';
+import { Col, Form, notification, Row, Table, Tooltip } from 'antd';
 import { EditMappingsModal } from './EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';

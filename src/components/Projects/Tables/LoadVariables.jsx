@@ -5,7 +5,6 @@ import './TableStyling.scss';
 import { handlePost, handleUpdate } from '../../Manager/FetchManager';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { useNavigate, useParams } from 'react-router-dom';
 import { ModalSpinner } from '../../Manager/Spinner';
 
 export const LoadVariables = ({ load, setLoad }) => {
