@@ -2,15 +2,20 @@ import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
 import DataTypeSubForm from './DataTypeSubForm';
+import { ModalSpinner } from '../../Manager/Spinner';
 
 export const AddVariable = ({ table, setTable }) => {
   const { vocabUrl, user } = useContext(myContext);
   const [addRow, setAddRow] = useState(false);
   const [type, setType] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const { TextArea } = Input;
   const [form] = Form.useForm();
 
   const handleSubmit = values => {
+    setLoading(true);
+
     fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
       method: 'PUT',
       headers: {
@@ -25,9 +30,14 @@ export const AddVariable = ({ table, setTable }) => {
           throw new Error('An unknown error occurred.');
         }
       })
-      .then(data => setTable(data))
+      .then(data => {
+        setTable(data);
+        form.resetFields();
+        setAddRow(false);
+      })
       // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Variable added successfully.'));
+      .then(() => message.success('Variable added successfully.'))
+      .finally(() => setLoading(false));
   };
 
   const validateUnique = (_, value) => {
@@ -65,8 +75,6 @@ export const AddVariable = ({ table, setTable }) => {
         onOk={() => {
           form.validateFields().then(values => {
             handleSubmit(values);
-            form.resetFields();
-            setAddRow(false);
             setType('');
           });
         }}
@@ -77,74 +85,78 @@ export const AddVariable = ({ table, setTable }) => {
         }}
         maskClosable={false}
       >
-        <Form form={form} layout="vertical">
-          <Space
-            style={{
-              display: 'flex',
-              marginBottom: 3,
-            }}
-            align="baseline"
-          >
-            <Form.Item
-              name={['name']}
-              label="Variable name"
-              rules={[
-                { required: true, message: 'Variable name is required.' },
-                { validator: validateUnique },
-              ]}
+        {loading ? (
+          <ModalSpinner />
+        ) : (
+          <Form form={form} layout="vertical">
+            <Space
+              style={{
+                display: 'flex',
+                marginBottom: 3,
+              }}
+              align="baseline"
             >
-              <Input
-                style={{
-                  width: '15vw',
-                }}
-                autoFocus
-              />
-            </Form.Item>
-            <Form.Item
-              name={['description']}
-              label="Variable description"
-              rules={[
-                {
-                  required: true,
-                  message: 'Variable description is required.',
-                },
-              ]}
-            >
-              <TextArea
-                rows={1}
-                style={{
-                  width: '39vw',
-                }}
-                autoFocus
-              />
-            </Form.Item>
-            <Form.Item
-              label="Data Type"
-              name={['data_type']}
-              rules={[
-                {
-                  required: true,
-                  message: 'Select data type.',
-                },
-              ]}
-            >
-              <Select
-                style={{ width: '10vw' }}
-                placeholder="Select data type"
-                onChange={value => {
-                  setType(value);
-                }}
-                options={[
-                  { value: 'ENUMERATION', label: 'Enumeration' },
-                  { value: 'INTEGER', label: 'Integer' },
-                  { value: 'QUANTITY', label: 'Quantity' },
-                  { value: 'STRING', label: 'String' },
+              <Form.Item
+                name={['name']}
+                label="Variable name"
+                rules={[
+                  { required: true, message: 'Variable name is required.' },
+                  { validator: validateUnique },
                 ]}
-              />
-            </Form.Item>
-          </Space>
-          <DataTypeSubForm form={form} type={type} />
-        </Form>
+              >
+                <Input
+                  style={{
+                    width: '15vw',
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item
+                name={['description']}
+                label="Variable description"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Variable description is required.',
+                  },
+                ]}
+              >
+                <TextArea
+                  rows={1}
+                  style={{
+                    width: '39vw',
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item
+                label="Data Type"
+                name={['data_type']}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Select data type.',
+                  },
+                ]}
+              >
+                <Select
+                  style={{ width: '10vw' }}
+                  placeholder="Select data type"
+                  onChange={value => {
+                    setType(value);
+                  }}
+                  options={[
+                    { value: 'ENUMERATION', label: 'Enumeration' },
+                    { value: 'INTEGER', label: 'Integer' },
+                    { value: 'QUANTITY', label: 'Quantity' },
+                    { value: 'STRING', label: 'String' },
+                  ]}
+                />
+              </Form.Item>
+            </Space>
+            <DataTypeSubForm form={form} type={type} />
+          </Form>
+        )}
       </Modal>
     </>
   );

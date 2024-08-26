@@ -1,7 +1,7 @@
 import { Form, Input, message, Modal, notification, Select, Space } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { Spinner } from '../../Manager/Spinner';
+import { ModalSpinner } from '../../Manager/Spinner';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../MappingContext';
@@ -14,8 +14,6 @@ export const EditVariable = ({
   table,
   setTable,
   form,
-  loading,
-  setLoading,
   setSelectedKey,
 }) => {
   const { TextArea } = Input;
@@ -23,6 +21,7 @@ export const EditVariable = ({
   const { setMapping } = useContext(MappingContext);
   const { tableId } = useParams();
   const [type, setType] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (editRow === tableData.key) {
@@ -60,6 +59,7 @@ export const EditVariable = ({
     // // Object to put in the body of the PATCH request. Provides the old variable
     // // and replaces with the updated variable on the back end.
     // // The variable in the associated mappings is automatically udpated on the back end.
+    setLoading(true);
     const updatedName = {
       variable: {
         [`${tableData.name}`]: `${values.name}`,
@@ -106,6 +106,8 @@ export const EditVariable = ({
             })
             .then(data => {
               setTable(data);
+              form.resetFields();
+              setEditRow('');
               message.success('Changes saved successfully.');
             });
         })
@@ -122,8 +124,10 @@ export const EditVariable = ({
               }
               return error;
             })
+            .finally(() => setLoading(false))
         );
     } else {
+      setLoading(true);
       fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
         method: 'PUT',
         headers: {
@@ -140,6 +144,8 @@ export const EditVariable = ({
         })
         .then(data => {
           setTable(data);
+          form.resetFields();
+          setEditRow('');
           message.success('Changes saved successfully.');
         })
 
@@ -156,36 +162,38 @@ export const EditVariable = ({
               }
               return error;
             })
+            .finally(() => setLoading(false))
         );
     }
   };
 
   return (
     <>
-      {!loading ? (
-        editRow === tableData.key && (
-          <Modal
-            open={editRow === tableData.key}
-            width={'70%'}
-            onOk={() => {
-              form.validateFields().then(values => {
-                handleSubmit(values);
-                form.resetFields();
-                setEditRow('');
-                setType('');
-                setSelectedKey(null);
-              });
-            }}
-            onCancel={() => {
-              form.resetFields();
-              setEditRow(null);
+      {editRow === tableData.key && (
+        <Modal
+          open={editRow === tableData.key}
+          width={'70%'}
+          onOk={() => {
+            form.validateFields().then(values => {
+              handleSubmit(values);
               setType('');
               setSelectedKey(null);
-            }}
-            maskClosable={false}
-            destroyOnClose={true}
-          >
-            {' '}
+            });
+          }}
+          onCancel={() => {
+            form.resetFields();
+            setEditRow(null);
+            setType('');
+            setSelectedKey(null);
+          }}
+          maskClosable={false}
+          destroyOnClose={true}
+          cancelButtonProps={{ disabled: loading }}
+          okButtonProps={{ disabled: loading }}
+        >
+          {loading ? (
+            <ModalSpinner />
+          ) : (
             <Form form={form} layout="vertical" preserve={false}>
               <Space
                 style={{
@@ -263,10 +271,8 @@ export const EditVariable = ({
                 tableData={tableData}
               />
             </Form>
-          </Modal>
-        )
-      ) : (
-        <Spinner />
+          )}
+        </Modal>
       )}
     </>
   );

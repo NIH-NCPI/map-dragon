@@ -4,7 +4,7 @@ import './TableStyling.scss';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
-import { Card, Col, Form, Menu, notification, Row, Table, Tooltip } from 'antd';
+import { Card, Col, Form, notification, Row, Table, Tooltip } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';

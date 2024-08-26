@@ -1,14 +1,17 @@
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
+import { ModalSpinner } from '../../Manager/Spinner';
 
 export const AddCode = ({ terminology, setTerminology }) => {
   const { vocabUrl, user } = useContext(myContext);
   const [addRow, setAddRow] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { TextArea } = Input;
   const [form] = Form.useForm();
 
   const handleSubmit = values => {
+    setLoading(true);
     fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${values.code}`, {
       method: 'PUT',
       headers: {
@@ -23,9 +26,14 @@ export const AddCode = ({ terminology, setTerminology }) => {
           throw new Error('An unknown error occurred.');
         }
       })
-      .then(data => setTerminology(data))
+      .then(data => {
+        setTerminology(data);
+        form.resetFields();
+        setAddRow(false);
+      })
       // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Code added successfully.'));
+      .then(() => message.success('Code added successfully.'))
+      .finally(() => setLoading(false));
   };
 
   const validateUnique = (_, value) => {
@@ -63,8 +71,6 @@ export const AddCode = ({ terminology, setTerminology }) => {
         onOk={() =>
           form.validateFields().then(values => {
             handleSubmit(values);
-            form.resetFields();
-            setAddRow(false);
           })
         }
         onCancel={() => {
@@ -72,54 +78,60 @@ export const AddCode = ({ terminology, setTerminology }) => {
           setAddRow(false);
         }}
         maskClosable={false}
+        cancelButtonProps={{ disabled: loading }}
+        okButtonProps={{ disabled: loading }}
       >
-        <Form form={form} layout="vertical">
-          <Space
-            style={{
-              display: 'flex',
-              marginBottom: 3,
-            }}
-            align="baseline"
-          >
-            <Form.Item
-              name={['code']}
-              label="Code name"
-              rules={[
-                { required: true, message: 'Input code name' },
-                { validator: validateUnique },
-              ]}
+        {loading ? (
+          <ModalSpinner />
+        ) : (
+          <Form form={form} layout="vertical">
+            <Space
+              style={{
+                display: 'flex',
+                marginBottom: 3,
+              }}
+              align="baseline"
             >
-              <Input
-                style={{
-                  width: '13vw',
-                }}
-                autoFocus
-              />
-            </Form.Item>
-            <Form.Item
-              name={['display']}
-              label="Code display"
-              rules={[{ required: true, message: 'Input variable display' }]}
-            >
-              <Input
-                rows={1}
-                style={{
-                  width: '13vw',
-                }}
-                autoFocus
-              />
-            </Form.Item>
-            <Form.Item name={['description']} label="Code description">
-              <TextArea
-                rows={1}
-                style={{
-                  width: '30vw',
-                }}
-                autoFocus
-              />
-            </Form.Item>
-          </Space>
-        </Form>
+              <Form.Item
+                name={['code']}
+                label="Code name"
+                rules={[
+                  { required: true, message: 'Input code name' },
+                  { validator: validateUnique },
+                ]}
+              >
+                <Input
+                  style={{
+                    width: '13vw',
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item
+                name={['display']}
+                label="Code display"
+                rules={[{ required: true, message: 'Input variable display' }]}
+              >
+                <Input
+                  rows={1}
+                  style={{
+                    width: '13vw',
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item name={['description']} label="Code description">
+                <TextArea
+                  rows={1}
+                  style={{
+                    width: '30vw',
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+            </Space>
+          </Form>
+        )}
       </Modal>
     </>
   );

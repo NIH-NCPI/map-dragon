@@ -1,20 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import './StudyStyling.scss';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
-import {
-  Row,
-  Col,
-  Divider,
-  Skeleton,
-  Card,
-  Modal,
-  Form,
-  message,
-  notification,
-} from 'antd';
+import { Row, Col, Divider, Skeleton, Card, Form, notification } from 'antd';
 
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { SettingsDropdownStudy } from '../../Manager/Dropdown/SettingsDropdownStudy';
@@ -81,15 +71,6 @@ export const StudyDetails = () => {
   // Submit function for the modal to edit the study name, description, and url.
   // The function adds the variables and filename to the body of the PUT request to retain the complete
   // study object, since only 3 parts (captured in "values" through ant.d functionality) are being edited.
-  const handleSubmit = values => {
-    handleUpdate(vocabUrl, 'Study', study, {
-      ...values,
-      datadictionary: study?.datadictionary,
-    })
-      .then(data => setStudy(data))
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Changes saved successfully.'));
-  };
 
   return (
     <>
@@ -214,27 +195,13 @@ export const StudyDetails = () => {
         </div>
       )}
       {/* Modal to edit details */}
-      <Modal
-        open={edit}
-        width={'51%'}
-        onOk={() =>
-          form.validateFields().then(values => {
-            form.resetFields();
-            setEdit(false);
-            handleSubmit(values);
-          })
-        }
-        onCancel={() => {
-          form.resetFields();
-          setEdit(false);
-        }}
-        maskClosable={false}
-        closeIcon={false}
-        destroyOnClose={true}
-      >
-        {/* Displays the edit form */}
-        <EditStudyDetails form={form} study={study} />
-      </Modal>
+      <EditStudyDetails
+        form={form}
+        study={study}
+        setStudy={setStudy}
+        edit={edit}
+        setEdit={setEdit}
+      />
       <DeleteStudy />
       <AddDD addDD={addDD} setAddDD={setAddDD} study={study} />
     </>

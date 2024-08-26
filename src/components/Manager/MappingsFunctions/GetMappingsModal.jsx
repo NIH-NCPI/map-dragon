@@ -90,8 +90,6 @@ export const GetMappingsModal = ({
   );
 
   const onClose = () => {
-    form.resetFields();
-    setGetMappings(null);
     setPage(0);
     setResults([]);
     setLoading(true);
@@ -140,6 +138,8 @@ export const GetMappingsModal = ({
       })
       .then(data => {
         setMapping(data.codes);
+        form.resetFields();
+        setGetMappings(null);
         message.success('Changes saved successfully.');
       });
   };
@@ -323,9 +323,13 @@ export const GetMappingsModal = ({
         }}
         onCancel={() => {
           onClose();
+          form.resetFields();
+          setGetMappings(null);
         }}
         maskClosable={false}
         destroyOnClose={true}
+        cancelButtonProps={{ disabled: loading }}
+        okButtonProps={{ disabled: loading }}
       >
         <div className="results_modal_container">
           <>

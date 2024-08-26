@@ -1,7 +1,7 @@
 import { Form, Input, message, Modal, notification, Space } from 'antd';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { Spinner } from '../../Manager/Spinner';
+import { ModalSpinner } from '../../Manager/Spinner';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../MappingContext';
@@ -13,9 +13,9 @@ export const EditCode = ({
   terminology,
   setTerminology,
   form,
-  loading,
   setSelectedKey,
 }) => {
+  const [loading, setLoading] = useState(false);
   const { TextArea } = Input;
   const { vocabUrl, user } = useContext(myContext);
   const { setMapping } = useContext(MappingContext);
@@ -58,6 +58,8 @@ export const EditCode = ({
     // Object to put in the body of the PATCH request. Provides the old code
     // and replaces with the updated code and/or display on the back end.
     // The code in the associdated mappings is automatically udpated on the back end.
+
+    setLoading(true);
     const updatedRowDTO = {
       code: {
         [`${tableData.code}`]: `${values.code}`,
@@ -78,6 +80,8 @@ export const EditCode = ({
     })
       .then(data => {
         setTerminology(data);
+        form.resetFields();
+        setEditRow('');
         message.success('Changes saved successfully.');
       })
       .catch(error => {
@@ -103,33 +107,36 @@ export const EditCode = ({
             }
             return error;
           })
-      );
+      )
+      .finally(() => setLoading(false));
   };
 
   return (
     <>
-      {!loading ? (
-        editRow === tableData.key && (
-          <Modal
-            open={editRow === tableData.key}
-            width={'70%'}
-            onOk={() => {
-              form.validateFields().then(values => {
-                handleSubmit(values);
-                form.resetFields();
-                setEditRow('');
-                setSelectedKey(null);
-              });
-            }}
-            onCancel={() => {
-              form.resetFields();
-              setEditRow(null);
+      {editRow === tableData.key && (
+        <Modal
+          open={editRow === tableData.key}
+          width={'70%'}
+          onOk={() => {
+            form.validateFields().then(values => {
+              handleSubmit(values);
+
               setSelectedKey(null);
-            }}
-            maskClosable={false}
-            destroyOnClose={true}
-          >
-            {' '}
+            });
+          }}
+          onCancel={() => {
+            form.resetFields();
+            setEditRow(null);
+            setSelectedKey(null);
+          }}
+          maskClosable={false}
+          destroyOnClose={true}
+          cancelButtonProps={{ disabled: loading }}
+          okButtonProps={{ disabled: loading }}
+        >
+          {loading ? (
+            <ModalSpinner />
+          ) : (
             <Form form={form} layout="vertical" preserve={false}>
               <Space
                 style={{
@@ -183,10 +190,8 @@ export const EditCode = ({
                 </Form.Item>
               </Space>
             </Form>
-          </Modal>
-        )
-      ) : (
-        <Spinner />
+          )}
+        </Modal>
       )}
     </>
   );
