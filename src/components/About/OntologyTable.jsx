@@ -39,7 +39,10 @@ export const OntologyTable = ({ ontology }) => {
         </div>
       ),
       onFilter: (value, record) =>
-        record.ontology.toString().toLowerCase().includes(value.toLowerCase()),
+        record?.ontology
+          ?.toString()
+          .toLowerCase()
+          .includes(value.toLowerCase()),
       filterIcon: filtered => (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
@@ -81,7 +84,7 @@ export const OntologyTable = ({ ontology }) => {
         </div>
       ),
       onFilter: (value, record) =>
-        record.curie.toString().toLowerCase().includes(value.toLowerCase()),
+        record?.curie?.toString().toLowerCase().includes(value.toLowerCase()),
       filterIcon: filtered => (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
