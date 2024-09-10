@@ -22,6 +22,9 @@ export const NavBar = () => {
             <NavLink to="/studies">
               <li className="nav_link">Studies</li>
             </NavLink>
+            <NavLink to="/terminologies">
+              <li className="nav_link">Terminologies</li>
+            </NavLink>
             {/* Placeholder elements below. No functionality at this time.*/}
             <NavLink to="/help">
               <li className="nav_link">Help</li>

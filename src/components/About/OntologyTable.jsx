@@ -42,7 +42,8 @@ export const OntologyTable = ({ ontology }) => {
         record?.ontology
           ?.toString()
           .toLowerCase()
-          .includes(value.toLowerCase()),
+          .includes(value.toLowerCase()) ||
+        record?.curie?.toString().toLowerCase().includes(value.toLowerCase()),
       filterIcon: filtered => (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
@@ -52,42 +53,6 @@ export const OntologyTable = ({ ontology }) => {
     {
       title: 'Curie',
       dataIndex: 'curie',
-      filterDropdown: ({
-        setSelectedKeys,
-        selectedKeys,
-        confirm,
-        clearFilters,
-      }) => (
-        <div style={{ padding: 8 }}>
-          <Input
-            placeholder={`Search Ontology`}
-            value={selectedKeys[0]}
-            onChange={e => {
-              setSelectedKeys(e.target.value ? [e.target.value] : []);
-              confirm({ closeDropdown: false });
-            }}
-            style={{ display: 'block', marginBottom: 8 }}
-          />
-          <Space>
-            <Button
-              onClick={() => {
-                clearFilters();
-                setSelectedKeys([]);
-                confirm({ closeDropdown: false });
-              }}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Reset
-            </Button>
-          </Space>
-        </div>
-      ),
-      onFilter: (value, record) =>
-        record?.curie?.toString().toLowerCase().includes(value.toLowerCase()),
-      filterIcon: filtered => (
-        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
-      ),
       width: 100,
     },
     {

@@ -72,7 +72,7 @@ export const OntologyInfo = () => {
               className={active === api.api_id ? 'active_api' : 'inactive_api'}
               onClick={() => setActive(api.api_id)}
             >
-              {api.api_id}
+              {api.api_name}
             </div>
           ))}
         </div>
