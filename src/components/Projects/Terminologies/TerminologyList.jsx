@@ -1,6 +1,6 @@
 import { Button, Input, Space, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAll } from '../../Manager/FetchManager';
@@ -10,23 +10,22 @@ export const TerminologyList = () => {
   const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState([]);
   const [filter, setFilter] = useState(null);
+
   const { vocabUrl } = useContext(myContext);
 
   const navigate = useNavigate();
+
+  const inputRef = useRef(null);
 
   useEffect(() => {
     setLoading(true);
     getAll(vocabUrl, 'Terminology', navigate)
       .then(data => {
         setTerms(data);
-        // if (data.length > 0) {
-        //   setActive(data[0]?.api_id);
-        // }
       })
       .finally(() => setLoading(false));
   }, []);
 
-  console.log(filter);
   const terminologyTitle = () => {
     return (
       <div className="terminology_filter">
@@ -40,6 +39,7 @@ export const TerminologyList = () => {
     {
       title: terminologyTitle(),
       dataIndex: 'name',
+      // Filters table by keystroke
       filterDropdown: ({
         setSelectedKeys,
         selectedKeys,
@@ -48,11 +48,12 @@ export const TerminologyList = () => {
       }) => (
         <div style={{ padding: 8 }}>
           <Input
+            ref={inputRef}
             placeholder={`Search Terminology`}
             value={selectedKeys[0]}
             onChange={e => {
               setSelectedKeys(e.target.value ? [e.target.value] : []);
-              setFilter(e.target.value ? [e.target.value] : []);
+              setFilter(e.target.value ? [e.target.value] : []); // sets filter to filter text to display at top of table
               confirm({ closeDropdown: false });
             }}
             style={{ display: 'block', marginBottom: 8 }}
@@ -75,6 +76,7 @@ export const TerminologyList = () => {
         </div>
       ),
       onFilter: (value, record) =>
+        // Searches both the name and description property for keystrokes to filter
         record?.name?.props.children
           .toString()
           .toLowerCase()
@@ -86,6 +88,13 @@ export const TerminologyList = () => {
       filterIcon: filtered => (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
+      onFilterDropdownOpenChange: open => {
+        if (open) {
+          setTimeout(() => {
+            inputRef.current?.focus(); // Focus cursor on search input
+          }, 100); // Small delay to ensure input is rendered
+        }
+      },
       width: 400,
     },
     {
@@ -99,12 +108,17 @@ export const TerminologyList = () => {
     name: <Link to={`/Terminology/${item.id}`}>{item.name}</Link>,
     description: item.description,
   }));
+
   return loading ? (
     <Spinner />
   ) : (
     <div className="terminology_container">
       <h2>Terminology Index</h2>
-      <Table columns={columns} dataSource={dataSource} />
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        getPopupContainer={trigger => trigger.parentNode}
+      />
     </div>
   );
 };
