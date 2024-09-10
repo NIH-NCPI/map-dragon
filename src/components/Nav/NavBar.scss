@@ -20,7 +20,7 @@ nav {
     text-decoration: none;
     color: $navColor;
     font: {
-      size: 1.2em;
+      size: 1em;
       weight: 800;
     }
   }
@@ -63,6 +63,7 @@ nav {
   justify-content: center;
   background-color: $linkColor;
   height: 75px;
+  padding: 0 4px;
   width: $navHeight;
   border-radius: 10px;
 }

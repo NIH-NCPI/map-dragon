@@ -43,7 +43,7 @@ export const AddVariable = ({ table, setTable }) => {
   const validateUnique = (_, value) => {
     // Validator function for form. Checks if the term being added already exists.
     const isUnique = !table.variables.some(
-      item => item.name.toLowerCase() === value.toLowerCase()
+      item => item?.name?.toLowerCase() === value.toLowerCase()
     );
 
     if (isUnique) {
