@@ -9,6 +9,7 @@ import { Spinner } from '../../Manager/Spinner';
 export const TerminologyList = () => {
   const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState([]);
+  const [filter, setFilter] = useState(null);
   const { vocabUrl } = useContext(myContext);
 
   const navigate = useNavigate();
@@ -25,9 +26,19 @@ export const TerminologyList = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  console.log(filter);
+  const terminologyTitle = () => {
+    return (
+      <div className="terminology_filter">
+        <div>Terminology</div>
+        {filter?.length > 0 ? <div>Filtering by '{filter}'</div> : ''}
+      </div>
+    );
+  };
+
   const columns = [
     {
-      title: 'Terminology',
+      title: terminologyTitle(),
       dataIndex: 'name',
       filterDropdown: ({
         setSelectedKeys,
@@ -41,15 +52,18 @@ export const TerminologyList = () => {
             value={selectedKeys[0]}
             onChange={e => {
               setSelectedKeys(e.target.value ? [e.target.value] : []);
+              setFilter(e.target.value ? [e.target.value] : []);
               confirm({ closeDropdown: false });
             }}
             style={{ display: 'block', marginBottom: 8 }}
+            autoFocus
           />
           <Space>
             <Button
               onClick={() => {
                 clearFilters();
                 setSelectedKeys([]);
+                setFilter('');
                 confirm({ closeDropdown: false });
               }}
               size="small"
