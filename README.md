@@ -34,11 +34,12 @@ Make sure you have Node.js and npm installed on your machine.
 ### Dependencies
 This project utilizes the following dependencies:
 
-+ React: A JavaScript library for building user interfaces.  
-+ Vite: A front-end tooling for web development.  
-+ Ant Design: A design component library.
-+ Sass: A CSS preprocessor.
++ React: A JavaScript library for building user interfaces  
++ Vite: A front-end tooling for web development  
++ Ant Design: A design component library
++ Sass: A CSS preprocessor
 + React OAuth2 | Google: A React library for Google OAuth
 + jwt-decode: A JWT decoder
++ Papa Parse: A CSV parser
 
 
