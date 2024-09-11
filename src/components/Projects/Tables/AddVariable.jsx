@@ -43,7 +43,7 @@ export const AddVariable = ({ table, setTable }) => {
   const validateUnique = (_, value) => {
     // Validator function for form. Checks if the term being added already exists.
     const isUnique = !table.variables.some(
-      item => item?.name?.toLowerCase() === value.toLowerCase()
+      item => item?.name?.toLowerCase() === value?.toLowerCase()
     );
 
     if (isUnique) {
@@ -100,7 +100,7 @@ export const AddVariable = ({ table, setTable }) => {
                 name={['name']}
                 label="Variable name"
                 rules={[
-                  { required: true, message: 'Variable name is required.' },
+                  { required: true, message: 'Input variable name.' },
                   { validator: validateUnique },
                 ]}
               >
@@ -117,7 +117,7 @@ export const AddVariable = ({ table, setTable }) => {
                 rules={[
                   {
                     required: true,
-                    message: 'Variable description is required.',
+                    message: 'Input variable description.',
                   },
                 ]}
               >

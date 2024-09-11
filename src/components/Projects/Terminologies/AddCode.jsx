@@ -39,7 +39,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
   const validateUnique = (_, value) => {
     // Validator function for form. Checks if the term being added already exists.
     const isUnique = !terminology.codes.some(
-      item => item.code.toLowerCase() === value.toLowerCase()
+      item => item?.code?.toLowerCase() === value?.toLowerCase()
     );
 
     if (isUnique) {
