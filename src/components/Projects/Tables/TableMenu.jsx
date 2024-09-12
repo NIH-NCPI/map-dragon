@@ -92,7 +92,11 @@ export const TableMenu = ({
   // Matches the code in the tableData to the code in the mappings to see if a variable has mappings
   const showEditMappings =
     mapping?.length > 0 &&
-    mapping?.some(m => m?.code === variable.code && m?.mappings?.length > 0);
+    mapping?.some(
+      m =>
+        m?.code.toLowerCase() === variable.code.toLowerCase() &&
+        m?.mappings?.length > 0
+    );
 
   // Menu items
   const items = [

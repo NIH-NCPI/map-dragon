@@ -140,7 +140,7 @@ There is then a tooltip that displays the variables on hover.*/
     mapping?.length > 0 &&
     mapping?.map(
       (item, index) =>
-        item.code === variable.code &&
+        item?.code === variable?.code &&
         item?.mappings?.length > 0 && (
           <Tooltip
             title={item.mappings.map(code => {
