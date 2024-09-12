@@ -39,10 +39,12 @@ export const EditMappingsTableModal = ({
   }, [editMappings]);
 
   const onClose = () => {
+    setEditMappings(null);
     setTermMappings([]);
     setOptions([]);
     setReset(false);
     setEditSearch(false);
+    setSelectedKey(null);
   };
 
   const fetchMappings = () => {
@@ -236,6 +238,7 @@ export const EditMappingsTableModal = ({
       })
       .finally(() => setLoading(false));
   };
+
   return (
     <Modal
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
@@ -266,7 +269,6 @@ export const EditMappingsTableModal = ({
         form.resetFields();
         setSelectedMappings([]);
         setDisplaySelectedMappings([]);
-        setSelectedKey(null);
         reset &&
           getById(vocabUrl, 'Table', `${tableId}/mapping`).then(data =>
             setMapping(data.codes)
