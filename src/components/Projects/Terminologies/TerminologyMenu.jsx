@@ -43,6 +43,7 @@ export const TerminologyMenu = ({
         if (res.ok) {
           return res.json().then(data => {
             message.success('Code deleted successfully.');
+            setSelectedKey(null);
           });
         } else {
           notification.error({

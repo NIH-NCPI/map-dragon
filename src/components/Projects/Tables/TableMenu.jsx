@@ -43,6 +43,7 @@ export const TableMenu = ({
         if (res.ok) {
           return res.json().then(data => {
             message.success('Variable deleted successfully.');
+            setSelectedKey(null);
           });
         } else {
           notification.error({
