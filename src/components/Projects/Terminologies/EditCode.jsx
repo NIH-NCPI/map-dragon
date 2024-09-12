@@ -120,7 +120,6 @@ export const EditCode = ({
           onOk={() => {
             form.validateFields().then(values => {
               handleSubmit(values);
-
               setSelectedKey(null);
             });
           }}

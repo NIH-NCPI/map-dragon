@@ -1,11 +1,23 @@
 import { Button, Input, Space, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import { useState } from 'react';
 
 export const OntologyTable = ({ ontology }) => {
+  const [filter, setFilter] = useState(null);
+
+  const ontologyTitle = () => {
+    return (
+      <div className="ontology_filter">
+        <div>Ontology</div>
+        {filter?.length > 0 ? <div>Filtering by '{filter}'</div> : ''}
+      </div>
+    );
+  };
+
   // Column data with filter functionality for ontology names and curies
   const columns = [
     {
-      title: 'Ontology',
+      title: ontologyTitle(),
       dataIndex: 'ontology',
       filterDropdown: ({
         setSelectedKeys,
@@ -19,6 +31,7 @@ export const OntologyTable = ({ ontology }) => {
             value={selectedKeys[0]}
             onChange={e => {
               setSelectedKeys(e.target.value ? [e.target.value] : []);
+              setFilter(e.target.value ? [e.target.value] : []);
               confirm({ closeDropdown: false });
             }}
             style={{ display: 'block', marginBottom: 8 }}
@@ -28,6 +41,7 @@ export const OntologyTable = ({ ontology }) => {
               onClick={() => {
                 clearFilters();
                 setSelectedKeys([]);
+                setFilter(null);
                 confirm({ closeDropdown: false });
               }}
               size="small"
@@ -75,9 +89,6 @@ export const OntologyTable = ({ ontology }) => {
     <Table
       columns={columns}
       dataSource={dataSource}
-      pagination={{
-        pageSize: 50,
-      }}
       scroll={{
         y: 470,
       }}

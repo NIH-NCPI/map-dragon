@@ -42,8 +42,8 @@ export const EditVariable = ({
     // Validator function for form. Checks if the term being added already exists.
     const isUnique = !table.variables.some(
       item =>
-        item.name.toLowerCase() === value.toLowerCase() &&
-        value.toLowerCase() !== tableData.name.toLowerCase()
+        item.name?.toLowerCase() === value?.toLowerCase() &&
+        value?.toLowerCase() !== tableData?.name?.toLowerCase()
     );
 
     if (isUnique) {
@@ -66,16 +66,12 @@ export const EditVariable = ({
       },
     };
 
-    //If there is a change in the variable name, the name is first sent to the 'rename' endpoint
+    // If there is a change in the variable name, the name is first sent to the 'rename' endpoint
     // with a PATCH request to update the name and the code name for the associated mappings.
     // All the values from the form are then sent for editing with a PUT request.
     // Else if there is not a change in the name, all the form values are  sent to the variable.name
     // endpoint with a PUT request to edit the data for the variable.
-    if (
-      !table.variables.some(
-        item => item.name.toLowerCase() === values.name.toLowerCase()
-      )
-    ) {
+    if (!table.variables.some(item => item?.name === values?.name)) {
       handlePatch(vocabUrl, 'Table', table, {
         ...updatedName,
         editor: user.email,
