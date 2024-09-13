@@ -10,7 +10,7 @@ import {
 import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
 import './TableStyling.scss';
-import { handlePost, handleUpdate } from '../../Manager/FetchManager';
+import { handleUpdate } from '../../Manager/FetchManager';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -30,7 +30,6 @@ export const UploadTable = ({ addTable, setAddTable }) => {
   // copy of the tables array in the DD. The value of the
   // tables array is set to the copy with the new table in the PUT call (handleUpdate function)
   const tableUpload = values => {
-    console.log(values);
     setLoading(true);
     const newTableArray = [...dataDictionary?.tables];
     fetch(`${vocabUrl}/LoadTable`, {

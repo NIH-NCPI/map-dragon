@@ -12,6 +12,7 @@ import { useContext, useState } from 'react';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { myContext } from '../../../App';
 import { useNavigate } from 'react-router-dom';
+import Papa from 'papaparse';
 
 export const AddTerminology = () => {
   const [form] = Form.useForm();
@@ -23,15 +24,19 @@ export const AddTerminology = () => {
 
   const navigate = useNavigate();
 
-  const tableUpload = values => {
-    console.log(values);
+  const termUpload = values => {
+    const cleanedCodes = values.codes.map(item => ({
+      ...item,
+      code: item.code.toLowerCase().replaceAll(' ', '_'),
+    }));
+
     setLoading(true);
     fetch(`${vocabUrl}/Terminology`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify({ ...values, codes: cleanedCodes }),
     })
       .then(res => {
         if (!res.ok) {
@@ -58,7 +63,7 @@ export const AddTerminology = () => {
 
   /* Function for upload. If a file was uploaded, it takes the values from the form, parses the uploaded file's content
   into JSON, gets the file name to display on the page later, creates a "codes" array 
-  with the file's data, then runs the tableUpload function to create the new table.
+  with the file's data, then runs the termUpload function to create the new table.
   If there is no file selected, it skips the JSON parsing and skips straight to the POST. */
   const handleUpload = values => {
     values?.codes?.file
@@ -67,10 +72,10 @@ export const AddTerminology = () => {
           skipEmptyLines: true,
           complete: function (result) {
             values.codes = result.data;
-            tableUpload(values);
+            termUpload(values);
           },
         })
-      : tableUpload({
+      : termUpload({
           ...values,
           codes: [],
         });
