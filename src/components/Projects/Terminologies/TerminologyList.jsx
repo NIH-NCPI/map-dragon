@@ -5,6 +5,7 @@ import { myContext } from '../../../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAll } from '../../Manager/FetchManager';
 import { Spinner } from '../../Manager/Spinner';
+import { AddTerminology } from './AddTerminology';
 
 export const TerminologyList = () => {
   const [loading, setLoading] = useState(false);
@@ -114,6 +115,7 @@ export const TerminologyList = () => {
   ) : (
     <div className="terminology_container">
       <h2>Terminology Index</h2>
+      <AddTerminology />
       <Table
         columns={columns}
         dataSource={dataSource}

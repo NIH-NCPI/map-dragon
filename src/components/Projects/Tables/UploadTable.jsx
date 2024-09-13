@@ -30,59 +30,60 @@ export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
   // copy of the tables array in the DD. The value of the
   // tables array is set to the copy with the new table in the PUT call (handleUpdate function)
   const tableUpload = values => {
-    setLoading(true);
-    const newTableArray = [...dataDictionary?.tables];
-    fetch(`${vocabUrl}/LoadTable`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ ...values, editor: user.email }),
-    })
-      .then(res => {
-        if (res.status === 400) {
-          return res.json().then(error => {
-            notification.error({
-              message: 'Error',
-              description: `${error.message_to_user}`,
-              duration: 10,
-            });
-            throw new Error('400 error');
-          });
-        } else if (!res.ok) {
-          return res.json().then(error => {
-            throw new Error(error.message_to_user || 'An error occurred');
-          });
-        }
-        return res.json();
-      })
-      .then(data => {
-        setAddTable(false);
-        form.resetFields();
-        setTable(data);
-        newTableArray.push({ 'reference': `Table/${data.id}` });
-        handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
-          ...dataDictionary,
-          tables: newTableArray,
-        })
-          .then(updatedData => {
-            setDataDictionary(updatedData);
-            message.success('Table uploaded successfully.');
+    console.log(values);
+    // setLoading(true);
+    // const newTableArray = [...dataDictionary?.tables];
+    // fetch(`${vocabUrl}/LoadTable`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ ...values, editor: user.email }),
+    // })
+    //   .then(res => {
+    //     if (res.status === 400) {
+    //       return res.json().then(error => {
+    //         notification.error({
+    //           message: 'Error',
+    //           description: `${error.message_to_user}`,
+    //           duration: 10,
+    //         });
+    //         throw new Error('400 error');
+    //       });
+    //     } else if (!res.ok) {
+    //       return res.json().then(error => {
+    //         throw new Error(error.message_to_user || 'An error occurred');
+    //       });
+    //     }
+    //     return res.json();
+    //   })
+    //   .then(data => {
+    //     setAddTable(false);
+    //     form.resetFields();
+    //     setTable(data);
+    //     newTableArray.push({ 'reference': `Table/${data.id}` });
+    //     handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
+    //       ...dataDictionary,
+    //       tables: newTableArray,
+    //     })
+    //       .then(updatedData => {
+    //         setDataDictionary(updatedData);
+    //         message.success('Table uploaded successfully.');
 
-            navigate(
-              `/Study/${studyId}/DataDictionary/${DDId}/Table/${data.id}`
-            );
-          })
-          .catch(error => {
-            if (error.message !== '400 error') {
-              notification.error({
-                message: 'Error',
-                description: 'An error occurred uploading the table',
-              });
-            }
-          });
-      })
-      .finally(() => setLoading(false));
+    //         navigate(
+    //           `/Study/${studyId}/DataDictionary/${DDId}/Table/${data.id}`
+    //         );
+    //       })
+    //       .catch(error => {
+    //         if (error.message !== '400 error') {
+    //           notification.error({
+    //             message: 'Error',
+    //             description: 'An error occurred uploading the table',
+    //           });
+    //         }
+    //       });
+    //   })
+    //   .finally(() => setLoading(false));
   };
 
   /* Function for upload. If a file was uploaded, it takes the values from the form, parses the uploaded file's content
