@@ -10,17 +10,17 @@ import {
 import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
 import './TableStyling.scss';
-import { handlePost, handleUpdate } from '../../Manager/FetchManager';
+import { handleUpdate } from '../../Manager/FetchManager';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ModalSpinner } from '../../Manager/Spinner';
 
-export const UploadTable = ({ addTable, setAddTable, setTablesDD }) => {
+export const UploadTable = ({ addTable, setAddTable }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { vocabUrl, dataDictionary, setDataDictionary, setTable, table, user } =
+  const { vocabUrl, dataDictionary, setDataDictionary, setTable, user } =
     useContext(myContext);
   const { studyId, DDId } = useParams();
   const navigate = useNavigate();

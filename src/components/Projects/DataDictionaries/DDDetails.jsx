@@ -222,14 +222,7 @@ export const DDDetails = () => {
         dataDictionary={dataDictionary}
         setDataDictionary={setDataDictionary}
       />
-      <UploadTable
-        addTable={addTable}
-        setAddTable={setAddTable}
-        setTablesDD={setTablesDD}
-        tablesDD={tablesDD}
-        dataDictionary={dataDictionary}
-        setDataDictionary={setDataDictionary}
-      />
+      <UploadTable addTable={addTable} setAddTable={setAddTable} />
       <DeleteDD studyId={studyId} />
     </>
   );
