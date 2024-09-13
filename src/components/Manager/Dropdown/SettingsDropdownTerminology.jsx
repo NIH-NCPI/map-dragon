@@ -3,8 +3,8 @@ import { Dropdown, Button, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { myContext } from '../../../App';
 
-export const SettingsDropdownTerminology = () => {
-  const { setEdit, setClear, setDeleteState } = useContext(myContext);
+export const SettingsDropdownTerminology = ({ codes }) => {
+  const { setEdit, setClear, setImportState } = useContext(myContext);
 
   const items = [
     {
@@ -16,13 +16,14 @@ export const SettingsDropdownTerminology = () => {
       key: '1',
       danger: true,
     },
-    // {
-    //   label: 'Delete',
-    //   key: '2',
-    //   danger: true,
-    // },
   ];
 
+  if (codes.length < 1) {
+    items.unshift({
+      label: 'Import CSV',
+      key: '2',
+    });
+  }
   // onClick for dropdown. Sets states to true depending on their key.
   // A modal is then triggered to open in the component to perform the desired task.
   const onClick = ({ key }) => {
@@ -31,8 +32,8 @@ export const SettingsDropdownTerminology = () => {
         return setEdit(true);
       case '1':
         return setClear(true);
-      // case '2':
-      //   return setDeleteState(true);
+      case '2':
+        return setImportState(true);
     }
   };
 
