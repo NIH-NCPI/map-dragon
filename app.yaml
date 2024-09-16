@@ -10,7 +10,8 @@ handlers:
     static_files: dist/\1
     upload: dist/(.*\..+)$
 
-  # Redirect all other URLs to 'index.html' to handle client-side routing
+  # Catch all handler to index.html
+
   - url: /.*
     static_files: dist/index.html
     upload: dist/index.html
