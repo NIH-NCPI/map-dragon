@@ -6,11 +6,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getAll } from '../../Manager/FetchManager';
 import { Spinner } from '../../Manager/Spinner';
 import { AddTerminology } from './AddTerminology';
+import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteTerminology } from './DeleteTerminology';
 
 export const TerminologyList = () => {
   const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState([]);
   const [filter, setFilter] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
   const { vocabUrl } = useContext(myContext);
 
@@ -37,7 +40,9 @@ export const TerminologyList = () => {
   };
 
   const nameLink = item => (
-    <Link to={`/Terminology/${item.id}`}>{item.name}</Link>
+    <Link to={`/Terminology/${item.id}`}>
+      {item.name ? item.name : item.id}
+    </Link>
   );
 
   const columns = [
@@ -58,7 +63,7 @@ export const TerminologyList = () => {
             value={selectedKeys[0]}
             onChange={e => {
               setSelectedKeys(e.target.value ? [e.target.value] : []);
-              setFilter(e.target.value ? [e.target.value] : []); // sets filter to filter text to display at top of table
+              setFilter(e.target.value ? [e.target.value] : []); // sets filter to the input text to display at top of table
               confirm({ closeDropdown: false });
             }}
             style={{ display: 'block', marginBottom: 8 }}
@@ -106,25 +111,45 @@ export const TerminologyList = () => {
       title: 'Description',
       dataIndex: 'description',
     },
+    {
+      title: '',
+      dataIndex: 'delete_column',
+      width: 10,
+    },
   ];
 
   const dataSource = terms.map((item, i) => ({
     key: i,
     name: nameLink(item),
     description: item.description,
+    // Sets deleteId to the row's (i.e. terminology's) is
+    delete_column: (
+      <DeleteOutlined
+        onClick={() => {
+          setDeleteId(item.id);
+        }}
+      />
+    ),
   }));
 
   return loading ? (
     <Spinner />
   ) : (
-    <div className="terminology_container">
-      <h2>Terminology Index</h2>
-      <AddTerminology />
-      <Table
-        columns={columns}
-        dataSource={dataSource}
-        getPopupContainer={trigger => trigger.parentNode}
+    <>
+      <div className="terminology_container">
+        <h2>Terminology Index</h2>
+        <AddTerminology />
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          getPopupContainer={trigger => trigger.parentNode}
+        />
+      </div>
+      <DeleteTerminology
+        setTerms={setTerms}
+        deleteId={deleteId}
+        setDeleteId={setDeleteId}
       />
-    </div>
+    </>
   );
 };
