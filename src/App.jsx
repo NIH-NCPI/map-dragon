@@ -17,6 +17,7 @@ function App() {
   const [edit, setEdit] = useState(false); //edit state for settings dropdown menus. Triggers edit modal to open.
   const [clear, setClear] = useState(false); // clear mappings state for dropdown menus. Triggers confirm pop-up to clear mappings.
   const [deleteState, setDeleteState] = useState(false);
+  const [importState, setImportState] = useState(false);
   const [exportState, setExportState] = useState(false);
   const initialTable = { name: '', description: '', url: '', variables: [] }; //initial state of table
   const [table, setTable] = useState(initialTable);
@@ -70,6 +71,8 @@ function App() {
           setExportState,
           user,
           setUser,
+          importState,
+          setImportState,
         }}
       >
         <AppRouter />

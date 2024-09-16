@@ -14,6 +14,7 @@ import { MappingContext } from '../../../MappingContext';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { TerminologyMenu } from './TerminologyMenu';
 import { Submenu } from '../../Manager/Submenu';
+import { LoadCodes } from './LoadCodes';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -203,7 +204,7 @@ There is then a tooltip that displays the codes on hover.*/
                 <div className="study_details_right">
                   <div className="study_dropdown">
                     {/* ant.design dropdown for edit. */}
-                    <SettingsDropdownTerminology />
+                    <SettingsDropdownTerminology codes={terminology.codes} />
                   </div>
                 </div>
               </Col>
@@ -252,6 +253,10 @@ There is then a tooltip that displays the codes on hover.*/
             setTerminology={setTerminology}
           />
           <ClearMappings propId={terminologyId} component={'Terminology'} />
+          <LoadCodes
+            terminology={terminology}
+            setTerminology={setTerminology}
+          />
         </div>
       )}
     </>

@@ -36,6 +36,10 @@ export const TerminologyList = () => {
     );
   };
 
+  const nameLink = item => (
+    <Link to={`/Terminology/${item.id}`}>{item.name}</Link>
+  );
+
   const columns = [
     {
       title: terminologyTitle(),
@@ -78,8 +82,8 @@ export const TerminologyList = () => {
       ),
       onFilter: (value, record) =>
         // Searches both the name and description property for keystrokes to filter
-        record?.name?.props.children
-          .toString()
+        record?.name?.props?.children
+          ?.toString()
           .toLowerCase()
           .includes(value.toLowerCase()) ||
         record?.description
@@ -106,7 +110,7 @@ export const TerminologyList = () => {
 
   const dataSource = terms.map((item, i) => ({
     key: i,
-    name: <Link to={`/Terminology/${item.id}`}>{item.name}</Link>,
+    name: nameLink(item),
     description: item.description,
   }));
 

@@ -1,25 +1,43 @@
 import { Button, Form, Upload, Modal, notification, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
-import './TableStyling.scss';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 
-export const LoadVariables = ({ load, setLoad }) => {
+export const LoadCodes = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
-  const { vocabUrl, setTable, table, user } = useContext(myContext);
+  const { vocabUrl, importState, setImportState, user } = useContext(myContext);
   const [loading, setLoading] = useState(false);
 
-  const tableUpload = values => {
+  const termUpload = values => {
+    const cleanedCodes = values.codes.map(item => ({
+      ...item,
+      code: item.code.toLowerCase().replaceAll(' ', '_'),
+    }));
+
+    console.log({
+      ...values,
+      codes: cleanedCodes,
+      name: terminology.name,
+      description: terminology.description,
+      url: terminology.url,
+    });
+
     setLoading(true);
-    fetch(`${vocabUrl}/LoadTable/${table.id}`, {
+    fetch(`${vocabUrl}/Terminology/${terminology.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...values, editor: user.email }),
+      body: JSON.stringify({
+        ...values,
+        codes: cleanedCodes,
+        name: terminology.name,
+        description: terminology.description,
+        url: terminology.url,
+      }),
     })
       .then(res => {
         if (res.status === 400) {
@@ -39,15 +57,15 @@ export const LoadVariables = ({ load, setLoad }) => {
         return res.json();
       })
       .then(updatedData => {
-        setLoad(false);
-        setTable(updatedData);
-        message.success('Variables uploaded successfully.');
+        setImportState(false);
+        setTerminology(updatedData);
+        message.success('Codes uploaded successfully.');
       })
       .catch(error => {
         if (error.message !== '400 error') {
           notification.error({
             message: 'Error',
-            description: 'An error occurred uploading the variables',
+            description: 'An error occurred uploading the codes',
           });
         }
       })
@@ -55,29 +73,28 @@ export const LoadVariables = ({ load, setLoad }) => {
   };
 
   /* Function for upload. If a file was uploaded, it takes the values from the form, parses the uploaded file's content
-    into JSON, gets the file name to display on the page later, creates a "csvContents" array 
-    with the file's data, then runs the tableUpload function to create the new table. */
+  into JSON, gets the file name to display on the page later, creates a "codes" array 
+  with the file's data, then runs the termUpload function to create the new table.
+  If there is no file selected, it skips the JSON parsing and skips straight to the POST. */
   const handleUpload = values => {
-    Papa.parse(values.csvContents.file, {
+    Papa.parse(values.codes.file, {
       header: true,
       skipEmptyLines: true,
       complete: function (result) {
-        values.filename = values.csvContents.file.name;
-        values.csvContents = result.data;
-        tableUpload(values);
+        values.codes = result.data;
+        termUpload(values);
       },
     });
   };
 
   return (
     <>
-      {/* ant.design modal with the form to add a table */}
       {/* when the OK button is pressed, the form validates the fields to ensure required sections are completed.
           The handleSubmit function is called to POST the values to the API. 
           The modal is reset to its initial, blank state.
           load is set to false to close the modal */}
       <Modal
-        open={load}
+        open={importState}
         width={'50%'}
         onOk={() =>
           form.validateFields().then(values => {
@@ -87,7 +104,7 @@ export const LoadVariables = ({ load, setLoad }) => {
         }
         onCancel={() => {
           form.resetFields();
-          setLoad(false);
+          setImportState(false);
           setFileList([]);
         }}
         cancelButtonProps={{ disabled: loading }}
@@ -98,9 +115,9 @@ export const LoadVariables = ({ load, setLoad }) => {
           <ModalSpinner />
         ) : (
           <Form form={form} layout="vertical" name="form_in_modal">
-            <h2>Upload Variables</h2>
+            <h2>Upload Codes</h2>
             <Form.Item
-              name="csvContents"
+              name="codes"
               rules={[{ required: true, message: 'Please select file.' }]}
               extra="CSV files only, in Data Dictionary format."
             >

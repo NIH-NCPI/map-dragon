@@ -36,7 +36,10 @@ export const AddTerminology = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...values, codes: cleanedCodes }),
+      body: JSON.stringify({
+        ...values,
+        codes: cleanedCodes,
+      }),
     })
       .then(res => {
         if (!res.ok) {
@@ -46,17 +49,17 @@ export const AddTerminology = () => {
         }
         return res.json();
       })
-      .catch(error => {
-        notification.error({
-          message: 'Error',
-          description: 'An error occurred uploading the terminology',
-        });
-      })
       .then(data => {
         setCreateTerm(false);
         form.resetFields();
         message.success('Terminology uploaded successfully.');
         navigate(`/Terminology/${data.id}`);
+      })
+      .catch(error => {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred uploading the terminology',
+        });
       })
       .finally(() => setLoading(false));
   };
