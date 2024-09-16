@@ -5,11 +5,12 @@ runtime_config:
   operating_system: 'ubuntu22'
 
 handlers:
-  # Serve all static files with url ending with a file extension
+  # Serve all static files from the 'dist' directory
   - url: /(.*\..+)$
-    static_files: build/\1
-    upload: build/(.*\..+)$
-  # Catch all handler to index.html
+    static_files: dist/\1
+    upload: dist/(.*\..+)$
+
+  # Redirect all other URLs to 'index.html' to handle client-side routing
   - url: /.*
-    static_files: build/index.html
-    upload: build/index.html
+    static_files: dist/index.html
+    upload: dist/index.html
