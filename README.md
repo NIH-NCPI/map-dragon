@@ -1,4 +1,4 @@
-# Vocabulary Management Tool
+# Map Dragon
 This application will support several user groups in submitting and validating their data, managing and tracking data definitions, and aligning data to standardized terms. 
 
 ## Getting Started
@@ -15,12 +15,12 @@ Make sure you have Node.js and npm installed on your machine.
 1. Clone the repository:
 
    ```sh
-   git clone git@github.com:yelenacox/vocabulary-management-tool.git
+   git clone git@github.com:NIH-NCPI/map-dragon.git
 
 2. Navigate into the project directory:
 
    ```sh
-   cd vocabulary-management-tool
+   cd map-dragon
 3. Install dependencies
 
    ```sh
