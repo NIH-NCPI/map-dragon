@@ -37,7 +37,9 @@ jobs:
         run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Activate service account
-        run: gcloud auth activate-service-account --key-file=${{ secrets.GCP_CREDENTIALS }}
+        run: |
+          echo "${{ secrets.GCP_CREDENTIALS }}" > key.json
+          gcloud auth activate-service-account --key-file=key.json 
 
       # Step 4: Build and push Docker image to Google Container Registry (GCR)
       - name: Build and push Docker image
