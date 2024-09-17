@@ -129,6 +129,7 @@ export const UploadTable = ({ addTable, setAddTable }) => {
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
         maskClosable={false}
+        closeIcon={false}
       >
         {loading ? (
           <ModalSpinner />

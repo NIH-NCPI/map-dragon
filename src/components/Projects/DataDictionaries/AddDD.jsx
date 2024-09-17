@@ -70,6 +70,7 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
       destroyOnClose={true}
       cancelButtonProps={{ disabled: loading }}
       okButtonProps={{ disabled: loading }}
+      closeIcon={false}
     >
       {loading ? (
         <ModalSpinner />

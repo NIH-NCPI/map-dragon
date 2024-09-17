@@ -57,7 +57,7 @@ export const AddVariable = ({ table, setTable }) => {
 
   return (
     <>
-      <div className="add_row_button">
+      <div className="add_row_buttons">
         <Button
           onClick={() => setAddRow(true)}
           type="primary"
@@ -84,6 +84,7 @@ export const AddVariable = ({ table, setTable }) => {
           setType('');
         }}
         maskClosable={false}
+        closeIcon={false}
       >
         {loading ? (
           <ModalSpinner />

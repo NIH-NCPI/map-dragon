@@ -15,6 +15,7 @@ import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsMod
 import { TerminologyMenu } from './TerminologyMenu';
 import { Submenu } from '../../Manager/Submenu';
 import { LoadCodes } from './LoadCodes';
+import { PreferredTerminology } from './PreferredTerminology';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -211,11 +212,13 @@ There is then a tooltip that displays the codes on hover.*/
             </div>
           </Row>
           <div className="table_container">
-            <AddCode
-              terminology={terminology}
-              setTerminology={setTerminology}
-            />
-
+            <div className="add_row_buttons">
+              <PreferredTerminology />
+              <AddCode
+                terminology={terminology}
+                setTerminology={setTerminology}
+              />
+            </div>
             {/* ant.design table with columns */}
             {loading ? (
               <Spinner />

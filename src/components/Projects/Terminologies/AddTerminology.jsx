@@ -86,7 +86,7 @@ export const AddTerminology = () => {
 
   return (
     <>
-      <div className="add_row_button">
+      <div className="add_row_buttons">
         <Button
           onClick={() => setCreateTerm(true)}
           type="primary"
@@ -113,6 +113,7 @@ export const AddTerminology = () => {
         maskClosable={false}
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
+        closeIcon={false}
       >
         {loading ? (
           <ModalSpinner />

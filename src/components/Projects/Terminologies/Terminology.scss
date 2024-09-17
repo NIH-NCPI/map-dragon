@@ -154,18 +154,11 @@ a:hover {
   top: 25vh;
 }
 
-.add_row_button,
-.export_button {
+.add_row_buttons {
   float: right;
   margin-right: 35px;
-}
-.export_button {
-  margin-top: 10px;
-}
-
-.add_row_buttons {
   display: flex;
-  gap: 2px;
+  gap: 8px;
 }
 
 .terminology_filter {

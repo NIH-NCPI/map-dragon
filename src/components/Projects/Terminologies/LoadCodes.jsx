@@ -110,6 +110,7 @@ export const LoadCodes = ({ terminology, setTerminology }) => {
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
         maskClosable={false}
+        closeIcon={false}
       >
         {loading ? (
           <ModalSpinner />
