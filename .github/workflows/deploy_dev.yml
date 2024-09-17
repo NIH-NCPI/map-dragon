@@ -37,7 +37,7 @@ jobs:
       # Step 4: Build and push Docker image to Google Container Registry (GCR)
       - name: Build and push Docker image
         run: |
-          IMAGE=gcr.io/${{ secrets.GCP_PROJECT_ID }}/vmt:$GITHUB_SHA
+          IMAGE=gcr.io/map-dragon-dev/vmt:$GITHUB_SHA
           docker build -t $IMAGE .
           docker push $IMAGE
 
