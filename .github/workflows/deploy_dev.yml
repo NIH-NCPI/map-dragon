@@ -40,16 +40,17 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE=vmt/${{ secrets.GCP_PROJECT_ID }}/vmt:$GITHUB_SHA
-          docker build -t $IMAGE .
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vmt/vmt_image:$GITHUB_SHA"
+          docker build -t "${IMAGE}" .
           docker push $IMAGE
 
       # Step 5: Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
-          IMAGE=vmt/${{ secrets.GCP_PROJECT_ID }}/vmt:$GITHUB_SHA
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vmt/vmt_image:$GITHUB_SHA"
+
           gcloud run deploy vmt \
-            --image $IMAGE \
+            --image "${IMAGE}" \
             --platform managed \
             --region ${{ env.REGION }} \
             --allow-unauthenticated
