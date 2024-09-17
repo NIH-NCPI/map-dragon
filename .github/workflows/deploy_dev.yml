@@ -48,8 +48,8 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           IMAGE=gcr.io/${{ secrets.GCP_PROJECT_ID }}/vmt:$GITHUB_SHA
-          gcloud run deploy github-actions-deploy \
+          gcloud run deploy vmt \
             --image $IMAGE \
             --platform managed \
-            --region us-east1 \
+            --region ${{ env.REGION }} \
             --allow-unauthenticated
