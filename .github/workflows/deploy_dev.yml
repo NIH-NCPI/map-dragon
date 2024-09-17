@@ -3,7 +3,7 @@ name: Deploy to Cloud Run
 on:
   push:
     branches:
-      - gitub-deploy  # Adjust if you use a different branch
+      - github-deploy  # Adjust if you use a different branchc
 
 jobs:
   deploy:
