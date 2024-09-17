@@ -28,12 +28,6 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}  # Ensure this secret is correctly set in GitHub Secrets
 
-    
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}  # Ensure this secret is also set
-
       - name: 'Docker Auth'
         run: |-
           gcloud auth configure-docker '${{ secrets.REGION }} --docker.pkg.dev' 
