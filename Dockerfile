@@ -1,5 +1,5 @@
 # Stage 1: Build the React app
-FROM node:lts-alpine as builder
+FROM node:lts-alpine as build
 
 
 # Copy the package.json and package-lock.json files
