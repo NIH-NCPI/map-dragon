@@ -36,21 +36,21 @@ jobs:
 
       - name: 'Docker Auth'
         run: |-
-          gcloud auth configure-docker '${{ env.REGION }} --docker.pkg.dev' 
+          gcloud auth configure-docker '${{ secrets.REGION }} --docker.pkg.dev' 
 
       - name: Build and push Docker image
         run: |
-          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vmt/vmt_image:$GITHUB_SHA"
-          docker build -t "${IMAGE}" .
+          IMAGE="${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vmt/vmt_image:$GITHUB_SHA"
+          docker build -t ${IMAGE} .
           docker push $IMAGE
 
       # Step 5: Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
-          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vmt/vmt_image:$GITHUB_SHA"
+          IMAGE="${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vmt/vmt_image:$GITHUB_SHA"
 
           gcloud run deploy vmt \
             --image "${IMAGE}" \
             --platform managed \
-            --region ${{ env.REGION }} \
+            --region ${{ secrets.REGION }} \
             --allow-unauthenticated
