@@ -33,11 +33,6 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}  # Ensure this secret is also set
-      - name: Set gcloud project
-        run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: Activate service account
-        run: gcloud auth activate-service-account --key-file=${{ secrets.GCP_CREDENTIALS }}
 
       # Step 4: Build and push Docker image to Google Container Registry (GCR)
       - name: Build and push Docker image
