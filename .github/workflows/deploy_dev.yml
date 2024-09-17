@@ -3,13 +3,12 @@ name: Deploy to Cloud Run
 on:
   push:
     branches:
-      - main  # Adjust if you use a different main branch
+      - github-deploy  # Adjust if you use a different main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    if: github.event.review.state == 'approved'
 
     environment:
       name: dev
