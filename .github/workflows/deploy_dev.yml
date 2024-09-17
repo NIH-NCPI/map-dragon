@@ -17,24 +17,27 @@ jobs:
       id-token: 'write'
 
     steps:
-      # Step 1: Checkout code
+
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Authenticate to Google Cloud using a Service Account
+
       - name: Authenticate to Google Cloud
         id: auth
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}  # Ensure this secret is correctly set in GitHub Secrets
 
-      # Step 3: Set up Google Cloud SDK
+    
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}  # Ensure this secret is also set
 
-      # Step 4: Build and push Docker image to Google Container Registry (GCR)
+      - name: 'Docker Auth'
+        run: |-
+          gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev' 
+
       - name: Build and push Docker image
         run: |
           IMAGE=gcr.io/${{ secrets.GCP_PROJECT_ID }}/vmt:$GITHUB_SHA
