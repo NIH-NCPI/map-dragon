@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Start your app using a production-ready server like serve
-CMD ["npx", "serve", "-s", "build"]
+CMD ["npm", "run", "build"]
