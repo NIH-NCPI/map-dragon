@@ -1,0 +1,47 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # Adjust if you use a different main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    if: github.event.review.state == 'approved'
+
+    environment:
+      name: dev
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }} 
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/VMT_dev:latest .
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/VMT_dev:latest
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy github-actions-deploy \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/VMT_dev:latest \
+            --platform managed \
+            --region us-east1 \
+            --allow-unauthenticated
