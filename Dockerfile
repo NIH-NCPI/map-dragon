@@ -21,8 +21,8 @@ FROM nginx:alpine
 # Copy the build output to the Nginx html directory
 COPY --from=build ./dist /usr/share/nginx/html
 
-# Expose port 5000
-EXPOSE 5000
+# Expose port 8080
+EXPOSE 8080
 
 
 # Start Nginx
