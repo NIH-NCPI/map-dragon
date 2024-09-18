@@ -37,6 +37,7 @@ jobs:
           echo "PROJECT_ID: ${{ env.PROJECT_ID }}"
           echo "SERVICE: ${{ env.SERVICE }}"
            # ... print other relevant variables
+     
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
 
@@ -50,10 +51,13 @@ jobs:
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
 
-      - name: 'Build and Push Container'
+      - name: 'Build Docker Image' # New step to build the image
         run: |-
-          DOCKER_TAG="${{ env.REGION }}--docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          docker build --tag "${DOCKER_TAG}" .
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          docker build -t "${DOCKER_TAG}" .
+
+      - name: 'Push Docker Image'
+        run: |-
           docker push "${DOCKER_TAG}"
 
       - name: 'Deploy to Cloud Run'
