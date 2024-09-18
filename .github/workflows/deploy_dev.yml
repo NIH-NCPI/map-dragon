@@ -1,14 +1,27 @@
-name: Deploy to Cloud Run
+# This workflow build and push a Docker container to Google Artifact Registry
+# and deploy it on Cloud Run when a PR has been approved by a reviewer.
+
+name: 'Build and Deploy to Cloud Run'
 
 on:
-  push:
-    branches:
-      - github-deploy  # Adjust if you use a different branchc
+  pull_request_review:
+    types: [submitted]
+
+env:
+
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  REGION: ${{ secrets.REGION_LOC_1 }}
+  SERVICE: 'vmt'
+  IMAGE_NAME: 'vmt_img'
+  GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
 
 jobs:
+  
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: 'ubuntu-latest'
 
+    # if: github.event.review.state == 'approved'
+    
     environment:
       name: dev
 
@@ -17,34 +30,28 @@ jobs:
       id-token: 'write'
 
     steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-
-      - name: Authenticate to Google Cloud
-        id: auth
-        uses: google-github-actions/auth@v2
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}  # Ensure this secret is correctly set in GitHub Secrets
+          credentials_json: '${{ env.GCP_CREDENTIALS }}'
 
       - name: 'Docker Auth'
         run: |-
-          gcloud auth configure-docker '${{ secrets.REGION }} --docker.pkg.dev' 
+          gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
 
-      - name: Build and push Docker image
-        run: |
-          IMAGE="${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vmt/vmt_image:$GITHUB_SHA"
-          docker build -t ${IMAGE} .
-          docker push $IMAGE
+      - name: 'Build and Push Container'
+        run: |-
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          docker build --tag "${DOCKER_TAG}" .
+          docker push "${DOCKER_TAG}"
 
-      # Step 5: Deploy to Cloud Run
-      - name: Deploy to Cloud Run
-        run: |
-          IMAGE="${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/vmt/vmt_image:$GITHUB_SHA"
-
-          gcloud run deploy vmt \
-            --image "${IMAGE}" \
-            --platform managed \
-            --region ${{ secrets.REGION }} \
-            --allow-unauthenticated
+      - name: 'Deploy to Cloud Run'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: '${{ env.SERVICE }}'
+          region: '${{ env.REGION }}'
+          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
