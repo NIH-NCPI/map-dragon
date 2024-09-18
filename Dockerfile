@@ -1,5 +1,5 @@
 # Stage 1: Build the React app
-FROM node:lts-alpine as build
+FROM node:18-alpine as build
 
 
 # Copy the package.json and package-lock.json files
@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Build the React app
-RUN npm run build
+RUN npm run build || (echo "Build failed! Check the logs for more details." && exit 1)
 
 # Stage 2: Serve the React app
 FROM nginx:alpine
