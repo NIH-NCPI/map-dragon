@@ -62,10 +62,9 @@ jobs:
           docker push "${DOCKER_TAG}"
 
       - name: 'Deploy to Cloud Run'
-        run: |
-          gcloud run deploy ${{ env.SERVICE }} \
-          --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-          --region ${{ env.REGION }} \
-          --platform managed \
-          --labels managed-by=github-actions,commit-sha=${{ github.sha }} \
-          --startup-probe-initial-delay-seconds=30 # Set your desired value
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: '${{ env.SERVICE }}'
+          region: '${{ env.REGION }}'
+          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          labels: managed-by=github-actions,commit-sha=${{ github.sha }}
