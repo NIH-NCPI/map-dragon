@@ -1,6 +1,7 @@
 # Stage 1: Build the React app
 FROM node:18-alpine as build
 
+ENV HOST 0.0.0.0
 
 # Copy the package.json and package-lock.json files
 COPY package*.json ./
@@ -22,6 +23,7 @@ COPY --from=build ./dist /usr/share/nginx/html
 
 # Expose port 8080
 EXPOSE 8080
+
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
