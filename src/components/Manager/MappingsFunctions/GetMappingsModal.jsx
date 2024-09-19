@@ -356,18 +356,21 @@ export const GetMappingsModal = ({
                             valuePropName="value"
                             rules={[{ required: false }]}
                           >
-                            {displaySelectedMappings?.map((sm, i) => (
-                              <Checkbox
-                                key={i}
-                                checked={selectedBoxes.some(
-                                  box => box.obo_id === sm.obo_id
-                                )}
-                                value={sm}
-                                onChange={e => onCheckboxChange(e, sm, i)}
-                              >
-                                {selectedTermsDisplay(sm, i)}
-                              </Checkbox>
-                            ))}
+                            {' '}
+                            <div className="modal_display_results">
+                              {displaySelectedMappings?.map((sm, i) => (
+                                <Checkbox
+                                  key={i}
+                                  checked={selectedBoxes.some(
+                                    box => box.obo_id === sm.obo_id
+                                  )}
+                                  value={sm}
+                                  onChange={e => onCheckboxChange(e, sm, i)}
+                                >
+                                  {selectedTermsDisplay(sm, i)}
+                                </Checkbox>
+                              ))}
+                            </div>
                           </Form.Item>
                         )}
                         <Form.Item

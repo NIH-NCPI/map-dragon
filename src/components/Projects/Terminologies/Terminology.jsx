@@ -213,7 +213,10 @@ There is then a tooltip that displays the codes on hover.*/
           </Row>
           <div className="table_container">
             <div className="add_row_buttons">
-              <PreferredTerminology />
+              <PreferredTerminology
+                terminology={terminology}
+                setTerminology={setTerminology}
+              />
               <AddCode
                 terminology={terminology}
                 setTerminology={setTerminology}

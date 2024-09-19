@@ -1,18 +1,34 @@
-import { Button, Checkbox, Form, Input, Modal, Space, Table } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Pagination,
+} from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { getAll } from '../../Manager/FetchManager';
 import { myContext } from '../../../App';
 import { Link, useNavigate } from 'react-router-dom';
+import { ellipsisString } from '../../Manager/Utilitiy';
+import { ModalSpinner } from '../../Manager/Spinner';
 
-export const PreferredTerminology = () => {
+export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
   const { vocabUrl } = useContext(myContext);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [terms, setTerms] = useState([]);
-  const [filter, setFilter] = useState(null);
+  const [terminologies, setTerminologies] = useState([]);
+  const [displaySelectedTerminologies, setDisplaySelectedTerminologies] =
+    useState([]);
+  const [selectedTerminologies, setSelectedTerminologies] = useState([]);
+  const [selectedBoxes, setSelectedBoxes] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const navigate = useNavigate();
   const inputRef = useRef(null);
@@ -21,99 +37,166 @@ export const PreferredTerminology = () => {
     setLoading(true);
     getAll(vocabUrl, 'Terminology', navigate)
       .then(data => {
-        setTerms(data);
+        setTerminologies(data);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  const terminologyTitle = () => {
+  // Sets the value of the selected_mappings in the form to the checkboxes that are selected
+  useEffect(() => {
+    form.setFieldsValue({
+      selected_terminologies: selectedBoxes,
+    });
+  }, [selectedBoxes, form]);
+
+  const handleSubmit = values => {
+    setLoading(true);
+    const preferredTerminologies = values?.selected_terminologies?.map(
+      item => ({
+        preferred_terminology: item.id,
+      })
+    );
+
+    fetch(`${vocabUrl}/Terminology/${terminology.id}/preferred_terminology`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(preferredTerminologies),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => {
+        setTerminology(data);
+        form.resetFields();
+        message.success('Preferred terminology updated successfully.');
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the preferred terminology.',
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const onClose = () => {
+    setCurrentPage(1);
+    setPageSize(10);
+    setSelectedBoxes([]);
+    setSelectedTerminologies([]);
+    setDisplaySelectedTerminologies([]);
+    setOpen(false);
+  };
+
+  const paginatedTerminologies = terminologies.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const handlePageChange = page => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (current, size) => {
+    setPageSize(size);
+    setCurrentPage(1); // Reset to page 1 when page size changes
+  };
+
+  // If the checkbox is checked, it adds the object to the selectedBoxes array
+  // If it is unchecked, it filters it out of the selectedBoxes array.
+  const onCheckboxChange = (event, terminology) => {
+    if (event.target.checked) {
+      setSelectedBoxes(prevState => [...prevState, terminology]);
+    } else {
+      setSelectedBoxes(prevState =>
+        prevState.filter(val => val !== terminology)
+      );
+    }
+  };
+
+  const onSelectedChange = checkedValues => {
+    const selected = JSON.parse(checkedValues?.[0]);
+    const selectedTerminology = terminologies.find(
+      term => term.id === selected.preferred_terminology
+    );
+
+    // Updates selectedTerminologies and displayselectedTerminologys to include the new selected items
+    setSelectedTerminologies(prevState => [...prevState, selectedTerminology]);
+
+    // Adds the selectedTerminologies to the selectedBoxes to ensure they are checked
+    setSelectedBoxes(prevState => {
+      const updated = [...prevState, selectedTerminology];
+      // Sets the values for the form to the selectedTerminologiess checkboxes that are checked
+      form.setFieldsValue({ selected_terminologies: updated });
+      return updated;
+    });
+
+    setDisplaySelectedTerminologies(prevState => [
+      ...prevState,
+      selectedTerminology,
+    ]);
+
+    // Filters out the selected checkboxes from the results being displayed
+    const updatedTerminologies = terminologies.filter(
+      term => term.id !== selected.preferred_terminology
+    );
+    setTerminologies(updatedTerminologies);
+  };
+
+  const selectedTermsDisplay = (selected, index) => {
     return (
-      <div className="terminology_filter">
-        <div>Terminology</div>
-        {filter?.length > 0 ? <div>Filtering by '{filter}'</div> : ''}
-      </div>
+      <>
+        <div key={index} className="modal_display_result">
+          <div>
+            <div className="modal_term_ontology">
+              <div>
+                <Link
+                  to={`/Terminology/${selected.id}`}
+                  target="_blank"
+                  className="terminology_link"
+                >
+                  {selected?.name ? selected.name : selected.id}
+                </Link>
+              </div>
+            </div>
+            <div>{ellipsisString(selected?.description, '100')}</div>
+          </div>
+        </div>
+      </>
     );
   };
 
-  const nameLink = item => (
-    <Link to={`/Terminology/${item.id}`} target="_blank">
-      {item.name ? item.name : item.id}
-    </Link>
-  );
-
-  const columns = [
-    {
-      title: terminologyTitle(),
-      dataIndex: 'name',
-      // Filters table by keystroke
-      filterDropdown: ({
-        setSelectedKeys,
-        selectedKeys,
-        confirm,
-        clearFilters,
-      }) => (
-        <div style={{ padding: 8 }}>
-          <Input
-            ref={inputRef}
-            placeholder={`Search Terminology`}
-            value={selectedKeys[0]}
-            onChange={e => {
-              setSelectedKeys(e.target.value ? [e.target.value] : []);
-              setFilter(e.target.value ? [e.target.value] : []); // sets filter to the input text to display at top of table
-              confirm({ closeDropdown: false });
-            }}
-            style={{ display: 'block', marginBottom: 8 }}
-            autoFocus
-          />
-          <Space>
-            <Button
-              onClick={() => {
-                clearFilters();
-                setSelectedKeys([]);
-                setFilter('');
-                confirm({ closeDropdown: false });
-              }}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Reset
-            </Button>
-          </Space>
+  const checkBoxDisplay = (item, index) => {
+    return (
+      <>
+        <div key={index} className="modal_search_result">
+          <div>
+            <div className="modal_term_ontology">
+              <div>
+                <Link
+                  to={`/Terminology/${item.id}`}
+                  target="_blank"
+                  className="terminology_link"
+                >
+                  {item?.name ? item.name : item.id}
+                </Link>
+              </div>
+            </div>
+            <div>{ellipsisString(item?.description, '100')}</div>
+          </div>
         </div>
-      ),
-      onFilter: (value, record) =>
-        // Searches both the name and description property for keystrokes to filter
-        record?.name?.props?.children
-          ?.toString()
-          .toLowerCase()
-          .includes(value.toLowerCase()) ||
-        record?.description
-          ?.toString()
-          .toLowerCase()
-          .includes(value.toLowerCase()),
-      filterIcon: filtered => (
-        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
-      ),
-      onFilterDropdownOpenChange: open => {
-        if (open) {
-          setTimeout(() => {
-            inputRef.current?.focus(); // Focus cursor on search input
-          }, 100); // Small delay to ensure input is rendered
-        }
-      },
-      width: 400,
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-    },
-  ];
-
-  const dataSource = terms.map((item, i) => ({
-    key: i,
-    name: nameLink(item),
-    description: item.description,
-  }));
+      </>
+    );
+  };
 
   return (
     <>
@@ -129,42 +212,116 @@ export const PreferredTerminology = () => {
         </Button>
       </div>
       <Modal
-        // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
-        // if there is a code being passed, it evaluates to true and opens the modal.
         open={open}
         width={'60%'}
         onOk={() => {
-          form.validateFields();
-          setOpen(false);
+          form.validateFields().then(values => {
+            handleSubmit(values);
+            onClose();
+          });
         }}
         onCancel={() => {
           form.resetFields();
-          setOpen(false);
+          onClose();
         }}
         closeIcon={false}
         maskClosable={false}
         destroyOnClose={true}
-        style={{
-          top: 20,
-        }}
+        cancelButtonProps={{ disabled: loading }}
+        okButtonProps={{ disabled: loading }}
+        styles={{ body: { height: '60vh', overflowY: 'auto' } }}
+        footer={(_, { OkBtn, CancelBtn }) => (
+          <>
+            <div className="modal_footer">
+              <Pagination
+                current={currentPage}
+                pageSize={pageSize}
+                total={terminologies.length}
+                onChange={handlePageChange}
+                showSizeChanger
+                onShowSizeChange={handlePageSizeChange}
+                pageSizeOptions={['10', '20', '50']} // Set page size options
+              />
+              <div className="cancel_ok_buttons">
+                <CancelBtn />
+                <OkBtn />
+              </div>
+            </div>
+          </>
+        )}
       >
-        <div className="modal_search_results_header">
-          <h3>Terminologies</h3>
-        </div>
-        <Form form={form} layout="vertical" preserve={false}>
-          <Form.Item
-            name={['mappings']}
-            valuePropName="value"
-            // Each checkbox is checked by default. The user can uncheck a checkbox to remove a mapping by clicking the save button.
-          >
-            <Table
-              columns={columns}
-              dataSource={dataSource}
-              getPopupContainer={trigger => trigger.parentNode}
-              size="small"
-            />
-          </Form.Item>
-        </Form>
+        {loading ? (
+          <ModalSpinner />
+        ) : (
+          <>
+            {' '}
+            <div className="modal_search_results_header">
+              <h3>Terminologies</h3>
+            </div>
+            <Form form={form} layout="vertical" preserve={false}>
+              <Form.Item
+                name={['preferred_terminology']}
+                valuePropName="value"
+                // Each checkbox is checked by default. The user can uncheck a checkbox to remove a mapping by clicking the save button.
+              >
+                <div className="result_container">
+                  <Form form={form} layout="vertical">
+                    {displaySelectedTerminologies?.length > 0 && (
+                      <Form.Item
+                        name="selected_terminologies"
+                        valuePropName="value"
+                        rules={[{ required: false }]}
+                      >
+                        <div className="modal_display_results">
+                          {displaySelectedTerminologies?.map((selected, i) => (
+                            <Checkbox
+                              key={i}
+                              checked={selectedBoxes.some(
+                                box => box.id === selected.id
+                              )}
+                              value={selected}
+                              onChange={e => onCheckboxChange(e, selected)}
+                            >
+                              {selectedTermsDisplay(selected, i)}
+                            </Checkbox>
+                          ))}
+                        </div>
+                      </Form.Item>
+                    )}
+                    <Form.Item
+                      name={['terminologies']}
+                      valuePropName="value"
+                      rules={[
+                        {
+                          required: false,
+                        },
+                      ]}
+                    >
+                      {paginatedTerminologies?.length > 0 ? (
+                        <Checkbox.Group
+                          className="mappings_checkbox"
+                          options={paginatedTerminologies?.map(
+                            (term, index) => {
+                              return {
+                                value: JSON.stringify({
+                                  preferred_terminology: term.id,
+                                }),
+                                label: checkBoxDisplay(term, index),
+                              };
+                            }
+                          )}
+                          onChange={onSelectedChange}
+                        />
+                      ) : (
+                        ''
+                      )}
+                    </Form.Item>
+                  </Form>
+                </div>
+              </Form.Item>
+            </Form>
+          </>
+        )}
       </Modal>
     </>
   );
