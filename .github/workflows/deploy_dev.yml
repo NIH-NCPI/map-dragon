@@ -54,7 +54,7 @@ jobs:
       - name: 'Build Docker Image' # New step to build the image
         run: |-
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          docker build -t ENV_FILE=.env.dev "${DOCKER_TAG}" .
+          docker build -t ENV_FILE="dev" "${DOCKER_TAG}" .
 
       - name: 'Push Docker Image'
         run: |-
