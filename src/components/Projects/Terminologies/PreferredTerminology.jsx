@@ -18,7 +18,9 @@ import { ModalSpinner } from '../../Manager/Spinner';
 
 export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
-  const { vocabUrl } = useContext(myContext);
+  const { Search } = Input;
+
+  const { vocabUrl, user } = useContext(myContext);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -29,6 +31,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [selectedBoxes, setSelectedBoxes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [searchText, setSearchText] = useState('');
 
   const navigate = useNavigate();
   const inputRef = useRef(null);
@@ -57,12 +60,19 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
       })
     );
 
+    const preferredTermDTO = () => {
+      return {
+        'editor': user.email,
+        'preferred_terminologies': [preferredTerminologies],
+      };
+    };
+
     fetch(`${vocabUrl}/Terminology/${terminology.id}/preferred_terminology`, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(preferredTerminologies),
+      body: JSON.stringify(preferredTermDTO()),
     })
       .then(res => {
         if (res.ok) {
@@ -97,7 +107,13 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
     setOpen(false);
   };
 
-  const paginatedTerminologies = terminologies.slice(
+  const getFilteredItems = () =>
+    terminologies?.filter(
+      item =>
+        item?.name &&
+        item?.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+  const paginatedTerminologies = getFilteredItems().slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -236,7 +252,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
               <Pagination
                 current={currentPage}
                 pageSize={pageSize}
-                total={terminologies.length}
+                total={getFilteredItems().length}
                 onChange={handlePageChange}
                 showSizeChanger
                 onShowSizeChange={handlePageSizeChange}
@@ -257,6 +273,13 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
             {' '}
             <div className="modal_search_results_header">
               <h3>Terminologies</h3>
+              <div className="mappings_search_bar">
+                <Search
+                  placeholder="Search terminologies"
+                  value={searchText}
+                  onChange={e => setSearchText(e.target.value)}
+                />
+              </div>
             </div>
             <Form form={form} layout="vertical" preserve={false}>
               <Form.Item
