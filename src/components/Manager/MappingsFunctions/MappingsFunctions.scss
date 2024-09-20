@@ -1,0 +1,16 @@
+.reset-modal,
+.clear-mappings {
+  top: 25vh;
+}
+
+.modal_search_results_header {
+  margin: 0 0 15px 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+.mappings_search_bar {
+  width: 50%;
+}
