@@ -55,7 +55,7 @@ jobs:
 
         run: |-
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          docker build -t "${DOCKER_TAG}" --build-arg ENV=qa .
+          docker build -t "${DOCKER_TAG}" --build-arg ENV=dev .
 
       - name: 'Push Docker Image'
         run: |-
