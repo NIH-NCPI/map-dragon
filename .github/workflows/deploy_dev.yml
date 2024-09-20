@@ -4,9 +4,8 @@
 name: 'Build and Deploy to Cloud Run'
 
 on:
-  push:
-    branches:
-      - github-deploy  # Adjust if you use a different branchc
+  pull_request_review:
+    types: [submitted]
 
 env:
 
@@ -21,6 +20,7 @@ jobs:
   
   deploy:
     runs-on: 'ubuntu-latest'
+    if: github.event.review.state == 'approved'
 
     
     environment:
