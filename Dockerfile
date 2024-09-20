@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Build the React app
-RUN npm run build || (echo "Build failed! Check the logs for more details." && exit 1)
+RUN vite build --mode $ENV_FILE || (echo "Build failed! Check the logs for more details." && exit 1)
 
 # Stage 2: Serve the React app
 FROM nginx:alpine
