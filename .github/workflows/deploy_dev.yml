@@ -10,7 +10,7 @@ on:
 
 env:
 
-  PROJECT_ID: ${{ env.PROJECT_ID }}
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION_LOC_1 }}
   SERVICE: 'vmt'
   IMAGE_NAME: 'vmt_img'
