@@ -16,7 +16,7 @@ RUN npm run build || (echo "Build failed! Check the logs for more details." && e
 
 # Stage 2: Serve the React app
 FROM nginx:alpine
-
+RUN echo "stage2"
 # Copy the custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf 
 
