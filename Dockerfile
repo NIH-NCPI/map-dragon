@@ -11,10 +11,9 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-ARG ENV_FILE
 # Build the React app
+RUN npm run build || (echo "Build failed! Check the logs for more details." && exit 1)
 
-RUN if [[ "$ENV_FILE" = "dev" ]]; then RUN npm run build-dev; fi
 # Stage 2: Serve the React app
 FROM nginx:alpine
 
