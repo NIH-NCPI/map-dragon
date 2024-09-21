@@ -4,6 +4,9 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { EditCode } from './EditCode';
 import { ShowHistory } from '../../Manager/ShowHistory';
+import { getById } from '../../Manager/FetchManager';
+import { AssignMappings } from '../../Manager/MappingsFunctions/AssignMappings';
+import { MappingContext } from '../../../MappingContext';
 
 export const TerminologyMenu = ({
   tableData,
@@ -15,13 +18,29 @@ export const TerminologyMenu = ({
   mapping,
   setEditMappings,
   setGetMappings,
+  prefTerminologies,
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, selectedKey, setSelectedKey, user } = useContext(myContext);
+  const { assignMappings, setAssignMappings } = useContext(MappingContext);
   const { item } = tableData;
   const [deleteRow, setDeleteRow] = useState(null);
   const [editRow, setEditRow] = useState(null);
   const [showHistory, setShowHistory] = useState(null);
+
+  // useEffect(() => {
+  //   getById(vocabUrl, 'Terminology', `${terminology.id}/preferred_terminology`)
+  //     .then(data => setPrefTerminologies(data?.references))
+  //     .catch(error => {
+  //       if (error) {
+  //         notification.error({
+  //           message: 'Error',
+  //           description: 'An error occurred loading preferred terminologies.',
+  //         });
+  //       }
+  //       return error;
+  //     });
+  // }, []);
 
   // Opens the delete dialog box when Delete is selected in the menu
   useEffect(() => {
@@ -107,7 +126,12 @@ export const TerminologyMenu = ({
         { key: `${tableData.key}-2`, label: 'Delete' },
         {
           key: `${tableData.key}-3`,
-          label: showEditMappings ? 'Mappings' : 'Get Mappings',
+          label:
+            prefTerminologies.length > 0
+              ? 'Assign Mappings'
+              : showEditMappings
+              ? 'Mappings'
+              : 'Get Mappings',
         },
         {
           key: `${tableData.key}-4`,
@@ -127,7 +151,9 @@ export const TerminologyMenu = ({
       case `${tableData.key}-2`:
         return setDeleteRow(true);
       case `${tableData.key}-3`:
-        return showEditMappings
+        return prefTerminologies.length > 0
+          ? setAssignMappings(tableData.key)
+          : showEditMappings
           ? // If mappings exist for a code, sets editMappings to the code and opens EditMappingsTableModal in turn
             setEditMappings(item)
           : // If mappings do not exist for a code, sets getMappings to the code and opens GetMappingsModal in turn
@@ -167,6 +193,16 @@ export const TerminologyMenu = ({
         tableData={tableData}
         setSelectedKey={setSelectedKey}
         code={tableData.code}
+      />
+      <AssignMappings
+        loading={loading}
+        setLoading={setLoading}
+        form={form}
+        tableData={tableData}
+        setSelectedKey={setSelectedKey}
+        terminology={terminology}
+        assignMappings={assignMappings}
+        setAssignMappings={setAssignMappings}
       />
     </>
   );

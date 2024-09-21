@@ -21,7 +21,8 @@ export const Terminology = () => {
   const [form] = Form.useForm();
 
   const { terminologyId } = useParams();
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, setPrefTerminologies, prefTerminologies } =
+    useContext(myContext);
   const {
     editMappings,
     setEditMappings,
@@ -120,6 +121,20 @@ There is then a tooltip that displays the codes on hover.*/
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    getById(vocabUrl, 'Terminology', `${terminologyId}/preferred_terminology`)
+      .then(data => setPrefTerminologies(data?.references))
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred loading preferred terminologies.',
+          });
+        }
+        return error;
+      });
+  }, []);
+
   // columns for the ant.design table
   const columns = [
     {
@@ -158,6 +173,7 @@ There is then a tooltip that displays the codes on hover.*/
                   setEditMappings={setEditMappings}
                   setGetMappings={setGetMappings}
                   mapping={mapping}
+                  prefTerminologies={prefTerminologies}
                 />
               </>
             )}

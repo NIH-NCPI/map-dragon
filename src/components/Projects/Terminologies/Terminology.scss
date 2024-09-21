@@ -90,6 +90,14 @@
   color: $darkBlue;
 }
 
+.pref_terms {
+  display: flex;
+  align-items: center;
+}
+
+.pref_term_name {
+  width: 20vw;
+}
 .modal_display_results {
   display: flex;
   flex-direction: column;

@@ -356,7 +356,6 @@ export const GetMappingsModal = ({
                             valuePropName="value"
                             rules={[{ required: false }]}
                           >
-                            {' '}
                             <div className="modal_display_results">
                               {displaySelectedMappings?.map((sm, i) => (
                                 <Checkbox

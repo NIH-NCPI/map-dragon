@@ -8,9 +8,8 @@ import {
   notification,
   Pagination,
 } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { getAll } from '../../Manager/FetchManager';
+import { useContext, useEffect, useState } from 'react';
+import { getAll, getById } from '../../Manager/FetchManager';
 import { myContext } from '../../../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { ellipsisString } from '../../Manager/Utilitiy';
@@ -20,11 +19,12 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
 
-  const { vocabUrl, user } = useContext(myContext);
+  const { vocabUrl, user, setPrefTerminologies } = useContext(myContext);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [terminologies, setTerminologies] = useState([]);
+  const [originalTerminologies, setOriginalTerminologies] = useState([]);
   const [displaySelectedTerminologies, setDisplaySelectedTerminologies] =
     useState([]);
   const [selectedTerminologies, setSelectedTerminologies] = useState([]);
@@ -34,13 +34,13 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [searchText, setSearchText] = useState('');
 
   const navigate = useNavigate();
-  const inputRef = useRef(null);
 
   useEffect(() => {
     setLoading(true);
     getAll(vocabUrl, 'Terminology', navigate)
       .then(data => {
         setTerminologies(data);
+        setOriginalTerminologies(data);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -63,7 +63,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
     const preferredTermDTO = () => {
       return {
         'editor': user.email,
-        'preferred_terminologies': [preferredTerminologies],
+        'preferred_terminologies': preferredTerminologies,
       };
     };
 
@@ -82,7 +82,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
         }
       })
       .then(data => {
-        setTerminology(data);
+        setPrefTerminologies(data?.references);
         form.resetFields();
         message.success('Preferred terminology updated successfully.');
       })
@@ -95,6 +95,19 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
         }
         return error;
       })
+      .then(() =>
+        getById(vocabUrl, 'Terminology', `${terminology.id}`)
+          .then(data => setTerminology(data))
+          .catch(error => {
+            if (error) {
+              notification.error({
+                message: 'Error',
+                description: 'An error occurred loading the Terminology.',
+              });
+            }
+            return error;
+          })
+      )
       .finally(() => setLoading(false));
   };
 
@@ -207,7 +220,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
                 </Link>
               </div>
             </div>
-            <div>{ellipsisString(item?.description, '100')}</div>
+            <div>{ellipsisString(item?.description, '100')} </div>
           </div>
         </div>
       </>
@@ -239,13 +252,20 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
         onCancel={() => {
           form.resetFields();
           onClose();
+          setTerminologies(originalTerminologies);
         }}
         closeIcon={false}
         maskClosable={false}
         destroyOnClose={true}
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
-        styles={{ body: { height: '60vh', overflowY: 'auto' } }}
+        styles={{
+          body: {
+            minHeight: '55vh',
+            maxHeight: '55vh',
+            overflowY: 'auto',
+          },
+        }}
         footer={(_, { OkBtn, CancelBtn }) => (
           <>
             <div className="modal_footer">
@@ -270,7 +290,6 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
           <ModalSpinner />
         ) : (
           <>
-            {' '}
             <div className="modal_search_results_header">
               <h3>Terminologies</h3>
               <div className="mappings_search_bar">
@@ -285,6 +304,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
               <Form.Item
                 name={['preferred_terminology']}
                 valuePropName="value"
+                style={{ marginBottom: '0' }}
                 // Each checkbox is checked by default. The user can uncheck a checkbox to remove a mapping by clicking the save button.
               >
                 <div className="result_container">
