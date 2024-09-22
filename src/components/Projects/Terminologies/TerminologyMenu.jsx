@@ -28,20 +28,6 @@ export const TerminologyMenu = ({
   const [editRow, setEditRow] = useState(null);
   const [showHistory, setShowHistory] = useState(null);
 
-  // useEffect(() => {
-  //   getById(vocabUrl, 'Terminology', `${terminology.id}/preferred_terminology`)
-  //     .then(data => setPrefTerminologies(data?.references))
-  //     .catch(error => {
-  //       if (error) {
-  //         notification.error({
-  //           message: 'Error',
-  //           description: 'An error occurred loading preferred terminologies.',
-  //         });
-  //       }
-  //       return error;
-  //     });
-  // }, []);
-
   // Opens the delete dialog box when Delete is selected in the menu
   useEffect(() => {
     if (deleteRow) {

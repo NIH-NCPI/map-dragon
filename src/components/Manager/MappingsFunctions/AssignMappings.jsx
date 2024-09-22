@@ -17,7 +17,7 @@ export const AssignMappings = ({
 }) => {
   const { vocabUrl, prefTerminologies, setPrefTerminologies } =
     useContext(myContext);
-  const [terminologyToMap, setTerminologyToMap] = useState([]);
+  const [terminologiesToMap, setTerminologiesToMap] = useState([]);
 
   const navigate = useNavigate();
 
@@ -26,45 +26,29 @@ export const AssignMappings = ({
     setSelectedKey(null);
   };
 
-  const fetchPromises = () =>
-    prefTerminologies.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then(res => {
-        if (!res.ok) {
-          return res.json().then(error => {
-            throw new Error(error);
-          });
-        }
-        return res.json();
-      })
-    );
-  useEffect(() => {
-    if (assignMappings === tableData.key) {
-      console.log(
-        'assignMappings:',
-        assignMappings,
-        'tableData.key:',
-        tableData.key
+  const fetchTerminologies = async () => {
+    try {
+      const fetchPromises = prefTerminologies.map(pref =>
+        fetch(`${vocabUrl}/${pref?.reference}`).then(response =>
+          response.json()
+        )
       );
-      setLoading(true);
-      fetchPromises();
-      Promise.all(fetchPromises)
-        .then(data => {
-          setTerminologyToMap(data);
-        })
-        // .catch(error => {
-        //   notification.error({
-        //     message: 'Error',
-        //     description: 'An error occurred loading preferred terminologies.',
-        //   });
-        // })
-        .finally(() => setLoading(false));
+
+      const results = await Promise.all(fetchPromises);
+
+      // Once all fetch calls are resolved, set the combined data
+      setTerminologiesToMap(results);
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: 'An error occurred. Please try again.',
+      });
     }
-  }, [assignMappings, tableData.key]);
+  };
+  console.log(terminologiesToMap);
+  useEffect(() => {
+    if (assignMappings === tableData.key) fetchTerminologies();
+  }, [assignMappings]);
 
   return (
     assignMappings === tableData.key && (

@@ -102,7 +102,25 @@ There is then a tooltip that displays the codes on hover.*/
                   });
                 }
                 return error;
-              });
+              })
+              .then(() =>
+                getById(
+                  vocabUrl,
+                  'Terminology',
+                  `${terminologyId}/preferred_terminology`
+                )
+                  .then(data => setPrefTerminologies(data?.references))
+                  .catch(error => {
+                    if (error) {
+                      notification.error({
+                        message: 'Error',
+                        description:
+                          'An error occurred loading preferred terminologies.',
+                      });
+                    }
+                    return error;
+                  })
+              );
           } else {
             setLoading(false);
           }
@@ -121,19 +139,19 @@ There is then a tooltip that displays the codes on hover.*/
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    getById(vocabUrl, 'Terminology', `${terminologyId}/preferred_terminology`)
-      .then(data => setPrefTerminologies(data?.references))
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred loading preferred terminologies.',
-          });
-        }
-        return error;
-      });
-  }, []);
+  // useEffect(() => {
+  //   getById(vocabUrl, 'Terminology', `${terminologyId}/preferred_terminology`)
+  //     .then(data => setPrefTerminologies(data?.references))
+  //     .catch(error => {
+  //       if (error) {
+  //         notification.error({
+  //           message: 'Error',
+  //           description: 'An error occurred loading preferred terminologies.',
+  //         });
+  //       }
+  //       return error;
+  //     });
+  // }, []);
 
   // columns for the ant.design table
   const columns = [
