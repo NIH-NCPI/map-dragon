@@ -4,7 +4,6 @@ import { Login } from '../Auth/Login';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export const NavBar = () => {
-  console.log(import.meta.env.VITE_SEARCH_ENDPOINT,"SUP endpoint test"
   return (
     <>
       <nav className="navbar">
