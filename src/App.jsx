@@ -39,7 +39,9 @@ function App() {
     top: '25vh',
   });
 
+  console.log(vocabUrl,"sup vocabUrl");
   return (
+    
     <GoogleOAuthProvider clientId={clientId}>
       <myContext.Provider
         value={{
