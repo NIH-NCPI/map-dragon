@@ -7,21 +7,24 @@ export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
   const [active, setActive] = useState(null);
   const [originalTerminologies, setOriginalTerminologies] = useState([]);
   const [displaySelectedMappings, setDisplaySelectedMappings] = useState([]);
-  const [selectedMappings, setSelectedMappings] = useState([]);
   const [selectedBoxes, setSelectedBoxes] = useState([]);
   const [activeTerminology, setActiveTerminology] = useState(null);
+  const [allCheckboxes, setAllCheckboxes] = useState([]);
 
   useEffect(() => {
     setActive(terminologiesToMap?.[0]?.id);
   }, [terminologiesToMap]);
 
   useEffect(() => {
-    active && mappedTerminology();
-    setActiveTerminology(terminologiesToMap.find(term => term.id === active));
+    setAllCheckboxes(
+      terminologiesToMap.find(term => term.id === active)?.codes ?? []
+    );
+    setSelectedBoxes([]);
+    setDisplaySelectedMappings([]);
+    form.resetFields();
   }, [active]);
 
   const onCheckboxChange = (event, code) => {
-    // console.log(code);
     if (event.target.checked) {
       setSelectedBoxes(prevState => [...prevState, code]);
     } else {
@@ -30,29 +33,17 @@ export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
   };
 
   const onSelectedChange = checkedValues => {
-    const selected = JSON.parse(checkedValues);
-    console.log(selected);
-    const selectedMapping = activeTerminology?.codes?.find(
-      term => term.code === selected.code
-    );
-    // Updates selectedMappings and displaySelectedMappings to include the new selected items
-    setSelectedMappings(prevState => [...prevState, selectedMapping]);
+    const selected = JSON.parse(checkedValues?.[checkedValues.length - 1]);
 
     // Adds the selectedMappings to the selectedBoxes to ensure they are checked
     setSelectedBoxes(prevState => {
-      const updated = [...prevState, selectedMapping];
-      // Sets the values for the form to the selectedMappingss checkboxes that are checked
+      const updated = [...prevState, selected];
+      // Sets the values for the form to the selectedMappings checkboxes that are checked
       form.setFieldsValue({ selected_mappings: updated });
       return updated;
     });
 
-    setDisplaySelectedMappings(prevState => [...prevState, selectedMapping]);
-
-    // Filters out the selected checkboxes from the results being displayed
-    const updatedMappings = activeTerminology?.codes?.filter(
-      term => term.code !== selected.code
-    );
-    setActiveTerminology(updatedMappings);
+    setDisplaySelectedMappings(prevState => [...prevState, selected]);
   };
 
   const selectedCodesDisplay = (selected, index) => {
@@ -89,62 +80,64 @@ export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
     );
   };
   const mappedTerminology = () => {
-    const activeTerminology = terminologiesToMap.find(
-      term => term.id === active
-    );
-
-    // If no activeTerminology or codes, return null
-    if (!activeTerminology || activeTerminology.codes.length === 0) return null;
-
     return (
-      <Form form={form} layout="vertical">
-        {displaySelectedMappings?.length > 0 && (
-          <Form.Item
-            name="selected_mappings"
-            valuePropName="value"
-            rules={[{ required: false }]}
-          >
-            <div className="modal_display_results">
-              {displaySelectedMappings?.map((selected, i) => (
-                <Checkbox
-                  key={i}
-                  checked={selectedBoxes?.some(
-                    box => box?.code === selected?.code
-                  )}
-                  value={selected}
-                  onChange={e => onCheckboxChange(e, selected, i)}
-                >
-                  {selectedCodesDisplay(selected, i)}
-                </Checkbox>
-              ))}
-            </div>
-          </Form.Item>
-        )}
+      allCheckboxes.length > 0 && (
+        <Form form={form} layout="vertical">
+          {displaySelectedMappings?.length > 0 && (
+            <Form.Item
+              name="selected_mappings"
+              valuePropName="value"
+              rules={[{ required: false }]}
+            >
+              <div className="modal_display_results">
+                {displaySelectedMappings?.map((selected, i) => (
+                  <Checkbox
+                    key={i}
+                    checked={selectedBoxes?.some(
+                      box => box?.code === selected?.code
+                    )}
+                    value={selected}
+                    onChange={e => onCheckboxChange(e, selected, i)}
+                  >
+                    {selectedCodesDisplay(selected, i)}
+                  </Checkbox>
+                ))}
+              </div>
+            </Form.Item>
+          )}
 
-        <Form.Item
-          name={['mappings']}
-          valuePropName="value"
-          rules={[
-            {
-              required: false,
-            },
-          ]}
-        >
-          <Checkbox.Group
-            className="mappings_checkbox"
-            options={activeTerminology.codes.map((code, index) => ({
-              value: JSON.stringify({
-                code: code.code,
-                display: code.display,
-                description: code.description,
-                system: code.system,
-              }),
-              label: checkBoxDisplay(code, index),
-            }))}
-            onChange={onSelectedChange}
-          />
-        </Form.Item>
-      </Form>
+          <Form.Item
+            name={['mappings']}
+            valuePropName="value"
+            rules={[
+              {
+                required: false,
+              },
+            ]}
+          >
+            <Checkbox.Group
+              className="mappings_checkbox"
+              options={allCheckboxes
+                .filter(
+                  checkbox =>
+                    !displaySelectedMappings.some(
+                      dsm => checkbox.code === dsm.code
+                    )
+                )
+                .map((code, index) => ({
+                  value: JSON.stringify({
+                    code: code.code,
+                    display: code.display,
+                    description: code.description,
+                    system: code.system,
+                  }),
+                  label: checkBoxDisplay(code, index),
+                }))}
+              onChange={onSelectedChange}
+            />
+          </Form.Item>
+        </Form>
+      )
     );
   };
 
