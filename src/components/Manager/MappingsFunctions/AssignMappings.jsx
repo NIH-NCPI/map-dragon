@@ -4,10 +4,10 @@ import { Form, Modal, notification } from 'antd';
 import { MappingContext } from '../../../MappingContext';
 import { getById } from '../FetchManager';
 import { useNavigate } from 'react-router-dom';
+import { AssignMappingsCheckboxes } from './AssignMappingsCheckboxes';
+import { ModalSpinner } from '../Spinner';
 
 export const AssignMappings = ({
-  loading,
-  setLoading,
   form,
   setSelectedKey,
   terminology,
@@ -18,34 +18,33 @@ export const AssignMappings = ({
   const { vocabUrl, prefTerminologies, setPrefTerminologies } =
     useContext(myContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
-
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const onClose = () => {
     setAssignMappings(false);
     setSelectedKey(null);
   };
 
-  const fetchTerminologies = async () => {
-    try {
-      const fetchPromises = prefTerminologies.map(pref =>
-        fetch(`${vocabUrl}/${pref?.reference}`).then(response =>
-          response.json()
-        )
-      );
+  const fetchTerminologies = () => {
+    setLoading(true);
+    const fetchPromises = prefTerminologies.map(pref =>
+      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
+    );
 
-      const results = await Promise.all(fetchPromises);
-
-      // Once all fetch calls are resolved, set the combined data
-      setTerminologiesToMap(results);
-    } catch (error) {
-      notification.error({
-        message: 'Error',
-        description: 'An error occurred. Please try again.',
-      });
-    }
+    Promise.all(fetchPromises)
+      .then(results => {
+        // Once all fetch calls are resolved, set the combined data
+        setTerminologiesToMap(results);
+      })
+      .catch(error => {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred. Please try again.',
+        });
+      })
+      .finally(() => setLoading(false));
   };
-  console.log(terminologiesToMap);
+
   useEffect(() => {
     if (assignMappings === tableData.key) fetchTerminologies();
   }, [assignMappings]);
@@ -65,13 +64,24 @@ export const AssignMappings = ({
           form.resetFields();
           onClose();
         }}
+        styles={{
+          body: {
+            minHeight: '55vh',
+            maxHeight: '55vh',
+            overflowY: 'auto',
+          },
+        }}
         closeIcon={false}
         maskClosable={false}
         destroyOnClose={true}
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
       >
-        poop
+        {loading ? (
+          <ModalSpinner />
+        ) : (
+          <AssignMappingsCheckboxes terminologiesToMap={terminologiesToMap} />
+        )}
       </Modal>
     )
   );

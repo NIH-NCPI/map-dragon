@@ -181,8 +181,6 @@ export const TerminologyMenu = ({
         code={tableData.code}
       />
       <AssignMappings
-        loading={loading}
-        setLoading={setLoading}
         form={form}
         tableData={tableData}
         setSelectedKey={setSelectedKey}
