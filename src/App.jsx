@@ -39,7 +39,7 @@ function App() {
     top: '25vh',
   });
 
-  console.log(vocabUrl,"sup vocabUrl");
+  console.log(vocabUrl,"sup vocabUrl test");
   return (
     
     <GoogleOAuthProvider clientId={clientId}>
