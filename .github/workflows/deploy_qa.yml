@@ -16,6 +16,7 @@ env:
   SERVICE: 'mapDragon_qa'
   IMAGE_NAME: 'mapDragon_qa_img'
   GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
+  test: ${{ vars.test }}
 
 
 jobs:
@@ -36,6 +37,7 @@ jobs:
         run: |
           echo "PROJECT_ID: ${{ env.PROJECT_ID }}"
           echo "SERVICE: ${{ env.SERVICE }}"
+          echo "test: ${{ env.test }}"
           # ... print other relevant variables
      
       - name: 'Checkout'
