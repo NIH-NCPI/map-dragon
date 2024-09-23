@@ -13,8 +13,8 @@ env:
 
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION_LOC_1 }}
-  SERVICE: 'mapDragon'
-  IMAGE_NAME: 'mapDragon_img'
+  SERVICE: 'map-dragon'
+  IMAGE_NAME: 'map-dragon_img'
   GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
 
 
