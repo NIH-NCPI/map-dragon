@@ -11,7 +11,7 @@ on:
 
 env:
 
-  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  PROJECT_ID: map-dragon-uat
   REGION: ${{ secrets.REGION_LOC_1 }}
   SERVICE: 'mapDragon_qa'
   IMAGE_NAME: 'mapDragon_qa_img'
