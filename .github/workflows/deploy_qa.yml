@@ -4,9 +4,11 @@
 name: 'Build and Deploy QA to Cloud Run'
 
 on:
-  push:
+  pull_request:
     branches:
-      - github-deploy  # Adjust if you use a different branchc
+      - release
+    types:
+      - closed
 
 
 env:
