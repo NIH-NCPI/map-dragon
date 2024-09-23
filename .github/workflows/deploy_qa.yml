@@ -32,6 +32,11 @@ jobs:
       id-token: 'write'
 
     steps:
+      - name: 'Print Environment Variables'
+        run: |
+          echo "PROJECT_ID: ${{ env.PROJECT_ID }}"
+          echo "SERVICE: ${{ env.SERVICE }}"
+          # ... print other relevant variables
      
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
