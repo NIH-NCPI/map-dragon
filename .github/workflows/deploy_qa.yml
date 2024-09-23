@@ -23,7 +23,6 @@ jobs:
   deploy:
     runs-on: 'ubuntu-latest'
 
-    
     environment:
       name: qa
 
