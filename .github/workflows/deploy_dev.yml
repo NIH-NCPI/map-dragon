@@ -24,7 +24,6 @@ jobs:
     runs-on: 'ubuntu-latest'
     
     if: github.event.review.state == 'approved'
-
     
     environment:
       name: dev
@@ -48,10 +47,11 @@ jobs:
           echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.dev
           echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.dev
           echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.dev
+      
       - name: 'Docker Auth'
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
-
+          
       - name: 'Build Docker Image' # New step to build the image
 
         run: |-

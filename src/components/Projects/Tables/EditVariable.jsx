@@ -186,6 +186,7 @@ export const EditVariable = ({
           destroyOnClose={true}
           cancelButtonProps={{ disabled: loading }}
           okButtonProps={{ disabled: loading }}
+          closeIcon={false}
         >
           {loading ? (
             <ModalSpinner />

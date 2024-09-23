@@ -1,3 +1,5 @@
+@import '../../Styling/Variables';
+
 .reset-modal,
 .clear-mappings {
   top: 25vh;
@@ -13,4 +15,32 @@
 
 .mappings_search_bar {
   width: 50%;
+}
+
+.inactive_term,
+.active_term {
+  padding: 10px;
+  cursor: pointer;
+  width: 15vw;
+  border-bottom: white 2px solid;
+}
+
+.active_term {
+  background-color: $darkBlue;
+  color: white;
+}
+
+.inactive_term {
+  background-color: $lightBlue;
+}
+
+.assign_map_checkbox_container {
+  display: flex;
+  // width: 50vw;
+}
+
+.assign_map_checkboxes {
+  padding: 0 0 0 15px;
+  // background-color: lightcoral;
+  width: 41vw;
 }

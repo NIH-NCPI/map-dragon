@@ -6,6 +6,7 @@ export const MappingContext = createContext();
 export function MappingContextRoot() {
   const [editMappings, setEditMappings] = useState(false); //triggers modal to open to edit mappings
   const [getMappings, setGetMappings] = useState(false); //triggers modal to open to search to get new mappings
+  const [assignMappings, setAssignMappings] = useState(false);
   const [mapping, setMapping] = useState({}); // mapped terms for an individual terminologys
   const [existingMappings, setExistingMappings] = useState([]);
   const [filteredMappings, setFilteredMappings] = useState([]);
@@ -30,6 +31,8 @@ export function MappingContextRoot() {
     setDisplaySelectedMappings,
     selectedBoxes,
     setSelectedBoxes,
+    assignMappings,
+    setAssignMappings,
   };
 
   return (

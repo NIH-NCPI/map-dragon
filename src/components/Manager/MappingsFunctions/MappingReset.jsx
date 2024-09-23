@@ -296,18 +296,21 @@ export const MappingReset = ({
                           valuePropName="value"
                           rules={[{ required: false }]}
                         >
-                          {displaySelectedMappings?.map((sm, i) => (
-                            <Checkbox
-                              key={i}
-                              onChange={e => onCheckboxChange(e, sm)}
-                              checked={selectedBoxes.some(
-                                box => box.obo_id === sm.obo_id
-                              )}
-                              value={sm}
-                            >
-                              {selectedTermsDisplay(sm, i)}
-                            </Checkbox>
-                          ))}
+                          {' '}
+                          <div className="modal_display_results">
+                            {displaySelectedMappings?.map((sm, i) => (
+                              <Checkbox
+                                key={i}
+                                onChange={e => onCheckboxChange(e, sm)}
+                                checked={selectedBoxes.some(
+                                  box => box.obo_id === sm.obo_id
+                                )}
+                                value={sm}
+                              >
+                                {selectedTermsDisplay(sm, i)}
+                              </Checkbox>
+                            ))}
+                          </div>
                         </Form.Item>
                       )}
                       <Form.Item

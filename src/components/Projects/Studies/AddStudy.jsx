@@ -66,6 +66,7 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
       maskClosable={false}
       cancelButtonProps={{ disabled: loading }}
       okButtonProps={{ disabled: loading }}
+      closeIcon={false}
     >
       {loading ? (
         <ModalSpinner />

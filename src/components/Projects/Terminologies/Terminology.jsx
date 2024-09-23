@@ -15,12 +15,14 @@ import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsMod
 import { TerminologyMenu } from './TerminologyMenu';
 import { Submenu } from '../../Manager/Submenu';
 import { LoadCodes } from './LoadCodes';
+import { PreferredTerminology } from './PreferredTerminology';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
 
   const { terminologyId } = useParams();
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, setPrefTerminologies, prefTerminologies } =
+    useContext(myContext);
   const {
     editMappings,
     setEditMappings,
@@ -100,7 +102,25 @@ There is then a tooltip that displays the codes on hover.*/
                   });
                 }
                 return error;
-              });
+              })
+              .then(() =>
+                getById(
+                  vocabUrl,
+                  'Terminology',
+                  `${terminologyId}/preferred_terminology`
+                )
+                  .then(data => setPrefTerminologies(data?.references))
+                  .catch(error => {
+                    if (error) {
+                      notification.error({
+                        message: 'Error',
+                        description:
+                          'An error occurred loading preferred terminologies.',
+                      });
+                    }
+                    return error;
+                  })
+              );
           } else {
             setLoading(false);
           }
@@ -118,6 +138,20 @@ There is then a tooltip that displays the codes on hover.*/
 
       .finally(() => setLoading(false));
   }, []);
+
+  // useEffect(() => {
+  //   getById(vocabUrl, 'Terminology', `${terminologyId}/preferred_terminology`)
+  //     .then(data => setPrefTerminologies(data?.references))
+  //     .catch(error => {
+  //       if (error) {
+  //         notification.error({
+  //           message: 'Error',
+  //           description: 'An error occurred loading preferred terminologies.',
+  //         });
+  //       }
+  //       return error;
+  //     });
+  // }, []);
 
   // columns for the ant.design table
   const columns = [
@@ -157,6 +191,7 @@ There is then a tooltip that displays the codes on hover.*/
                   setEditMappings={setEditMappings}
                   setGetMappings={setGetMappings}
                   mapping={mapping}
+                  prefTerminologies={prefTerminologies}
                 />
               </>
             )}
@@ -211,11 +246,16 @@ There is then a tooltip that displays the codes on hover.*/
             </div>
           </Row>
           <div className="table_container">
-            <AddCode
-              terminology={terminology}
-              setTerminology={setTerminology}
-            />
-
+            <div className="add_row_buttons">
+              <PreferredTerminology
+                terminology={terminology}
+                setTerminology={setTerminology}
+              />
+              <AddCode
+                terminology={terminology}
+                setTerminology={setTerminology}
+              />
+            </div>
             {/* ant.design table with columns */}
             {loading ? (
               <Spinner />

@@ -1,6 +1,8 @@
 # Stage 1: Build the React app
+
 # FROM node:latest as build
 FROM node:18-alpine AS build 
+
 
 
 # Copy the package.json and package-lock.json files
@@ -26,6 +28,7 @@ COPY --from=build ./dist /usr/share/nginx/html
 
 # Expose port 5000
 EXPOSE 5000
+
 
 
 # Start Nginx
