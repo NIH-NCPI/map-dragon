@@ -50,8 +50,8 @@ jobs:
       - name: Generate .env.dev file
         run: |
           echo "VITE_VOCAB_ENDPOINT=${{secrets.VITE_VOCAB_ENDPOINT_DEV}}" > .env.dev
-          echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.dev
-          echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" > .env.dev
+          echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" >> .env.dev
+          echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.dev
       - name: 'Docker Auth'
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
