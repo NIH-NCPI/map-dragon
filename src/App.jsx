@@ -34,6 +34,8 @@ function App() {
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
+  const [prefTerminologies, setPrefTerminologies] = useState([]);
+  const [assignMappings, setAssignMappings] = useState(true);
 
   message.config({
     top: '25vh',
@@ -73,6 +75,10 @@ function App() {
           setUser,
           importState,
           setImportState,
+          prefTerminologies,
+          setPrefTerminologies,
+          assignMappings,
+          setAssignMappings,
         }}
       >
         <AppRouter />

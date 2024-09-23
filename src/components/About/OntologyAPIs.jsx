@@ -3,6 +3,7 @@ import './OntologyInfo.scss';
 import { getOntologies } from '../Manager/FetchManager';
 import { myContext } from '../../App';
 import { SmallSpinner, Spinner } from '../Manager/Spinner';
+import { Tooltip } from 'antd';
 
 import { OntologyTable } from './OntologyTable';
 
@@ -72,7 +73,13 @@ export const OntologyInfo = () => {
               className={active === api.api_id ? 'active_api' : 'inactive_api'}
               onClick={() => setActive(api.api_id)}
             >
-              {api.api_name}
+              <Tooltip
+                placement="left"
+                mouseEnterDelay={0.5}
+                title={api.api_name}
+              >
+                {api.api_id.toUpperCase()}
+              </Tooltip>
             </div>
           ))}
         </div>

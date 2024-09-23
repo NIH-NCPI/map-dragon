@@ -10,6 +10,7 @@ import { StudyDetails } from './components/Projects/Studies/StudyDetails';
 import { StudyList } from './components/Projects/Studies/StudyList';
 
 import './App.scss';
+import { PageLayout } from './components/Styling/PageLayout.jsx';
 import { MappingContextRoot } from './MappingContext';
 import { Error404 } from './components/Error/Error404';
 import { OntologyInfo } from './components/About/OntologyAPIs';
@@ -34,27 +35,29 @@ export const AppRouter = () => {
           }
         >
           <Route index element={<OntologySearch />} />
-          <Route path="/search/:query" element={<SearchResults />} />
-          <Route path="/404" element={<Error404 />} />
-          <Route path="/about" element={<OntologyInfo />} />
-          <Route path="/terminologies" element={<TerminologyList />} />
-          <Route element={<MappingContextRoot />}>
-            <Route path="/studies" element={<StudyList />} />
-            <Route path="/Study/:studyId">
-              <Route index element={<StudyDetails />} />
-              {/* <Route path="/Table/:tableId" element={<TableDetails />} /> */}
-              <Route path="/Study/:studyId/DataDictionary/:DDId">
-                <Route index element={<DDDetails />} />
-                <Route
-                  path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId"
-                  element={<TableDetails />}
-                />
+          <Route element={<PageLayout />}>
+            <Route path="/search/:query" element={<SearchResults />} />
+            <Route path="/404" element={<Error404 />} />
+            <Route path="/about" element={<OntologyInfo />} />
+            <Route path="/terminologies" element={<TerminologyList />} />
+            <Route element={<MappingContextRoot />}>
+              <Route path="/studies" element={<StudyList />} />
+              <Route path="/Study/:studyId">
+                <Route index element={<StudyDetails />} />
+                {/* <Route path="/Table/:tableId" element={<TableDetails />} /> */}
+                <Route path="/Study/:studyId/DataDictionary/:DDId">
+                  <Route index element={<DDDetails />} />
+                  <Route
+                    path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId"
+                    element={<TableDetails />}
+                  />
+                </Route>
               </Route>
+              <Route
+                path="/Terminology/:terminologyId"
+                element={<Terminology />}
+              />
             </Route>
-            <Route
-              path="/Terminology/:terminologyId"
-              element={<Terminology />}
-            />
           </Route>
         </Route>
       </Routes>{' '}

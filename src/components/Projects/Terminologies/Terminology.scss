@@ -90,6 +90,22 @@
   color: $darkBlue;
 }
 
+.pref_terms {
+  display: flex;
+  align-items: center;
+}
+
+.pref_term_name {
+  width: 20vw;
+}
+.modal_display_results {
+  display: flex;
+  flex-direction: column;
+}
+.modal_display_result {
+  margin: 0 0 10px 0;
+}
+
 .modal_search_result {
   display: flex;
   align-items: center;
@@ -110,8 +126,14 @@
 a {
   color: $lightBlue;
 }
+a.terminology_link {
+  color: $darkBlue;
+}
 a:hover {
   color: $darkBlue;
+}
+a.terminology_link:hover {
+  color: $lightBlue;
 }
 
 .view_more_link {
@@ -154,22 +176,21 @@ a:hover {
   top: 25vh;
 }
 
-.add_row_button,
-.export_button {
+.add_row_buttons {
   float: right;
   margin-right: 35px;
-}
-.export_button {
-  margin-top: 10px;
-}
-
-.add_row_buttons {
   display: flex;
-  gap: 2px;
+  gap: 8px;
 }
 
 .terminology_filter {
   display: flex;
   flex-direction: row;
   gap: 80px;
+}
+
+.modal_footer {
+  display: flex;
+  gap: 8px;
+  justify-content: end;
 }

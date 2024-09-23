@@ -93,6 +93,7 @@ export const LoadVariables = ({ load, setLoad }) => {
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
         maskClosable={false}
+        closeIcon={false}
       >
         {loading ? (
           <ModalSpinner />
