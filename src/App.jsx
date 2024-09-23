@@ -38,8 +38,6 @@ function App() {
   message.config({
     top: '25vh',
   });
-
-  console.log(vocabUrl,"sup vocabUrl test");
   return (
     
     <GoogleOAuthProvider clientId={clientId}>
