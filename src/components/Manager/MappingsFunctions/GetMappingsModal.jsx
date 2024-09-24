@@ -226,7 +226,7 @@ export const GetMappingsModal = ({
                 </a>
               </div>
             </div>
-            <div>{ellipsisString(d?.description[0], '100')}</div>
+            <div>{ellipsisString(d?.description[0], '120')}</div>
             {/* <div>Ontology: {d.ontology_prefix}</div> */}
           </div>
         </div>
