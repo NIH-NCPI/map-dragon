@@ -1,5 +1,5 @@
 # This workflow build and push a Docker container to Google Artifact Registry
-# and deploy it on Cloud Run when a  when a release is created.
+# and deploy it on Cloud Run when a PR to the `release` branch is made.
 
 name: 'Build and Deploy QA to Cloud Run'
 
@@ -33,11 +33,6 @@ jobs:
       id-token: 'write'
 
     steps:
-      - name: 'Print Environment Variables'
-        run: |
-          echo "PROJECT_ID: ${{ env.PROJECT_ID }}"
-          echo "SERVICE: ${{ env.SERVICE }}"
-          # ... print other relevant variables
      
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
