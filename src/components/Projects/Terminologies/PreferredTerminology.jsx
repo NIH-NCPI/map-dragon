@@ -19,7 +19,8 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
 
-  const { vocabUrl, user, setPrefTerminologies } = useContext(myContext);
+  const { vocabUrl, user, setPrefTerminologies, prefTerminologies } =
+    useContext(myContext);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -74,6 +75,24 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
       },
       body: JSON.stringify(preferredTermDTO()),
     })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(() =>
+        fetch(
+          `${vocabUrl}/Terminology/${terminology.id}/preferred_terminology`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+      )
       .then(res => {
         if (res.ok) {
           return res.json();

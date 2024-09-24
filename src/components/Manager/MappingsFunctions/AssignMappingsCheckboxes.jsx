@@ -2,13 +2,10 @@ import { useEffect, useState } from 'react';
 import { Checkbox, Form } from 'antd';
 import { ellipsisString } from '../Utilitiy';
 
-export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
-  const [form] = Form.useForm();
+export const AssignMappingsCheckboxes = ({ terminologiesToMap, form }) => {
   const [active, setActive] = useState(null);
-  const [originalTerminologies, setOriginalTerminologies] = useState([]);
   const [displaySelectedMappings, setDisplaySelectedMappings] = useState([]);
   const [selectedBoxes, setSelectedBoxes] = useState([]);
-  const [activeTerminology, setActiveTerminology] = useState(null);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
 
   useEffect(() => {
@@ -19,16 +16,15 @@ export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
     setAllCheckboxes(
       terminologiesToMap.find(term => term.id === active)?.codes ?? []
     );
-    setSelectedBoxes([]);
-    setDisplaySelectedMappings([]);
-    form.resetFields();
   }, [active]);
 
   const onCheckboxChange = (event, code) => {
     if (event.target.checked) {
-      setSelectedBoxes(prevState => [...prevState, code]);
+      // setSelectedBoxes(prevState => [...prevState, code]);
+      console.log('checked', code);
     } else {
       setSelectedBoxes(prevState => prevState.filter(val => val !== code));
+      console.log('unchecked', code);
     }
   };
 

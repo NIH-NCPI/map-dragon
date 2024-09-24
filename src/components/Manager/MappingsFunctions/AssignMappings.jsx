@@ -1,33 +1,32 @@
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { Form, Modal, notification } from 'antd';
-import { MappingContext } from '../../../MappingContext';
-import { getById } from '../FetchManager';
-import { useNavigate } from 'react-router-dom';
+import { Form, message, Modal, notification } from 'antd';
 import { AssignMappingsCheckboxes } from './AssignMappingsCheckboxes';
 import { ModalSpinner } from '../Spinner';
+import { MappingContext } from '../../../MappingContext';
 
 export const AssignMappings = ({
-  form,
   setSelectedKey,
-  terminology,
   tableData,
   assignMappings,
   setAssignMappings,
+  terminology,
 }) => {
-  const { vocabUrl, prefTerminologies, setPrefTerminologies } =
-    useContext(myContext);
+  const [form] = Form.useForm();
+  const { vocabUrl, prefTerminologies, user } = useContext(myContext);
+  const { setMapping } = useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [mappingProp, setMappingProp] = useState('');
 
   const onClose = () => {
     setAssignMappings(false);
     setSelectedKey(null);
+    setMappingProp('');
   };
-
   const fetchTerminologies = () => {
     setLoading(true);
-    const fetchPromises = prefTerminologies.map(pref =>
+    const fetchPromises = prefTerminologies?.map(pref =>
       fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
     );
 
@@ -46,8 +45,45 @@ export const AssignMappings = ({
   };
 
   useEffect(() => {
-    if (assignMappings === tableData.key) fetchTerminologies();
+    if (assignMappings === tableData.key) {
+      fetchTerminologies();
+      setMappingProp(tableData.code);
+    }
   }, [assignMappings]);
+
+  const handleSubmit = values => {
+    console.log(values);
+    const selectedMappings = values?.selected_mappings?.map(item => ({
+      code: item.code,
+      display: item.display,
+      description: item.description[0],
+      system: item.system,
+    }));
+    const mappingsDTO = {
+      mappings: selectedMappings,
+      editor: user.email,
+    };
+
+    fetch(`${vocabUrl}/Terminology/${terminology.id}/mapping/${mappingProp}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mappingsDTO),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => {
+        setMapping(data.codes);
+        form.resetFields();
+        message.success('Changes saved successfully.');
+      });
+  };
 
   return (
     assignMappings === tableData.key && (
@@ -56,7 +92,7 @@ export const AssignMappings = ({
         width={'60%'}
         onOk={() => {
           form.validateFields().then(values => {
-            //   handleSubmit(values);
+            handleSubmit(values);
             onClose();
           });
         }}
@@ -80,7 +116,10 @@ export const AssignMappings = ({
         {loading ? (
           <ModalSpinner />
         ) : (
-          <AssignMappingsCheckboxes terminologiesToMap={terminologiesToMap} />
+          <AssignMappingsCheckboxes
+            form={form}
+            terminologiesToMap={terminologiesToMap}
+          />
         )}
       </Modal>
     )
