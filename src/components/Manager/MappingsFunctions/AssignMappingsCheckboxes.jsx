@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Checkbox, Form } from 'antd';
+import { Checkbox, Form, Tooltip } from 'antd';
 import { ellipsisString } from '../Utilitiy';
 
-export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
-  const [form] = Form.useForm();
+export const AssignMappingsCheckboxes = ({
+  terminologiesToMap,
+  form,
+  selectedBoxes,
+  setSelectedBoxes,
+}) => {
   const [active, setActive] = useState(null);
-  const [originalTerminologies, setOriginalTerminologies] = useState([]);
   const [displaySelectedMappings, setDisplaySelectedMappings] = useState([]);
-  const [selectedBoxes, setSelectedBoxes] = useState([]);
-  const [activeTerminology, setActiveTerminology] = useState(null);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
 
   useEffect(() => {
@@ -19,10 +20,13 @@ export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
     setAllCheckboxes(
       terminologiesToMap.find(term => term.id === active)?.codes ?? []
     );
-    setSelectedBoxes([]);
-    setDisplaySelectedMappings([]);
-    form.resetFields();
   }, [active]);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      selected_terminologies: selectedBoxes,
+    });
+  }, [selectedBoxes, form]);
 
   const onCheckboxChange = (event, code) => {
     if (event.target.checked) {
@@ -55,7 +59,19 @@ export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
               <div>{selected?.code}</div>
             </div>
             <div>{selected?.display}</div>
-            <div>{ellipsisString(selected?.description, '100')}</div>
+            <div>
+              {selected?.description?.length > 85 ? (
+                <Tooltip
+                  placement="topRight"
+                  mouseEnterDelay={0.5}
+                  title={selected?.description}
+                >
+                  {ellipsisString(selected?.description, '85')}
+                </Tooltip>
+              ) : (
+                ellipsisString(selected?.description, '85')
+              )}
+            </div>
           </div>
         </div>
       </>
@@ -72,7 +88,19 @@ export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
                 <div>{item.code}</div>
               </div>
               <div>{item.display}</div>
-              <div>{ellipsisString(item?.description, '100')}</div>
+              <div>
+                {item?.description?.length > 85 ? (
+                  <Tooltip
+                    placement="topRight"
+                    mouseEnterDelay={0.5}
+                    title={item?.description}
+                  >
+                    {ellipsisString(item?.description, '85')}
+                  </Tooltip>
+                ) : (
+                  ellipsisString(item?.description, '85')
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -97,7 +125,7 @@ export const AssignMappingsCheckboxes = ({ terminologiesToMap }) => {
                       box => box?.code === selected?.code
                     )}
                     value={selected}
-                    onChange={e => onCheckboxChange(e, selected, i)}
+                    onChange={e => onCheckboxChange(e, selected)}
                   >
                     {selectedCodesDisplay(selected, i)}
                   </Checkbox>

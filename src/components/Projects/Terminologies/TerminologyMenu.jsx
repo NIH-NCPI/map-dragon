@@ -113,7 +113,7 @@ export const TerminologyMenu = ({
         {
           key: `${tableData.key}-3`,
           label:
-            prefTerminologies.length > 0
+            prefTerminologies?.length > 0 && !showEditMappings
               ? 'Assign Mappings'
               : showEditMappings
               ? 'Mappings'
@@ -137,7 +137,7 @@ export const TerminologyMenu = ({
       case `${tableData.key}-2`:
         return setDeleteRow(true);
       case `${tableData.key}-3`:
-        return prefTerminologies.length > 0
+        return prefTerminologies.length > 0 && !showEditMappings
           ? setAssignMappings(tableData.key)
           : showEditMappings
           ? // If mappings exist for a code, sets editMappings to the code and opens EditMappingsTableModal in turn
@@ -181,7 +181,6 @@ export const TerminologyMenu = ({
         code={tableData.code}
       />
       <AssignMappings
-        form={form}
         tableData={tableData}
         setSelectedKey={setSelectedKey}
         terminology={terminology}

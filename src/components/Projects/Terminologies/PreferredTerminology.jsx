@@ -7,6 +7,7 @@ import {
   Modal,
   notification,
   Pagination,
+  Tooltip,
 } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { getAll, getById } from '../../Manager/FetchManager';
@@ -19,7 +20,8 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
 
-  const { vocabUrl, user, setPrefTerminologies } = useContext(myContext);
+  const { vocabUrl, user, setPrefTerminologies, prefTerminologies } =
+    useContext(myContext);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -74,6 +76,24 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
       },
       body: JSON.stringify(preferredTermDTO()),
     })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(() =>
+        fetch(
+          `${vocabUrl}/Terminology/${terminology.id}/preferred_terminology`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+      )
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -197,7 +217,15 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
                 </Link>
               </div>
             </div>
-            <div>{ellipsisString(selected?.description, '100')}</div>
+            <div>
+              {selected?.description?.length > 125 ? (
+                <Tooltip title={selected?.description} mouseEnterDelay={0.5}>
+                  {ellipsisString(selected?.description, '125')}
+                </Tooltip>
+              ) : (
+                ellipsisString(selected?.description, '125')
+              )}
+            </div>
           </div>
         </div>
       </>
@@ -220,7 +248,15 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
                 </Link>
               </div>
             </div>
-            <div>{ellipsisString(item?.description, '100')} </div>
+            <div>
+              {item?.description?.length > 125 ? (
+                <Tooltip title={item?.description} mouseEnterDelay={0.5}>
+                  {ellipsisString(item?.description, '125')}
+                </Tooltip>
+              ) : (
+                ellipsisString(item?.description, '125')
+              )}
+            </div>
           </div>
         </div>
       </>
@@ -237,7 +273,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
             marginBottom: 16,
           }}
         >
-          Select Terminology
+          Select Terminology ({prefTerminologies?.length})
         </Button>
       </div>
       <Modal
@@ -305,7 +341,6 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
                 name={['preferred_terminology']}
                 valuePropName="value"
                 style={{ marginBottom: '0' }}
-                // Each checkbox is checked by default. The user can uncheck a checkbox to remove a mapping by clicking the save button.
               >
                 <div className="result_container">
                   <Form form={form} layout="vertical">
