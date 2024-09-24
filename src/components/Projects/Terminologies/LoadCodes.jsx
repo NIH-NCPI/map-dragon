@@ -17,14 +17,6 @@ export const LoadCodes = ({ terminology, setTerminology }) => {
       code: item.code.toLowerCase().replaceAll(' ', '_'),
     }));
 
-    console.log({
-      ...values,
-      codes: cleanedCodes,
-      name: terminology.name,
-      description: terminology.description,
-      url: terminology.url,
-    });
-
     setLoading(true);
     fetch(`${vocabUrl}/Terminology/${terminology.id}`, {
       method: 'PUT',

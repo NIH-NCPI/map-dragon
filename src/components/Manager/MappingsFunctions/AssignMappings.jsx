@@ -18,6 +18,7 @@ export const AssignMappings = ({
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mappingProp, setMappingProp] = useState('');
+  const [selectedBoxes, setSelectedBoxes] = useState([]);
 
   const onClose = () => {
     setAssignMappings(false);
@@ -52,8 +53,7 @@ export const AssignMappings = ({
   }, [assignMappings]);
 
   const handleSubmit = values => {
-    console.log(values);
-    const selectedMappings = values?.selected_mappings?.map(item => ({
+    const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
       description: item.description[0],
@@ -119,6 +119,8 @@ export const AssignMappings = ({
           <AssignMappingsCheckboxes
             form={form}
             terminologiesToMap={terminologiesToMap}
+            selectedBoxes={selectedBoxes}
+            setSelectedBoxes={setSelectedBoxes}
           />
         )}
       </Modal>
