@@ -1,27 +1,23 @@
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  message,
-  Modal,
-  notification,
-  Pagination,
-  Tooltip,
-} from 'antd';
+import { Button, Form, message, Modal, notification, Pagination } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { getAll, getById } from '../../Manager/FetchManager';
 import { myContext } from '../../../App';
-import { Link, useNavigate } from 'react-router-dom';
-import { ellipsisString } from '../../Manager/Utilitiy';
+import { useNavigate } from 'react-router-dom';
 import { ModalSpinner } from '../../Manager/Spinner';
+import { SelectPreferredTerminologies } from './SelectPreferredTerminologies';
 
 export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
-  const { Search } = Input;
-
-  const { vocabUrl, user, setPrefTerminologies, prefTerminologies } =
-    useContext(myContext);
+  const {
+    vocabUrl,
+    user,
+    setPrefTerminologies,
+    prefTerminologies,
+    existingPreferred,
+    setExistingPreferred,
+    preferredData,
+    setPreferredData,
+  } = useContext(myContext);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,7 +43,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Sets the value of the selected_mappings in the form to the checkboxes that are selected
+  // Sets the value of the selected_terminologies in the form to the checkboxes that are selected
   useEffect(() => {
     form.setFieldsValue({
       selected_terminologies: selectedBoxes,
@@ -56,11 +52,13 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
 
   const handleSubmit = values => {
     setLoading(true);
-    const preferredTerminologies = values?.selected_terminologies?.map(
-      item => ({
+    //Aggregates the values into one variable to pass to the body of the API call
+    const preferredTerminologies = [
+      ...(values.existing_terminologies?.map(v => JSON.parse(v)) ?? []),
+      ...(values?.selected_terminologies?.map(item => ({
         preferred_terminology: item.id,
-      })
-    );
+      })) ?? []),
+    ];
 
     const preferredTermDTO = () => {
       return {
@@ -138,14 +136,31 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
     setSelectedTerminologies([]);
     setDisplaySelectedTerminologies([]);
     setOpen(false);
+    setSearchText('');
+    setPreferredData([]);
   };
 
+  // Filters the terminologies that have already been selected out of the main terminology array to avoid duplicates
+  const filterTerminologies = () => {
+    const terminologiesToExclude = new Set([
+      ...prefTerminologies?.map(pt => pt?.id),
+      ...displaySelectedTerminologies?.map(dst => dst?.id),
+      ...preferredData?.map(ep => ep?.id),
+    ]);
+    return terminologies.filter(t => !terminologiesToExclude?.has(t.id));
+  };
+
+  const filteredTerminologyArray = filterTerminologies();
+
+  // Searches for terminologies by keystroke
   const getFilteredItems = () =>
-    terminologies?.filter(
+    filteredTerminologyArray?.filter(
       item =>
         item?.name &&
         item?.name.toLowerCase().includes(searchText.toLowerCase())
     );
+
+  // Pagination
   const paginatedTerminologies = getFilteredItems().slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
@@ -158,109 +173,6 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const handlePageSizeChange = (current, size) => {
     setPageSize(size);
     setCurrentPage(1); // Reset to page 1 when page size changes
-  };
-
-  // If the checkbox is checked, it adds the object to the selectedBoxes array
-  // If it is unchecked, it filters it out of the selectedBoxes array.
-  const onCheckboxChange = (event, terminology) => {
-    if (event.target.checked) {
-      setSelectedBoxes(prevState => [...prevState, terminology]);
-    } else {
-      setSelectedBoxes(prevState =>
-        prevState.filter(val => val !== terminology)
-      );
-    }
-  };
-
-  const onSelectedChange = checkedValues => {
-    const selected = JSON.parse(checkedValues?.[0]);
-    const selectedTerminology = terminologies.find(
-      term => term.id === selected.preferred_terminology
-    );
-
-    // Updates selectedTerminologies and displayselectedTerminologys to include the new selected items
-    setSelectedTerminologies(prevState => [...prevState, selectedTerminology]);
-
-    // Adds the selectedTerminologies to the selectedBoxes to ensure they are checked
-    setSelectedBoxes(prevState => {
-      const updated = [...prevState, selectedTerminology];
-      // Sets the values for the form to the selectedTerminologiess checkboxes that are checked
-      form.setFieldsValue({ selected_terminologies: updated });
-      return updated;
-    });
-
-    setDisplaySelectedTerminologies(prevState => [
-      ...prevState,
-      selectedTerminology,
-    ]);
-
-    // Filters out the selected checkboxes from the results being displayed
-    const updatedTerminologies = terminologies.filter(
-      term => term.id !== selected.preferred_terminology
-    );
-    setTerminologies(updatedTerminologies);
-  };
-
-  const selectedTermsDisplay = (selected, index) => {
-    return (
-      <>
-        <div key={index} className="modal_display_result">
-          <div>
-            <div className="modal_term_ontology">
-              <div>
-                <Link
-                  to={`/Terminology/${selected.id}`}
-                  target="_blank"
-                  className="terminology_link"
-                >
-                  {selected?.name ? selected.name : selected.id}
-                </Link>
-              </div>
-            </div>
-            <div>
-              {selected?.description?.length > 125 ? (
-                <Tooltip title={selected?.description} mouseEnterDelay={0.5}>
-                  {ellipsisString(selected?.description, '125')}
-                </Tooltip>
-              ) : (
-                ellipsisString(selected?.description, '125')
-              )}
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  };
-
-  const checkBoxDisplay = (item, index) => {
-    return (
-      <>
-        <div key={index} className="modal_search_result">
-          <div>
-            <div className="modal_term_ontology">
-              <div>
-                <Link
-                  to={`/Terminology/${item.id}`}
-                  target="_blank"
-                  className="terminology_link"
-                >
-                  {item?.name ? item.name : item.id}
-                </Link>
-              </div>
-            </div>
-            <div>
-              {item?.description?.length > 125 ? (
-                <Tooltip title={item?.description} mouseEnterDelay={0.5}>
-                  {ellipsisString(item?.description, '125')}
-                </Tooltip>
-              ) : (
-                ellipsisString(item?.description, '125')
-              )}
-            </div>
-          </div>
-        </div>
-      </>
-    );
   };
 
   return (
@@ -326,78 +238,20 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
           <ModalSpinner />
         ) : (
           <>
-            <div className="modal_search_results_header">
-              <h3>Terminologies</h3>
-              <div className="mappings_search_bar">
-                <Search
-                  placeholder="Search terminologies"
-                  value={searchText}
-                  onChange={e => setSearchText(e.target.value)}
-                />
-              </div>
-            </div>
-            <Form form={form} layout="vertical" preserve={false}>
-              <Form.Item
-                name={['preferred_terminology']}
-                valuePropName="value"
-                style={{ marginBottom: '0' }}
-              >
-                <div className="result_container">
-                  <Form form={form} layout="vertical">
-                    {displaySelectedTerminologies?.length > 0 && (
-                      <Form.Item
-                        name="selected_terminologies"
-                        valuePropName="value"
-                        rules={[{ required: false }]}
-                      >
-                        <div className="modal_display_results">
-                          {displaySelectedTerminologies?.map((selected, i) => (
-                            <Checkbox
-                              key={i}
-                              checked={selectedBoxes.some(
-                                box => box.id === selected.id
-                              )}
-                              value={selected}
-                              onChange={e => onCheckboxChange(e, selected)}
-                            >
-                              {selectedTermsDisplay(selected, i)}
-                            </Checkbox>
-                          ))}
-                        </div>
-                      </Form.Item>
-                    )}
-                    <Form.Item
-                      name={['terminologies']}
-                      valuePropName="value"
-                      rules={[
-                        {
-                          required: false,
-                        },
-                      ]}
-                    >
-                      {paginatedTerminologies?.length > 0 ? (
-                        <Checkbox.Group
-                          className="mappings_checkbox"
-                          options={paginatedTerminologies?.map(
-                            (term, index) => {
-                              return {
-                                value: JSON.stringify({
-                                  preferred_terminology: term.id,
-                                }),
-                                label: checkBoxDisplay(term, index),
-                              };
-                            }
-                          )}
-                          onChange={onSelectedChange}
-                        />
-                      ) : (
-                        ''
-                      )}
-                    </Form.Item>
-                  </Form>
-                </div>
-              </Form.Item>
-            </Form>
+            <SelectPreferredTerminologies
+              form={form}
+              displaySelectedTerminologies={displaySelectedTerminologies}
+              selectedBoxes={selectedBoxes}
+              setSelectedBoxes={setSelectedBoxes}
+              terminologies={terminologies}
+              setTerminologies={setTerminologies}
+              setDisplaySelectedTerminologies={setDisplaySelectedTerminologies}
+              setSelectedTerminologies={setSelectedTerminologies}
+              searchText={searchText}
+              setSearchText={setSearchText}
+              paginatedTerminologies={paginatedTerminologies}
+              open={open}
+            />
           </>
         )}
       </Modal>
