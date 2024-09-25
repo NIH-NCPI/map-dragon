@@ -1,4 +1,4 @@
-import { Checkbox, Divider, Form, Input, Tooltip } from 'antd';
+import { Checkbox, Form, Input, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { useContext, useEffect, useState } from 'react';
