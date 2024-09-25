@@ -1,14 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  message,
-  Modal,
-  notification,
-  Pagination,
-  Tooltip,
-} from 'antd';
+import { Button, Form, message, Modal, notification, Pagination } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { getAll, getById } from '../../Manager/FetchManager';
 import { myContext } from '../../../App';
@@ -18,8 +8,16 @@ import { SelectPreferredTerminologies } from './SelectPreferredTerminologies';
 
 export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
-  const { vocabUrl, user, setPrefTerminologies, prefTerminologies } =
-    useContext(myContext);
+  const {
+    vocabUrl,
+    user,
+    setPrefTerminologies,
+    prefTerminologies,
+    existingPreferred,
+    setExistingPreferred,
+    preferredData,
+    setPreferredData,
+  } = useContext(myContext);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,7 +43,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Sets the value of the selected_mappings in the form to the checkboxes that are selected
+  // Sets the value of the selected_terminologies in the form to the checkboxes that are selected
   useEffect(() => {
     form.setFieldsValue({
       selected_terminologies: selectedBoxes,
@@ -54,6 +52,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
 
   const handleSubmit = values => {
     setLoading(true);
+    //Aggregates the values into one variable to pass to the body of the API call
     const preferredTerminologies = [
       ...(values.existing_terminologies?.map(v => JSON.parse(v)) ?? []),
       ...(values?.selected_terminologies?.map(item => ({
@@ -138,24 +137,30 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
     setDisplaySelectedTerminologies([]);
     setOpen(false);
     setSearchText('');
+    setPreferredData([]);
   };
 
+  // Filters the terminologies that have already been selected out of the main terminology array to avoid duplicates
   const filterTerminologies = () => {
     const terminologiesToExclude = new Set([
       ...prefTerminologies?.map(pt => pt?.id),
       ...displaySelectedTerminologies?.map(dst => dst?.id),
+      ...preferredData?.map(ep => ep?.id),
     ]);
     return terminologies.filter(t => !terminologiesToExclude?.has(t.id));
   };
 
   const filteredTerminologyArray = filterTerminologies();
 
+  // Searches for terminologies by keystroke
   const getFilteredItems = () =>
     filteredTerminologyArray?.filter(
       item =>
         item?.name &&
         item?.name.toLowerCase().includes(searchText.toLowerCase())
     );
+
+  // Pagination
   const paginatedTerminologies = getFilteredItems().slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
@@ -245,6 +250,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
               searchText={searchText}
               setSearchText={setSearchText}
               paginatedTerminologies={paginatedTerminologies}
+              open={open}
             />
           </>
         )}

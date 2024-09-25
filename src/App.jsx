@@ -36,6 +36,8 @@ function App() {
   const [user, setUser] = useState(null);
   const [prefTerminologies, setPrefTerminologies] = useState([]);
   const [assignMappings, setAssignMappings] = useState(true);
+  const [existingPreferred, setExistingPreferred] = useState([]);
+  const [preferredData, setPreferredData] = useState([]);
 
   message.config({
     top: '25vh',
@@ -79,6 +81,10 @@ function App() {
           setPrefTerminologies,
           assignMappings,
           setAssignMappings,
+          existingPreferred,
+          setExistingPreferred,
+          preferredData,
+          setPreferredData,
         }}
       >
         <AppRouter />

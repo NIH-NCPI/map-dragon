@@ -16,15 +16,21 @@ export const SelectPreferredTerminologies = ({
   searchText,
   setSearchText,
   paginatedTerminologies,
+  open,
 }) => {
-  const { prefTerminologies, vocabUrl } = useContext(myContext);
+  const {
+    prefTerminologies,
+    vocabUrl,
+    setExistingPreferred,
+    preferredData,
+    setPreferredData,
+  } = useContext(myContext);
   const { Search } = Input;
-  const [preferredData, setPreferredData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [existingPreferred, setExistingPreferred] = useState([]);
 
   const fetchTerminologies = () => {
     setLoading(true);
+    // Maps through prefTerminologies and fetches each terminology by its id
     const fetchPromises = prefTerminologies?.map(pref =>
       fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
     );
@@ -32,8 +38,8 @@ export const SelectPreferredTerminologies = ({
     Promise.all(fetchPromises)
       .then(results => {
         // Once all fetch calls are resolved, set the combined data
-        setExistingPreferred(results);
         setPreferredData(results);
+        setExistingPreferred(results);
       })
       .catch(error => {
         notification.error({
@@ -45,8 +51,10 @@ export const SelectPreferredTerminologies = ({
   };
   useEffect(() => {
     prefTerminologies && fetchTerminologies();
-  }, []);
+  }, [open]);
 
+  // If the checkbox is checked, it adds the object to the selectedBoxes array
+  // If it is unchecked, it filters it out of the selectedBoxes array.
   const onCheckboxChange = (event, terminology) => {
     if (event.target.checked) {
       setSelectedBoxes(prevState => [...prevState, terminology]);
@@ -125,11 +133,11 @@ export const SelectPreferredTerminologies = ({
             <div className="modal_term_ontology">
               <div>
                 <Link
-                  to={`/Terminology/${item.id}`}
+                  to={`/Terminology/${item?.id}`}
                   target="_blank"
                   className="terminology_link"
                 >
-                  <b>{item?.name ? item.name : item.id}</b>
+                  <b>{item?.name ? item.name : item?.id}</b>
                 </Link>
               </div>
             </div>
@@ -148,9 +156,9 @@ export const SelectPreferredTerminologies = ({
     );
   };
 
-  const initialChecked = existingPreferred.map(term =>
+  const initialChecked = preferredData?.map(term =>
     JSON.stringify({
-      preferred_terminology: term.id,
+      preferred_terminology: term?.id,
     })
   );
 
@@ -195,7 +203,7 @@ export const SelectPreferredTerminologies = ({
                       options={preferredData?.map((term, index) => {
                         return {
                           value: JSON.stringify({
-                            preferred_terminology: term.id,
+                            preferred_terminology: term?.id,
                           }),
                           label: checkBoxDisplay(term, index),
                         };
