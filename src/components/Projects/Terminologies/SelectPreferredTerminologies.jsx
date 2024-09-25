@@ -1,4 +1,4 @@
-import { Checkbox, Form, Input, Tooltip } from 'antd';
+import { Checkbox, Divider, Form, Input, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { useContext, useEffect, useState } from 'react';
@@ -185,8 +185,9 @@ export const SelectPreferredTerminologies = ({
           style={{ marginBottom: '0' }}
         >
           <div className="result_container">
-            <Form form={form} layout="vertical">
-              {preferredData?.length > 0 && (
+            {preferredData?.length > 0 && (
+              <>
+                <h4>Preferred</h4>
                 <Form.Item
                   initialValue={initialChecked}
                   name={['existing_terminologies']}
@@ -214,8 +215,12 @@ export const SelectPreferredTerminologies = ({
                     ''
                   )}
                 </Form.Item>
-              )}
-              {displaySelectedTerminologies?.length > 0 && (
+              </>
+            )}
+            {displaySelectedTerminologies?.length > 0 && (
+              <>
+                <h4>Selected</h4>
+
                 <Form.Item
                   name="selected_terminologies"
                   valuePropName="value"
@@ -236,17 +241,20 @@ export const SelectPreferredTerminologies = ({
                     ))}
                   </div>
                 </Form.Item>
-              )}
-              <Form.Item
-                name={['terminologies']}
-                valuePropName="value"
-                rules={[
-                  {
-                    required: false,
-                  },
-                ]}
-              >
-                {paginatedTerminologies?.length > 0 ? (
+                <h4>Terminologies</h4>
+              </>
+            )}
+            <Form.Item
+              name={['terminologies']}
+              valuePropName="value"
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+            >
+              {paginatedTerminologies?.length > 0 ? (
+                <>
                   <Checkbox.Group
                     className="mappings_checkbox"
                     options={paginatedTerminologies?.map((term, index) => {
@@ -259,11 +267,11 @@ export const SelectPreferredTerminologies = ({
                     })}
                     onChange={onSelectedChange}
                   />
-                ) : (
-                  ''
-                )}
-              </Form.Item>
-            </Form>
+                </>
+              ) : (
+                ''
+              )}
+            </Form.Item>
           </div>
         </Form.Item>
       </Form>
