@@ -118,7 +118,6 @@
 }
 
 .mappings_checkbox {
-  margin: 0 0 5px 0;
   display: flex;
   flex-direction: column;
 }
@@ -193,4 +192,8 @@ a.terminology_link:hover {
   display: flex;
   gap: 8px;
   justify-content: end;
+}
+
+.modal_divider {
+  margin-bottom: 15px;
 }

@@ -209,8 +209,8 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
         okButtonProps={{ disabled: loading }}
         styles={{
           body: {
-            minHeight: '55vh',
-            maxHeight: '55vh',
+            minHeight: '60vh',
+            maxHeight: '60vh',
             overflowY: 'auto',
           },
         }}
