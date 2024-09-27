@@ -116,7 +116,7 @@ export const APIResults = ({
                 onChange={onSelectedChange}
               />
             ) : (
-              ''
+              <h3>No results found</h3>
             )}
           </Form.Item>
           <div>

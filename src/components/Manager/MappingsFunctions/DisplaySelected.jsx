@@ -3,7 +3,6 @@ import { ellipsisString } from '../Utilitiy';
 
 export const DisplaySelected = ({
   displaySelectedMappings,
-  form,
   selectedBoxes,
   setSelectedBoxes,
 }) => {
@@ -56,26 +55,28 @@ export const DisplaySelected = ({
   return (
     <>
       {displaySelectedMappings?.length > 0 && (
-        <Form.Item
-          name="selected_mappings"
-          valuePropName="value"
-          rules={[{ required: false }]}
-        >
-          <div className="modal_display_results">
-            {displaySelectedMappings?.map((selected, i) => (
-              <Checkbox
-                key={i}
-                checked={selectedBoxes?.some(
-                  box => box?.code === selected?.code
-                )}
-                value={selected}
-                onChange={e => onCheckboxChange(e, selected)}
-              >
-                {selectedCodesDisplay(selected, i)}
-              </Checkbox>
-            ))}
-          </div>
-        </Form.Item>
+        <>
+          <Form.Item
+            name="selected_mappings"
+            valuePropName="value"
+            rules={[{ required: false }]}
+          >
+            <div className="modal_display_results">
+              {displaySelectedMappings?.map((selected, i) => (
+                <Checkbox
+                  key={i}
+                  checked={selectedBoxes?.some(
+                    box => box?.code === selected?.code
+                  )}
+                  value={selected}
+                  onChange={e => onCheckboxChange(e, selected)}
+                >
+                  {selectedCodesDisplay(selected, i)}
+                </Checkbox>
+              ))}
+            </div>
+          </Form.Item>
+        </>
       )}
     </>
   );
