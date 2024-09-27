@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Checkbox, Form, Tooltip } from 'antd';
 import { ellipsisString } from '../Utilitiy';
+import { APISearchBar } from '../../Projects/Terminologies/APISearchBar';
+import { DisplaySelected } from './DisplaySelected';
+import { APIResults } from '../../Projects/Terminologies/APIResults';
 
 export const AssignMappingsCheckboxes = ({
   terminologiesToMap,
   form,
   selectedBoxes,
   setSelectedBoxes,
+  searchProp,
 }) => {
   const [active, setActive] = useState(null);
   const [displaySelectedMappings, setDisplaySelectedMappings] = useState([]);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setActive(terminologiesToMap?.[0]?.id);
@@ -28,14 +33,6 @@ export const AssignMappingsCheckboxes = ({
     });
   }, [selectedBoxes, form]);
 
-  const onCheckboxChange = (event, code) => {
-    if (event.target.checked) {
-      setSelectedBoxes(prevState => [...prevState, code]);
-    } else {
-      setSelectedBoxes(prevState => prevState.filter(val => val !== code));
-    }
-  };
-
   const onSelectedChange = checkedValues => {
     const selected = JSON.parse(checkedValues?.[checkedValues.length - 1]);
 
@@ -48,34 +45,6 @@ export const AssignMappingsCheckboxes = ({
     });
 
     setDisplaySelectedMappings(prevState => [...prevState, selected]);
-  };
-
-  const selectedCodesDisplay = (selected, index) => {
-    return (
-      <>
-        <div key={index} className="modal_display_result">
-          <div>
-            <div className="modal_term_ontology">
-              <div>{selected?.code}</div>
-            </div>
-            <div>{selected?.display}</div>
-            <div>
-              {selected?.description?.length > 85 ? (
-                <Tooltip
-                  placement="topRight"
-                  mouseEnterDelay={0.5}
-                  title={selected?.description}
-                >
-                  {ellipsisString(selected?.description, '85')}
-                </Tooltip>
-              ) : (
-                ellipsisString(selected?.description, '85')
-              )}
-            </div>
-          </div>
-        </div>
-      </>
-    );
   };
 
   const checkBoxDisplay = (item, index) => {
@@ -109,31 +78,20 @@ export const AssignMappingsCheckboxes = ({
   };
   const mappedTerminology = () => {
     return (
-      allCheckboxes.length > 0 && (
-        <Form form={form} layout="vertical">
-          {displaySelectedMappings?.length > 0 && (
-            <Form.Item
-              name="selected_mappings"
-              valuePropName="value"
-              rules={[{ required: false }]}
-            >
-              <div className="modal_display_results">
-                {displaySelectedMappings?.map((selected, i) => (
-                  <Checkbox
-                    key={i}
-                    checked={selectedBoxes?.some(
-                      box => box?.code === selected?.code
-                    )}
-                    value={selected}
-                    onChange={e => onCheckboxChange(e, selected)}
-                  >
-                    {selectedCodesDisplay(selected, i)}
-                  </Checkbox>
-                ))}
-              </div>
-            </Form.Item>
-          )}
-
+      <Form form={form} layout="vertical">
+        <DisplaySelected
+          displaySelectedMappings={displaySelectedMappings}
+          form={form}
+          selectedBoxes={selectedBoxes}
+          setSelectedBoxes={setSelectedBoxes}
+        />
+        {active === 'search' ? (
+          <APIResults
+            loading={loading}
+            displaySelectedMappings={displaySelectedMappings}
+            onSelectedChange={onSelectedChange}
+          />
+        ) : (
           <Form.Item
             name={['mappings']}
             valuePropName="value"
@@ -164,27 +122,36 @@ export const AssignMappingsCheckboxes = ({
               onChange={onSelectedChange}
             />
           </Form.Item>
-        </Form>
-      )
+        )}
+      </Form>
     );
   };
 
   return (
     <>
-      <div className="assign_map_checkbox_container">
-        <div className="assign_map_checkbox_wrapper">
-          {terminologiesToMap.map((term, i) => (
-            <div
-              key={i}
-              className={active === term.id ? 'active_term' : 'inactive_term'}
-              onClick={() => setActive(term.id)}
-            >
-              {term.name}
-            </div>
-          ))}
+      {terminologiesToMap?.length && (
+        <div className="assign_map_checkbox_container">
+          <div className="assign_map_checkbox_wrapper">
+            {terminologiesToMap.map((term, i) => (
+              <div
+                key={i}
+                className={active === term.id ? 'active_term' : 'inactive_term'}
+                onClick={() => setActive(term.id)}
+              >
+                {term.name}
+              </div>
+            ))}
+            <APISearchBar
+              active={active}
+              setActive={setActive}
+              searchProp={searchProp}
+              selectedBoxes={selectedBoxes}
+              setLoading={setLoading}
+            />
+          </div>
+          <div className="assign_map_checkboxes">{mappedTerminology()}</div>
         </div>
-        <div className="assign_map_checkboxes">{mappedTerminology()}</div>
-      </div>
+      )}
     </>
   );
 };

@@ -13,6 +13,7 @@ export const AssignMappings = ({
   terminology,
 }) => {
   const [form] = Form.useForm();
+
   const { vocabUrl, prefTerminologies, user } = useContext(myContext);
   const { setMapping } = useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
@@ -56,7 +57,9 @@ export const AssignMappings = ({
     const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
-      description: item.description[0],
+      description: Array.isArray(item.description)
+        ? item.description[0]
+        : item.description,
       system: item.system,
     }));
     const mappingsDTO = {
@@ -121,6 +124,9 @@ export const AssignMappings = ({
             terminologiesToMap={terminologiesToMap}
             selectedBoxes={selectedBoxes}
             setSelectedBoxes={setSelectedBoxes}
+            searchProp={
+              tableData?.display ? tableData.display : tableData?.code
+            }
           />
         )}
       </Modal>
