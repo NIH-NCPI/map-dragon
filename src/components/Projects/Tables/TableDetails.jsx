@@ -8,7 +8,7 @@ import { Card, Col, Form, notification, Row, Table, Tooltip } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 import { ExportFile } from './ExportFile';
 import { EditMappingsTableModal } from './EditMappingsTableModal';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';

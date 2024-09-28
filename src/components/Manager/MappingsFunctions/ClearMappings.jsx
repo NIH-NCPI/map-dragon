@@ -4,7 +4,7 @@ import './MappingsFunctions.scss';
 
 import { useContext } from 'react';
 import { myContext } from '../../../App';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const ClearMappings = ({ propId, component }) => {
   const { confirm } = Modal;

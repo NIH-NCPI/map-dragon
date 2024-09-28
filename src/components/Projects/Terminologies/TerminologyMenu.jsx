@@ -6,7 +6,7 @@ import { EditCode } from './EditCode';
 import { ShowHistory } from '../../Manager/ShowHistory';
 import { getById } from '../../Manager/FetchManager';
 import { AssignMappings } from '../../Manager/MappingsFunctions/AssignMappings';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const TerminologyMenu = ({
   tableData,

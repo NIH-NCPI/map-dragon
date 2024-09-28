@@ -4,7 +4,7 @@ import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 import EditDataTypeSubForm from './EditDataTypeSubForm';
 
 export const EditVariable = ({

@@ -11,7 +11,7 @@ import { StudyList } from './components/Projects/Studies/StudyList';
 
 import './App.scss';
 import { PageLayout } from './components/Styling/PageLayout.jsx';
-import { MappingContextRoot } from './MappingContext';
+import { MappingContextRoot } from './Contexts/MappingContext.jsx';
 import { Error404 } from './components/Error/Error404';
 import { OntologyInfo } from './components/About/OntologyAPIs';
 import { TerminologyList } from './components/Projects/Terminologies/TerminologyList';

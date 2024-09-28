@@ -3,7 +3,7 @@ import { myContext } from '../../../App';
 import { Form, message, Modal, notification } from 'antd';
 import { AssignMappingsCheckboxes } from './AssignMappingsCheckboxes';
 import { ModalSpinner } from '../Spinner';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const AssignMappings = ({
   setSelectedKey,

@@ -10,7 +10,7 @@ import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { AddCode } from './AddCode';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { TerminologyMenu } from './TerminologyMenu';
 import { Submenu } from '../../Manager/Submenu';
