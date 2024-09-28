@@ -38,6 +38,10 @@ function App() {
   const [assignMappings, setAssignMappings] = useState(true);
   const [existingPreferred, setExistingPreferred] = useState([]);
   const [preferredData, setPreferredData] = useState([]);
+  const [apiResults, setApiResults] = useState([]);
+  const [apiResultsCount, setApiResultsCount] = useState();
+  const [apiPage, setApiPage] = useState(0);
+  const [apiTotalCount, setApiTotalCount] = useState();
 
   message.config({
     top: '25vh',
@@ -85,6 +89,14 @@ function App() {
           setExistingPreferred,
           preferredData,
           setPreferredData,
+          apiResults,
+          setApiResults,
+          apiResultsCount,
+          setApiResultsCount,
+          apiPage,
+          setApiPage,
+          apiTotalCount,
+          setApiTotalCount,
         }}
       >
         <AppRouter />

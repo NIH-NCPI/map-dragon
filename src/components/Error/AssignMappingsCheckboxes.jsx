@@ -137,9 +137,7 @@ export const AssignMappingsCheckboxes = ({
 
   return (
     <>
-      <div className="assign_map_title">
-        <b>{searchProp}</b>
-      </div>
+      <h4>{searchProp}</h4>
       {terminologiesToMap?.length && (
         <div className="assign_map_checkbox_container">
           <div className="assign_map_checkbox_wrapper">
