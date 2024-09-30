@@ -10,19 +10,20 @@ import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { AddCode } from './AddCode';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { TerminologyMenu } from './TerminologyMenu';
 import { Submenu } from '../../Manager/Submenu';
 import { LoadCodes } from './LoadCodes';
 import { PreferredTerminology } from './PreferredTerminology';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
 
   const { terminologyId } = useParams();
-  const { vocabUrl, setPrefTerminologies, prefTerminologies } =
-    useContext(myContext);
+  const { vocabUrl } = useContext(myContext);
+  const { setPrefTerminologies, prefTerminologies } = useContext(SearchContext);
   const {
     editMappings,
     setEditMappings,

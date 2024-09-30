@@ -3,7 +3,8 @@ import { myContext } from '../../../App';
 import { Form, message, Modal, notification } from 'antd';
 import { AssignMappingsCheckboxes } from './AssignMappingsCheckboxes';
 import { ModalSpinner } from '../Spinner';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const AssignMappings = ({
   setSelectedKey,
@@ -14,7 +15,8 @@ export const AssignMappings = ({
 }) => {
   const [form] = Form.useForm();
 
-  const { vocabUrl, prefTerminologies, user } = useContext(myContext);
+  const { vocabUrl, user } = useContext(myContext);
+  const { prefTerminologies, setApiResults } = useContext(SearchContext);
   const { setMapping } = useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -22,9 +24,9 @@ export const AssignMappings = ({
   const [selectedBoxes, setSelectedBoxes] = useState([]);
 
   const onClose = () => {
-    setAssignMappings(false);
     setSelectedKey(null);
     setMappingProp('');
+    setApiResults([]);
   };
   const fetchTerminologies = () => {
     setLoading(true);
@@ -54,6 +56,7 @@ export const AssignMappings = ({
   }, [assignMappings]);
 
   const handleSubmit = values => {
+    setLoading(true);
     const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
@@ -84,8 +87,10 @@ export const AssignMappings = ({
       .then(data => {
         setMapping(data.codes);
         form.resetFields();
+        setAssignMappings(false);
         message.success('Changes saved successfully.');
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -102,6 +107,7 @@ export const AssignMappings = ({
         onCancel={() => {
           form.resetFields();
           onClose();
+          setAssignMappings(false);
         }}
         styles={{
           body: {

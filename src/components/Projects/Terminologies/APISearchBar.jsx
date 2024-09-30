@@ -2,6 +2,7 @@ import { Input } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ontologyReducer } from '../../Manager/Utilitiy';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const APISearchBar = ({
   active,
@@ -11,15 +12,15 @@ export const APISearchBar = ({
   setLoading,
 }) => {
   const { Search } = Input;
+  const { searchUrl } = useContext(myContext);
   const {
-    searchUrl,
     apiResults,
     setApiResults,
     setApiResultsCount,
     apiPage,
     setApiPage,
     setApiTotalCount,
-  } = useContext(myContext);
+  } = useContext(SearchContext);
   const [inputValue, setInputValue] = useState(searchProp);
   const entriesPerPage = 15;
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);

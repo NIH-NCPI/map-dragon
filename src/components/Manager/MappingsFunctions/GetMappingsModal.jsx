@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const GetMappingsModal = ({
   componentString,
@@ -227,7 +227,6 @@ export const GetMappingsModal = ({
               </div>
             </div>
             <div>{ellipsisString(d?.description[0], '120')}</div>
-            {/* <div>Ontology: {d.ontology_prefix}</div> */}
           </div>
         </div>
       </>

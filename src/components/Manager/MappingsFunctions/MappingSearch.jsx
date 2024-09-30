@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
-import { MappingContext } from '../../../MappingContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const MappingSearch = ({
   setEditMappings,
