@@ -5,19 +5,17 @@ import { myContext } from '../../../App';
 import { useNavigate } from 'react-router-dom';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { SelectPreferredTerminologies } from './SelectPreferredTerminologies';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
+  const { vocabUrl, user } = useContext(myContext);
   const {
-    vocabUrl,
-    user,
     setPrefTerminologies,
     prefTerminologies,
-    existingPreferred,
-    setExistingPreferred,
     preferredData,
     setPreferredData,
-  } = useContext(myContext);
+  } = useContext(SearchContext);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -102,6 +100,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
       .then(data => {
         setPrefTerminologies(data?.references);
         form.resetFields();
+        setOpen(false);
         message.success('Preferred terminology updated successfully.');
       })
       .catch(error => {
@@ -135,7 +134,6 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
     setSelectedBoxes([]);
     setSelectedTerminologies([]);
     setDisplaySelectedTerminologies([]);
-    setOpen(false);
     setSearchText('');
     setPreferredData([]);
   };
@@ -201,6 +199,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
           form.resetFields();
           onClose();
           setTerminologies(originalTerminologies);
+          setOpen(false);
         }}
         closeIcon={false}
         maskClosable={false}

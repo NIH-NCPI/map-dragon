@@ -34,14 +34,6 @@ function App() {
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
-  const [prefTerminologies, setPrefTerminologies] = useState([]);
-  const [assignMappings, setAssignMappings] = useState(true);
-  const [existingPreferred, setExistingPreferred] = useState([]);
-  const [preferredData, setPreferredData] = useState([]);
-  const [apiResults, setApiResults] = useState([]);
-  const [apiResultsCount, setApiResultsCount] = useState();
-  const [apiPage, setApiPage] = useState(0);
-  const [apiTotalCount, setApiTotalCount] = useState();
 
   message.config({
     top: '25vh',
@@ -81,22 +73,6 @@ function App() {
           setUser,
           importState,
           setImportState,
-          prefTerminologies,
-          setPrefTerminologies,
-          assignMappings,
-          setAssignMappings,
-          existingPreferred,
-          setExistingPreferred,
-          preferredData,
-          setPreferredData,
-          apiResults,
-          setApiResults,
-          apiResultsCount,
-          setApiResultsCount,
-          apiPage,
-          setApiPage,
-          apiTotalCount,
-          setApiTotalCount,
         }}
       >
         <AppRouter />

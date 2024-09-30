@@ -16,13 +16,14 @@ import { TerminologyMenu } from './TerminologyMenu';
 import { Submenu } from '../../Manager/Submenu';
 import { LoadCodes } from './LoadCodes';
 import { PreferredTerminology } from './PreferredTerminology';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
 
   const { terminologyId } = useParams();
-  const { vocabUrl, setPrefTerminologies, prefTerminologies } =
-    useContext(myContext);
+  const { vocabUrl } = useContext(myContext);
+  const { setPrefTerminologies, prefTerminologies } = useContext(SearchContext);
   const {
     editMappings,
     setEditMappings,

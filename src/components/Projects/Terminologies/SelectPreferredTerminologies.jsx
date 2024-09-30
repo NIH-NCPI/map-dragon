@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ellipsisString } from '../../Manager/Utilitiy';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const SelectPreferredTerminologies = ({
   form,
@@ -18,13 +19,13 @@ export const SelectPreferredTerminologies = ({
   paginatedTerminologies,
   open,
 }) => {
+  const { vocabUrl } = useContext(myContext);
   const {
     prefTerminologies,
-    vocabUrl,
     setExistingPreferred,
     preferredData,
     setPreferredData,
-  } = useContext(myContext);
+  } = useContext(SearchContext);
   const { Search } = Input;
   const [loading, setLoading] = useState(false);
 

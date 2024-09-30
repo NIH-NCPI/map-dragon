@@ -1,8 +1,8 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { Checkbox, Form, Tooltip } from 'antd';
-import { myContext } from '../../../App';
 import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const APIResults = ({
   loading,
@@ -10,7 +10,7 @@ export const APIResults = ({
   onSelectedChange,
 }) => {
   const { apiResults, apiResultsCount, apiPage, setApiPage, apiTotalCount } =
-    useContext(myContext);
+    useContext(SearchContext);
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
 
