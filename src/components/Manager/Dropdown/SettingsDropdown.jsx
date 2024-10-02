@@ -2,9 +2,21 @@ import { useContext } from 'react';
 import { Dropdown, Button, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { myContext } from '../../../App';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const SettingsDropdown = () => {
-  const { setEdit, setDeleteState } = useContext(myContext);
+  const { setEdit, setDeleteState, user } = useContext(myContext);
+
+  // Login functions for each case in the dropdown menu with different props passed depending on selection
+  const passEdit = () => {
+    setEdit(true);
+  };
+  const loginEdit = RequiredLogin({ handleSuccess: passEdit });
+
+  const passDelete = () => {
+    setDeleteState(true);
+  };
+  const loginDelete = RequiredLogin({ handleSuccess: passDelete });
 
   // placeholder items for the dropdown
   const items = [
@@ -21,12 +33,14 @@ export const SettingsDropdown = () => {
 
   // onClick for dropdown. Sets states to true depending on their key.
   // A modal is then triggered to open in the component to perform the desired task.
+  // If a user is not logged in, the login screen is triggered
+
   const onClick = ({ key }) => {
     switch (key) {
       case '0':
-        return setEdit(true);
+        return user ? setEdit(true) : loginEdit();
       case '1':
-        return setDeleteState(true);
+        return user ? setDeleteState(true) : loginDelete();
     }
   };
 

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { SelectPreferredTerminologies } from './SelectPreferredTerminologies';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
@@ -28,6 +29,11 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchText, setSearchText] = useState('');
+
+  const handleSuccess = () => {
+    setOpen(true);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   const navigate = useNavigate();
 
@@ -177,7 +183,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
     <>
       <div className="add_row_button">
         <Button
-          onClick={() => setOpen(true)}
+          onClick={() => (user ? setOpen(true) : login())}
           type="primary"
           style={{
             marginBottom: 16,

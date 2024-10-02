@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { EditVariable } from './EditVariable';
 import { myContext } from '../../../App';
 import { ShowHistory } from '../../Manager/ShowHistory';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const TableMenu = ({
   tableData,
@@ -22,6 +23,27 @@ export const TableMenu = ({
   const [editRow, setEditRow] = useState(null);
   const [deleteRow, setDeleteRow] = useState(null);
   const [showHistory, setShowHistory] = useState(null);
+
+  // Login functions for each case in the dropdown menu with different props passed depending on selection
+  const passEdit = () => {
+    setEditRow(tableData.key);
+  };
+  const loginEdit = RequiredLogin({ handleSuccess: passEdit });
+
+  const passDelete = () => {
+    setDeleteRow(true);
+  };
+  const loginDelete = RequiredLogin({ handleSuccess: passDelete });
+
+  const passEditMappings = () => {
+    setEditMappings(variable);
+  };
+  const loginEditMappings = RequiredLogin({ handleSuccess: passEditMappings });
+
+  const passGetMappings = () => {
+    setGetMappings(variable);
+  };
+  const loginGetMappings = RequiredLogin({ handleSuccess: passGetMappings });
 
   // Opens the delete dialog box when Delete is selected in the menu
   useEffect(() => {
@@ -120,20 +142,26 @@ export const TableMenu = ({
   ];
 
   // onClick function for Menu.
+  // If a user is not logged in, the login screen is triggered
+
   const onClick = obj => {
     const key = obj.key;
     setSelectedKey(key);
     switch (key) {
       case `${tableData.key}-1`:
-        return setEditRow(tableData.key);
+        return user ? setEditRow(tableData.key) : loginEdit();
       case `${tableData.key}-2`:
-        return setDeleteRow(true);
+        return user ? setDeleteRow(true) : loginDelete();
       case `${tableData.key}-3`:
         return showEditMappings
           ? // If mappings exist for a variable, sets editMappings to the variable and opens EditMappingsTableModal in turn
-            setEditMappings(variable)
+            user
+            ? setEditMappings(variable)
+            : loginEditMappings()
           : // If mappings do not exist for a variable, sets getMappings to the variable and opens GetMappingsModal in turn
-            setGetMappings(variable);
+          user
+          ? setGetMappings(variable)
+          : loginGetMappings();
       case `${tableData.key}-4`:
         return setShowHistory(tableData.key);
     }

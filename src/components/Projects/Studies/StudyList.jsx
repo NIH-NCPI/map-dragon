@@ -5,18 +5,23 @@ import '../../Manager/AddNewCard.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { myContext } from '../../../App';
 import { Spinner } from '../../Manager/Spinner';
-import { getAll, handlePost } from '../../Manager/FetchManager';
-import { Form, Row, Col, Card, notification, Skeleton } from 'antd';
+import { getAll } from '../../Manager/FetchManager';
+import { Row, Col, Card, notification, Skeleton } from 'antd';
 import { AddStudy } from './AddStudy';
 import { ellipsisString } from '../../Manager/Utilitiy';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 const { Meta } = Card;
 
 export const StudyList = () => {
-  const { addStudy, setAddStudy, vocabUrl } = useContext(myContext);
+  const { addStudy, setAddStudy, vocabUrl, user } = useContext(myContext);
   const [studies, setStudies] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const handleSuccess = () => {
+    setAddStudy(true);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
   // API call to fetch all studies. Sets response to 'studies' then sets loading to false
   useEffect(() => {
     setLoading(true);
@@ -55,7 +60,15 @@ export const StudyList = () => {
                 <Col span={6}>
                   {/* The first column is a card that opens a modal to add a new study. It sets 'addStudy' to true on click
                 and triggers the modal to open*/}
-                  <span onClick={() => setAddStudy(true)}>
+                  <span
+                    onClick={() => {
+                      if (user) {
+                        setAddStudy(true);
+                      } else {
+                        login();
+                      }
+                    }}
+                  >
                     <Card
                       hoverable
                       bordered={true}

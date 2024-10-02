@@ -3,6 +3,7 @@ import { myContext } from '../../../App';
 import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
 import DataTypeSubForm from './DataTypeSubForm';
 import { ModalSpinner } from '../../Manager/Spinner';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const AddVariable = ({ table, setTable }) => {
   const { vocabUrl, user } = useContext(myContext);
@@ -12,6 +13,11 @@ export const AddVariable = ({ table, setTable }) => {
 
   const { TextArea } = Input;
   const [form] = Form.useForm();
+
+  const handleSuccess = () => {
+    setAddRow(true);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   const handleSubmit = values => {
     setLoading(true);
@@ -59,7 +65,7 @@ export const AddVariable = ({ table, setTable }) => {
     <>
       <div className="add_row_buttons">
         <Button
-          onClick={() => setAddRow(true)}
+          onClick={() => (user ? setAddRow(true) : login())}
           type="primary"
           style={{
             marginBottom: 16,

@@ -7,6 +7,7 @@ import { ShowHistory } from '../../Manager/ShowHistory';
 import { getById } from '../../Manager/FetchManager';
 import { AssignMappings } from '../../Manager/MappingsFunctions/AssignMappings';
 import { MappingContext } from '../../../Contexts/MappingContext';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const TerminologyMenu = ({
   tableData,
@@ -27,6 +28,35 @@ export const TerminologyMenu = ({
   const [deleteRow, setDeleteRow] = useState(null);
   const [editRow, setEditRow] = useState(null);
   const [showHistory, setShowHistory] = useState(null);
+
+  // Login functions for each case in the dropdown menu with different props passed depending on selection
+
+  const passEdit = () => {
+    setEditRow(tableData.key);
+  };
+  const loginEdit = RequiredLogin({ handleSuccess: passEdit });
+
+  const passDelete = () => {
+    setDeleteRow(true);
+  };
+  const loginDelete = RequiredLogin({ handleSuccess: passDelete });
+
+  const passAssignMappings = () => {
+    setAssignMappings(tableData.key);
+  };
+  const loginAssignMappings = RequiredLogin({
+    handleSuccess: passAssignMappings,
+  });
+
+  const passEditMappings = () => {
+    setEditMappings(item);
+  };
+  const loginEditMappings = RequiredLogin({ handleSuccess: passEditMappings });
+
+  const passGetMappings = () => {
+    setGetMappings(item);
+  };
+  const loginGetMappings = RequiredLogin({ handleSuccess: passGetMappings });
 
   // Opens the delete dialog box when Delete is selected in the menu
   useEffect(() => {
@@ -128,22 +158,30 @@ export const TerminologyMenu = ({
   ];
 
   // onClick function for Menu.
+  // If a user is not logged in, the login screen is triggered
+
   const onClick = obj => {
     const key = obj.key;
     setSelectedKey(key);
     switch (key) {
       case `${tableData.key}-1`:
-        return setEditRow(tableData.key);
+        return user ? setEditRow(tableData.key) : loginEdit();
       case `${tableData.key}-2`:
-        return setDeleteRow(true);
+        return user ? setDeleteRow(true) : loginDelete();
       case `${tableData.key}-3`:
         return prefTerminologies.length > 0 && !showEditMappings
-          ? setAssignMappings(tableData.key)
+          ? user
+            ? setAssignMappings(tableData.key)
+            : loginAssignMappings()
           : showEditMappings
           ? // If mappings exist for a code, sets editMappings to the code and opens EditMappingsTableModal in turn
-            setEditMappings(item)
+            user
+            ? setEditMappings(item)
+            : loginEditMappings()
           : // If mappings do not exist for a code, sets getMappings to the code and opens GetMappingsModal in turn
-            setGetMappings(item);
+          user
+          ? setGetMappings(item)
+          : loginGetMappings();
       case `${tableData.key}-4`:
         return setShowHistory(tableData.key);
     }

@@ -19,7 +19,7 @@ export const AddTerminology = () => {
   const handleSuccess = () => {
     setCreateTerm(true);
   };
-  const login = RequiredLogin({ setState: handleSuccess });
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
   const [form] = Form.useForm();
   const { vocabUrl, user } = useContext(myContext);
 

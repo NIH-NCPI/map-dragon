@@ -18,11 +18,13 @@ import { ExpandedRowTable } from './ExpandedRowTable';
 import { TableMenu } from './TableMenu';
 import { Submenu } from '../../Manager/Submenu';
 import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
 
-  const { vocabUrl, edit, setEdit, table, setTable } = useContext(myContext);
+  const { vocabUrl, edit, setEdit, table, setTable, user } =
+    useContext(myContext);
   const {
     getMappings,
     setGetMappings,
@@ -35,6 +37,11 @@ export const TableDetails = () => {
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
   const navigate = useNavigate();
+
+  const handleSuccess = () => {
+    setLoad(true);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
     setDataSource(tableData(table));
@@ -220,7 +227,7 @@ There is then a tooltip that displays the variables on hover.*/
                 <div className="study_details_right">
                   <div className="study_dropdown">
                     {/* ant.design dropdown for edit. */}
-                    <SettingsDropdownTable />
+                    <SettingsDropdownTable table={table} />
                   </div>
                 </div>
               </Col>
@@ -270,7 +277,7 @@ There is then a tooltip that displays the variables on hover.*/
                 <Col span={6}>
                   {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
                 and triggers the modal to open*/}
-                  <span onClick={() => setLoad(true)}>
+                  <span onClick={() => (user ? setLoad(true) : login())}>
                     <Card
                       hoverable
                       bordered={true}

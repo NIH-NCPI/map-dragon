@@ -2,7 +2,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useContext } from 'react';
 import { myContext } from '../../App';
 
-export const RequiredLogin = ({ setState }) => {
+export const RequiredLogin = ({ handleSuccess }) => {
   const { setUser } = useContext(myContext);
   const login = useGoogleLogin({
     onSuccess: tokenResponse => {
@@ -16,8 +16,9 @@ export const RequiredLogin = ({ setState }) => {
         .then(res => res.json())
         .then(data => {
           setUser(data);
-          if (setState) {
-            setState();
+          localStorage.setItem('user', JSON.stringify(data));
+          if (handleSuccess) {
+            handleSuccess();
           }
         });
     },
