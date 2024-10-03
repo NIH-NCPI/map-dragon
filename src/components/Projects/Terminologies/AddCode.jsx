@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
 import { ModalSpinner } from '../../Manager/Spinner';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const AddCode = ({ terminology, setTerminology }) => {
   const { vocabUrl, user } = useContext(myContext);
@@ -9,6 +10,11 @@ export const AddCode = ({ terminology, setTerminology }) => {
   const [loading, setLoading] = useState(false);
   const { TextArea } = Input;
   const [form] = Form.useForm();
+
+  const handleSuccess = () => {
+    setAddRow(true);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   const handleSubmit = values => {
     setLoading(true);
@@ -55,7 +61,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
     <>
       <div className="add_row_button">
         <Button
-          onClick={() => setAddRow(true)}
+          onClick={() => (user ? setAddRow(true) : login())}
           type="primary"
           style={{
             marginBottom: 16,

@@ -3,11 +3,17 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 const { confirm } = Modal;
 
 export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
-  const { vocabUrl, setDataDictionary } = useContext(myContext);
+  const { vocabUrl, setDataDictionary, user } = useContext(myContext);
   const [remove, setRemove] = useState(false);
+
+  const handleSuccess = () => {
+    setRemove(true);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   // Function to remove table from a DD. Runs a DELETE call on the DD id and table id
   // Then fetches the updated DD data with the table removed.
@@ -75,7 +81,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
 
   return (
     <>
-      <Button danger onClick={() => setRemove(true)}>
+      <Button danger onClick={() => (user ? setRemove(true) : login())}>
         Remove
       </Button>
       {remove && showConfirm()}

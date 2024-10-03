@@ -1,6 +1,6 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Logout } from './Logout';
 import { myContext } from '../../App';
 
@@ -18,18 +18,23 @@ export const Login = () => {
     <Logout user={user} setUser={setUser} />
   ) : (
     // Logs user in, decodes the JWT token, saves the decoded JWT in local storage and sets user to it
-    <GoogleLogin
-      theme="filled_black"
-      onSuccess={credentialResponse => {
-        const credentialResponseDecoded = jwtDecode(
-          credentialResponse.credential
-        );
-        setUser(credentialResponseDecoded);
-        localStorage.setItem('user', JSON.stringify(credentialResponseDecoded));
-      }}
-      onError={() => {
-        console.log('Login Failed');
-      }}
-    />
+    <div>
+      <GoogleLogin
+        theme="filled_black"
+        onSuccess={credentialResponse => {
+          const credentialResponseDecoded = jwtDecode(
+            credentialResponse.credential
+          );
+          setUser(credentialResponseDecoded);
+          localStorage.setItem(
+            'user',
+            JSON.stringify(credentialResponseDecoded)
+          );
+        }}
+        onError={() => {
+          console.log('Login Failed');
+        }}
+      />
+    </div>
   );
 };

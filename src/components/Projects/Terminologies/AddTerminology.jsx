@@ -13,10 +13,15 @@ import { ModalSpinner } from '../../Manager/Spinner';
 import { myContext } from '../../../App';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const AddTerminology = () => {
+  const handleSuccess = () => {
+    setCreateTerm(true);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
   const [form] = Form.useForm();
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, user } = useContext(myContext);
 
   const [createTerm, setCreateTerm] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -88,7 +93,13 @@ export const AddTerminology = () => {
     <>
       <div className="add_row_buttons">
         <Button
-          onClick={() => setCreateTerm(true)}
+          onClick={() => {
+            if (user) {
+              setCreateTerm(true);
+            } else {
+              login();
+            }
+          }}
           type="primary"
           style={{
             marginBottom: 16,

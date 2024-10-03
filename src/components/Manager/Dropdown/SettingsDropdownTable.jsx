@@ -2,19 +2,38 @@ import { useContext } from 'react';
 import { Dropdown, Button, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { myContext } from '../../../App';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
-export const SettingsDropdownTable = () => {
-  const { setEdit, setClear, setDeleteState, setExportState } =
+export const SettingsDropdownTable = ({ table }) => {
+  const { setEdit, setClear, setDeleteState, setExportState, user } =
     useContext(myContext);
+
+  // Login functions for each case in the dropdown menu with different props passed depending on selection
+  const passEdit = () => {
+    setEdit(true);
+  };
+  const loginEdit = RequiredLogin({ handleSuccess: passEdit });
+
+  const passDelete = () => {
+    setDeleteState(true);
+  };
+
+  const loginDelete = RequiredLogin({ handleSuccess: passDelete });
+
+  const passExport = () => {
+    setExportState(true);
+  };
+  const loginExport = RequiredLogin({ handleSuccess: passExport });
+
+  const passClear = () => {
+    setClear(true);
+  };
+  const loginClear = RequiredLogin({ handleSuccess: passClear });
 
   const items = [
     {
       label: 'Edit',
       key: '0',
-    },
-    {
-      label: 'Export mapped terms',
-      key: '1',
     },
     {
       label: 'Clear mapped terms',
@@ -28,18 +47,25 @@ export const SettingsDropdownTable = () => {
     },
   ];
 
+  if (table?.variables?.length) {
+    items.splice(1, 0, {
+      label: 'Export mapped terms',
+      key: '1',
+    });
+  }
   // onClick for dropdown. Sets states to true depending on their key.
   // A modal is then triggered to open in the component to perform the desired task.
+  // If a user is not logged in, the login screen is triggered
   const onClick = ({ key }) => {
     switch (key) {
       case '0':
-        return setEdit(true);
+        return user ? setEdit(true) : loginEdit();
       case '1':
-        return setExportState(true);
+        return user ? setExportState(true) : loginExport();
       case '2':
-        return setClear(true);
+        return user ? setClear(true) : loginClear();
       case '3':
-        return setDeleteState(true);
+        return user ? setDeleteState(true) : loginDelete();
     }
   };
 

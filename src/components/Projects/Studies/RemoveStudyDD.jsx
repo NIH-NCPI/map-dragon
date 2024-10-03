@@ -3,11 +3,16 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 const { confirm } = Modal;
 
 export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
-  const { vocabUrl, setStudy } = useContext(myContext);
+  const { vocabUrl, setStudy, user } = useContext(myContext);
   const [remove, setRemove] = useState(false);
+  const handleSuccess = () => {
+    setRemove(true);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   // Function to remove DD from a study. Runs a DELETE call on the Study id and DD id
   // Then fetches the updated Study data with the DD removed.
@@ -74,7 +79,7 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
 
   return (
     <>
-      <Button danger onClick={() => setRemove(true)}>
+      <Button danger onClick={() => (user ? setRemove(true) : login())}>
         Remove
       </Button>
       {remove && showConfirm()}

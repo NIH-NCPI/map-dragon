@@ -22,6 +22,7 @@ import { UploadTable } from '../Tables/UploadTable';
 import { RemoveTableDD } from './RemoveTableDD';
 import { DeleteDD } from './DeleteDD';
 import { Submenu } from '../../Manager/Submenu';
+import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const DDDetails = () => {
   const [form] = Form.useForm();
@@ -33,11 +34,17 @@ export const DDDetails = () => {
     setEdit,
     dataDictionary,
     setDataDictionary,
+    user,
   } = useContext(myContext);
   const { studyId, DDId } = useParams();
 
   const [loading, setLoading] = useState(true);
   const [addTable, setAddTable] = useState(false);
+
+  const handleSuccess = () => {
+    setAddTable(true);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   const navigate = useNavigate();
   /* Function that maps through the tables array in a DD.
@@ -137,7 +144,7 @@ export const DDDetails = () => {
               <Col span={6}>
                 {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
                 and triggers the modal to open*/}
-                <span onClick={() => setAddTable(true)}>
+                <span onClick={() => (user ? setAddTable(true) : login())}>
                   <Card
                     hoverable
                     bordered={true}
