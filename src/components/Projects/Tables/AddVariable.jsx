@@ -63,18 +63,16 @@ export const AddVariable = ({ table, setTable }) => {
 
   return (
     <>
-      <div className="add_row_buttons">
-        <Button
-          onClick={() => (user ? setAddRow(true) : login())}
-          type="primary"
-          style={{
-            marginBottom: 16,
-          }}
-          // disabled={addRow}
-        >
-          Add variable
-        </Button>
-      </div>
+      <Button
+        onClick={() => (user ? setAddRow(true) : login())}
+        type="primary"
+        style={{
+          marginBottom: 16,
+        }}
+        // disabled={addRow}
+      >
+        Add variable
+      </Button>
       <Modal
         open={addRow}
         width={'70%'}

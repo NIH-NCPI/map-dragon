@@ -19,6 +19,7 @@ import { TableMenu } from './TableMenu';
 import { Submenu } from '../../Manager/Submenu';
 import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -249,13 +250,17 @@ There is then a tooltip that displays the variables on hover.*/
             The expandable rows currently show the min, max, and units properties with no styling. */}
             {table?.variables?.length > 0 ? (
               <>
-                <AddVariable
-                  table={table}
-                  setTable={setTable}
-                  dataSource={dataSource}
-                  setDataSource={setDataSource}
-                  form={form}
-                />
+                {' '}
+                <div className="add_row_buttons">
+                  <FilterSelect />
+                  <AddVariable
+                    table={table}
+                    setTable={setTable}
+                    dataSource={dataSource}
+                    setDataSource={setDataSource}
+                    form={form}
+                  />
+                </div>
                 <Form form={form}>
                   <Table
                     columns={columns}
@@ -269,7 +274,6 @@ There is then a tooltip that displays the variables on hover.*/
                     }}
                   />
                 </Form>
-
                 <ExportFile table={table} />
               </>
             ) : (
