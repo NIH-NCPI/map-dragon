@@ -84,10 +84,10 @@ export const FilterAPI = ({ form }) => {
     <ModalSpinner />
   ) : (
     <div>
-      <div className="ontology_container">
-        <div className="api_list">
-          <div className="api_label">APIs</div>
-          <Form form={form} layout="vertical">
+      <div className="api_list">
+        <Form form={form} layout="vertical">
+          <div>
+            <div className="api_label">APIs</div>
             <Form.Item name={'selected_apis'} valuePropName="value">
               <Checkbox.Group
                 className="mappings_checkbox"
@@ -99,15 +99,15 @@ export const FilterAPI = ({ form }) => {
                 })}
               />
             </Form.Item>
-          </Form>
-        </div>
-        <div className="ontology_list">
-          {tableLoading ? (
-            <SmallSpinner />
-          ) : (
-            <FilterOntology ontology={ontology} form={form} />
-          )}
-        </div>
+          </div>
+          <div className="ontology_list">
+            {tableLoading ? (
+              <SmallSpinner />
+            ) : (
+              <FilterOntology ontology={ontology} form={form} />
+            )}
+          </div>
+        </Form>
       </div>
     </div>
   );
