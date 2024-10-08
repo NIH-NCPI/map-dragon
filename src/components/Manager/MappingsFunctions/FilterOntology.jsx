@@ -1,13 +1,32 @@
-import { Checkbox, Form } from 'antd';
-import { useEffect, useState } from 'react';
+import { Checkbox, Form, Pagination } from 'antd';
+import { useContext, useEffect, useState } from 'react';
+import { myContext } from '../../../App';
 
-export const FilterOntology = ({ ontology, form }) => {
-  const [selectedOntologies, setSelectedOntologies] = useState([]);
-  const [selectedBoxes, setSelectedBoxes] = useState([]);
-  const [displaySelectedOntologies, setDisplaySelectedOntologies] = useState(
-    []
-  );
+export const FilterOntology = ({
+  ontology,
+  form,
+  selectedOntologies,
+  setSelectedOntologies,
+  selectedBoxes,
+  setSelectedBoxes,
+  displaySelectedOntologies,
+  setDisplaySelectedOntologies,
+  searchText,
+  paginatedOntologies,
+}) => {
   const [allCheckboxes, setAllCheckboxes] = useState([]);
+  const { ontologyForPagination, setOntologyForPagination } =
+    useContext(myContext);
+
+  useEffect(() => {
+    setOntologyForPagination(ontology);
+  }, [ontology]);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      ontologies: selectedBoxes,
+    });
+  }, [selectedBoxes, form]);
 
   const ontologyForCheckboxes = () => {
     return ontology.flatMap(
@@ -19,39 +38,45 @@ export const FilterOntology = ({ ontology, form }) => {
   );
 
   useEffect(() => {
-    setAllCheckboxes(ontologyForCheckboxes() ?? []);
+    setAllCheckboxes(ontologyForCheckboxes());
   }, [ontology]);
-  console.log(allCheckboxes);
 
-  //   useEffect(() => {
-  //     setOntologiesForSelection(ontologyForCheckboxes());
-  //   }, []);
+  const onCheckboxChange = (event, selected) => {
+    if (event.target.checked) {
+      setSelectedBoxes(prevState => [...prevState, selected]);
+    } else {
+      setSelectedBoxes(prevState => prevState.filter(val => val !== selected));
+    }
+  };
 
   const onSelectedChange = checkedValues => {
-    const selected = JSON.parse(checkedValues?.[0]);
-    const selectedOntology = ontologyForCheckboxes().find(
-      item => item.ontology_code === selected.ontology
-    );
-    // Updates selectedTerminologies and displayselectedOntologys to include the new selected items
-    setSelectedOntologies(prevState => [...prevState, selectedOntology]);
+    if (checkedValues.length > 0) {
+      const selected = JSON.parse(checkedValues[0]);
+      const selectedOntology = ontologyForCheckboxes().find(
+        item => item.ontology_code === selected.ontology
+      );
 
-    // Adds the selectedTerminologies to the selectedBoxes to ensure they are checked
-    setSelectedBoxes(prevState => {
-      const updated = [...prevState, selectedOntology];
-      // Sets the values for the form to the selectedTerminologiess checkboxes that are checked
-      form.setFieldsValue({ ontologies: updated });
-      return updated;
-    });
+      // Updates selectedOntologies and displaySelectedOntologies to include the new selected items
+      setSelectedOntologies(prevState => [...prevState, selectedOntology]);
 
-    setDisplaySelectedOntologies(prevState => [...prevState, selectedOntology]);
-    console.log(displaySelectedOntologies);
+      // Add the selectedOntology to the selectedBoxes
+      setSelectedBoxes(prevState => {
+        const updated = [...prevState, selectedOntology];
+        form.setFieldsValue({ ontologies: updated }); // Update form values
+        return updated;
+      });
 
-    // Filters out the selected checkboxes from the results being displayed
-    const updatedOntologies = ontologyForCheckboxes().filter(
-      ont => ont.ontology_code !== selected.ontology
-    );
-    console.log(updatedOntologies);
-    setOntologiesForSelection(updatedOntologies);
+      setDisplaySelectedOntologies(prevState => [
+        ...prevState,
+        selectedOntology,
+      ]);
+
+      // Filters out the selected ontologies from the available ones
+      const updatedOntologies = ontologyForCheckboxes().filter(
+        ont => ont.ontology_code !== selected.ontology
+      );
+      setOntologiesForSelection(updatedOntologies);
+    }
   };
 
   const selectedOntDisplay = (ont, i) => {
@@ -85,26 +110,28 @@ export const FilterOntology = ({ ontology, form }) => {
 
   return (
     <>
-      <Form.Item name={'selected_ontologies'} valuePropName="value">
-        <div className="modal_display_results">
-          {displaySelectedOntologies?.map((selected, i) => (
-            <Checkbox
-              key={i}
-              checked={selectedBoxes.some(
-                box => box.ontology_code === selected?.ontology?.ontology_code
-              )}
-              value={selected}
-              onChange={e => onCheckboxChange(e, selected)}
-            >
-              {selectedOntDisplay(selected, i)}
-            </Checkbox>
-          ))}
-        </div>
-      </Form.Item>
+      {displaySelectedOntologies.length > 0 && (
+        <Form.Item name={'selected_ontologies'} valuePropName="value">
+          <div className="modal_display_results">
+            {displaySelectedOntologies?.map((selected, i) => (
+              <Checkbox
+                key={i}
+                checked={selectedBoxes.some(
+                  box => box?.ontology_code === selected?.ontology_code
+                )}
+                value={selected}
+                onChange={e => onCheckboxChange(e, selected)}
+              >
+                {selectedOntDisplay(selected, i)}
+              </Checkbox>
+            ))}
+          </div>
+        </Form.Item>
+      )}
       <Form.Item name={'ontologies'} valuePropName="value">
         <Checkbox.Group
           className="mappings_checkbox"
-          options={allCheckboxes
+          options={paginatedOntologies
             ?.filter(
               checkbox =>
                 !displaySelectedOntologies.some(
@@ -117,6 +144,9 @@ export const FilterOntology = ({ ontology, form }) => {
               }),
               label: checkBoxDisplay(ont, i),
             }))}
+          value={selectedBoxes.map(item =>
+            JSON.stringify({ ontology: item.ontology_code })
+          )}
           onChange={onSelectedChange}
         />
       </Form.Item>

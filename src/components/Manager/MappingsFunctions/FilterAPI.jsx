@@ -1,30 +1,34 @@
 import { useContext, useEffect, useState } from 'react';
-import { Checkbox, Form, Tooltip } from 'antd';
-import { getOntologies } from '../FetchManager';
+import { Checkbox, Form, Input } from 'antd';
 import { ModalSpinner, SmallSpinner, Spinner } from '../Spinner';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
 
-export const FilterAPI = ({ form }) => {
+export const FilterAPI = ({
+  form,
+  selectedOntologies,
+  setSelectedOntologies,
+  selectedBoxes,
+  setSelectedBoxes,
+  displaySelectedOntologies,
+  setDisplaySelectedOntologies,
+  ontologyApis,
+  active,
+  setActive,
+  searchText,
+  setSearchText,
+  currentPage,
+  setCurrentPage,
+  pageSize,
+  setPageSize,
+  paginatedOntologies,
+}) => {
+  const { Search } = Input;
+
   const { vocabUrl } = useContext(myContext);
-  const [ontologyApis, setOntologyApis] = useState([]);
   const [ontology, setOntology] = useState([]);
-  const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
-
-  // Gets the ontologyAPIs on first load, automatically sets active to the first of the list to display on the page
-  useEffect(() => {
-    setLoading(true);
-    getOntologies(vocabUrl)
-      .then(data => {
-        setOntologyApis(data);
-        if (data.length > 0) {
-          setActive(data[0]?.api_id);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, []);
 
   // Fetches the active ontologyAPI each time the active API changes
   useEffect(() => {
@@ -85,9 +89,10 @@ export const FilterAPI = ({ form }) => {
   ) : (
     <div>
       <div className="api_list">
-        <Form form={form} layout="vertical">
+        <Form form={form}>
           <div>
             <div className="api_label">APIs</div>
+
             <Form.Item name={'selected_apis'} valuePropName="value">
               <Checkbox.Group
                 className="mappings_checkbox"
@@ -104,7 +109,22 @@ export const FilterAPI = ({ form }) => {
             {tableLoading ? (
               <SmallSpinner />
             ) : (
-              <FilterOntology ontology={ontology} form={form} />
+              <FilterOntology
+                ontology={ontology}
+                form={form}
+                selectedOntologies={selectedOntologies}
+                setSelectedOntologies={setSelectedOntologies}
+                selectedBoxes={selectedBoxes}
+                setSelectedBoxes={setSelectedBoxes}
+                displaySelectedOntologies={displaySelectedOntologies}
+                setDisplaySelectedOntologies={setDisplaySelectedOntologies}
+                searchText={searchText}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+                paginatedOntologies={paginatedOntologies}
+              />
             )}
           </div>
         </Form>
