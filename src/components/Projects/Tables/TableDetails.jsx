@@ -37,6 +37,8 @@ export const TableDetails = () => {
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
+  const [apiPreferences, setApiPreferences] = useState({});
+
   const navigate = useNavigate();
 
   const handleSuccess = () => {
@@ -69,6 +71,24 @@ export const TableDetails = () => {
                   });
                 }
                 return error;
+              })
+              .then(() =>
+                fetch(`${vocabUrl}/${data?.terminology?.reference}/filter`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                })
+              )
+              .then(res => {
+                if (res.ok) {
+                  return res.json();
+                } else {
+                  throw new Error('An unknown error occurred.');
+                }
+              })
+              .then(data => {
+                setApiPreferences(data);
               });
           } else {
             setLoading(false);
@@ -79,7 +99,7 @@ export const TableDetails = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred loading the ontology preferences.',
           });
         }
         return error;
@@ -252,7 +272,11 @@ There is then a tooltip that displays the variables on hover.*/
               <>
                 {' '}
                 <div className="add_row_buttons">
-                  <FilterSelect />
+                  <FilterSelect
+                    table={table}
+                    apiPreferences={apiPreferences}
+                    setApiPreferences={setApiPreferences}
+                  />
                   <AddVariable
                     table={table}
                     setTable={setTable}

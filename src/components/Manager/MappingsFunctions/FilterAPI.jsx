@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Checkbox, Form, Input } from 'antd';
-import { ModalSpinner, SmallSpinner, Spinner } from '../Spinner';
+import { ModalSpinner, OntologySpinner } from '../Spinner';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
 
@@ -107,7 +107,9 @@ export const FilterAPI = ({
           </div>
           <div className="ontology_list">
             {tableLoading ? (
-              <SmallSpinner />
+              <div className="ontology_spinner_div">
+                <OntologySpinner />
+              </div>
             ) : (
               <FilterOntology
                 ontology={ontology}

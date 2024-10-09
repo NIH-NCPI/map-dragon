@@ -5,7 +5,6 @@ import { myContext } from '../../../App';
 export const FilterOntology = ({
   ontology,
   form,
-  selectedOntologies,
   setSelectedOntologies,
   selectedBoxes,
   setSelectedBoxes,
@@ -29,10 +28,14 @@ export const FilterOntology = ({
   }, [selectedBoxes, form]);
 
   const ontologyForCheckboxes = () => {
-    return ontology.flatMap(
-      item => Object.values(item?.ontologies).map(ont => ont) // Just return `ont` directly
+    return ontology.flatMap(item =>
+      Object.values(item?.ontologies).map(ont => ({
+        ...ont,
+        api: ontology?.[0]?.api_id,
+      }))
     );
   };
+
   const [ontologiesForSelection, setOntologiesForSelection] = useState(
     ontologyForCheckboxes
   );
@@ -110,46 +113,48 @@ export const FilterOntology = ({
 
   return (
     <>
-      {displaySelectedOntologies.length > 0 && (
-        <Form.Item name={'selected_ontologies'} valuePropName="value">
-          <div className="modal_display_results">
-            {displaySelectedOntologies?.map((selected, i) => (
-              <Checkbox
-                key={i}
-                checked={selectedBoxes.some(
-                  box => box?.ontology_code === selected?.ontology_code
-                )}
-                value={selected}
-                onChange={e => onCheckboxChange(e, selected)}
-              >
-                {selectedOntDisplay(selected, i)}
-              </Checkbox>
-            ))}
-          </div>
+      <div className="modal_checkbox_wrapper">
+        {displaySelectedOntologies.length > 0 && (
+          <Form.Item name={'selected_ontologies'} valuePropName="value">
+            <div className="modal_selected">
+              {displaySelectedOntologies?.map((selected, i) => (
+                <Checkbox
+                  key={i}
+                  checked={selectedBoxes.some(
+                    box => box?.ontology_code === selected?.ontology_code
+                  )}
+                  value={selected}
+                  onChange={e => onCheckboxChange(e, selected)}
+                >
+                  {selectedOntDisplay(selected, i)}
+                </Checkbox>
+              ))}
+            </div>
+          </Form.Item>
+        )}
+        <Form.Item name={'ontologies'} valuePropName="value">
+          <Checkbox.Group
+            className="mappings_checkbox"
+            options={paginatedOntologies
+              ?.filter(
+                checkbox =>
+                  !displaySelectedOntologies.some(
+                    dsm => checkbox.ontology_code === dsm.ontology_code
+                  )
+              )
+              .map((ont, i) => ({
+                value: JSON.stringify({
+                  ontology: ont.ontology_code,
+                }),
+                label: checkBoxDisplay(ont, i),
+              }))}
+            value={selectedBoxes.map(item =>
+              JSON.stringify({ ontology: item.ontology_code })
+            )}
+            onChange={onSelectedChange}
+          />
         </Form.Item>
-      )}
-      <Form.Item name={'ontologies'} valuePropName="value">
-        <Checkbox.Group
-          className="mappings_checkbox"
-          options={paginatedOntologies
-            ?.filter(
-              checkbox =>
-                !displaySelectedOntologies.some(
-                  dsm => checkbox.ontology_code === dsm.ontology_code
-                )
-            )
-            .map((ont, i) => ({
-              value: JSON.stringify({
-                ontology: ont.ontology_code,
-              }),
-              label: checkBoxDisplay(ont, i),
-            }))}
-          value={selectedBoxes.map(item =>
-            JSON.stringify({ ontology: item.ontology_code })
-          )}
-          onChange={onSelectedChange}
-        />
-      </Form.Item>
+      </div>
     </>
   );
 };

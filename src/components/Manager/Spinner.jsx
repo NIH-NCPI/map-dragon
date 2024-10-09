@@ -41,3 +41,13 @@ export const SmallSpinner = () => {
     </div>
   );
 };
+
+export const OntologySpinner = () => {
+  return (
+    <div className="ontology_spinner_container">
+      <div className="ontology_spinner">
+        <Spin />
+      </div>
+    </div>
+  );
+};

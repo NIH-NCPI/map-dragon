@@ -1,11 +1,11 @@
-import { Button, Form, Modal, Pagination } from 'antd';
+import { Button, Form, message, Modal, notification, Pagination } from 'antd';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
 
-export const FilterSelect = () => {
+export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
   const [form] = Form.useForm();
   const [addFilter, setAddFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,9 +17,7 @@ export const FilterSelect = () => {
   );
   const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const { user, vocabUrl, ontologyForPagination } = useContext(myContext);
-
   const [ontologyApis, setOntologyApis] = useState([]);
   const [searchText, setSearchText] = useState('');
 
@@ -35,6 +33,10 @@ export const FilterSelect = () => {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    setActive(ontologyApis[0]?.api_id);
+  }, [addFilter]);
 
   const handleSuccess = () => {
     setAddFilter(true);
@@ -56,47 +58,81 @@ export const FilterSelect = () => {
     setSelectedOntologies([]);
     setSelectedBoxes([]);
     setDisplaySelectedOntologies([]);
-    setActive(ontologyApis[0]?.api_id);
   };
 
+  // If the api doesn't exist in api_preference, creates an empty array for it
+  // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   const handleSubmit = values => {
-    console.log(values);
-    // setLoading(true);
-    // const selectedMappings = selectedBoxes?.map(item => ({
-    //   code: item.code,
-    //   display: item.display,
-    //   description: Array.isArray(item.description)
-    //     ? item.description[0]
-    //     : item.description,
-    //   system: item.system,
-    // }));
-    // const mappingsDTO = {
-    //   mappings: selectedMappings,
-    //   editor: user.email,
-    // };
+    setLoading(true);
+    const apiPreference = {
+      api_preference: {},
+    };
+    values?.ontologies.forEach(({ ontology_code, api }) => {
+      if (!apiPreference.api_preference[api]) {
+        apiPreference.api_preference[api] = [];
+      }
+      if (!apiPreference.api_preference[api].includes(ontology_code)) {
+        apiPreference.api_preference[api].push(ontology_code);
+      }
+    });
+    const apiPreferenceDTO = {
+      api_preference: apiPreference?.api_preference,
+      editor: user.email,
+    };
 
-    // fetch(`${vocabUrl}/Terminology/${terminology.id}/mapping/${mappingProp}`, {
-    //   method: 'PUT',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(mappingsDTO),
-    // })
-    //   .then(res => {
-    //     if (res.ok) {
-    //       return res.json();
-    //     } else {
-    //       throw new Error('An unknown error occurred.');
-    //     }
-    //   })
-    //   .then(data => {
-    //     setMapping(data.codes);
-    //     form.resetFields();
-    //     setAssignMappings(false);
-    //     message.success('Changes saved successfully.');
-    //   })
-    //   .finally(() => setLoading(false));
+    fetch(`${vocabUrl}/${table?.terminology?.reference}/filter`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(apiPreferenceDTO),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(() =>
+        fetch(`${vocabUrl}/${table?.terminology?.reference}/filter`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+      )
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => {
+        setApiPreferences(data);
+        form.resetFields();
+        setAddFilter(false);
+        message.success('Preferred ontologies saved successfully.');
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the ontology preferences.',
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
   };
+
+  const apiPrefObject = apiPreferences?.self?.api_preference;
+
+  // // Calculate the total length of all arrays
+  const apiPrefLength =
+    apiPrefObject &&
+    Object.values(apiPrefObject)?.reduce((acc, arr) => acc + arr.length, 0);
 
   // Makes a set of ontologies to exclude from the list of available ones to select(excludes those that have already been selected)
   // Converts the ontologies object into an array and filter based on the ontologiesToExclude
@@ -108,11 +144,14 @@ export const FilterSelect = () => {
         const ontologiesToExclude = new Set(
           displaySelectedOntologies?.map(dst => dst?.ontology_code)
         );
-        const filteredOntologies = Object.values(ontologiesObject).filter(
-          obj => {
+        const filteredOntologies = Object.values(ontologiesObject)
+          .map(po => ({
+            ...po,
+            api: ontologyForPagination?.[0]?.api_id,
+          }))
+          .filter(obj => {
             return !ontologiesToExclude.has(obj.ontology_code);
-          }
-        );
+          });
 
         return filteredOntologies;
       }
@@ -136,7 +175,7 @@ export const FilterSelect = () => {
           marginBottom: 16,
         }}
       >
-        API Filters
+        API Filters {apiPrefObject ? `(${apiPrefLength})` : ''}
       </Button>
       <Modal
         open={addFilter}
@@ -145,7 +184,6 @@ export const FilterSelect = () => {
           body: {
             minHeight: '60vh',
             maxHeight: '60vh',
-            overflowY: 'auto',
           },
         }}
         onOk={() => {
