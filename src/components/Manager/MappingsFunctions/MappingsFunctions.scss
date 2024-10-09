@@ -46,3 +46,35 @@
 .assign_map_title {
   margin-bottom: 5px;
 }
+
+.active_selected_api,
+.inactive_selected_api {
+  padding: 0 5px;
+  width: 10.5vw;
+}
+
+.active_selected_api {
+  background-color: rgb(233, 237, 240);
+  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid rgb(238, 238, 255);
+  border-right: 1px solid rgb(238, 238, 255);
+}
+
+.modal_checkbox_wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 55vh;
+  width: 50vw;
+  overflow: auto;
+}
+
+.modal_selected {
+  display: flex;
+  flex-direction: column;
+}
+
+.ontology_spinner_div {
+  display: flex;
+  width: 50vw;
+  justify-content: center;
+}

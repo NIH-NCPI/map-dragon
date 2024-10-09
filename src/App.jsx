@@ -34,6 +34,7 @@ function App() {
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
+  const [ontologyForPagination, setOntologyForPagination] = useState([]);
 
   message.config({
     top: '25vh',
@@ -73,6 +74,8 @@ function App() {
           setUser,
           importState,
           setImportState,
+          ontologyForPagination,
+          setOntologyForPagination,
         }}
       >
         <AppRouter />

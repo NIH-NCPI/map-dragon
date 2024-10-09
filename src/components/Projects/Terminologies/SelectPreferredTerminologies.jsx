@@ -92,6 +92,7 @@ export const SelectPreferredTerminologies = ({
     const updatedTerminologies = terminologies.filter(
       term => term.id !== selected.preferred_terminology
     );
+
     setTerminologies(updatedTerminologies);
   };
 

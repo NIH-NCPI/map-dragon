@@ -19,6 +19,7 @@ import { TableMenu } from './TableMenu';
 import { Submenu } from '../../Manager/Submenu';
 import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -36,6 +37,8 @@ export const TableDetails = () => {
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
+  const [apiPreferences, setApiPreferences] = useState({});
+
   const navigate = useNavigate();
 
   const handleSuccess = () => {
@@ -68,6 +71,24 @@ export const TableDetails = () => {
                   });
                 }
                 return error;
+              })
+              .then(() =>
+                fetch(`${vocabUrl}/${data?.terminology?.reference}/filter`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                })
+              )
+              .then(res => {
+                if (res.ok) {
+                  return res.json();
+                } else {
+                  throw new Error('An unknown error occurred.');
+                }
+              })
+              .then(data => {
+                setApiPreferences(data);
               });
           } else {
             setLoading(false);
@@ -78,7 +99,7 @@ export const TableDetails = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred loading the ontology preferences.',
           });
         }
         return error;
@@ -249,13 +270,21 @@ There is then a tooltip that displays the variables on hover.*/
             The expandable rows currently show the min, max, and units properties with no styling. */}
             {table?.variables?.length > 0 ? (
               <>
-                <AddVariable
-                  table={table}
-                  setTable={setTable}
-                  dataSource={dataSource}
-                  setDataSource={setDataSource}
-                  form={form}
-                />
+                {' '}
+                <div className="add_row_buttons">
+                  <FilterSelect
+                    table={table}
+                    apiPreferences={apiPreferences}
+                    setApiPreferences={setApiPreferences}
+                  />
+                  <AddVariable
+                    table={table}
+                    setTable={setTable}
+                    dataSource={dataSource}
+                    setDataSource={setDataSource}
+                    form={form}
+                  />
+                </div>
                 <Form form={form}>
                   <Table
                     columns={columns}
@@ -269,7 +298,6 @@ There is then a tooltip that displays the variables on hover.*/
                     }}
                   />
                 </Form>
-
                 <ExportFile table={table} />
               </>
             ) : (
