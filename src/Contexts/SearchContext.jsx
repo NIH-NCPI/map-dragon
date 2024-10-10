@@ -12,6 +12,7 @@ export function SearchContextRoot() {
   const [apiResultsCount, setApiResultsCount] = useState();
   const [apiPage, setApiPage] = useState(0);
   const [apiTotalCount, setApiTotalCount] = useState();
+  const [apiPreferences, setApiPreferences] = useState({});
 
   const context = {
     prefTerminologies,
@@ -30,6 +31,8 @@ export function SearchContextRoot() {
     setApiPage,
     apiTotalCount,
     setApiTotalCount,
+    apiPreferences,
+    setApiPreferences,
   };
 
   return (

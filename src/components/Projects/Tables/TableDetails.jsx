@@ -20,12 +20,14 @@ import { Submenu } from '../../Manager/Submenu';
 import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
 
   const { vocabUrl, edit, setEdit, table, setTable, user } =
     useContext(myContext);
+  const { apiPreferences, setApiPreferences } = useContext(SearchContext);
   const {
     getMappings,
     setGetMappings,
@@ -37,7 +39,6 @@ export const TableDetails = () => {
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
-  const [apiPreferences, setApiPreferences] = useState({});
 
   const navigate = useNavigate();
 
@@ -66,8 +67,7 @@ export const TableDetails = () => {
                 if (error) {
                   notification.error({
                     message: 'Error',
-                    description:
-                      'An error occurred loading mappings. Please try again.',
+                    description: 'An error occurred loading mappings.',
                   });
                 }
                 return error;
