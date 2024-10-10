@@ -4,6 +4,7 @@ import { myContext } from '../../../App';
 import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const GetMappingsModal = ({
   componentString,
@@ -17,6 +18,7 @@ export const GetMappingsModal = ({
   const { Search } = Input;
 
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
+  const { apiPreferences } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
   const [loading, setLoading] = useState(true);
@@ -155,8 +157,21 @@ export const GetMappingsModal = ({
     number of results to return per page (entriesPerPage) and a calculation of the first index to start the results
     on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
+    const apiPreferenceOntologies = () => {
+      if (apiPreferences?.self?.api_preference?.ols) {
+        // Get the ontologies from the 'ols' array and join them with commas
+        const filteredOntologies =
+          apiPreferences.self.api_preference.ols.join(',');
+        console.log(filteredOntologies);
+        // Construct the final URL with the filteredOntologies
+        return filteredOntologies;
+      } else {
+        const defaultOntologies = 'mondo,hp,maxo,ncit';
+        return defaultOntologies;
+      }
+    };
     return fetch(
-      `${searchUrl}q=${query}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
+      `${searchUrl}q=${query}&ontology=${apiPreferenceOntologies()}&rows=${entriesPerPage}&start=${pageStart}`,
       {
         method: 'GET',
         headers: {
