@@ -146,32 +146,9 @@ export const GetMappingsModal = ({
       });
   };
 
-  // The function that makes the API call to search for the passed code.
-
-  const fetchResults = (page, query) => {
-    if (!!!query) {
-      return undefined;
-    }
-    setLoading(true);
-    /* The OLS API returns 10 results by default unless specified otherwise. The fetch call includes a specified
-    number of results to return per page (entriesPerPage) and a calculation of the first index to start the results
-    on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
-    const pageStart = page * entriesPerPage;
-    const apiPreferenceOntologies = () => {
-      if (apiPreferences?.self?.api_preference?.ols) {
-        // Get the ontologies from the 'ols' array and join them with commas
-        const filteredOntologies =
-          apiPreferences.self.api_preference.ols.join(',');
-        console.log(filteredOntologies);
-        // Construct the final URL with the filteredOntologies
-        return filteredOntologies;
-      } else {
-        const defaultOntologies = 'mondo,hp,maxo,ncit';
-        return defaultOntologies;
-      }
-    };
+  const fetchFunction = (query, ontologiesToSearch, page, pageStart) => {
     return fetch(
-      `${searchUrl}q=${query}&ontology=${apiPreferenceOntologies()}&rows=${entriesPerPage}&start=${pageStart}`,
+      `${searchUrl}q=${query}&ontology=${ontologiesToSearch}&rows=${entriesPerPage}&start=${pageStart}`,
       {
         method: 'GET',
         headers: {
@@ -209,6 +186,79 @@ export const GetMappingsModal = ({
         setResultsCount(res.results.length);
       })
       .then(() => setLoading(false));
+  };
+
+  // The function that makes the API call to search for the passed code.
+
+  const fetchResults = (page, query) => {
+    if (!!!query) {
+      return undefined;
+    }
+    setLoading(true);
+    /* The OLS API returns 10 results by default unless specified otherwise. The fetch call includes a specified
+    number of results to return per page (entriesPerPage) and a calculation of the first index to start the results
+    on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
+    const pageStart = page * entriesPerPage;
+
+    if (
+      apiPreferences?.self?.api_preference &&
+      'ols' in apiPreferences?.self?.api_preference
+    ) {
+      const apiPreferenceOntologies = () => {
+        if (apiPreferences?.self?.api_preference?.ols) {
+          // Get the ontologies from the 'ols' array and join them with commas
+          const filteredOntologies =
+            apiPreferences.self.api_preference.ols.join(',');
+          console.log(filteredOntologies);
+          // Construct the final URL with the filteredOntologies
+          return filteredOntologies;
+        } else {
+          const defaultOntologies = 'mondo,hp,maxo,ncit';
+          return defaultOntologies;
+        }
+      };
+      return fetchFunction(query, apiPreferenceOntologies(), page, pageStart);
+    } else {
+      return fetch(
+        `${searchUrl}q=${query}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+        .then(res => res.json())
+        .then(data => {
+          // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
+
+          let res = ontologyReducer(data?.response?.docs);
+          // if the page > 0 (i.e. if this is not the first batch of results), the new results
+          // are concatenated to the old
+          if (selectedBoxes) {
+            res.results = res.results.filter(
+              d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
+            );
+          }
+
+          if (page > 0 && results.length > 0) {
+            res.results = results.concat(res.results);
+
+            // Apply filtering to remove results with obo_id in selectedBoxes
+          } else {
+            // Set the total number of search results for pagination
+            setTotalCount(data.response.numFound);
+          }
+
+          //the results are set to res (the filtered, concatenated results)
+
+          setResults(res.results);
+          setFilteredResultsCount(res?.filteredResults?.length);
+          // resultsCount is set to the length of the filtered, concatenated results for pagination
+          setResultsCount(res.results.length);
+        })
+        .then(() => setLoading(false));
+    }
   };
 
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
