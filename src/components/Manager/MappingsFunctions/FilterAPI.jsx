@@ -22,6 +22,7 @@ export const FilterAPI = ({
   pageSize,
   setPageSize,
   paginatedOntologies,
+  apiPreferences,
 }) => {
   const { Search } = Input;
 
@@ -126,6 +127,7 @@ export const FilterAPI = ({
                 pageSize={pageSize}
                 setPageSize={setPageSize}
                 paginatedOntologies={paginatedOntologies}
+                apiPreferences={apiPreferences}
               />
             )}
           </div>
