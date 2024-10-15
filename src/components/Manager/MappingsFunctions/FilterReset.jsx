@@ -54,7 +54,7 @@ export const FilterReset = ({ table }) => {
   return (
     <>
       <Button danger onClick={() => (user ? setRemove(true) : login())}>
-        Reset{' '}
+        Reset
       </Button>
       {remove && showConfirm()}
     </>
