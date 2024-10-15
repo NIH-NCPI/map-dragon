@@ -1,6 +1,7 @@
 import { Checkbox, Form, Pagination } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
+import { FilterReset } from './FilterReset';
 
 export const FilterOntology = ({
   ontology,
@@ -13,6 +14,7 @@ export const FilterOntology = ({
   searchText,
   paginatedOntologies,
   apiPreferences,
+  table,
 }) => {
   const [allCheckboxes, setAllCheckboxes] = useState([]);
   const { ontologyForPagination, setOntologyForPagination } =
@@ -151,7 +153,9 @@ export const FilterOntology = ({
           key => apiPreferences?.self?.api_preference[key]?.length > 0
         ) && (
           <>
-            <h4>Ontology Filters</h4>
+            <div className="onto_reset">
+              <h4>Ontology Filters</h4> <FilterReset table={table} />
+            </div>
             <Form.Item
               initialValue={initialChecked}
               name={['existing_filters']}

@@ -1,12 +1,11 @@
 import { Checkbox, Input, message, Modal, Form, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
+import { ellipsisString, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { olsFilterOntologiesSearch } from '../FetchManager';
-import { defaultIconPrefixCls } from 'antd/es/config-provider';
 
 export const GetMappingsModal = ({
   componentString,
