@@ -277,6 +277,7 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
           setPageSize={setPageSize}
           paginatedOntologies={paginatedOntologies}
           apiPreferences={apiPreferences}
+          table={table}
         />
       </Modal>
     </>
