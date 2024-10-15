@@ -1,3 +1,5 @@
+import { ontologyReducer } from './Utilitiy';
+
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {
   return fetch(`${vocabUrl}/${name}`, {
@@ -164,4 +166,60 @@ export const getOntologies = vocabUrl => {
       });
     }
   });
+};
+
+export const olsFilterOntologiesSearch = (
+  searchUrl,
+  query,
+  ontologiesToSearch,
+  page,
+  entriesPerPage,
+  pageStart,
+  selectedBoxes,
+  setTotalCount,
+  setResults,
+  setFilteredResultsCount,
+  setResultsCount,
+  setLoading
+) => {
+  setLoading(true);
+  return fetch(
+    `${searchUrl}q=${query}&ontology=${ontologiesToSearch}&rows=${entriesPerPage}&start=${pageStart}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+    .then(res => res.json())
+    .then(data => {
+      // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
+
+      let res = ontologyReducer(data?.response?.docs);
+      // if the page > 0 (i.e. if this is not the first batch of results), the new results
+      // are concatenated to the old
+      if (selectedBoxes) {
+        res.results = res.results.filter(
+          d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
+        );
+      }
+
+      if (page > 0 && results.length > 0) {
+        res.results = results.concat(res.results);
+
+        // Apply filtering to remove results with obo_id in selectedBoxes
+      } else {
+        // Set the total number of search results for pagination
+        setTotalCount(data.response.numFound);
+      }
+
+      //the results are set to res (the filtered, concatenated results)
+
+      setResults(res.results);
+      setFilteredResultsCount(res?.filteredResults?.length);
+      // resultsCount is set to the length of the filtered, concatenated results for pagination
+      setResultsCount(res.results.length);
+    })
+    .then(() => setLoading(false));
 };
