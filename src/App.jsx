@@ -7,6 +7,7 @@ export const myContext = createContext();
 
 function App() {
   const searchUrl = import.meta.env.VITE_SEARCH_ENDPOINT;
+  const monarchUrl = import.meta.env.VITE_MONARCH_SEARCH;
   const vocabUrl = import.meta.env.VITE_VOCAB_ENDPOINT;
   const clientId = import.meta.env.VITE_CLIENT_ID;
 
@@ -47,6 +48,7 @@ function App() {
           results,
           setResults,
           searchUrl,
+          monarchUrl,
           vocabUrl,
           tablesDD,
           setTablesDD,
