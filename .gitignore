@@ -27,3 +27,4 @@ dist-ssr
 .env.local
 .env.qa
 .env.dev
+.env
