@@ -4,11 +4,10 @@
 name: 'Build and Deploy to Cloud Run'
 on:
   pull_request_review:
-    types: [submitted]
-  push:
     branches:
-      - main  # Adjust if you use a different branch
-
+      - main
+    types: [submitted]
+    
 env:
 
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
@@ -23,7 +22,7 @@ jobs:
   deploy:
     runs-on: 'ubuntu-latest'
     
-    if: github.event.pull_request.merged == 'true'
+    if: github.event.review.state == 'approved'
     
     environment:
       name: dev
