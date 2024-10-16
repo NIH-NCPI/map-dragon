@@ -2,15 +2,16 @@
 @import '../Styling/BackgroundImage.scss';
 
 .results_page_container {
-  background:white;
+  background: white;
   margin: 0 30vw 0 5vw;
-  padding:1rem;
+  padding: 1rem;
 }
 
 .search_button_results {
   @include button;
   margin-left: 20px;
   cursor: pointer;
+
   &.disabled_results {
     cursor: default;
   }
@@ -36,17 +37,19 @@
   background-color: none;
   z-index: 1;
 }
+
 div.search_result:nth-child(2) {
-  padding-top:2rem;
+  padding-top: 2rem;
 }
 
 
 .search_results_header {
   padding-bottom: 10px;
   position: sticky;
-  top:15rem;
+  top: 15rem;
   background: white;
-  h2{
+
+  h2 {
     margin: 0;
   }
 }
