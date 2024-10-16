@@ -424,9 +424,6 @@ export const GetMappingsModal = ({
                           Displaying {resultsCount}
                           &nbsp;of&nbsp;{totalCount}
                         </Tooltip>
-                        {console.log('total', totalCount)}
-                        {console.log('filtered', filteredResultsCount)}
-                        {console.log('results', filteredResultsCount)}
                         {totalCount - filteredResultsCount !== resultsCount && (
                           <span
                             className="view_more_link"
