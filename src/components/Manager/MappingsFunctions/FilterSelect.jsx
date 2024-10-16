@@ -214,72 +214,74 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
       >
         API Filters {apiPrefObject ? `(${apiPrefLength})` : ''}
       </Button>
-      <Modal
-        open={addFilter}
-        width={'70%'}
-        styles={{
-          body: {
-            minHeight: '60vh',
-            maxHeight: '60vh',
-          },
-        }}
-        onOk={() => {
-          form.validateFields().then(values => {
-            handleSubmit(values);
+      {addFilter && (
+        <Modal
+          open={addFilter}
+          width={'70%'}
+          styles={{
+            body: {
+              minHeight: '60vh',
+              maxHeight: '60vh',
+            },
+          }}
+          onOk={() => {
+            form.validateFields().then(values => {
+              handleSubmit(values);
+              onClose();
+            });
+          }}
+          onCancel={() => {
+            form.resetFields();
+            setAddFilter(false);
             onClose();
-          });
-        }}
-        onCancel={() => {
-          form.resetFields();
-          setAddFilter(false);
-          onClose();
-        }}
-        maskClosable={false}
-        closeIcon={false}
-        footer={(_, { OkBtn, CancelBtn }) => (
-          <>
-            <div className="modal_footer">
+          }}
+          maskClosable={false}
+          closeIcon={false}
+          footer={(_, { OkBtn, CancelBtn }) => (
+            <>
               <div className="modal_footer">
-                <Pagination
-                  current={currentPage}
-                  pageSize={pageSize}
-                  total={filteredOntologiesArray?.length}
-                  onChange={handlePageChange}
-                  showSizeChanger
-                  onShowSizeChange={handlePageSizeChange}
-                  pageSizeOptions={['10', '20', '50']} // Set page size options
-                />
+                <div className="modal_footer">
+                  <Pagination
+                    current={currentPage}
+                    pageSize={pageSize}
+                    total={filteredOntologiesArray?.length}
+                    onChange={handlePageChange}
+                    showSizeChanger
+                    onShowSizeChange={handlePageSizeChange}
+                    pageSizeOptions={['10', '20', '50']} // Set page size options
+                  />
+                </div>
+                <div className="cancel_ok_buttons">
+                  <CancelBtn />
+                  <OkBtn />
+                </div>
               </div>
-              <div className="cancel_ok_buttons">
-                <CancelBtn />
-                <OkBtn />
-              </div>
-            </div>
-          </>
-        )}
-      >
-        <FilterAPI
-          form={form}
-          selectedOntologies={selectedOntologies}
-          setSelectedOntologies={setSelectedOntologies}
-          selectedBoxes={selectedBoxes}
-          setSelectedBoxes={setSelectedBoxes}
-          displaySelectedOntologies={displaySelectedOntologies}
-          setDisplaySelectedOntologies={setDisplaySelectedOntologies}
-          ontologyApis={ontologyApis}
-          active={active}
-          setActive={setActive}
-          searchText={searchText}
-          setSearchText={setSearchText}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          paginatedOntologies={paginatedOntologies}
-          apiPreferences={apiPreferences}
-          table={table}
-        />
-      </Modal>
+            </>
+          )}
+        >
+          <FilterAPI
+            form={form}
+            selectedOntologies={selectedOntologies}
+            setSelectedOntologies={setSelectedOntologies}
+            selectedBoxes={selectedBoxes}
+            setSelectedBoxes={setSelectedBoxes}
+            displaySelectedOntologies={displaySelectedOntologies}
+            setDisplaySelectedOntologies={setDisplaySelectedOntologies}
+            ontologyApis={ontologyApis}
+            active={active}
+            setActive={setActive}
+            searchText={searchText}
+            setSearchText={setSearchText}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            paginatedOntologies={paginatedOntologies}
+            apiPreferences={apiPreferences}
+            table={table}
+          />
+        </Modal>
+      )}
     </>
   );
 };

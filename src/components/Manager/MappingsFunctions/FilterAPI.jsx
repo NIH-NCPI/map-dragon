@@ -91,7 +91,7 @@ export const FilterAPI = ({
   ) : (
     <div>
       <div className="api_list">
-        <Form form={form}>
+        <Form form={form} preserve={false}>
           <div>
             <div className="api_label">APIs</div>
 
