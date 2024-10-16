@@ -27,11 +27,11 @@ export const NavBar = () => {
             </NavLink>
             {/* Placeholder elements below. No functionality at this time.*/}
             <NavLink to="/help">
-              <li className="nav_link">Help</li>
+              <li className="nav_link">About</li>
             </NavLink>
 
             <NavLink to="/about">
-              <li className="nav_link">About</li>
+              <li className="nav_link">Ontologies</li>
             </NavLink>
           </div>
           <div className="login">

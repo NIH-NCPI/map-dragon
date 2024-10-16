@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
+import { ModalSpinner } from '../Spinner';
 
 export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
   const [form] = Form.useForm();
@@ -64,7 +65,7 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
   const handleSubmit = values => {
-    // setLoading(true);
+    setLoading(true);
     const apiPreference = {
       api_preference: {},
     };
@@ -259,27 +260,31 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
             </>
           )}
         >
-          <FilterAPI
-            form={form}
-            selectedOntologies={selectedOntologies}
-            setSelectedOntologies={setSelectedOntologies}
-            selectedBoxes={selectedBoxes}
-            setSelectedBoxes={setSelectedBoxes}
-            displaySelectedOntologies={displaySelectedOntologies}
-            setDisplaySelectedOntologies={setDisplaySelectedOntologies}
-            ontologyApis={ontologyApis}
-            active={active}
-            setActive={setActive}
-            searchText={searchText}
-            setSearchText={setSearchText}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            pageSize={pageSize}
-            setPageSize={setPageSize}
-            paginatedOntologies={paginatedOntologies}
-            apiPreferences={apiPreferences}
-            table={table}
-          />
+          {loading ? (
+            <ModalSpinner />
+          ) : (
+            <FilterAPI
+              form={form}
+              selectedOntologies={selectedOntologies}
+              setSelectedOntologies={setSelectedOntologies}
+              selectedBoxes={selectedBoxes}
+              setSelectedBoxes={setSelectedBoxes}
+              displaySelectedOntologies={displaySelectedOntologies}
+              setDisplaySelectedOntologies={setDisplaySelectedOntologies}
+              ontologyApis={ontologyApis}
+              active={active}
+              setActive={setActive}
+              searchText={searchText}
+              setSearchText={setSearchText}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              pageSize={pageSize}
+              setPageSize={setPageSize}
+              paginatedOntologies={paginatedOntologies}
+              apiPreferences={apiPreferences}
+              table={table}
+            />
+          )}
         </Modal>
       )}
     </>

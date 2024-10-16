@@ -19,7 +19,7 @@ export const GetMappingsModal = ({
   const { Search } = Input;
 
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
-  const { apiPreferences } = useContext(SearchContext);
+  const { apiPreferences, defaultOntologies } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,6 @@ export const GetMappingsModal = ({
     setSelectedBoxes,
   } = useContext(MappingContext);
   let ref = useRef();
-  const defaultOntologies = 'mondo,hp,maxo,ncit';
 
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
   // if there is a searchProp being passed, it evaluates to true and runs the search function.
@@ -186,7 +185,8 @@ export const GetMappingsModal = ({
         setResults,
         setFilteredResultsCount,
         setResultsCount,
-        setLoading
+        setLoading,
+        results
       );
     } else
       return olsFilterOntologiesSearch(
@@ -201,7 +201,8 @@ export const GetMappingsModal = ({
         setResults,
         setFilteredResultsCount,
         setResultsCount,
-        setLoading
+        setLoading,
+        results
       );
   };
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
@@ -423,6 +424,9 @@ export const GetMappingsModal = ({
                           Displaying {resultsCount}
                           &nbsp;of&nbsp;{totalCount}
                         </Tooltip>
+                        {console.log('total', totalCount)}
+                        {console.log('filtered', filteredResultsCount)}
+                        {console.log('results', filteredResultsCount)}
                         {totalCount - filteredResultsCount !== resultsCount && (
                           <span
                             className="view_more_link"

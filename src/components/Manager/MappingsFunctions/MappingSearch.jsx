@@ -15,7 +15,7 @@ export const MappingSearch = ({
   searchProp,
 }) => {
   const { searchUrl } = useContext(myContext);
-  const { apiPreferences } = useContext(SearchContext);
+  const { apiPreferences, defaultOntologies } = useContext(SearchContext);
 
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
@@ -135,7 +135,8 @@ export const MappingSearch = ({
         setResults,
         setFilteredResultsCount,
         setResultsCount,
-        setLoading
+        setLoading,
+        results
       );
     } else
       return olsFilterOntologiesSearch(
@@ -150,7 +151,8 @@ export const MappingSearch = ({
         setResults,
         setFilteredResultsCount,
         setResultsCount,
-        setLoading
+        setLoading,
+        results
       );
   };
 
