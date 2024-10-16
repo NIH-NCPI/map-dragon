@@ -180,7 +180,8 @@ export const olsFilterOntologiesSearch = (
   setResults,
   setFilteredResultsCount,
   setResultsCount,
-  setLoading
+  setLoading,
+  results
 ) => {
   setLoading(true);
   return fetch(

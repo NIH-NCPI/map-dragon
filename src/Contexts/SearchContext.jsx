@@ -13,6 +13,7 @@ export function SearchContextRoot() {
   const [apiPage, setApiPage] = useState(0);
   const [apiTotalCount, setApiTotalCount] = useState();
   const [apiPreferences, setApiPreferences] = useState({});
+  const defaultOntologies = 'mondo,hp,maxo,ncit';
 
   const context = {
     prefTerminologies,
@@ -33,6 +34,7 @@ export function SearchContextRoot() {
     setApiTotalCount,
     apiPreferences,
     setApiPreferences,
+    defaultOntologies,
   };
 
   return (

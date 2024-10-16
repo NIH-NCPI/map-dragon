@@ -51,6 +51,19 @@ export const TableDetails = () => {
     setDataSource(tableData(table));
   }, [table, mapping]);
 
+  const alphabetizeOntologies = ontologies => {
+    // Sort the keys alphabetically
+    const sortedKeys = Object.keys(ontologies).sort();
+
+    // Rebuild object using the sorted keys
+    const sortedOntologies = {};
+    sortedKeys.forEach(key => {
+      sortedOntologies[key] = ontologies[key];
+    });
+
+    return sortedOntologies;
+  };
+
   // fetches the table and sets 'table' to the response
   useEffect(() => {
     setLoading(true);
