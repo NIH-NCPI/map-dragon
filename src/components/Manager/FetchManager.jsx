@@ -181,7 +181,8 @@ export const olsFilterOntologiesSearch = (
   setFilteredResultsCount,
   setResultsCount,
   setLoading,
-  results
+  results,
+  setFacetCounts
 ) => {
   setLoading(true);
   return fetch(
@@ -221,6 +222,7 @@ export const olsFilterOntologiesSearch = (
       setFilteredResultsCount(res?.filteredResults?.length);
       // resultsCount is set to the length of the filtered, concatenated results for pagination
       setResultsCount(res.results.length);
+      setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
     })
     .then(() => setLoading(false));
 };

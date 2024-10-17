@@ -13,6 +13,7 @@ export function SearchContextRoot() {
   const [apiPage, setApiPage] = useState(0);
   const [apiTotalCount, setApiTotalCount] = useState();
   const [apiPreferences, setApiPreferences] = useState({});
+  const [facetCounts, setFacetCounts] = useState([]);
   const defaultOntologies = 'mondo,hp,maxo,ncit';
 
   const context = {
@@ -35,6 +36,8 @@ export function SearchContextRoot() {
     apiPreferences,
     setApiPreferences,
     defaultOntologies,
+    facetCounts,
+    setFacetCounts,
   };
 
   return (

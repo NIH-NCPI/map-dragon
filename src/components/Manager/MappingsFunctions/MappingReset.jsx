@@ -14,7 +14,8 @@ export const MappingReset = ({
   onClose,
 }) => {
   const { searchUrl } = useContext(myContext);
-  const { apiPreferences, defaultOntologies } = useContext(SearchContext);
+  const { apiPreferences, defaultOntologies, facetCounts, setFacetCounts } =
+    useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
   const [loading, setLoading] = useState(true);
@@ -133,7 +134,8 @@ export const MappingReset = ({
         setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setFacetCounts
       );
     } else
       return olsFilterOntologiesSearch(
@@ -149,7 +151,8 @@ export const MappingReset = ({
         setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setFacetCounts
       );
   };
 
