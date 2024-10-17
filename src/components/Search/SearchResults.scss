@@ -2,13 +2,16 @@
 @import '../Styling/BackgroundImage.scss';
 
 .results_page_container {
+  background: white;
   margin: 0 30vw 0 5vw;
+  padding: 1rem;
 }
 
 .search_button_results {
   @include button;
   margin-left: 20px;
   cursor: pointer;
+
   &.disabled_results {
     cursor: default;
   }
@@ -23,8 +26,11 @@
 }
 
 .search_field_container {
-  padding: 10px 0 20px 0;
-  margin-top: 19vh;
+  position: sticky;
+  top: 1rem;
+  padding: 10px 0 10px 0;
+  padding-top: 10rem;
+  background: white;
 }
 
 .search_results {
@@ -32,10 +38,27 @@
   z-index: 1;
 }
 
+div.search_result:nth-child(2) {
+  padding-top: 2rem;
+}
+
+
+.search_results_header {
+  padding-bottom: 10px;
+  position: sticky;
+  top: 15rem;
+  background: white;
+
+  h2 {
+    margin: 0;
+  }
+}
+
 .search_field_results {
   display: flex;
   flex-direction: row;
   align-items: center;
+
 }
 
 #search_input_results {
