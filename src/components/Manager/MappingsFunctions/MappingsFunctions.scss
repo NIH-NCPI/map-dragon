@@ -16,7 +16,7 @@
   position: fixed;
 }
 .result_form {
-  margin-left: 10vw;
+  margin-left: 11vw;
 }
 
 .modal_search_results_header {
@@ -104,9 +104,6 @@
   gap: 8px;
 }
 
-.view_more_link {
-  display: flex;
-  flex-direction: column;
-  margin-left: 10vw;
-  gap: 10px;
+.view_more_wrapper {
+  margin-left: 11vw;
 }

@@ -6,6 +6,7 @@ import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { olsFilterOntologiesSearch } from '../FetchManager';
+import { OntologyCheckboxes } from './OntologyCheckboxes';
 
 export const GetMappingsModal = ({
   componentString,
@@ -22,7 +23,7 @@ export const GetMappingsModal = ({
   const { apiPreferences, defaultOntologies, setFacetCounts, facetCounts } =
     useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 15;
+  const entriesPerPage = 5000;
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [monarchResults, setMonarchResults] = useState([]);
@@ -365,7 +366,10 @@ export const GetMappingsModal = ({
                     <div className="result_container">
                       <Form form={form} layout="vertical">
                         <div className="all_checkboxes_container">
-                          <div className="ontology_form">poop</div>
+                          <OntologyCheckboxes
+                            facetCounts={facetCounts}
+                            apiPreferences={apiPreferences}
+                          />
                           <div className="result_form">
                             {displaySelectedMappings?.length > 0 && (
                               <Form.Item
@@ -425,7 +429,7 @@ export const GetMappingsModal = ({
                           </div>
                         </div>
                       </Form>
-                      <div className="view_more_link">
+                      <div className="view_more_wrapper">
                         {/* 'View More' pagination displaying the number of results being displayed
                       out of the total number of results. Because of the filter to filter out the duplicates,
                       there is a tooltip informing the user that redundant entries have been removed to explain any

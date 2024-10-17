@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Checkbox, Form } from 'antd';
+import { Checkbox, Form, Tooltip } from 'antd';
 import { ModalSpinner, OntologySpinner } from '../Spinner';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
@@ -123,7 +123,12 @@ export const FilterAPI = ({
       <div className="api_list">
         <Form form={form} preserve={false}>
           <div>
-            <div className="api_label">APIs</div>
+            <Tooltip
+              placement="top"
+              title="Default search through OLS using HPO, MAXO, MONDO, NCIT"
+            >
+              <div className="api_label">APIs</div>
+            </Tooltip>
 
             <Form.Item name={'selected_apis'} valuePropName="value">
               <Checkbox.Group
