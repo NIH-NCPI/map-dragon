@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Checkbox, Form, Input } from 'antd';
+import { Checkbox, Form } from 'antd';
 import { ModalSpinner, OntologySpinner } from '../Spinner';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
@@ -16,19 +16,39 @@ export const FilterAPI = ({
   active,
   setActive,
   searchText,
-  setSearchText,
   currentPage,
   setCurrentPage,
   pageSize,
   setPageSize,
   paginatedOntologies,
+  apiPreferences,
+  table,
 }) => {
-  const { Search } = Input;
-
   const { vocabUrl } = useContext(myContext);
   const [ontology, setOntology] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
+
+  // The selected ontology filters that have already been selected
+  const existingFilters = Object.values(apiPreferences?.self || {}).flat();
+
+  // Flattens the existingFilters into a single array
+  const flattenedFilters = existingFilters
+    .flatMap(item =>
+      Object.keys(item).map(key =>
+        item[key].map(value => ({
+          api: key,
+        }))
+      )
+    )
+    .flat();
+
+  // The initial value for the form. The checkboxes for the filters that have already been selected will be checked by default
+  const initialChecked = flattenedFilters?.map(ef =>
+    JSON.stringify({
+      ontology: ef,
+    })
+  );
 
   // Fetches the active ontologyAPI each time the active API changes
   useEffect(() => {
@@ -54,7 +74,20 @@ export const FilterAPI = ({
           }
         })
         .then(data => {
-          setOntology(data);
+          //Alphabetizes the data
+          const sortedData = data.map(api => {
+            const sortedOntologies = Object.fromEntries(
+              Object.entries(api.ontologies).sort((a, b) =>
+                a[1].ontology_code > b[1].ontology_code ? 1 : -1
+              )
+            );
+
+            return {
+              ...api,
+              ontologies: sortedOntologies,
+            };
+          });
+          setOntology(sortedData);
         })
         .finally(() => setTableLoading(false))
     );
@@ -83,13 +116,12 @@ export const FilterAPI = ({
       </>
     );
   };
-
   return loading ? (
     <ModalSpinner />
   ) : (
     <div>
       <div className="api_list">
-        <Form form={form}>
+        <Form form={form} preserve={false}>
           <div>
             <div className="api_label">APIs</div>
 
@@ -126,6 +158,8 @@ export const FilterAPI = ({
                 pageSize={pageSize}
                 setPageSize={setPageSize}
                 paginatedOntologies={paginatedOntologies}
+                apiPreferences={apiPreferences}
+                table={table}
               />
             )}
           </div>

@@ -1,9 +1,11 @@
 import { Checkbox, Input, message, Modal, Form, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
+import { ellipsisString, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
+import { SearchContext } from '../../../Contexts/SearchContext';
+import { olsFilterOntologiesSearch } from '../FetchManager';
 
 export const GetMappingsModal = ({
   componentString,
@@ -17,10 +19,12 @@ export const GetMappingsModal = ({
   const { Search } = Input;
 
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
+  const { apiPreferences, defaultOntologies } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 15;
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
+  const [monarchResults, setMonarchResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
   const [resultsCount, setResultsCount] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
@@ -150,52 +154,57 @@ export const GetMappingsModal = ({
     if (!!!query) {
       return undefined;
     }
-    setLoading(true);
     /* The OLS API returns 10 results by default unless specified otherwise. The fetch call includes a specified
     number of results to return per page (entriesPerPage) and a calculation of the first index to start the results
     on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
-    return fetch(
-      `${searchUrl}q=${query}&ontology=mondo,hp,maxo,ncit&rows=${entriesPerPage}&start=${pageStart}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-      .then(res => res.json())
-      .then(data => {
-        // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
 
-        let res = ontologyReducer(data?.response?.docs);
-        // if the page > 0 (i.e. if this is not the first batch of results), the new results
-        // are concatenated to the old
-        if (selectedBoxes) {
-          res.results = res.results.filter(
-            d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
-          );
-        }
-
-        if (page > 0 && results.length > 0) {
-          res.results = results.concat(res.results);
-
-          // Apply filtering to remove results with obo_id in selectedBoxes
+    if (
+      //If there are api preferences and one of them is OLS, it gets the preferred ontologies
+      apiPreferences?.self?.api_preference &&
+      'ols' in apiPreferences?.self?.api_preference
+    ) {
+      const apiPreferenceOntologies = () => {
+        if (apiPreferences?.self?.api_preference?.ols) {
+          return apiPreferences.self.api_preference.ols.join(',');
         } else {
-          // Set the total number of search results for pagination
-          setTotalCount(data.response.numFound);
+          // else if there are no preferred ontologies, it uses the default ontologies
+          return defaultOntologies;
         }
-
-        //the results are set to res (the filtered, concatenated results)
-
-        setResults(res.results);
-        setFilteredResultsCount(res?.filteredResults?.length);
-        // resultsCount is set to the length of the filtered, concatenated results for pagination
-        setResultsCount(res.results.length);
-      })
-      .then(() => setLoading(false));
+      };
+      //fetch call to search OLS with either preferred or default ontologies
+      return olsFilterOntologiesSearch(
+        searchUrl,
+        query,
+        apiPreferenceOntologies(),
+        page,
+        entriesPerPage,
+        pageStart,
+        selectedBoxes,
+        setTotalCount,
+        setResults,
+        setFilteredResultsCount,
+        setResultsCount,
+        setLoading,
+        results
+      );
+    } else
+      return olsFilterOntologiesSearch(
+        searchUrl,
+        query,
+        defaultOntologies,
+        page,
+        entriesPerPage,
+        pageStart,
+        selectedBoxes,
+        setTotalCount,
+        setResults,
+        setFilteredResultsCount,
+        setResultsCount,
+        setLoading,
+        results
+      );
   };
-
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
   const handleViewMore = e => {
     e.preventDefault();

@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
+import { ModalSpinner } from '../Spinner';
 
 export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
   const [form] = Form.useForm();
@@ -63,15 +64,15 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
-
   const handleSubmit = values => {
-    // setLoading(true);
+    setLoading(true);
     const apiPreference = {
       api_preference: {},
     };
 
     if (values?.ontologies?.length > 0) {
-      values?.ontologies.forEach(({ ontology_code, api }) => {
+      // If there are ontologies, populate apiPreference with them
+      values.ontologies.forEach(({ ontology_code, api }) => {
         if (!apiPreference.api_preference[api]) {
           apiPreference.api_preference[api] = [];
         }
@@ -80,28 +81,45 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
         }
       });
     } else {
-      values?.selected_apis.forEach(item => {
+      // If no ontologies are provided, initialize api preferences from selected_apis
+      values?.selected_apis?.forEach(item => {
         const apiObj = JSON.parse(item);
         const apiName = apiObj.api_preference;
         apiPreference.api_preference[apiName] = []; // Create an empty array for each api_preference
       });
     }
 
-    values?.selected_apis?.forEach(item => {
-      const apiObj = JSON.parse(item);
-      const apiName = apiObj.api_preference;
-      if (!apiPreference.api_preference[apiName]) {
-        apiPreference.api_preference[apiName] = [];
-      }
-    });
+    // Now handle the existing_filters
+    if (values?.existing_filters?.length > 0) {
+      values.existing_filters.forEach(item => {
+        const apiObj = JSON.parse(item); // Parse the JSON string
+        const apiName = apiObj.ontology.api; // Extract the API
+        const ontologyCode = apiObj.ontology.ontology; // Extract the ontology code
+
+        // Ensure the apiName exists in apiPreference.api_preference
+        if (!apiPreference.api_preference[apiName]) {
+          apiPreference.api_preference[apiName] = []; // Initialize if not already present
+        }
+
+        // Add the ontologyCode to the corresponding api, if it's not already included
+        if (!apiPreference.api_preference[apiName].includes(ontologyCode)) {
+          apiPreference.api_preference[apiName].push(ontologyCode);
+        }
+      });
+    }
 
     const apiPreferenceDTO = {
       api_preference: apiPreference?.api_preference,
       editor: user.email,
     };
 
+    const method =
+      Object.keys(apiPreferences?.self?.api_preference || {}).length === 0
+        ? 'POST'
+        : 'PUT';
+
     fetch(`${vocabUrl}/${table?.terminology?.reference}/filter`, {
-      method: 'POST',
+      method: method,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -197,70 +215,78 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
       >
         API Filters {apiPrefObject ? `(${apiPrefLength})` : ''}
       </Button>
-      <Modal
-        open={addFilter}
-        width={'70%'}
-        styles={{
-          body: {
-            minHeight: '60vh',
-            maxHeight: '60vh',
-          },
-        }}
-        onOk={() => {
-          form.validateFields().then(values => {
-            handleSubmit(values);
+      {addFilter && (
+        <Modal
+          open={addFilter}
+          width={'70%'}
+          styles={{
+            body: {
+              minHeight: '60vh',
+              maxHeight: '60vh',
+            },
+          }}
+          onOk={() => {
+            form.validateFields().then(values => {
+              handleSubmit(values);
+              onClose();
+            });
+          }}
+          onCancel={() => {
+            form.resetFields();
+            setAddFilter(false);
             onClose();
-          });
-        }}
-        onCancel={() => {
-          form.resetFields();
-          setAddFilter(false);
-          onClose();
-        }}
-        maskClosable={false}
-        closeIcon={false}
-        footer={(_, { OkBtn, CancelBtn }) => (
-          <>
-            <div className="modal_footer">
+          }}
+          maskClosable={false}
+          closeIcon={false}
+          footer={(_, { OkBtn, CancelBtn }) => (
+            <>
               <div className="modal_footer">
-                <Pagination
-                  current={currentPage}
-                  pageSize={pageSize}
-                  total={filteredOntologiesArray?.length}
-                  onChange={handlePageChange}
-                  showSizeChanger
-                  onShowSizeChange={handlePageSizeChange}
-                  pageSizeOptions={['10', '20', '50']} // Set page size options
-                />
+                <div className="modal_footer">
+                  <Pagination
+                    current={currentPage}
+                    pageSize={pageSize}
+                    total={filteredOntologiesArray?.length}
+                    onChange={handlePageChange}
+                    showSizeChanger
+                    onShowSizeChange={handlePageSizeChange}
+                    pageSizeOptions={['10', '20', '50']} // Set page size options
+                  />
+                </div>
+                <div className="cancel_ok_buttons">
+                  <CancelBtn />
+                  <OkBtn />
+                </div>
               </div>
-              <div className="cancel_ok_buttons">
-                <CancelBtn />
-                <OkBtn />
-              </div>
-            </div>
-          </>
-        )}
-      >
-        <FilterAPI
-          form={form}
-          selectedOntologies={selectedOntologies}
-          setSelectedOntologies={setSelectedOntologies}
-          selectedBoxes={selectedBoxes}
-          setSelectedBoxes={setSelectedBoxes}
-          displaySelectedOntologies={displaySelectedOntologies}
-          setDisplaySelectedOntologies={setDisplaySelectedOntologies}
-          ontologyApis={ontologyApis}
-          active={active}
-          setActive={setActive}
-          searchText={searchText}
-          setSearchText={setSearchText}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          pageSize={pageSize}
-          setPageSize={setPageSize}
-          paginatedOntologies={paginatedOntologies}
-        />
-      </Modal>
+            </>
+          )}
+        >
+          {loading ? (
+            <ModalSpinner />
+          ) : (
+            <FilterAPI
+              form={form}
+              selectedOntologies={selectedOntologies}
+              setSelectedOntologies={setSelectedOntologies}
+              selectedBoxes={selectedBoxes}
+              setSelectedBoxes={setSelectedBoxes}
+              displaySelectedOntologies={displaySelectedOntologies}
+              setDisplaySelectedOntologies={setDisplaySelectedOntologies}
+              ontologyApis={ontologyApis}
+              active={active}
+              setActive={setActive}
+              searchText={searchText}
+              setSearchText={setSearchText}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              pageSize={pageSize}
+              setPageSize={setPageSize}
+              paginatedOntologies={paginatedOntologies}
+              apiPreferences={apiPreferences}
+              table={table}
+            />
+          )}
+        </Modal>
+      )}
     </>
   );
 };
