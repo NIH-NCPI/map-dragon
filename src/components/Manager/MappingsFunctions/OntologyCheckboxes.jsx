@@ -1,8 +1,62 @@
-import { Checkbox, Form } from 'antd';
+import { Checkbox, Form, notification } from 'antd';
 import { ontologyCounts } from '../Utilitiy';
+import { useContext, useEffect, useState } from 'react';
+import { myContext } from '../../../App';
+import { SearchContext } from '../../../Contexts/SearchContext';
+import { olsFilterOntologiesSearch } from '../FetchManager';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
-export const OntologyCheckboxes = ({ facetCounts, apiPreferences }) => {
+export const OntologyCheckboxes = ({ apiPreferences }) => {
+  const { vocabUrl, searchUrl } = useContext(myContext);
+  const { apiPreferencesCode, setApiPreferencesCode, facetCounts } =
+    useContext(SearchContext);
+  const [checkedOntologies, setCheckedOntologies] = useState([]);
+
+  const existingOntologies = apiPreferencesCode
+    ? apiPreferencesCode
+    : Object.values(apiPreferences?.self?.api_preference).flat(); // Flatten arrays into a single array
+  useEffect(() => {
+    setCheckedOntologies(existingOntologies); // Set the initial checked keys
+  }, [apiPreferences]);
+  ``;
+
+  const onCheckboxChange = e => {
+    const { value, checked } = e.target;
+
+    setCheckedOntologies(existingOntologies => {
+      const newCheckedOntologies = checked
+        ? [...existingOntologies, value] // Add key if checked
+        : existingOntologies.filter(key => key !== value); // Remove key if unchecked
+
+      // Update apiPreferencesCode
+      setApiPreferencesCode(existingCode => {
+        if (checked) {
+          // Add value if checked, and avoid duplications
+          return existingCode ? `${existingCode},${value}` : value;
+        } else {
+          // Remove the value if unchecked
+          const updatedCode = existingCode
+            .split(',')
+            .filter(code => code !== value)
+            .join(',');
+
+          return updatedCode;
+        }
+      });
+
+      return newCheckedOntologies;
+    });
+  };
   const formattedFacetCounts = ontologyCounts(facetCounts);
+
+  console.log(apiPreferencesCode);
+
+  // Sort the `formattedFacetCounts` before rendering, not inside the `map()`
+  const sortedFacetCounts = formattedFacetCounts?.sort(
+    (a, b) =>
+      (existingOntologies.includes(Object.keys(a)[0]) ? -1 : 1) -
+      (existingOntologies.includes(Object.keys(b)[0]) ? -1 : 1)
+  );
 
   return (
     <div className="ontology_form">
@@ -12,12 +66,22 @@ export const OntologyCheckboxes = ({ facetCounts, apiPreferences }) => {
         rules={[{ required: false }]}
       >
         <div className="modal_display_results">
-          {formattedFacetCounts?.map((fc, i) => {
+          {sortedFacetCounts?.map((fc, i) => {
             const key = Object.keys(fc)[0];
             const value = fc[key];
+            formattedFacetCounts.sort(
+              (a, b) =>
+                (existingOntologies.includes(Object.keys(a)[0]) ? -1 : 1) -
+                (existingOntologies.includes(Object.keys(b)[0]) ? -1 : 1)
+            );
 
             return (
-              <Checkbox key={i} value={key}>
+              <Checkbox
+                key={i}
+                value={key}
+                checked={checkedOntologies.includes(key)} // Check if key is in checkedOntologies array
+                onChange={onCheckboxChange} // Handle the change
+              >
                 {`${key.toUpperCase()} ${value !== '0' ? `(${value})` : ''}`}
               </Checkbox>
             );

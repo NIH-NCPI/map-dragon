@@ -13,6 +13,8 @@ export function SearchContextRoot() {
   const [apiPage, setApiPage] = useState(0);
   const [apiTotalCount, setApiTotalCount] = useState();
   const [apiPreferences, setApiPreferences] = useState({});
+  const [apiPreferencesCode, setApiPreferencesCode] = useState({});
+  const [unformattedPref, setUnformattedPref] = useState([]);
   const [facetCounts, setFacetCounts] = useState([]);
   const defaultOntologies = 'mondo,hp,maxo,ncit';
 
@@ -35,9 +37,13 @@ export function SearchContextRoot() {
     setApiTotalCount,
     apiPreferences,
     setApiPreferences,
+    apiPreferencesCode,
+    setApiPreferencesCode,
     defaultOntologies,
     facetCounts,
     setFacetCounts,
+    unformattedPref,
+    setUnformattedPref,
   };
 
   return (

@@ -226,3 +226,61 @@ export const olsFilterOntologiesSearch = (
     })
     .then(() => setLoading(false));
 };
+
+export const getFiltersByCode = (
+  vocabUrl,
+  component,
+  mappingProp,
+  setApiPreferencesCode,
+  notification,
+  apiPreferencesCode,
+  setUnformattedPref
+) => {
+  return fetch(
+    `${vocabUrl}/${component?.terminology?.reference}/filter/${mappingProp}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        throw new Error('An unknown error occurred.');
+      }
+    })
+    .then(data => {
+      setUnformattedPref(data);
+
+      // Dynamically derive the mappingProp based on a condition or the structure of the data
+      const codeToSearch = Object.keys(data)[0]; // Example: get the first key in the object
+      if (data?.[codeToSearch]?.api_preference?.ols) {
+        const joinedOntologies =
+          data[codeToSearch].api_preference.ols.join(',');
+        setApiPreferencesCode(joinedOntologies); // Set state to the comma-separated string
+      } else {
+        setApiPreferencesCode(''); // Fallback if no ols found
+      }
+    })
+    .catch(error => {
+      if (error) {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred loading the ontology preferences.',
+        });
+      }
+      return error;
+    });
+};
+
+//   const preferredCodeOntologies = () => {
+//     if (apiPreferences?.mappingProp?.api_preference?.ols) {
+//       return apiPreferences.self.api_preference.ols.join(',');
+//     } else {
+//       // else if there are no preferred ontologies, it uses the default ontologies
+//       return defaultOntologies;
+//     }
+//   };

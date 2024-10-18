@@ -1,11 +1,19 @@
-import { Checkbox, Input, message, Modal, Form, Tooltip } from 'antd';
+import {
+  Checkbox,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Tooltip,
+} from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, ontologyCounts, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { olsFilterOntologiesSearch } from '../FetchManager';
+import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 
 export const GetMappingsModal = ({
@@ -20,10 +28,18 @@ export const GetMappingsModal = ({
   const { Search } = Input;
 
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
-  const { apiPreferences, defaultOntologies, setFacetCounts, facetCounts } =
-    useContext(SearchContext);
+  const {
+    apiPreferences,
+    defaultOntologies,
+    setFacetCounts,
+    facetCounts,
+    setApiPreferencesCode,
+    apiPreferencesCode,
+    setUnformattedPref,
+    unformattedPref,
+  } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 5000;
+  const entriesPerPage = 2500;
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [monarchResults, setMonarchResults] = useState([]);
@@ -33,7 +49,7 @@ export const GetMappingsModal = ({
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
-
+  console.log(unformattedPref);
   const {
     setSelectedMappings,
     displaySelectedMappings,
@@ -52,9 +68,23 @@ export const GetMappingsModal = ({
     setCurrentSearchProp(searchProp);
     setPage(0);
     if (!!searchProp) {
-      fetchResults(0, searchProp);
+      getFiltersByCode(
+        vocabUrl,
+        component,
+        mappingProp,
+        setApiPreferencesCode,
+        notification,
+        apiPreferencesCode,
+        setUnformattedPref
+      );
     }
   }, [searchProp]);
+
+  useEffect(() => {
+    if (apiPreferencesCode) {
+      fetchResults(0, searchProp);
+    }
+  }, [apiPreferencesCode, searchProp]);
 
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
@@ -110,6 +140,7 @@ export const GetMappingsModal = ({
     setCurrentSearchProp(query);
     setPage(0);
   };
+
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
@@ -178,7 +209,7 @@ export const GetMappingsModal = ({
       return olsFilterOntologiesSearch(
         searchUrl,
         query,
-        apiPreferenceOntologies(),
+        apiPreferencesCode ? apiPreferencesCode : apiPreferenceOntologies(),
         page,
         entriesPerPage,
         pageStart,
@@ -195,7 +226,9 @@ export const GetMappingsModal = ({
       return olsFilterOntologiesSearch(
         searchUrl,
         query,
-        defaultOntologies,
+        apiPreferencesCode && Object.keys(apiPreferencesCode).length > 0
+          ? apiPreferencesCode
+          : defaultOntologies,
         page,
         entriesPerPage,
         pageStart,
@@ -367,6 +400,21 @@ export const GetMappingsModal = ({
                           <OntologyCheckboxes
                             facetCounts={facetCounts}
                             apiPreferences={apiPreferences}
+                            mappingProp={mappingProp}
+                            component={component}
+                            setCurrentSearchProp={setCurrentSearchProp}
+                            setPage={setPage}
+                            page={page}
+                            entriesPerPage={entriesPerPage}
+                            selectedBoxes={selectedBoxes}
+                            setTotalCount={setTotalCount}
+                            setResults={setResults}
+                            setFilteredResultsCount={setFilteredResultsCount}
+                            setResultsCount={setResultsCount}
+                            setLoading={setLoading}
+                            results={results}
+                            setFacetCounts={setFacetCounts}
+                            setApiPreferencesCode={setApiPreferencesCode}
                           />
                           <div className="result_form">
                             {displaySelectedMappings?.length > 0 && (
