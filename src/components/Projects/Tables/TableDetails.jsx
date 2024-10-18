@@ -365,6 +365,7 @@ There is then a tooltip that displays the variables on hover.*/
         setMapping={setMapping}
         tableId={tableId}
         mappingProp={getMappings?.code}
+        mappingDesc={getMappings.description ? getMappings.description : 'No Description'}
       />
       <ClearMappings propId={tableId} component={'Table'} />
     </>

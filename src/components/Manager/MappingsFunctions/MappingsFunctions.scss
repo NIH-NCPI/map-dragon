@@ -11,15 +11,28 @@
   position: sticky;
   margin: 0 0 15px 0;
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
-  align-items: center;
-  gap: 20px;
+  justify-content: flex-start;
+  align-items: end;
   z-index: 10;
+  flex: 1;
+  border-bottom: solid 1px #eeee;
+  h4 {
+    margin:0;
+    padding-right:1rem;
+  }
+  .mappings_search_bar {
+    width: 60%;
+  }
+  .search-desc {
+    flex: 0 0 100%;
+    margin-bottom:1rem;
+  }
 }
 
-.mappings_search_bar {
-  width: 50%;
-}
+
+
 
 .inactive_term,
 .active_term {
