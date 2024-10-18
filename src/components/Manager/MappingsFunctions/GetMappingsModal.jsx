@@ -14,6 +14,7 @@ export const GetMappingsModal = ({
   searchProp,
   component,
   mappingProp,
+  mappingDesc
 }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
@@ -353,6 +354,7 @@ export const GetMappingsModal = ({
                         onChange={handleChange}
                       />
                     </div>
+                  <span className="search-desc">{mappingDesc}</span>
                   </div>
                   {/* ant.design form displaying the checkboxes with the search results.  */}
                   {results?.length > 0 ? (
