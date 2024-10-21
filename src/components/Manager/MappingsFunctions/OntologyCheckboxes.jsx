@@ -1,13 +1,9 @@
-import { Checkbox, Form, notification } from 'antd';
+import { Checkbox, Form } from 'antd';
 import { ontologyCounts } from '../Utilitiy';
 import { useContext, useEffect, useState } from 'react';
-import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { olsFilterOntologiesSearch } from '../FetchManager';
-import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const OntologyCheckboxes = ({ apiPreferences }) => {
-  const { vocabUrl, searchUrl } = useContext(myContext);
   const { apiPreferencesCode, setApiPreferencesCode, facetCounts } =
     useContext(SearchContext);
   const [checkedOntologies, setCheckedOntologies] = useState([]);
@@ -15,13 +11,13 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
   const existingOntologies = apiPreferencesCode
     ? apiPreferencesCode
     : Object.values(apiPreferences?.self?.api_preference).flat(); // Flatten arrays into a single array
+
   useEffect(() => {
     setCheckedOntologies(existingOntologies); // Set the initial checked keys
   }, [apiPreferences]);
   ``;
 
-  console.log(existingOntologies);
-
+  console.log('existing', existingOntologies);
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
 

@@ -275,12 +275,3 @@ export const getFiltersByCode = (
       return error;
     });
 };
-
-//   const preferredCodeOntologies = () => {
-//     if (apiPreferences?.mappingProp?.api_preference?.ols) {
-//       return apiPreferences.self.api_preference.ols.join(',');
-//     } else {
-//       // else if there are no preferred ontologies, it uses the default ontologies
-//       return defaultOntologies;
-//     }
-//   };

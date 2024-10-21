@@ -13,7 +13,7 @@ export function SearchContextRoot() {
   const [apiPage, setApiPage] = useState(0);
   const [apiTotalCount, setApiTotalCount] = useState();
   const [apiPreferences, setApiPreferences] = useState({});
-  const [apiPreferencesCode, setApiPreferencesCode] = useState({});
+  const [apiPreferencesCode, setApiPreferencesCode] = useState('');
   const [unformattedPref, setUnformattedPref] = useState([]);
   const [facetCounts, setFacetCounts] = useState([]);
   const defaultOntologies = 'mondo,hp,maxo,ncit';
