@@ -20,13 +20,18 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
   }, [apiPreferences]);
   ``;
 
+  console.log(existingOntologies);
+
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
 
     setCheckedOntologies(existingOntologies => {
-      const newCheckedOntologies = checked
-        ? [...existingOntologies, value] // Add key if checked
-        : existingOntologies.filter(key => key !== value); // Remove key if unchecked
+      // Ensure existingOntologies is always an array
+      const newCheckedOntologies = Array.isArray(existingOntologies)
+        ? checked
+          ? [...existingOntologies, value] // Add value if checked
+          : existingOntologies.filter(key => key !== value) // Remove value if unchecked
+        : []; // Fallback to an empty array if it's not an array
 
       // Update apiPreferencesCode
       setApiPreferencesCode(existingCode => {
@@ -34,22 +39,22 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
           // Add value if checked, and avoid duplications
           return existingCode ? `${existingCode},${value}` : value;
         } else {
-          // Remove the value if unchecked
+          // Remove value if unchecked, handling cases where the string might be empty
           const updatedCode = existingCode
             .split(',')
-            .filter(code => code !== value)
+            .filter(code => code !== value) // Remove the unchecked value
             .join(',');
 
-          return updatedCode;
+          // Ensure there's no trailing comma
+          return updatedCode.replace(/,$/, '');
         }
       });
 
       return newCheckedOntologies;
     });
   };
-  const formattedFacetCounts = ontologyCounts(facetCounts);
 
-  console.log(apiPreferencesCode);
+  const formattedFacetCounts = ontologyCounts(facetCounts);
 
   // Sort the `formattedFacetCounts` before rendering, not inside the `map()`
   const sortedFacetCounts = formattedFacetCounts?.sort(

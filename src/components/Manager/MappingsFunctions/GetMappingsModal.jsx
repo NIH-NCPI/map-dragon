@@ -49,7 +49,6 @@ export const GetMappingsModal = ({
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
-  console.log(unformattedPref);
   const {
     setSelectedMappings,
     displaySelectedMappings,
