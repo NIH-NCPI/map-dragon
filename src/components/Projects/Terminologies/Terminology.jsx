@@ -259,6 +259,7 @@ There is then a tooltip that displays the codes on hover.*/
             mapping={mapping}
             terminologyId={terminologyId}
             setMapping={setMapping}
+            mappingDesc={editMappings?.description ? editMappings?.description : 'No Description'}
           />
           <GetMappingsModal
             componentString={'Terminology'}
@@ -271,6 +272,7 @@ There is then a tooltip that displays the codes on hover.*/
             setMapping={setMapping}
             terminologyId={terminologyId}
             mappingProp={getMappings?.code}
+            mappingDesc={getMappings?.description ? getMappings?.description : 'No Description'}
           />
 
           {/* Displays the edit form */}

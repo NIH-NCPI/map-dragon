@@ -21,6 +21,7 @@ export const EditMappingsModal = ({
   setEditMappings,
   terminologyId,
   setMapping,
+  mappingDesc
 }) => {
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
@@ -320,6 +321,7 @@ export const EditMappingsModal = ({
                 ? editMappings.display
                 : editMappings?.code}
             </h3>
+          <span className="search-desc">{mappingDesc}</span>
           </div>
           <Form form={form} layout="vertical" preserve={false}>
             <Form.Item
@@ -344,6 +346,7 @@ export const EditMappingsModal = ({
           searchProp={
             editMappings?.display ? editMappings.display : editMappings?.code
           }
+          mappingDesc={editMappings?.description}
         />
       ) : (
         reset && (
@@ -356,6 +359,7 @@ export const EditMappingsModal = ({
             form={form}
             reset={reset}
             onClose={form.resetFields}
+            mappingDesc={editMappings?.description}
           />
         )
       )}

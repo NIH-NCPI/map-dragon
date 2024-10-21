@@ -12,7 +12,7 @@ export const MappingReset = ({
   mappingDesc,
   setEditMappings,
   form,
-  onClose,
+  onClose
 }) => {
   const { searchUrl } = useContext(myContext);
   const { apiPreferences, defaultOntologies } = useContext(SearchContext);
