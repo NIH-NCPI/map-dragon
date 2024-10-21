@@ -40,6 +40,11 @@ export const TableDetails = () => {
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
 
+  const [pageSize, setPageSize] = useState(
+    parseInt(localStorage.getItem('pageSize'), 10) || 10);
+  const handleTableChange = (current, size) => {
+    setPageSize(size);
+  };
   const navigate = useNavigate();
 
   const handleSuccess = () => {
@@ -49,7 +54,8 @@ export const TableDetails = () => {
 
   useEffect(() => {
     setDataSource(tableData(table));
-  }, [table, mapping]);
+    localStorage.setItem('pageSize', pageSize);
+  }, [table, mapping, pageSize]);
 
   const alphabetizeOntologies = ontologies => {
     // Sort the keys alphabetically
@@ -308,6 +314,12 @@ There is then a tooltip that displays the variables on hover.*/
                       rowExpandable: record =>
                         record.data_type === 'INTEGER' ||
                         record.data_type === 'QUANTITY',
+                    }}
+                    pagination={{
+                      showSizeChanger: true,
+                      pageSizeOptions: ['10', '20', '30'],
+                      pageSize: pageSize, // Use the stored pageSize
+                      onChange: handleTableChange, // Capture pagination changes
                     }}
                   />
                 </Form>
