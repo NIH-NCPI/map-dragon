@@ -33,6 +33,16 @@ export const Terminology = () => {
     setMapping,
   } = useContext(MappingContext);
 
+  const [pageSize, setPageSize] = useState(
+    parseInt(localStorage.getItem('pageSize'), 10) || 10);
+  const handleTableChange = (current, size) => {
+    setPageSize(size);
+  };
+  useEffect(() => {
+    localStorage.setItem('pageSize', pageSize);
+  }, [pageSize]);
+
+
   const [loading, setLoading] = useState(true);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
@@ -248,7 +258,15 @@ There is then a tooltip that displays the codes on hover.*/
               <Spinner />
             ) : (
               <Form form={form}>
-                <Table columns={columns} dataSource={dataSource} />
+                <Table 
+                columns={columns} 
+                dataSource={dataSource}
+                pagination={{ 
+                  showSizeChanger: true,
+                  pageSizeOptions: ['10', '20', '30'],
+                  pageSize: pageSize, // Use the stored pageSize
+                  onChange: handleTableChange, // Capture pagination changes
+                }}  />
               </Form>
             )}
           </div>
