@@ -13,6 +13,7 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
   const [checkedOntologies, setCheckedOntologies] = useState([]);
 
   const defaultOntologies = ['mondo', 'hp', 'maxo', 'ncit'];
+
   const existingOntologies = apiPreferencesCode
     ? apiPreferencesCode
     : apiPreferences &&
@@ -35,18 +36,7 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
           : existingOntologies.filter(key => key !== value)
         : [];
 
-      setApiPreferencesCode(existingCode => {
-        if (checked) {
-          return existingCode ? `${existingCode},${value}` : value;
-        } else {
-          const updatedCode = existingCode
-            .split(',')
-            .filter(code => code !== value)
-            .join(',');
-
-          return updatedCode;
-        }
-      });
+      setApiPreferencesCode(newCheckedOntologies);
 
       return newCheckedOntologies;
     });
