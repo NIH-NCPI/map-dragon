@@ -178,22 +178,25 @@ The function maps through the mapping array. For each variable, if the mapping v
 variable in the table, AND the mappings array length for the variable is > 0, the mappings array is mapped through
 and returns the length of the mapping array (i.e. returns the number of variables mapped to the table variable). 
 There is then a tooltip that displays the variables on hover.*/
-const noMapping = "noMapping"
-const matchCode = variable => {
-  if (!mapping?.length) { 
-    return noMapping; // Return "noMapping" if there are no mappings
+const noMapping = variable => {
+return <button onClick={() => setGetMappings({ name: variable.name, code: variable.code })}>
+    noMapping
+  </button>
   }
 
-  const mappedTerms = mapping.map((item, index) => { 
-    if (item?.code === variable?.code && item?.mappings?.length) {
-      return item.mappings.map(code => <div key={index}>{code.display}</div>);
-    } 
-    return null; // Return null if no match is found for this variable
-  });
-
-  // Check if any mappings were found for this variable
-  return mappedTerms.some(term => term !== null) ? mappedTerms : noMapping; 
-};
+  const matchCode = variable => {
+    if (!mapping?.length) {
+      return noMapping(variable);
+    }
+  
+    const variableMappings = mapping.find(item => item?.code === variable?.code); 
+  
+    if (variableMappings && variableMappings.mappings?.length) {
+      return variableMappings.mappings.map(code => <div key={code.id}>{code.display}</div>);
+    } else {
+      return noMapping(variable);
+    }
+  };
 
 
 
