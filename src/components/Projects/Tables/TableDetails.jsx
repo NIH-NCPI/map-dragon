@@ -48,6 +48,7 @@ export const TableDetails = () => {
   const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
+
     setDataSource(tableData(table));
   }, [table, mapping]);
 
@@ -177,22 +178,24 @@ The function maps through the mapping array. For each variable, if the mapping v
 variable in the table, AND the mappings array length for the variable is > 0, the mappings array is mapped through
 and returns the length of the mapping array (i.e. returns the number of variables mapped to the table variable). 
 There is then a tooltip that displays the variables on hover.*/
-  const matchCode = variable =>
-    mapping?.length > 0 &&
-    mapping?.map(
-      (item, index) =>
-        item?.code === variable?.code &&
-        item?.mappings?.length > 0 && (
-          <Tooltip
-            title={item.mappings.map(code => {
-              return <div key={index}>{code.code}</div>;
-            })}
-            key={index}
-          >
-            {item?.mappings?.length}
-          </Tooltip>
-        )
-    );
+const noMapping = "noMapping"
+const matchCode = variable => {
+  if (!mapping?.length) { 
+    return noMapping; // Return "noMapping" if there are no mappings
+  }
+
+  const mappedTerms = mapping.map((item, index) => { 
+    if (item?.code === variable?.code && item?.mappings?.length) {
+      return item.mappings.map(code => <div key={index}>{code.display}</div>);
+    } 
+    return null; // Return null if no match is found for this variable
+  });
+
+  // Check if any mappings were found for this variable
+  return mappedTerms.some(term => term !== null) ? mappedTerms : noMapping; 
+};
+
+
 
   // data for the table columns. Each table has an array of variables. Each variable has a name, description, and data type.
   // The integer and quantity data types include additional details.
@@ -365,7 +368,6 @@ There is then a tooltip that displays the variables on hover.*/
         setMapping={setMapping}
         tableId={tableId}
         mappingProp={getMappings?.code}
-        mappingDesc={getMappings?.description ? getMappings?.description : 'No Description'}
       />
       <ClearMappings propId={tableId} component={'Table'} />
     </>
