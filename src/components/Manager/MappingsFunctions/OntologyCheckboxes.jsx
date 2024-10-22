@@ -8,16 +8,23 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
     useContext(SearchContext);
   const [checkedOntologies, setCheckedOntologies] = useState([]);
 
+  const defaultOntologies = ['mondo', 'hp', 'maxo', 'ncit'];
   const existingOntologies = apiPreferencesCode
     ? apiPreferencesCode
-    : Object.values(apiPreferences?.self?.api_preference).flat(); // Flatten arrays into a single array
+    : apiPreferences &&
+      apiPreferences?.self &&
+      apiPreferences?.self?.api_preference
+    ? Object?.values(apiPreferences?.self?.api_preference).flat()
+    : defaultOntologies;
 
   useEffect(() => {
-    setCheckedOntologies(existingOntologies); // Set the initial checked keys
+    setCheckedOntologies(existingOntologies);
   }, [apiPreferences]);
-  ``;
 
-  console.log('existing', existingOntologies);
+  console.log('default', defaultOntologies);
+  console.log('exsiting', existingOntologies);
+  console.log('checked', checkedOntologies);
+
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
 
@@ -52,11 +59,18 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
 
   const formattedFacetCounts = ontologyCounts(facetCounts);
 
+  const existingOntologiesArray = Array.isArray(existingOntologies)
+    ? existingOntologies
+    : [];
+
+  const checkedOntologiesArray = Array.isArray(checkedOntologies)
+    ? checkedOntologies
+    : [];
   // Sort the `formattedFacetCounts` before rendering, not inside the `map()`
   const sortedFacetCounts = formattedFacetCounts?.sort(
     (a, b) =>
-      (existingOntologies.includes(Object.keys(a)[0]) ? -1 : 1) -
-      (existingOntologies.includes(Object.keys(b)[0]) ? -1 : 1)
+      (existingOntologiesArray?.includes(Object.keys(a)[0]) ? -1 : 1) -
+      (existingOntologiesArray?.includes(Object.keys(b)[0]) ? -1 : 1)
   );
 
   return (
@@ -72,16 +86,18 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
             const value = fc[key];
             formattedFacetCounts.sort(
               (a, b) =>
-                (existingOntologies.includes(Object.keys(a)[0]) ? -1 : 1) -
-                (existingOntologies.includes(Object.keys(b)[0]) ? -1 : 1)
+                (existingOntologiesArray?.includes(Object.keys(a)[0])
+                  ? -1
+                  : 1) -
+                (existingOntologiesArray?.includes(Object.keys(b)[0]) ? -1 : 1)
             );
 
             return (
               <Checkbox
                 key={i}
                 value={key}
-                checked={checkedOntologies.includes(key)} // Check if key is in checkedOntologies array
-                onChange={onCheckboxChange} // Handle the change
+                checked={checkedOntologiesArray?.includes(key)} // Check if key is in checkedOntologies array
+                onChange={onCheckboxChange}
               >
                 {`${key.toUpperCase()} ${value !== '0' ? `(${value})` : ''}`}
               </Checkbox>

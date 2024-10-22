@@ -41,7 +41,6 @@ function App() {
     top: '25vh',
   });
   return (
-    
     <GoogleOAuthProvider clientId={clientId}>
       <myContext.Provider
         value={{
