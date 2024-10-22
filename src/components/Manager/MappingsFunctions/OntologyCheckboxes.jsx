@@ -4,8 +4,12 @@ import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const OntologyCheckboxes = ({ apiPreferences }) => {
-  const { apiPreferencesCode, setApiPreferencesCode, facetCounts } =
-    useContext(SearchContext);
+  const {
+    apiPreferencesCode,
+    setApiPreferencesCode,
+    facetCounts,
+    ontologyApis,
+  } = useContext(SearchContext);
   const [checkedOntologies, setCheckedOntologies] = useState([]);
 
   const defaultOntologies = ['mondo', 'hp', 'maxo', 'ncit'];
@@ -21,35 +25,26 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
     setCheckedOntologies(existingOntologies);
   }, [apiPreferences]);
 
-  console.log('default', defaultOntologies);
-  console.log('exsiting', existingOntologies);
-  console.log('checked', checkedOntologies);
-
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
 
     setCheckedOntologies(existingOntologies => {
-      // Ensure existingOntologies is always an array
       const newCheckedOntologies = Array.isArray(existingOntologies)
         ? checked
-          ? [...existingOntologies, value] // Add value if checked
-          : existingOntologies.filter(key => key !== value) // Remove value if unchecked
-        : []; // Fallback to an empty array if it's not an array
+          ? [...existingOntologies, value]
+          : existingOntologies.filter(key => key !== value)
+        : [];
 
-      // Update apiPreferencesCode
       setApiPreferencesCode(existingCode => {
         if (checked) {
-          // Add value if checked, and avoid duplications
           return existingCode ? `${existingCode},${value}` : value;
         } else {
-          // Remove value if unchecked, handling cases where the string might be empty
           const updatedCode = existingCode
             .split(',')
-            .filter(code => code !== value) // Remove the unchecked value
+            .filter(code => code !== value)
             .join(',');
 
-          // Ensure there's no trailing comma
-          return updatedCode.replace(/,$/, '');
+          return updatedCode;
         }
       });
 
@@ -59,19 +54,35 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
 
   const formattedFacetCounts = ontologyCounts(facetCounts);
 
-  const existingOntologiesArray = Array.isArray(existingOntologies)
-    ? existingOntologies
-    : [];
+  const sortedData = ontologyApis.map(api => {
+    const sortedOntologies = Object.fromEntries(
+      Object.entries(api.ontologies).sort((a, b) =>
+        a[1].ontology_code > b[1].ontology_code ? 1 : -1
+      )
+    );
+
+    return {
+      ...api,
+      ontologies: sortedOntologies,
+    };
+  });
+
+  const countsMap = formattedFacetCounts.reduce((acc, item) => {
+    const key = Object.keys(item)[0];
+    acc[key] = parseInt(item[key], 10);
+    return acc;
+  }, {});
+
+  // // Build the new data structure
+  const countsResult = Object.keys(sortedData[0].ontologies).map(key => {
+    return { [key]: countsMap[key] || 0 };
+  });
 
   const checkedOntologiesArray = Array.isArray(checkedOntologies)
     ? checkedOntologies
     : [];
-  // Sort the `formattedFacetCounts` before rendering, not inside the `map()`
-  const sortedFacetCounts = formattedFacetCounts?.sort(
-    (a, b) =>
-      (existingOntologiesArray?.includes(Object.keys(a)[0]) ? -1 : 1) -
-      (existingOntologiesArray?.includes(Object.keys(b)[0]) ? -1 : 1)
-  );
+
+  console.log(checkedOntologiesArray);
 
   return (
     <div className="ontology_form">
@@ -81,28 +92,26 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
         rules={[{ required: false }]}
       >
         <div className="modal_display_results">
-          {sortedFacetCounts?.map((fc, i) => {
-            const key = Object.keys(fc)[0];
-            const value = fc[key];
-            formattedFacetCounts.sort(
-              (a, b) =>
-                (existingOntologiesArray?.includes(Object.keys(a)[0])
-                  ? -1
-                  : 1) -
-                (existingOntologiesArray?.includes(Object.keys(b)[0]) ? -1 : 1)
-            );
-
-            return (
-              <Checkbox
-                key={i}
-                value={key}
-                checked={checkedOntologiesArray?.includes(key)} // Check if key is in checkedOntologies array
-                onChange={onCheckboxChange}
-              >
-                {`${key.toUpperCase()} ${value !== '0' ? `(${value})` : ''}`}
-              </Checkbox>
-            );
-          })}
+          {countsResult
+            ?.sort((a, b) => {
+              const aValue = Object.values(a)[0];
+              const bValue = Object.values(b)[0];
+              return bValue - aValue;
+            })
+            .map((fc, i) => {
+              const key = Object.keys(fc)[0];
+              const value = fc[key];
+              return (
+                <Checkbox
+                  key={i}
+                  value={key}
+                  checked={checkedOntologiesArray?.includes(key)}
+                  onChange={onCheckboxChange}
+                >
+                  {`${key.toUpperCase()} ${value !== 0 ? `(${value})` : ''}`}
+                </Checkbox>
+              );
+            })}
         </div>
       </Form.Item>
     </div>

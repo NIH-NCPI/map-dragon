@@ -5,6 +5,7 @@ import { myContext } from '../../../App';
 import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
   const [form] = Form.useForm();
@@ -19,7 +20,7 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
   const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(false);
   const { user, vocabUrl, ontologyForPagination } = useContext(myContext);
-  const [ontologyApis, setOntologyApis] = useState([]);
+  const { ontologyApis, setOntologyApis } = useContext(SearchContext);
   const [searchText, setSearchText] = useState('');
 
   // Gets the ontologyAPIs on first load, automatically sets active to the first of the list to display on the page

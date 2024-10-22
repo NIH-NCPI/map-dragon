@@ -119,7 +119,6 @@ export const GetMappingsModal = ({
     setSelectedMappings([]);
     setDisplaySelectedMappings([]);
     setApiPreferencesCode(undefined);
-    setApiPreferences([]);
     setSelectedBoxes([]);
     setSelectedKey(null);
   };
