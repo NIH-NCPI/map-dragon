@@ -228,7 +228,7 @@ and returns the length of the mapping array (i.e. returns the number of variable
 There is then a tooltip that displays the variables on hover.*/
   const noMapping = variable => {
     return <Button onClick={() => setGetMappings({ name: variable.name, code: variable.code })}>
-      Get Mapping
+      Get Mappings
     </Button>
   }
 
