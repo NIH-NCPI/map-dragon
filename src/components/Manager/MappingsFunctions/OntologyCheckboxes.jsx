@@ -9,13 +9,22 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
     setApiPreferencesCode,
     facetCounts,
     ontologyApis,
+    component,
   } = useContext(SearchContext);
   const [checkedOntologies, setCheckedOntologies] = useState([]);
 
   const defaultOntologies = ['mondo', 'hp', 'maxo', 'ncit'];
 
+  let processedApiPreferencesCode;
+
+  if (Array.isArray(apiPreferencesCode)) {
+    processedApiPreferencesCode = apiPreferencesCode;
+  } else if (typeof apiPreferencesCode === 'string') {
+    processedApiPreferencesCode = apiPreferencesCode.split(',');
+  }
+
   const existingOntologies = apiPreferencesCode
-    ? apiPreferencesCode
+    ? processedApiPreferencesCode
     : apiPreferences &&
       apiPreferences?.self &&
       apiPreferences?.self?.api_preference
@@ -57,6 +66,13 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
     };
   });
 
+  // console.log('sorted', sortedData);
+  // console.log('ontologyapi', ontologyApis);
+  console.log('pref', Object.values(apiPreferences?.self?.api_preference));
+  // console.log('code', apiPreferencesCode);
+  console.log('default', defaultOntologies);
+  console.log('checked onts', checkedOntologies);
+
   const countsMap = formattedFacetCounts.reduce((acc, item) => {
     const key = Object.keys(item)[0];
     acc[key] = parseInt(item[key], 10);
@@ -65,14 +81,12 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
 
   // // Build the new data structure
   const countsResult = Object.keys(sortedData[0].ontologies).map(key => {
-    return { [key]: countsMap[key] || 0 };
+    return { [key]: countsMap[key] || 0, api: sortedData[0]?.api_id };
   });
 
   const checkedOntologiesArray = Array.isArray(checkedOntologies)
     ? checkedOntologies
     : [];
-
-  console.log(checkedOntologiesArray);
 
   return (
     <div className="ontology_form">

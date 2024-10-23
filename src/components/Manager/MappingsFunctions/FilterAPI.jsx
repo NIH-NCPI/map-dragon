@@ -43,13 +43,6 @@ export const FilterAPI = ({
     )
     .flat();
 
-  // The initial value for the form. The checkboxes for the filters that have already been selected will be checked by default
-  const initialChecked = flattenedFilters?.map(ef =>
-    JSON.stringify({
-      ontology: ef,
-    })
-  );
-
   // Fetches the active ontologyAPI each time the active API changes
   useEffect(() => {
     active && getOntologyApiById();

@@ -15,6 +15,7 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
+import { OntologyFilterCodeSubmit } from './OntologyFilterCodeSubmit';
 
 export const GetMappingsModal = ({
   componentString,
@@ -31,7 +32,6 @@ export const GetMappingsModal = ({
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
   const {
     apiPreferences,
-    setApiPreferences,
     defaultOntologies,
     setFacetCounts,
     setApiPreferencesCode,
@@ -82,6 +82,12 @@ export const GetMappingsModal = ({
   useEffect(() => {
     if (apiPreferencesCode !== undefined) fetchResults(0, searchProp);
   }, [apiPreferencesCode, searchProp]);
+
+  useEffect(() => {
+    if (!!currentSearchProp) {
+      fetchResults(page, currentSearchProp);
+    }
+  }, [page, currentSearchProp]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -143,7 +149,7 @@ export const GetMappingsModal = ({
       mappings: selectedMappings,
       editor: user.email,
     };
-
+    setLoading(true);
     fetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
       {
@@ -166,7 +172,18 @@ export const GetMappingsModal = ({
         form.resetFields();
         setGetMappings(null);
         message.success('Changes saved successfully.');
-      });
+      })
+      .then(() =>
+        OntologyFilterCodeSubmit(
+          apiPreferencesCode,
+          setApiPreferencesCode,
+          apiPreferences,
+          mappingProp,
+          table,
+          vocabUrl
+        )
+      )
+      .finally(() => setLoading(false));
   };
 
   const fetchResults = (page, query) => {
@@ -350,7 +367,7 @@ export const GetMappingsModal = ({
         okText="Save"
         onOk={() => {
           form.validateFields().then(values => {
-            // handleSubmit(values);
+            handleSubmit(values);
             console.log(values);
             onClose();
           });

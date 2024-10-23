@@ -224,7 +224,7 @@ export const olsFilterOntologiesSearch = (
       setResultsCount(res.results.length);
       setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
     })
-    .then(() => setLoading(false));
+    .finally(() => setLoading(false));
 };
 
 export const getFiltersByCode = (
@@ -241,7 +241,7 @@ export const getFiltersByCode = (
     `${vocabUrl}/${
       component === table
         ? component?.terminology?.reference
-        : `Terminology/${component.id}`
+        : `Terminology/${component?.id}`
     }/filter/${mappingProp}`,
     {
       method: 'GET',

@@ -355,6 +355,7 @@ There is then a tooltip that displays the variables on hover.*/
         setEditMappings={setEditMappings}
         tableId={tableId}
         setMapping={setMapping}
+        table={table}
       />
       <GetMappingsModal
         component={table}
