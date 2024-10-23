@@ -1,6 +1,7 @@
 import { OntologySearch } from './components/Search/OntologySearch';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { NavBar } from './components/Nav/NavBar';
+import { Breadcrumbs } from './components/Nav/Breadcrumbs.jsx';
 import { Footer } from './components/Nav/Footer';
 import { SearchResults } from './components/Search/SearchResults';
 import { Terminology } from './components/Projects/Terminologies/Terminology';
@@ -27,6 +28,7 @@ export const AppRouter = () => {
             <>
               <div className="approuter_div">
                 <NavBar />
+                <Breadcrumbs/>
                 <div className="outlet_div">
                   <Outlet />
                 </div>
