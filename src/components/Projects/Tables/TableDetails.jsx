@@ -225,7 +225,7 @@ The variables in the mappings need to be matched up to each variable in the tabl
 The function maps through the mapping array. For each variable, if the mapping variable is equal to the 
 variable in the table, AND the mappings array length for the variable is > 0, the mappings array is mapped through
 and returns the length of the mapping array (i.e. returns the number of variables mapped to the table variable). 
-There is then a tooltip that displays the variables on hover.*/
+It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
   const noMapping = variable => {
     return <Button onClick={() => setGetMappings({ name: variable.name, code: variable.code })}>
       Get Mappings
