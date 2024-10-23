@@ -54,6 +54,7 @@ input::file-selector-button:hover {
   border: 1px solid darkgrey;
   color: gray;
   border-radius: 25px;
+
   font: {
     size: 0.7rem;
     weight: 800;
@@ -73,4 +74,21 @@ input::file-selector-button:hover {
   display: flex;
   gap: 10px;
   margin-left: 50px;
+}
+
+.mapping {
+  &-display{
+    white-space: nowrap;
+  }
+  display: flex;
+  .remove-mapping {
+    padding-left:.25rem;
+    cursor: pointer;
+    opacity: 0;
+
+    &:hover {
+      transition: all .4s linear;
+      opacity: 1;
+    }
+  }
 }

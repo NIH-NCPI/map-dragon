@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
 import { Card, Col, Form, notification, Row, Table, Button } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
@@ -241,7 +242,7 @@ There is then a tooltip that displays the variables on hover.*/
     const variableMappings = mapping.find(item => item?.code === variable?.code);
 
     if (variableMappings && variableMappings.mappings?.length) {
-      return variableMappings.mappings.map(code => <div key={code.display}><span onClick={() => handleRemoveMapping(variableMappings,code)}>X </span>{code.display}</div>);
+      return variableMappings.mappings.map(code => <div className='mapping' key={code.display}><span className='mapping-display'>{code.display}</span><span className='remove-mapping' onClick={() => handleRemoveMapping(variableMappings,code)}><CloseCircleOutlined  style={{color:"red", }} /></span></div>);
     } else {
       return noMapping(variable);
     }
