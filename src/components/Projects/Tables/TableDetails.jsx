@@ -4,7 +4,7 @@ import './TableStyling.scss';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
-import { Card, Col, Form, notification, Row, Table, Tooltip } from 'antd';
+import { Card, Col, Form, notification, Row, Table, Button } from 'antd';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
@@ -52,6 +52,51 @@ export const TableDetails = () => {
     setDataSource(tableData(table));
   }, [table, mapping]);
 
+
+  const updateMappings = (mapArr,mappingCode ) => {
+    
+    // setLoading(true);
+    const mappingsDTO = {
+      mappings: mapArr,
+      editor: user.email,
+    };
+    console.log(mappingsDTO,"mappingsDTO");
+    
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${mappingCode}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mappingsDTO),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => {
+        setMapping(data.codes);
+        setEditMappings(null);
+        form.resetFields();
+        notification.success({ description:'Mapping removed.'});
+      })
+      .catch(error => {
+        console.log(error,'error');
+        
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
+  };
+
+
   const alphabetizeOntologies = ontologies => {
     // Sort the keys alphabetically
     const sortedKeys = Object.keys(ontologies).sort();
@@ -79,6 +124,8 @@ export const TableDetails = () => {
               .then(data => setMapping(data.codes))
               .catch(error => {
                 if (error) {
+                  console.log(error,"error");
+                  
                   notification.error({
                     message: 'Error',
                     description: 'An error occurred loading mappings.',
@@ -178,25 +225,36 @@ The function maps through the mapping array. For each variable, if the mapping v
 variable in the table, AND the mappings array length for the variable is > 0, the mappings array is mapped through
 and returns the length of the mapping array (i.e. returns the number of variables mapped to the table variable). 
 There is then a tooltip that displays the variables on hover.*/
-const noMapping = variable => {
-return <button onClick={() => setGetMappings({ name: variable.name, code: variable.code })}>
-    Set Mapping
-  </button>
+  const noMapping = variable => {
+    return <Button onClick={() => setGetMappings({ name: variable.name, code: variable.code })}>
+      Get Mapping
+    </Button>
   }
 
   const matchCode = variable => {
+
+
     if (!mapping?.length) {
       return noMapping(variable);
     }
-  
-    const variableMappings = mapping.find(item => item?.code === variable?.code); 
-  
+
+    const variableMappings = mapping.find(item => item?.code === variable?.code);
+
     if (variableMappings && variableMappings.mappings?.length) {
-      return variableMappings.mappings.map(code => <div key={code.id}>{code.display}</div>);
+      return variableMappings.mappings.map(code => <div key={code.display}><span onClick={() => handleRemoveMapping(variableMappings,code)}>X </span>{code.display}</div>);
     } else {
       return noMapping(variable);
     }
   };
+
+  const handleRemoveMapping = (variableMappings,code) => {
+    // console.log(variableMappings,"variableMappings");
+    const mappingToRemove = variableMappings.mappings.indexOf(code);
+    //remove mapping from mappings
+    {mappingToRemove !== -1 && variableMappings.mappings.splice(mappingToRemove,1)}   
+    updateMappings(variableMappings?.mappings,variableMappings?.code);    
+  
+  }
 
 
 
