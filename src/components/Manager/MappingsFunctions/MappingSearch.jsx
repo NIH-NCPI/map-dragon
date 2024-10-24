@@ -385,62 +385,59 @@ export const MappingSearch = ({
                     <div className="all_checkboxes_container">
                       <OntologyCheckboxes apiPreferences={apiPreferences} />
                       <div className="result_form">
+                        <Form.Item
+                          initialValue={initialChecked}
+                          name={['existing_mappings']}
+                          valuePropName="value"
+                          rules={[
+                            {
+                              required: false,
+                            },
+                          ]}
+                        >
+                          {mappingsForSearch?.length > 0 && (
+                            <Checkbox.Group
+                              className="mappings_checkbox"
+                              options={mappingsForSearch?.map((d, index) => {
+                                return {
+                                  value: JSON.stringify({
+                                    code: d.code,
+                                    display: d.display,
+                                    description: d.description,
+                                    system: d.system,
+                                  }),
+                                  label: existingMappingDisplay(d, index),
+                                };
+                              })}
+                              onChange={onExistingChange}
+                            />
+                          )}
+                        </Form.Item>
+                        {displaySelectedMappings?.length > 0 && (
+                          <Form.Item
+                            name="selected_mappings"
+                            valuePropName="value"
+                            rules={[{ required: false }]}
+                          >
+                            {' '}
+                            <div className="modal_display_results">
+                              {displaySelectedMappings?.map((sm, i) => (
+                                <Checkbox
+                                  key={i}
+                                  onChange={e => onCheckboxChange(e, sm)}
+                                  checked={selectedBoxes.some(
+                                    box => box.obo_id === sm.obo_id
+                                  )}
+                                  value={sm}
+                                >
+                                  {selectedTermsDisplay(sm, i)}
+                                </Checkbox>
+                              ))}
+                            </div>
+                          </Form.Item>
+                        )}{' '}
                         {results?.length > 0 ? (
                           <>
-                            <Form.Item
-                              initialValue={initialChecked}
-                              name={['existing_mappings']}
-                              valuePropName="value"
-                              rules={[
-                                {
-                                  required: false,
-                                },
-                              ]}
-                            >
-                              {mappingsForSearch?.length > 0 && (
-                                <Checkbox.Group
-                                  className="mappings_checkbox"
-                                  options={mappingsForSearch?.map(
-                                    (d, index) => {
-                                      return {
-                                        value: JSON.stringify({
-                                          code: d.code,
-                                          display: d.display,
-                                          description: d.description,
-                                          system: d.system,
-                                        }),
-                                        label: existingMappingDisplay(d, index),
-                                      };
-                                    }
-                                  )}
-                                  onChange={onExistingChange}
-                                />
-                              )}
-                            </Form.Item>
-
-                            {displaySelectedMappings?.length > 0 && (
-                              <Form.Item
-                                name="selected_mappings"
-                                valuePropName="value"
-                                rules={[{ required: false }]}
-                              >
-                                {' '}
-                                <div className="modal_display_results">
-                                  {displaySelectedMappings?.map((sm, i) => (
-                                    <Checkbox
-                                      key={i}
-                                      onChange={e => onCheckboxChange(e, sm)}
-                                      checked={selectedBoxes.some(
-                                        box => box.obo_id === sm.obo_id
-                                      )}
-                                      value={sm}
-                                    >
-                                      {selectedTermsDisplay(sm, i)}
-                                    </Checkbox>
-                                  ))}
-                                </div>
-                              </Form.Item>
-                            )}
                             <Form.Item
                               name={['filtered_mappings']}
                               valuePropName="value"

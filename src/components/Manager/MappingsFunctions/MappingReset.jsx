@@ -322,30 +322,30 @@ export const MappingReset = ({
                     <div className="all_checkboxes_container">
                       <OntologyCheckboxes apiPreferences={apiPreferences} />
                       <div className="result_form">
+                        {displaySelectedMappings?.length > 0 && (
+                          <Form.Item
+                            name="selected_mappings"
+                            valuePropName="value"
+                            rules={[{ required: false }]}
+                          >
+                            <div className="modal_display_results">
+                              {displaySelectedMappings?.map((sm, i) => (
+                                <Checkbox
+                                  key={i}
+                                  onChange={e => onCheckboxChange(e, sm)}
+                                  checked={selectedBoxes.some(
+                                    box => box.obo_id === sm.obo_id
+                                  )}
+                                  value={sm}
+                                >
+                                  {selectedTermsDisplay(sm, i)}
+                                </Checkbox>
+                              ))}
+                            </div>
+                          </Form.Item>
+                        )}{' '}
                         {results?.length > 0 ? (
                           <>
-                            {displaySelectedMappings?.length > 0 && (
-                              <Form.Item
-                                name="selected_mappings"
-                                valuePropName="value"
-                                rules={[{ required: false }]}
-                              >
-                                <div className="modal_display_results">
-                                  {displaySelectedMappings?.map((sm, i) => (
-                                    <Checkbox
-                                      key={i}
-                                      onChange={e => onCheckboxChange(e, sm)}
-                                      checked={selectedBoxes.some(
-                                        box => box.obo_id === sm.obo_id
-                                      )}
-                                      value={sm}
-                                    >
-                                      {selectedTermsDisplay(sm, i)}
-                                    </Checkbox>
-                                  ))}
-                                </div>
-                              </Form.Item>
-                            )}
                             <Form.Item
                               name={['filtered_mappings']}
                               valuePropName="value"
