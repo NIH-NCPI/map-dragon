@@ -419,10 +419,16 @@ export const MappingReset = ({
           ) : (
             <div className="loading_spinner">
               <ModalSpinner />
+
             </div>
-          )}
         </>
-      </div>
+        ) : (
+        <div className="loading_spinner">
+          <ModalSpinner />
+        </div>
+          )}
+      </>
+    </div >
     </>
   );
 };

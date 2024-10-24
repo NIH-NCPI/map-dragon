@@ -25,7 +25,7 @@ export const GetMappingsModal = ({
   component,
   mappingProp,
   mappingDesc,
-  table,
+  table
 }) => {
   const [form] = Form.useForm();
   const { Search } = Input;

@@ -23,6 +23,7 @@ export const Terminology = () => {
   const [form] = Form.useForm();
 
   const { terminologyId, tableId } = useParams();
+
   const { vocabUrl, user } = useContext(myContext);
   const { setPrefTerminologies, prefTerminologies } = useContext(SearchContext);
   const {
@@ -30,13 +31,13 @@ export const Terminology = () => {
     setEditMappings,
     getMappings,
     setGetMappings,
-    mapping,
+    mapping, 
     setMapping,
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10
-  );
+
+    parseInt(localStorage.getItem('pageSize'), 10) || 10);
   const handleTableChange = (current, size) => {
     setPageSize(size);
   };
@@ -50,12 +51,14 @@ export const Terminology = () => {
   const navigate = useNavigate();
 
   const updateMappings = (mapArr, mappingCode) => {
+
     // setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
       editor: user.email,
     };
     console.log(tableId, 'tableId');
+
 
     fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping/${mappingCode}`, {
       method: 'PUT',
@@ -82,6 +85,7 @@ export const Terminology = () => {
 
         if (error) {
           console.log(error, 'error');
+
 
           notification.error({
             message: 'Error',
@@ -113,13 +117,30 @@ It then shows the mappings as table data and alows the user to delete a mapping 
   };
 
   const matchCode = variable => {
+
     if (!mapping?.length) {
       return noMapping(variable);
     }
 
-    const variableMappings = mapping.find(
-      item => item?.code === variable?.code
-    );
+
+    const variableMappings = mapping.find(item => item?.code === variable?.code);
+
+    if (variableMappings && variableMappings.mappings?.length) {
+      return variableMappings.mappings.map(code => <div className='mapping' key={code.display}><span className='mapping-display'>{code.display}</span><span className='remove-mapping' onClick={() => handleRemoveMapping(variableMappings,code)}><CloseCircleOutlined  style={{color:"red", }} /></span></div>);
+    } else {
+      return noMapping(variable);
+    }
+  };
+
+  const handleRemoveMapping = (variableMappings,code) => {
+    // console.log(variableMappings,"variableMappings");
+    const mappingToRemove = variableMappings.mappings.indexOf(code);
+    //remove mapping from mappings
+    {mappingToRemove !== -1 && variableMappings.mappings.splice(mappingToRemove,1)}   
+    updateMappings(variableMappings?.mappings,variableMappings?.code);    
+  
+  }
+
 
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map(code => (
@@ -337,16 +358,16 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <Spinner />
             ) : (
               <Form form={form}>
-                <Table
-                  columns={columns}
-                  dataSource={dataSource}
-                  pagination={{
-                    showSizeChanger: true,
-                    pageSizeOptions: ['10', '20', '30'],
-                    pageSize: pageSize, // Use the stored pageSize
-                    onChange: handleTableChange, // Capture pagination changes
-                  }}
-                />
+
+                <Table 
+                columns={columns} 
+                dataSource={dataSource}
+                pagination={{ 
+                  showSizeChanger: true,
+                  pageSizeOptions: ['10', '20', '30'],
+                  pageSize: pageSize, // Use the stored pageSize
+                  onChange: handleTableChange, // Capture pagination changes
+                }}  />
               </Form>
             )}
           </div>
@@ -362,6 +383,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 : 'No Description'
             }
             terminology={terminology}
+
           />
           <GetMappingsModal
             componentString={'Terminology'}
@@ -379,6 +401,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 ? getMappings?.description
                 : 'No Description'
             }
+
           />
 
           {/* Displays the edit form */}

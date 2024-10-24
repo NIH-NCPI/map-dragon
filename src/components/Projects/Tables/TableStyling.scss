@@ -82,12 +82,12 @@ input::file-selector-button:hover {
   }
   display: flex;
   .remove-mapping {
-    padding-left: 0.25rem;
+    padding-left:.25rem;
     cursor: pointer;
     opacity: 0;
 
     &:hover {
-      transition: all 0.4s linear;
+      transition: all .4s linear;
       opacity: 1;
     }
   }
