@@ -40,3 +40,23 @@ export const ontologySystems = {
 export const systemsMatch = ont => {
   return ontologySystems[ont];
 };
+
+// Iterates over the facet counts in the result to make an object of search results per ontology
+export const ontologyCounts = arr => {
+  let result = [];
+  let i = 0;
+
+  while (i < arr.length) {
+    if (isNaN(arr[i])) {
+      // If element in array, it not a number (i.e. it's a string), it sets it as the key
+      const key = arr[i];
+      const value = arr[i + 1]; // Gets the first number after the string
+      result.push({ [key]: value }); // Pushes the key (string) and value (number) pair to the result array
+      i += 2; // Moves to the next letter-number pair
+    } else {
+      i += 1; // If the element is a number, it keeps going until it starts over and finds a string
+    }
+  }
+
+  return result;
+};

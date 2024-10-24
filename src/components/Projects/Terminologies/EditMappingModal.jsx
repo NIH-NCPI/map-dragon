@@ -15,18 +15,22 @@ import { ResetMappings } from './ResetMappings';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const EditMappingsModal = ({
   editMappings,
   setEditMappings,
   terminologyId,
   setMapping,
-  mappingDesc
+  mappingDesc,
+  terminology,
+
 }) => {
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
+  const { setApiPreferencesCode } = useContext(SearchContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
@@ -40,6 +44,7 @@ export const EditMappingsModal = ({
     setTermMappings([]);
     setOptions([]);
     setSelectedKey(null);
+    setApiPreferencesCode(undefined);
   };
 
   const fetchMappings = () => {
@@ -321,7 +326,8 @@ export const EditMappingsModal = ({
                 ? editMappings.display
                 : editMappings?.code}
             </h3>
-          <span className="search-desc">{mappingDesc}</span>
+            <span className="search-desc">{mappingDesc}</span>
+
           </div>
           <Form form={form} layout="vertical" preserve={false}>
             <Form.Item

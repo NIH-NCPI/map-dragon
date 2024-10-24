@@ -12,7 +12,7 @@ export const FilterReset = ({ table }) => {
   const [remove, setRemove] = useState(false);
 
   const deleteOntologies = evt => {
-    return fetch(`${vocabUrl}/${table?.terminology?.reference}/filter`, {
+    return fetch(`${vocabUrl}/${table?.terminology?.reference}/filter/self`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

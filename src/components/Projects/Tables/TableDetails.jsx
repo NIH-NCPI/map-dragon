@@ -141,12 +141,15 @@ export const TableDetails = () => {
                 return error;
               })
               .then(() =>
-                fetch(`${vocabUrl}/${data?.terminology?.reference}/filter`, {
-                  method: 'GET',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                })
+                fetch(
+                  `${vocabUrl}/${data?.terminology?.reference}/filter/self`,
+                  {
+                    method: 'GET',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                  }
+                )
               )
               .then(res => {
                 if (res.ok) {
@@ -434,6 +437,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         setEditMappings={setEditMappings}
         tableId={tableId}
         setMapping={setMapping}
+        table={table}
       />
       <GetMappingsModal
         component={table}
@@ -444,6 +448,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         setMapping={setMapping}
         tableId={tableId}
         mappingProp={getMappings?.code}
+        table={table}
       />
       <ClearMappings propId={tableId} component={'Table'} />
     </>

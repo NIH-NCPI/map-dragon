@@ -122,46 +122,48 @@ export const FilterAPI = ({
     <div>
       <div className="api_list">
         <Form form={form} preserve={false}>
-          <div>
-            <div className="api_label">APIs</div>
+          <div style={{ display: 'flex' }}>
+            <div style={{ flex: '0 0 25%' }}>
+              <div className="api_label">APIs</div>
 
-            <Form.Item name={'selected_apis'} valuePropName="value">
-              <Checkbox.Group
-                className="mappings_checkbox"
-                options={ontologyApis.map((api, index) => {
-                  return {
-                    value: JSON.stringify({ api_preference: api?.api_id }),
-                    label: checkboxDisplay(api, index),
-                  };
-                })}
-              />
-            </Form.Item>
-          </div>
-          <div className="ontology_list">
-            {tableLoading ? (
-              <div className="ontology_spinner_div">
-                <OntologySpinner />
-              </div>
-            ) : (
-              <FilterOntology
-                ontology={ontology}
-                form={form}
-                selectedOntologies={selectedOntologies}
-                setSelectedOntologies={setSelectedOntologies}
-                selectedBoxes={selectedBoxes}
-                setSelectedBoxes={setSelectedBoxes}
-                displaySelectedOntologies={displaySelectedOntologies}
-                setDisplaySelectedOntologies={setDisplaySelectedOntologies}
-                searchText={searchText}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                pageSize={pageSize}
-                setPageSize={setPageSize}
-                paginatedOntologies={paginatedOntologies}
-                apiPreferences={apiPreferences}
-                table={table}
-              />
-            )}
+              <Form.Item name={'selected_apis'} valuePropName="value">
+                <Checkbox.Group
+                  className="mappings_checkbox"
+                  options={ontologyApis.map((api, index) => {
+                    return {
+                      value: JSON.stringify({ api_preference: api?.api_id }),
+                      label: checkboxDisplay(api, index),
+                    };
+                  })}
+                />
+              </Form.Item>
+            </div>
+            <div style={{ flex: '0 0 70%' }}>
+              {tableLoading ? (
+                <div className="ontology_spinner_div">
+                  <OntologySpinner />
+                </div>
+              ) : (
+                <FilterOntology
+                  ontology={ontology}
+                  form={form}
+                  selectedOntologies={selectedOntologies}
+                  setSelectedOntologies={setSelectedOntologies}
+                  selectedBoxes={selectedBoxes}
+                  setSelectedBoxes={setSelectedBoxes}
+                  displaySelectedOntologies={displaySelectedOntologies}
+                  setDisplaySelectedOntologies={setDisplaySelectedOntologies}
+                  searchText={searchText}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                  pageSize={pageSize}
+                  setPageSize={setPageSize}
+                  paginatedOntologies={paginatedOntologies}
+                  apiPreferences={apiPreferences}
+                  table={table}
+                />
+              )}
+            </div>
           </div>
         </Form>
       </div>

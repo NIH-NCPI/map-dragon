@@ -1,11 +1,21 @@
-import { Checkbox, Input, message, Modal, Form, Tooltip } from 'antd';
+import {
+  Checkbox,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Tooltip,
+} from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { olsFilterOntologiesSearch } from '../FetchManager';
+import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
+import { OntologyCheckboxes } from './OntologyCheckboxes';
+import { OntologyFilterCodeSubmit } from './OntologyFilterCodeSubmit';
 
 export const GetMappingsModal = ({
   componentString,
@@ -14,25 +24,30 @@ export const GetMappingsModal = ({
   searchProp,
   component,
   mappingProp,
-  mappingDesc
+  mappingDesc,
+  table
 }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
-
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
-  const { apiPreferences, defaultOntologies } = useContext(SearchContext);
+  const {
+    apiPreferences,
+    defaultOntologies,
+    setFacetCounts,
+    setApiPreferencesCode,
+    apiPreferencesCode,
+    setUnformattedPref,
+  } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 15;
+  const entriesPerPage = 2500;
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
-  const [monarchResults, setMonarchResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
   const [resultsCount, setResultsCount] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
-
   const {
     setSelectedMappings,
     displaySelectedMappings,
@@ -51,13 +66,23 @@ export const GetMappingsModal = ({
     setCurrentSearchProp(searchProp);
     setPage(0);
     if (!!searchProp) {
-      fetchResults(0, searchProp);
+      getFiltersByCode(
+        vocabUrl,
+        component,
+        mappingProp,
+        setApiPreferencesCode,
+        notification,
+        apiPreferencesCode,
+        setUnformattedPref,
+        table
+      );
     }
   }, [searchProp]);
 
-  // The '!!' forces currentSearchProp to be evaluated as a boolean.
-  // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
-  // The function is run when the code and when the page changes.
+  useEffect(() => {
+    if (apiPreferencesCode !== undefined) fetchResults(0, searchProp);
+  }, [apiPreferencesCode, searchProp]);
+
   useEffect(() => {
     if (!!currentSearchProp) {
       fetchResults(page, currentSearchProp);
@@ -69,7 +94,7 @@ export const GetMappingsModal = ({
   This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
   Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
   useEffect(() => {
-    if (results && page > 0) {
+    if (results?.length > 0 && page > 0) {
       const container = ref.current.closest('.ant-modal-body');
       const scrollTop = ref.current.offsetTop - container.offsetTop;
       container.scrollTop = scrollTop;
@@ -97,9 +122,9 @@ export const GetMappingsModal = ({
   const onClose = () => {
     setPage(0);
     setResults([]);
-    setLoading(true);
     setSelectedMappings([]);
     setDisplaySelectedMappings([]);
+    setApiPreferencesCode(undefined);
     setSelectedBoxes([]);
     setSelectedKey(null);
   };
@@ -109,11 +134,12 @@ export const GetMappingsModal = ({
     setCurrentSearchProp(query);
     setPage(0);
   };
+
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
   const handleSubmit = values => {
-    const selectedMappings = values?.selected_mappings?.map(item => ({
+    const selectedMappings = selectedBoxes?.map(item => ({
       code: item.obo_id,
       display: item.label,
       description: item.description[0],
@@ -123,7 +149,7 @@ export const GetMappingsModal = ({
       mappings: selectedMappings,
       editor: user.email,
     };
-
+    setLoading(true);
     fetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
       {
@@ -146,10 +172,20 @@ export const GetMappingsModal = ({
         form.resetFields();
         setGetMappings(null);
         message.success('Changes saved successfully.');
-      });
+      })
+      .then(() =>
+        OntologyFilterCodeSubmit(
+          apiPreferencesCode,
+          setApiPreferencesCode,
+          apiPreferences,
+          mappingProp,
+          table,
+          vocabUrl,
+          component
+        )
+      )
+      .finally(() => setLoading(false));
   };
-
-  // The function that makes the API call to search for the passed code.
 
   const fetchResults = (page, query) => {
     if (!!!query) {
@@ -177,7 +213,9 @@ export const GetMappingsModal = ({
       return olsFilterOntologiesSearch(
         searchUrl,
         query,
-        apiPreferenceOntologies(),
+        apiPreferencesCode !== ''
+          ? apiPreferencesCode
+          : apiPreferenceOntologies(),
         page,
         entriesPerPage,
         pageStart,
@@ -187,13 +225,14 @@ export const GetMappingsModal = ({
         setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setFacetCounts
       );
     } else
       return olsFilterOntologiesSearch(
         searchUrl,
         query,
-        defaultOntologies,
+        apiPreferencesCode !== '' ? apiPreferencesCode : defaultOntologies,
         page,
         entriesPerPage,
         pageStart,
@@ -203,9 +242,11 @@ export const GetMappingsModal = ({
         setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setFacetCounts
       );
   };
+
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
   const handleViewMore = e => {
     e.preventDefault();
@@ -279,7 +320,6 @@ export const GetMappingsModal = ({
       setSelectedBoxes(prevState => prevState.filter(val => val !== code));
     }
   };
-
   const onSelectedChange = checkedValues => {
     const selected = JSON.parse(checkedValues?.[0]);
     const selectedMapping = results.find(
@@ -316,12 +356,13 @@ export const GetMappingsModal = ({
   };
 
   const filteredResultsArray = getFilteredResults();
+
   return (
     <>
       <Modal
         open={!!searchProp}
         closeIcon={false}
-        width={'60%'}
+        width={'70%'}
         styles={{ body: { height: '60vh', overflowY: 'auto' } }}
         okText="Save"
         onOk={() => {
@@ -340,26 +381,29 @@ export const GetMappingsModal = ({
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
       >
-        <div className="results_modal_container">
-          <>
-            {loading === false ? (
-              <>
-                <div className="modal_search_results">
-                  <div className="modal_search_results_header">
-                    <h4>{searchProp}</h4>
-                    <div className="mappings_search_bar">
-                      <Search
-                        onSearch={handleSearch}
-                        value={inputValue}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  <span className="search-desc">{mappingDesc}</span>
+        {loading ? (
+          <ModalSpinner />
+        ) : (
+          <div className="results_modal_container">
+            <>
+              <div className="modal_search_results">
+                <div className="modal_search_results_header">
+                  <h4>{searchProp}</h4>
+                  <div className="mappings_search_bar">
+                    <Search
+                      onSearch={handleSearch}
+                      value={inputValue}
+                      onChange={handleChange}
+                    />
                   </div>
-                  {/* ant.design form displaying the checkboxes with the search results.  */}
-                  {results?.length > 0 ? (
-                    <div className="result_container">
-                      <Form form={form} layout="vertical">
+                  <span className="search-desc">{mappingDesc}</span>
+                </div>
+                {/* ant.design form displaying the checkboxes with the search results.  */}
+                <div className="result_container">
+                  <Form form={form} layout="vertical" preserve={false}>
+                    <div className="all_checkboxes_container">
+                      <OntologyCheckboxes apiPreferences={apiPreferences} />
+                      <div className="result_form">
                         {displaySelectedMappings?.length > 0 && (
                           <Form.Item
                             name="selected_mappings"
@@ -382,75 +426,77 @@ export const GetMappingsModal = ({
                             </div>
                           </Form.Item>
                         )}
-                        <Form.Item
-                          name={['filtered_mappings']}
-                          valuePropName="value"
-                          rules={[
-                            {
-                              required: false,
-                            },
-                          ]}
-                        >
-                          {filteredResultsArray?.length > 0 ? (
-                            <Checkbox.Group
-                              className="mappings_checkbox"
-                              options={filteredResultsArray?.map((d, index) => {
-                                return {
-                                  value: JSON.stringify({
-                                    code: d.obo_id,
-                                    display: d.label,
-                                    description: d.description[0],
-                                    system: systemsMatch(
-                                      d?.obo_id.split(':')[0]
-                                    ),
-                                  }),
-                                  label: checkBoxDisplay(d, index),
-                                };
-                              })}
-                              onChange={onSelectedChange}
-                            />
-                          ) : (
-                            ''
-                          )}
-                        </Form.Item>
-                      </Form>
-                      <div>
-                        {/* 'View More' pagination displaying the number of results being displayed
-                      out of the total number of results. Because of the filter to filter out the duplicates,
-                      there is a tooltip informing the user that redundant entries have been removed to explain any
-                      inconsistencies in results numbers per page. */}
-                        <Tooltip
-                          placement="bottom"
-                          title="Redundant entries have been removed"
-                        >
-                          Displaying {resultsCount}
-                          &nbsp;of&nbsp;{totalCount}
-                        </Tooltip>
-                        {totalCount - filteredResultsCount !== resultsCount && (
-                          <span
-                            className="view_more_link"
-                            onClick={e => {
-                              handleViewMore(e);
-                              setLastCount(resultsCount);
-                            }}
-                          >
-                            View More
-                          </span>
+                        {results?.length > 0 ? (
+                          <>
+                            <Form.Item
+                              name={['filtered_mappings']}
+                              valuePropName="value"
+                              rules={[
+                                {
+                                  required: false,
+                                },
+                              ]}
+                            >
+                              {filteredResultsArray?.length > 0 ? (
+                                <Checkbox.Group
+                                  className="mappings_checkbox"
+                                  options={filteredResultsArray?.map(
+                                    (d, index) => {
+                                      return {
+                                        value: JSON.stringify({
+                                          code: d.obo_id,
+                                          display: d.label,
+                                          description: d.description[0],
+                                          system: systemsMatch(
+                                            d?.obo_id.split(':')[0]
+                                          ),
+                                        }),
+                                        label: checkBoxDisplay(d, index),
+                                      };
+                                    }
+                                  )}
+                                  onChange={onSelectedChange}
+                                />
+                              ) : (
+                                ''
+                              )}
+                            </Form.Item>{' '}
+                          </>
+                        ) : (
+                          <h3>No results found</h3>
                         )}
                       </div>
                     </div>
-                  ) : (
-                    <h3>No results found.</h3>
-                  )}
+                  </Form>
+                  <div className="view_more_wrapper">
+                    {/* 'View More' pagination displaying the number of results being displayed
+                      out of the total number of results. Because of the filter to filter out the duplicates,
+                      there is a tooltip informing the user that redundant entries have been removed to explain any
+                      inconsistencies in results numbers per page. */}
+                    <Tooltip
+                      placement="bottom"
+                      title="Redundant entries have been removed"
+                    >
+                      Displaying {resultsCount}
+                      &nbsp;of&nbsp;{totalCount}
+                    </Tooltip>
+                    {totalCount - filteredResultsCount !== resultsCount && (
+                      <span
+                        className="view_more_link"
+                        onClick={e => {
+                          handleViewMore(e);
+                          setLastCount(resultsCount);
+                        }}
+                      >
+                        View More
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </>
-            ) : (
-              <div className="loading_spinner">
-                <ModalSpinner />
               </div>
-            )}
-          </>
-        </div>
+            </>
+          </div>
+        )}
       </Modal>
     </>
   );

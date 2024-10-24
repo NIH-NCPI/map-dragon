@@ -5,9 +5,23 @@
   top: 25vh;
 }
 
+.all_checkboxes_container {
+  display: flex;
+  flex-direction: row;
+}
+.ontology_form {
+  width: 10vw;
+  height: 50vh;
+  overflow: auto;
+  position: fixed;
+}
+.result_form {
+  margin-left: 11vw;
+}
+
 .modal_search_results_header {
   background-color: white;
-  top:0;
+  top: 0;
   position: sticky;
   margin: 0 0 15px 0;
   display: flex;
@@ -101,4 +115,8 @@
   flex-direction: row;
   align-items: center;
   gap: 8px;
+}
+
+.view_more_wrapper {
+  margin-left: 11vw;
 }

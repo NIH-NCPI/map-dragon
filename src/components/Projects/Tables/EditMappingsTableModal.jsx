@@ -16,12 +16,14 @@ import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ResetTableMappings } from './ResetTableMappings';
 import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const EditMappingsTableModal = ({
   editMappings,
   setEditMappings,
   tableId,
   setMapping,
+  table,
 }) => {
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
@@ -33,6 +35,7 @@ export const EditMappingsTableModal = ({
   const [editSearch, setEditSearch] = useState(false);
   const { setSelectedMappings, setDisplaySelectedMappings } =
     useContext(MappingContext);
+  const { setApiPreferencesCode } = useContext(SearchContext);
 
   useEffect(() => {
     fetchMappings();
@@ -45,6 +48,7 @@ export const EditMappingsTableModal = ({
     setReset(false);
     setEditSearch(false);
     setSelectedKey(null);
+    setApiPreferencesCode(undefined);
   };
 
   const fetchMappings = () => {
@@ -337,18 +341,32 @@ export const EditMappingsTableModal = ({
           reset={reset}
           onClose={form.resetFields}
           searchProp={editMappings.name}
-          mappingDesc={editMappings.description ? editMappings.description : 'No Description'}
+          mappingDesc={
+            editMappings.description
+              ? editMappings.description
+              : 'No Description'
+          }
+          component={table}
+          mappingProp={editMappings.code}
+          table={table}
         />
       ) : (
         reset && (
           <MappingReset
             searchProp={editMappings.name}
-            mappingDesc={editMappings.description ? editMappings.description : 'No Description'}
+            mappingDesc={
+              editMappings.description
+                ? editMappings.description
+                : 'No Description'
+            }
             setEditMappings={setEditMappings}
             mappingsForSearch={mappingsForSearch}
             form={form}
             reset={reset}
             onClose={form.resetFields}
+            component={table}
+            mappingProp={editMappings.code}
+            table={table}
           />
         )
       )}

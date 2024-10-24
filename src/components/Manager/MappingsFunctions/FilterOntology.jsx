@@ -17,8 +17,7 @@ export const FilterOntology = ({
   table,
 }) => {
   const [allCheckboxes, setAllCheckboxes] = useState([]);
-  const { ontologyForPagination, setOntologyForPagination } =
-    useContext(myContext);
+  const { setOntologyForPagination } = useContext(myContext);
 
   useEffect(() => {
     setOntologyForPagination(ontology);
