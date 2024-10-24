@@ -13,7 +13,6 @@
 .api_list {
   width: 12vw;
   height: fit-content;
-  position: fixed;
   display: flex;
   flex-flow: column wrap;
   gap: 2px;
@@ -40,7 +39,6 @@
 }
 .ontology_list {
   margin: 0 0 0 15vw;
-  position: fixed;
   top: 20vh;
   height: 20%;
   width: 70vw;
