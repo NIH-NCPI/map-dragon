@@ -14,7 +14,8 @@ export const TerminologyList = () => {
   const [terms, setTerms] = useState([]);
   const [filter, setFilter] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-
+  const [pageSize, setPageSize] = useState(
+    parseInt(localStorage.getItem('pageSize'), 10) || 10);
   const { vocabUrl } = useContext(myContext);
 
   const navigate = useNavigate();
@@ -28,7 +29,8 @@ export const TerminologyList = () => {
         setTerms(data);
       })
       .finally(() => setLoading(false));
-  }, []);
+      localStorage.setItem('pageSize', pageSize);
+  }, [pageSize]);
 
   const terminologyTitle = () => {
     return (
@@ -44,6 +46,9 @@ export const TerminologyList = () => {
       {item.name ? item.name : item.id}
     </Link>
   );
+  const handleTableChange = (current, size) => { 
+    setPageSize(size);     
+  };
 
   const columns = [
     {
@@ -140,9 +145,16 @@ export const TerminologyList = () => {
         <h2>Terminology Index</h2>
         <AddTerminology />
         <Table
+          showSizeChanger={true}
           columns={columns}
           dataSource={dataSource}
           getPopupContainer={trigger => trigger.parentNode}
+          pagination={{ 
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '30'],
+            pageSize: pageSize, // Use the stored pageSize
+            onChange: handleTableChange, // Capture pagination changes
+          }} 
         />
       </div>
       <DeleteTerminology

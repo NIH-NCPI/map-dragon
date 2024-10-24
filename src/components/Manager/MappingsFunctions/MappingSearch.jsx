@@ -14,6 +14,7 @@ export const MappingSearch = ({
   mappingsForSearch,
   onClose,
   searchProp,
+  mappingDesc,
   component,
   mappingProp,
   table,
@@ -378,6 +379,7 @@ export const MappingSearch = ({
                       onChange={handleChange}
                     />
                   </div>
+                  <span className="search-desc">{mappingDesc}</span>
                 </div>
                 {/* ant.design form displaying the checkboxes with the search results.  */}
                 <div className="result_container">

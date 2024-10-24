@@ -341,6 +341,11 @@ export const EditMappingsTableModal = ({
           reset={reset}
           onClose={form.resetFields}
           searchProp={editMappings.name}
+          mappingDesc={
+            editMappings.description
+              ? editMappings.description
+              : 'No Description'
+          }
           component={table}
           mappingProp={editMappings.code}
           table={table}
@@ -349,6 +354,11 @@ export const EditMappingsTableModal = ({
         reset && (
           <MappingReset
             searchProp={editMappings.name}
+            mappingDesc={
+              editMappings.description
+                ? editMappings.description
+                : 'No Description'
+            }
             setEditMappings={setEditMappings}
             mappingsForSearch={mappingsForSearch}
             form={form}
