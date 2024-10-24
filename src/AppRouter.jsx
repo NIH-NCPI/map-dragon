@@ -62,6 +62,11 @@ export const AppRouter = () => {
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId"
                         element={<TableDetails />}
                       />
+                      <Route
+                        path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId/Terminology/:terminologyId"
+                        element={<Terminology />}
+                      />
+                      <Route path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId/Terminology/" element={<Terminology />} />
                     </Route>
                   </Route>
                 </Route>

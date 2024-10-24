@@ -217,7 +217,9 @@ There is then a tooltip that displays the variables on hover.*/
         max: variable.max,
         units: variable.units,
         enumeration: variable.data_type === 'ENUMERATION' && (
-          <Link to={`/${variable.enumerations.reference}`}>View/Edit</Link>
+          console.log(variable.enumerations.reference,"variable.enumerations.reference"),
+          
+          <Link to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${tableId}/${variable.enumerations.reference}`}>View/Edit</Link>
         ),
         mapped_terms: matchCode(variable),
       };
