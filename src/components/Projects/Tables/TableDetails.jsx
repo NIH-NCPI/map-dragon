@@ -42,7 +42,8 @@ export const TableDetails = () => {
   const [load, setLoad] = useState(false);
 
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10);
+    parseInt(localStorage.getItem('pageSize'), 10) || 10
+  );
   const handleTableChange = (current, size) => {
     setPageSize(size);
   };
@@ -54,21 +55,17 @@ export const TableDetails = () => {
   const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
-
     setDataSource(tableData(table));
     localStorage.setItem('pageSize', pageSize);
   }, [table, mapping, pageSize]);
 
-
-  const updateMappings = (mapArr,mappingCode ) => {
-    
+  const updateMappings = (mapArr, mappingCode) => {
     // setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
       editor: user.email,
     };
-    console.log(mappingsDTO,"mappingsDTO");
-    
+
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${mappingCode}`, {
       method: 'PUT',
       headers: {
@@ -87,11 +84,11 @@ export const TableDetails = () => {
         setMapping(data.codes);
         setEditMappings(null);
         form.resetFields();
-        notification.success({ description:'Mapping removed.'});
+        notification.success({ description: 'Mapping removed.' });
       })
       .catch(error => {
-        console.log(error,'error');
-        
+        console.log(error, 'error');
+
         if (error) {
           notification.error({
             message: 'Error',
@@ -102,7 +99,6 @@ export const TableDetails = () => {
       })
       .finally(() => setLoading(false));
   };
-
 
   const alphabetizeOntologies = ontologies => {
     // Sort the keys alphabetically
@@ -131,8 +127,8 @@ export const TableDetails = () => {
               .then(data => setMapping(data.codes))
               .catch(error => {
                 if (error) {
-                  console.log(error,"error");
-                  
+                  console.log(error, 'error');
+
                   notification.error({
                     message: 'Error',
                     description: 'An error occurred loading mappings.',
@@ -236,37 +232,52 @@ variable in the table, AND the mappings array length for the variable is > 0, th
 and returns the length of the mapping array (i.e. returns the number of variables mapped to the table variable). 
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
   const noMapping = variable => {
-    return <Button onClick={() => setGetMappings({ name: variable.name, code: variable.code })}>
-      Get Mappings
-    </Button>
-  }
+    return (
+      <Button
+        onClick={() =>
+          setGetMappings({ name: variable.name, code: variable.code })
+        }
+      >
+        Get Mappings
+      </Button>
+    );
+  };
 
   const matchCode = variable => {
-
-
     if (!mapping?.length) {
       return noMapping(variable);
     }
 
-    const variableMappings = mapping.find(item => item?.code === variable?.code);
+    const variableMappings = mapping.find(
+      item => item?.code === variable?.code
+    );
 
     if (variableMappings && variableMappings.mappings?.length) {
-      return variableMappings.mappings.map(code => <div className='mapping' key={code.display}><span className='mapping-display'>{code.display}</span><span className='remove-mapping' onClick={() => handleRemoveMapping(variableMappings,code)}><CloseCircleOutlined  style={{color:"red", }} /></span></div>);
+      return variableMappings.mappings.map(code => (
+        <div className="mapping" key={code.display}>
+          <span className="mapping-display">{code.display}</span>
+          <span
+            className="remove-mapping"
+            onClick={() => handleRemoveMapping(variableMappings, code)}
+          >
+            <CloseCircleOutlined style={{ color: 'red' }} />
+          </span>
+        </div>
+      ));
     } else {
       return noMapping(variable);
     }
   };
 
-  const handleRemoveMapping = (variableMappings,code) => {
-    // console.log(variableMappings,"variableMappings");
+  const handleRemoveMapping = (variableMappings, code) => {
     const mappingToRemove = variableMappings.mappings.indexOf(code);
     //remove mapping from mappings
-    {mappingToRemove !== -1 && variableMappings.mappings.splice(mappingToRemove,1)}   
-    updateMappings(variableMappings?.mappings,variableMappings?.code);    
-  
-  }
-
-
+    {
+      mappingToRemove !== -1 &&
+        variableMappings.mappings.splice(mappingToRemove, 1);
+    }
+    updateMappings(variableMappings?.mappings, variableMappings?.code);
+  };
 
   // data for the table columns. Each table has an array of variables. Each variable has a name, description, and data type.
   // The integer and quantity data types include additional details.
@@ -285,9 +296,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         max: variable.max,
         units: variable.units,
         enumeration: variable.data_type === 'ENUMERATION' && (
-          console.log(variable.enumerations.reference,"variable.enumerations.reference"),
-          
-          <Link to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${tableId}/${variable.enumerations.reference}`}>View/Edit</Link>
+          <Link
+            to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${tableId}/${variable.enumerations.reference}`}
+          >
+            View/Edit
+          </Link>
         ),
         mapped_terms: matchCode(variable),
       };

@@ -1,4 +1,4 @@
-import { Checkbox, Form } from 'antd';
+import { Checkbox, Form, Input } from 'antd';
 import { ontologyCounts } from '../Utilitiy';
 import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -9,14 +9,19 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
     setApiPreferencesCode,
     facetCounts,
     ontologyApis,
-    component,
   } = useContext(SearchContext);
+  const { Search } = Input;
+
   const [checkedOntologies, setCheckedOntologies] = useState([]);
+  const [searchText, setSearchText] = useState('');
 
   const defaultOntologies = ['mondo', 'hp', 'maxo', 'ncit'];
 
   let processedApiPreferencesCode;
 
+  // Ensures the data sent to the API is in the correct format.
+  // If apiPreferencesCode is an array, sets processedApiPreferencesCode equal to it.
+  // If it is a comma-separated string, it splits it by the commas and adds them to an array
   if (Array.isArray(apiPreferencesCode)) {
     processedApiPreferencesCode = apiPreferencesCode;
   } else if (typeof apiPreferencesCode === 'string') {
@@ -81,15 +86,29 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
     ? checkedOntologies
     : [];
 
+  const getFilteredItems = searchText => {
+    const filtered = countsResult?.filter(item => {
+      const key = Object.keys(item)[0];
+      return key.startsWith(searchText);
+    });
+    return filtered;
+  };
+
   return (
     <div className="ontology_form">
+      <Search
+        placeholder="Ontologies"
+        className="onto_search_bar"
+        value={searchText}
+        onChange={e => setSearchText(e.target.value)}
+      />
       <Form.Item
         name="selected_ontologies"
         valuePropName="value"
         rules={[{ required: false }]}
       >
         <div className="modal_display_results">
-          {countsResult
+          {getFilteredItems(searchText)
             ?.sort((a, b) => {
               const aValue = Object.values(a)[0];
               const bValue = Object.values(b)[0];
