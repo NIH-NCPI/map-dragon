@@ -1,5 +1,5 @@
 import { OntologySearch } from './components/Search/OntologySearch';
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes, Navigate } from 'react-router-dom';
 import { NavBar } from './components/Nav/NavBar';
 import { Breadcrumbs } from './components/Nav/Breadcrumbs.jsx';
 import { Footer } from './components/Nav/Footer';
@@ -43,10 +43,11 @@ export const AppRouter = () => {
             <Route path="/404" element={<Error404 />} />
             <Route path="/about" element={<OntologyInfo />} />
             <Route path="/terminologies" element={<TerminologyList />} />
+            <Route path="/terminology" element={<Navigate to="/terminologies" />} />
             <Route element={<MappingContextRoot />}>
               <Route element={<SearchContextRoot />}>
                 <Route path="/studies" element={<StudyList />} />
-                <Route path="/study" element={<StudyList />} />
+                <Route path="/study" element={<Navigate to="/studies" />} />
                 <Route path="/Study/:studyId">
                   <Route index element={<StudyDetails />} />
                   <Route path="DataDictionary">

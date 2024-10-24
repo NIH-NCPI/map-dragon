@@ -8,19 +8,23 @@ export const Breadcrumbs = () => {
    pathParts.forEach(path => {
       pathArr.push({ title: path, path: path });
    });
-   console.log(itemRender);
+  
+   console.log(location,'location');
    
 
    return <span className="breadcrumbs">
+       <li><Link to={'/'}>Home</Link> {location.pathname != '/' && <span>&nbsp;&nbsp;/&nbsp;&nbsp;</span>}</li>
       <Breadcrumb itemRender={itemRender} items={pathArr} />
    </span>
 }
 function itemRender(currentRoute, params, items, pathArr) {
    const isLast = currentRoute?.path === items[items.length - 1]?.path;
 
-   return isLast ? (
+   return <>
+   {isLast ? (
       <span>{currentRoute.title}</span>
    ) : (
       <Link to={`/${pathArr.join("/")}`}>{currentRoute.title}</Link>
-   );
+   )}
+   </>
 }
