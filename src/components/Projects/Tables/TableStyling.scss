@@ -2,7 +2,7 @@
 @import '../../Styling/Variables';
 
 .table_id_container {
-  margin: 17vh 10vw 13vh 10vw; //Make 10vh bottom without export button
+  margin: 5vh 10vw 13vh 10vw; //Make 10vh bottom without export button
   width: 66vw;
 }
 
@@ -77,17 +77,17 @@ input::file-selector-button:hover {
 }
 
 .mapping {
-  &-display{
+  &-display {
     white-space: nowrap;
   }
   display: flex;
   .remove-mapping {
-    padding-left:.25rem;
+    padding-left: 0.25rem;
     cursor: pointer;
     opacity: 0;
 
     &:hover {
-      transition: all .4s linear;
+      transition: all 0.4s linear;
       opacity: 1;
     }
   }
