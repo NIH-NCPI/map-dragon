@@ -66,13 +66,6 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
     };
   });
 
-  // console.log('sorted', sortedData);
-  // console.log('ontologyapi', ontologyApis);
-  console.log('pref', Object.values(apiPreferences?.self?.api_preference));
-  // console.log('code', apiPreferencesCode);
-  console.log('default', defaultOntologies);
-  console.log('checked onts', checkedOntologies);
-
   const countsMap = formattedFacetCounts.reduce((acc, item) => {
     const key = Object.keys(item)[0];
     acc[key] = parseInt(item[key], 10);
@@ -80,7 +73,7 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
   }, {});
 
   // // Build the new data structure
-  const countsResult = Object.keys(sortedData[0].ontologies).map(key => {
+  const countsResult = Object.keys(sortedData[0]?.ontologies).map(key => {
     return { [key]: countsMap[key] || 0, api: sortedData[0]?.api_id };
   });
 

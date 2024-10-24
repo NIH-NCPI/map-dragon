@@ -28,7 +28,6 @@ export const GetMappingsModal = ({
 }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
-
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
   const {
     apiPreferences,
@@ -139,7 +138,7 @@ export const GetMappingsModal = ({
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
   const handleSubmit = values => {
-    const selectedMappings = values?.selected_mappings?.map(item => ({
+    const selectedMappings = selectedBoxes?.map(item => ({
       code: item.obo_id,
       display: item.label,
       description: item.description[0],
@@ -180,7 +179,8 @@ export const GetMappingsModal = ({
           apiPreferences,
           mappingProp,
           table,
-          vocabUrl
+          vocabUrl,
+          component
         )
       )
       .finally(() => setLoading(false));
@@ -319,7 +319,6 @@ export const GetMappingsModal = ({
       setSelectedBoxes(prevState => prevState.filter(val => val !== code));
     }
   };
-
   const onSelectedChange = checkedValues => {
     const selected = JSON.parse(checkedValues?.[0]);
     const selectedMapping = results.find(
@@ -368,7 +367,6 @@ export const GetMappingsModal = ({
         onOk={() => {
           form.validateFields().then(values => {
             handleSubmit(values);
-            console.log(values);
             onClose();
           });
         }}

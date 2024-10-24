@@ -6,7 +6,8 @@ export const OntologyFilterCodeSubmit = (
   apiPreferences,
   mappingProp,
   table,
-  vocabUrl
+  vocabUrl,
+  component
 ) => {
   const apiPreference = {
     api_preference: { 'ols': [] },
@@ -21,7 +22,9 @@ export const OntologyFilterCodeSubmit = (
     apiPreference.api_preference.ols = apiPreferencesCode;
 
     fetch(
-      `${vocabUrl}/${table?.terminology?.reference}/filter/${mappingProp}`,
+      `${vocabUrl}/${(component = table
+        ? table?.terminology?.reference
+        : `Terminology/${component?.id}`)}/filter/${mappingProp}`,
       {
         method: 'POST',
         headers: {
@@ -36,27 +39,6 @@ export const OntologyFilterCodeSubmit = (
         } else {
           throw new Error('An unknown error occurred.');
         }
-      })
-      .then(() =>
-        fetch(
-          `${vocabUrl}/${table?.terminology?.reference}/filter/${mappingProp}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        )
-      )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(data => {
-        setApiPreferencesCode(data);
       })
       .catch(error => {
         if (error) {

@@ -134,7 +134,7 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
         }
       })
       .then(() =>
-        fetch(`${vocabUrl}/${table?.terminology?.reference}/filter`, {
+        fetch(`${vocabUrl}/${table?.terminology?.reference}/filter/self`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -256,9 +256,9 @@ There is then a tooltip that displays the codes on hover.*/
           <EditMappingsModal
             editMappings={editMappings}
             setEditMappings={setEditMappings}
-            mapping={mapping}
             terminologyId={terminologyId}
             setMapping={setMapping}
+            terminology={terminology}
           />
           <GetMappingsModal
             componentString={'Terminology'}
