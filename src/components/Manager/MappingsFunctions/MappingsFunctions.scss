@@ -10,7 +10,7 @@
   flex-direction: row;
 }
 .ontology_form {
-  width: 10vw;
+  width: 10.5vw;
   height: 50vh;
   overflow: auto;
   position: fixed;
@@ -28,25 +28,23 @@
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: end;
+  align-items: center;
   z-index: 10;
   flex: 1;
   border-bottom: solid 1px #eeee;
   h4 {
-    margin:0;
-    padding-right:1rem;
+    margin: 0;
+    padding-right: 1rem;
   }
   .mappings_search_bar {
+    margin: 0 0 0 8px;
     width: 60%;
   }
   .search-desc {
     flex: 0 0 100%;
-    margin-bottom:1rem;
+    margin-bottom: 1rem;
   }
 }
-
-
-
 
 .inactive_term,
 .active_term {
@@ -119,4 +117,8 @@
 
 .view_more_wrapper {
   margin-left: 11vw;
+}
+
+.onto_search_bar {
+  margin-bottom: 8px;
 }
