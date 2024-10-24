@@ -28,7 +28,7 @@ export const AppRouter = () => {
             <>
               <div className="approuter_div">
                 <NavBar />
-                <Breadcrumbs/>
+                <Breadcrumbs />
                 <div className="outlet_div">
                   <Outlet />
                 </div>
@@ -46,14 +46,22 @@ export const AppRouter = () => {
             <Route element={<MappingContextRoot />}>
               <Route element={<SearchContextRoot />}>
                 <Route path="/studies" element={<StudyList />} />
+                <Route path="/study" element={<StudyList />} />
                 <Route path="/Study/:studyId">
                   <Route index element={<StudyDetails />} />
-                  <Route path="/Study/:studyId/DataDictionary/:DDId">
-                    <Route index element={<DDDetails />} />
+                  <Route path="DataDictionary">
+                    <Route index element={<StudyDetails />} />
                     <Route
-                      path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId"
-                      element={<TableDetails />}
+                      path="/Study/:studyId/DataDictionary/:DDId/Table/"
+                      element={<DDDetails />}
                     />
+                    <Route path="/Study/:studyId/DataDictionary/:DDId">
+                      <Route index element={<DDDetails />} />
+                      <Route
+                        path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId"
+                        element={<TableDetails />}
+                      />
+                    </Route>
                   </Route>
                 </Route>
                 <Route

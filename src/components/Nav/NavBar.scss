@@ -88,10 +88,12 @@ nav.navbar {
 }
 
 .breadcrumbs {
-
-  position: sticky;
-  top: 115px;
- 
+  padding:.5rem;
+  & * {text-transform: capitalize;}
+  nav {
+    position: sticky;
+    top: 115px;
+  }
 }
 
 footer {
