@@ -417,12 +417,6 @@ export const MappingReset = ({
               </div>
             </>
           ) : (
-            <div className="loading_spinner">
-              <ModalSpinner />
-
-            </div>
-        </>
-        ) : (
         <div className="loading_spinner">
           <ModalSpinner />
         </div>
@@ -432,3 +426,4 @@ export const MappingReset = ({
     </>
   );
 };
+ 
