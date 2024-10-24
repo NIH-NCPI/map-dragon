@@ -282,7 +282,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         max: variable.max,
         units: variable.units,
         enumeration: variable.data_type === 'ENUMERATION' && (
-          <Link to={`/${variable.enumerations.reference}`}>View/Edit</Link>
+          console.log(variable.enumerations.reference,"variable.enumerations.reference"),
+          
+          <Link to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${tableId}/${variable.enumerations.reference}`}>View/Edit</Link>
         ),
         mapped_terms: matchCode(variable),
       };

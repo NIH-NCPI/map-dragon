@@ -1,9 +1,11 @@
 .approuter_div {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .outlet_div {
-  height: 100%;
-  min-height: 100vh;
+
+  position: relative;
+  // top:-2.5rem;
 }
