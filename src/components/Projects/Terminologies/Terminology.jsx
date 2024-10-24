@@ -4,7 +4,8 @@ import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
-import { Col, Form, notification, Row, Table, Tooltip } from 'antd';
+import { Col, Form, notification, Row, Table, Button } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { EditMappingsModal } from './EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
@@ -21,15 +22,15 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 export const Terminology = () => {
   const [form] = Form.useForm();
 
-  const { terminologyId } = useParams();
-  const { vocabUrl } = useContext(myContext);
+  const { terminologyId , tableId } = useParams();
+  const { vocabUrl, user } = useContext(myContext);
   const { setPrefTerminologies, prefTerminologies } = useContext(SearchContext);
   const {
     editMappings,
     setEditMappings,
     getMappings,
     setGetMappings,
-    mapping,
+    mapping, 
     setMapping,
   } = useContext(MappingContext);
 
@@ -37,28 +38,90 @@ export const Terminology = () => {
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
   const navigate = useNavigate();
+  
+  
+  const updateMappings = (mapArr,mappingCode ) => {
+    // setLoading(true);
+    const mappingsDTO = {
+      mappings: mapArr,
+      editor: user.email,
+    };
+    console.log(tableId,"tableId");
+    
+    fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping/${mappingCode}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mappingsDTO),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => {
+        setMapping(data.codes);
+        setEditMappings(null);
+        form.resetFields();
+        notification.success({ description:'Mapping removed.'});
+      })
+      .catch(error => {
+        console.log(error,'error');
+        
+        if (error) {
+          console.log(error,'error');
+          
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
+  };
+
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
 The codes in the mappings need to be matched up to each code in the terminology.
 The function maps through the mapping array. For each code, if the mapping code is equal to the 
 code in the terminology, AND the mappings array length for the code is > 0, the mappings array is mapped through
 and returns the length of the mapping array (i.e. returns the number of codes mapped to the terminology code). 
-There is then a tooltip that displays the codes on hover.*/
-  const matchCode = code =>
-    mapping?.length > 0 &&
-    mapping?.map(
-      (item, index) =>
-        item.code === code.code &&
-        item?.mappings?.length > 0 && (
-          <Tooltip
-            title={item.mappings.map(code => {
-              return <div key={index}>{code.code}</div>;
-            })}
-            key={index}
-          >
-            {item.mappings.length}
-          </Tooltip>
-        )
-    );
+It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
+
+  const noMapping = variable => {
+    return <Button onClick={() => setGetMappings({ name: variable.name, code: variable.code })}>
+      Get Mappings
+    </Button>
+  }
+
+  const matchCode = variable => {
+
+
+    if (!mapping?.length) {
+      return noMapping(variable);
+    }
+
+    const variableMappings = mapping.find(item => item?.code === variable?.code);
+
+    if (variableMappings && variableMappings.mappings?.length) {
+      return variableMappings.mappings.map(code => <div className='mapping' key={code.display}><span className='mapping-display'>{code.display}</span><span className='remove-mapping' onClick={() => handleRemoveMapping(variableMappings,code)}><CloseCircleOutlined  style={{color:"red", }} /></span></div>);
+    } else {
+      return noMapping(variable);
+    }
+  };
+
+  const handleRemoveMapping = (variableMappings,code) => {
+    // console.log(variableMappings,"variableMappings");
+    const mappingToRemove = variableMappings.mappings.indexOf(code);
+    //remove mapping from mappings
+    {mappingToRemove !== -1 && variableMappings.mappings.splice(mappingToRemove,1)}   
+    updateMappings(variableMappings?.mappings,variableMappings?.code);    
+  
+  }
+
 
   // data for each column in the table.
   // Map through the codes in the terminology and display the code, display, number of mapped terms,
