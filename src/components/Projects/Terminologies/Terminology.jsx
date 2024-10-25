@@ -55,7 +55,6 @@ export const Terminology = () => {
       mappings: mapArr,
       editor: user.email,
     };
-    console.log(tableId, 'tableId');
 
     fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping/${mappingCode}`, {
       method: 'PUT',
@@ -139,7 +138,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
   };
 
   const handleRemoveMapping = (variableMappings, code) => {
-    // console.log(variableMappings,"variableMappings");
     const mappingToRemove = variableMappings.mappings.indexOf(code);
     //remove mapping from mappings
     {
