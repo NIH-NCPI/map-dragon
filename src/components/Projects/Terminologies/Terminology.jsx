@@ -24,7 +24,12 @@ export const Terminology = () => {
 
   const { terminologyId, tableId } = useParams();
   const { vocabUrl, user } = useContext(myContext);
-  const { setPrefTerminologies, prefTerminologies } = useContext(SearchContext);
+  const {
+    setPrefTerminologies,
+    prefTerminologies,
+    setApiPreferencesTerm,
+    apiPreferencesTerm,
+  } = useContext(SearchContext);
   const {
     editMappings,
     setEditMappings,
@@ -180,6 +185,24 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         } else {
           setTerminology(data);
           if (data) {
+            const cleanedName = data?.name.toLowerCase().replaceAll(' ', '_');
+
+            fetch(`${vocabUrl}/Table/${tableId}/filter/${cleanedName}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+              .then(res => {
+                if (res.ok) {
+                  return res.json();
+                } else {
+                  throw new Error('An unknown error occurred.');
+                }
+              })
+              .then(data => {
+                setApiPreferencesTerm(data);
+              });
             getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
               .then(data => setMapping(data.codes))
               .catch(error => {
@@ -218,7 +241,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading the Terminology.',
+            description:
+              'An error occurred loading the the ontology preferences.',
           });
         }
         return error;

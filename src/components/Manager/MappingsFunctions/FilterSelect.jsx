@@ -7,7 +7,12 @@ import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
 import { SearchContext } from '../../../Contexts/SearchContext';
 
-export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
+export const FilterSelect = ({
+  component,
+  table,
+  apiPreferences,
+  setApiPreferences,
+}) => {
   const [form] = Form.useForm();
   const [addFilter, setAddFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -119,7 +124,7 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
         ? 'POST'
         : 'PUT';
 
-    fetch(`${vocabUrl}/${table?.terminology?.reference}/filter`, {
+    fetch(`${vocabUrl}/${(component = table && terminology?.id)}/filter`, {
       method: method,
       headers: {
         'Content-Type': 'application/json',
