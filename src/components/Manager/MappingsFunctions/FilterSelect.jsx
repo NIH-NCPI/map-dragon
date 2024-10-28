@@ -7,12 +7,7 @@ import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
 import { SearchContext } from '../../../Contexts/SearchContext';
 
-export const FilterSelect = ({
-  component,
-  table,
-  apiPreferences,
-  setApiPreferences,
-}) => {
+export const FilterSelect = ({ component, table, terminology }) => {
   const [form] = Form.useForm();
   const [addFilter, setAddFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,7 +20,14 @@ export const FilterSelect = ({
   const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(false);
   const { user, vocabUrl, ontologyForPagination } = useContext(myContext);
-  const { ontologyApis, setOntologyApis } = useContext(SearchContext);
+  const {
+    ontologyApis,
+    setOntologyApis,
+    apiPreferences,
+    setApiPreferences,
+    apiPreferencesTerm,
+    setApiPreferencesTerm,
+  } = useContext(SearchContext);
   const [searchText, setSearchText] = useState('');
 
   // Gets the ontologyAPIs on first load, automatically sets active to the first of the list to display on the page
@@ -124,13 +126,18 @@ export const FilterSelect = ({
         ? 'POST'
         : 'PUT';
 
-    fetch(`${vocabUrl}/${(component = table && terminology?.id)}/filter`, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(apiPreferenceDTO),
-    })
+    fetch(
+      `${vocabUrl}/${(component = table
+        ? `Table/${table.id}`
+        : `Terminology/${terminology.id}`)}/filter`,
+      {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(apiPreferenceDTO),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -171,7 +178,11 @@ export const FilterSelect = ({
       .finally(() => setLoading(false));
   };
 
-  const apiPrefObject = apiPreferences?.self?.api_preference;
+  const preferenceType = apiPreferencesTerm
+    ? apiPreferencesTerm
+    : apiPreferences;
+
+  const apiPrefObject = preferenceType?.self?.api_preference;
 
   // // Calculate the total length of all arrays
   const apiPrefLength =

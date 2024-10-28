@@ -374,12 +374,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <>
                 {' '}
                 <div className="add_row_buttons">
-                  <FilterSelect
-                    component={table}
-                    table={table}
-                    apiPreferences={apiPreferences}
-                    setApiPreferences={setApiPreferences}
-                  />
+                  <FilterSelect component={table} table={table} />
                   <AddVariable
                     table={table}
                     setTable={setTable}

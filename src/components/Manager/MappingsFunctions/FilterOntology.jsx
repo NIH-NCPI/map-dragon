@@ -2,6 +2,7 @@ import { Checkbox, Form, Pagination } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterReset } from './FilterReset';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const FilterOntology = ({
   ontology,
@@ -18,6 +19,7 @@ export const FilterOntology = ({
 }) => {
   const [allCheckboxes, setAllCheckboxes] = useState([]);
   const { setOntologyForPagination } = useContext(myContext);
+  const { apiPreferencesTerm } = useContext(SearchContext);
 
   useEffect(() => {
     setOntologyForPagination(ontology);
@@ -126,7 +128,11 @@ export const FilterOntology = ({
     );
   };
 
-  const existingFilters = Object.values(apiPreferences?.self || {}).flat();
+  const preferenceType = apiPreferencesTerm
+    ? apiPreferencesTerm
+    : apiPreferences;
+
+  const existingFilters = Object.values(preferenceType?.self || {}).flat();
 
   const flattenedFilters = existingFilters
     .flatMap(item =>
@@ -148,8 +154,8 @@ export const FilterOntology = ({
   return (
     <>
       <div className="modal_checkbox_wrapper">
-        {Object.keys(apiPreferences?.self?.api_preference || {}).some(
-          key => apiPreferences?.self?.api_preference[key]?.length > 0
+        {Object.keys(preferenceType?.self?.api_preference || {}).some(
+          key => preferenceType?.self?.api_preference[key]?.length > 0
         ) && (
           <>
             <div className="onto_reset">
@@ -204,8 +210,8 @@ export const FilterOntology = ({
             </Form.Item>
           </>
         )}
-        {(Object.keys(apiPreferences?.self?.api_preference || {}).some(
-          key => apiPreferences?.self?.api_preference[key]?.length > 0
+        {(Object.keys(preferenceType?.self?.api_preference || {}).some(
+          key => preferenceType?.self?.api_preference[key]?.length > 0
         ) ||
           displaySelectedOntologies.length > 0) && <h4>Ontologies</h4>}
         <Form.Item name={'ontologies'} valuePropName="value">

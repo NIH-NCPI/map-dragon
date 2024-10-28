@@ -18,6 +18,7 @@ import { Submenu } from '../../Manager/Submenu';
 import { LoadCodes } from './LoadCodes';
 import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -345,6 +346,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           </Row>
           <div className="table_container">
             <div className="add_row_buttons">
+              <FilterSelect component={terminology} terminology={terminology} />
+
               <PreferredTerminology
                 terminology={terminology}
                 setTerminology={setTerminology}
