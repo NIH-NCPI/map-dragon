@@ -28,9 +28,8 @@ export const FilterSelect = ({ component, table, terminology }) => {
     ontologyApis,
     setOntologyApis,
     apiPreferences,
-    setApiPreferences,
     apiPreferencesTerm,
-    setApiPreferencesTerm,
+    preferenceTypeSet,
   } = useContext(SearchContext);
   const [searchText, setSearchText] = useState('');
 
@@ -47,6 +46,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
       .finally(() => setLoading(false));
   }, []);
 
+  // Sets the first API in the list as active
   useEffect(() => {
     setActive(ontologyApis[0]?.api_id);
   }, [addFilter]);
@@ -72,9 +72,6 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setSelectedBoxes([]);
     setDisplaySelectedOntologies([]);
   };
-
-  const preferenceTypeSet = data =>
-    apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
 
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
@@ -129,7 +126,8 @@ export const FilterSelect = ({ component, table, terminology }) => {
     };
 
     const method =
-      Object.keys(apiPreferences?.self?.api_preference || {}).length === 0
+      Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).length ===
+      0
         ? 'POST'
         : 'PUT';
 
@@ -192,15 +190,18 @@ export const FilterSelect = ({ component, table, terminology }) => {
       .finally(() => setLoading(false));
   };
 
+  // Checks if there are apiPreferences (table) or apiPreferencesTerm (terminology) and returns the appropriate one
   const preferenceType = apiPreferencesTerm
     ? apiPreferencesTerm
     : apiPreferences;
 
-  const prefTypeKey = Object.keys(preferenceType)[0];
+  // The first key is different depending if it's coming from a table or terminology. This dynamically gets the first key
+  const prefTypeKey = Object?.keys(preferenceType)[0];
 
+  // Creates a dynamic api preference object
   const apiPrefObject = preferenceType[prefTypeKey]?.api_preference;
 
-  // // Calculate the total length of all arrays
+  // Calculates the total length of all arrays to display number of ontology filters
   const apiPrefLength =
     apiPrefObject &&
     Object.values(apiPrefObject)?.reduce((acc, arr) => acc + arr.length, 0);

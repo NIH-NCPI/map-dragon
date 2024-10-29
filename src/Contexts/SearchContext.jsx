@@ -20,6 +20,8 @@ export function SearchContextRoot() {
   const [apiPreferencesTerm, setApiPreferencesTerm] = useState(undefined);
 
   const defaultOntologies = 'mondo,hp,maxo,ncit';
+  const preferenceTypeSet = data =>
+    apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
 
   const context = {
     prefTerminologies,
@@ -51,6 +53,7 @@ export function SearchContextRoot() {
     setOntologyApis,
     setApiPreferencesTerm,
     apiPreferencesTerm,
+    preferenceTypeSet,
   };
 
   return (

@@ -1,4 +1,4 @@
-import { Checkbox, Form, Pagination } from 'antd';
+import { Checkbox, Form } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterReset } from './FilterReset';
@@ -101,6 +101,7 @@ export const FilterOntology = ({
       </>
     );
   };
+
   const checkBoxDisplay = (ont, i) => {
     return (
       <>
@@ -115,6 +116,7 @@ export const FilterOntology = ({
       </>
     );
   };
+
   const existingDisplay = (ont, i) => {
     return (
       <>
@@ -129,10 +131,12 @@ export const FilterOntology = ({
     );
   };
 
+  // Checks if there are apiPreferences (table) or apiPreferencesTerm (terminology) and returns the appropriate one
   const preferenceType = apiPreferencesTerm
     ? apiPreferencesTerm
     : apiPreferences;
 
+  // The first key is different depending if it's coming from a table or terminology. This dynamically gets the first key
   const prefTypeKey = Object.keys(preferenceType)[0];
 
   const existingFilters = Object.values(
@@ -156,16 +160,6 @@ export const FilterOntology = ({
     })
   );
 
-  useEffect(() => {
-    form.setFieldsValue({
-      existing_filters: flattenedFilters?.map((ff, index) =>
-        JSON.stringify({
-          ontology: ff,
-        })
-      ),
-    });
-  }, [apiPreferencesTerm, existingFilters, initialChecked, form]);
-
   return (
     <>
       <div className="modal_checkbox_wrapper">
@@ -175,11 +169,7 @@ export const FilterOntology = ({
           <>
             <div className="onto_reset">
               <h4>Ontology Filters</h4>{' '}
-              <FilterReset
-                table={table}
-                component={table}
-                terminology={terminology}
-              />
+              <FilterReset table={table} terminology={terminology} />
             </div>
             <Form.Item
               initialValue={initialChecked}
