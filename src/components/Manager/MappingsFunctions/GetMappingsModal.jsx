@@ -25,7 +25,7 @@ export const GetMappingsModal = ({
   component,
   mappingProp,
   mappingDesc,
-  table
+  table,
 }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
@@ -37,6 +37,7 @@ export const GetMappingsModal = ({
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
+    setApiPreferencesTerm,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 2500;

@@ -60,3 +60,5 @@ export const ontologyCounts = arr => {
 
   return result;
 };
+
+export const cleanedName = data => data?.toLowerCase().replaceAll(' ', '_');

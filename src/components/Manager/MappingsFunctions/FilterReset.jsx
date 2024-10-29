@@ -3,22 +3,30 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { useParams } from 'react-router-dom';
+import { cleanedName } from '../Utilitiy';
 
-export const FilterReset = ({ table }) => {
+export const FilterReset = ({ table, component, terminology }) => {
   const { confirm } = Modal;
+  const { tableId } = useParams();
 
   const { user, vocabUrl } = useContext(myContext);
   const { setApiPreferences } = useContext(SearchContext);
   const [remove, setRemove] = useState(false);
 
   const deleteOntologies = evt => {
-    return fetch(`${vocabUrl}/${table?.terminology?.reference}/filter/self`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ editor: user.email }),
-    })
+    return fetch(
+      `${vocabUrl}/Table/${tableId}/filter/${
+        component === table ? 'self' : cleanedName(terminology?.name)
+      }`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ editor: user.email }),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json().then(data => {

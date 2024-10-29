@@ -23,6 +23,7 @@ export const FilterAPI = ({
   paginatedOntologies,
   apiPreferences,
   table,
+  terminology,
 }) => {
   const { vocabUrl } = useContext(myContext);
   const [ontology, setOntology] = useState([]);
@@ -161,6 +162,7 @@ export const FilterAPI = ({
                   paginatedOntologies={paginatedOntologies}
                   apiPreferences={apiPreferences}
                   table={table}
+                  terminology={terminology}
                 />
               )}
             </div>

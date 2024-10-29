@@ -6,9 +6,13 @@ import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { cleanedName } from '../Utilitiy';
+import { useParams } from 'react-router-dom';
 
 export const FilterSelect = ({ component, table, terminology }) => {
   const [form] = Form.useForm();
+  const { tableId } = useParams();
+
   const [addFilter, setAddFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -69,6 +73,9 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setDisplaySelectedOntologies([]);
   };
 
+  const preferenceTypeSet = data =>
+    apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
+
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
@@ -127,9 +134,11 @@ export const FilterSelect = ({ component, table, terminology }) => {
         : 'PUT';
 
     fetch(
-      `${vocabUrl}/${(component = table
-        ? `Table/${table.id}`
-        : `Terminology/${terminology.id}`)}/filter`,
+      `${vocabUrl}/Table/${(component = table
+        ? table?.id
+        : tableId)}/${(component = table
+        ? `filter`
+        : `filter/${cleanedName(terminology?.name)}`)}`,
       {
         method: method,
         headers: {
@@ -146,12 +155,17 @@ export const FilterSelect = ({ component, table, terminology }) => {
         }
       })
       .then(() =>
-        fetch(`${vocabUrl}/${table?.terminology?.reference}/filter/self`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
+        fetch(
+          `${vocabUrl}/Table/${tableId}/filter/${(component = table
+            ? `self`
+            : `${cleanedName(terminology?.name)}`)}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
       )
       .then(res => {
         if (res.ok) {
@@ -161,7 +175,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
         }
       })
       .then(data => {
-        setApiPreferences(data);
+        preferenceTypeSet(data);
         form.resetFields();
         setAddFilter(false);
         message.success('Preferred ontologies saved successfully.');
@@ -182,7 +196,9 @@ export const FilterSelect = ({ component, table, terminology }) => {
     ? apiPreferencesTerm
     : apiPreferences;
 
-  const apiPrefObject = preferenceType?.self?.api_preference;
+  const prefTypeKey = Object.keys(preferenceType)[0];
+
+  const apiPrefObject = preferenceType[prefTypeKey]?.api_preference;
 
   // // Calculate the total length of all arrays
   const apiPrefLength =
@@ -300,6 +316,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
               paginatedOntologies={paginatedOntologies}
               apiPreferences={apiPreferences}
               table={table}
+              terminology={terminology}
             />
           )}
         </Modal>

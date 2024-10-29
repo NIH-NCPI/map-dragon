@@ -16,6 +16,7 @@ export const FilterOntology = ({
   paginatedOntologies,
   apiPreferences,
   table,
+  terminology,
 }) => {
   const [allCheckboxes, setAllCheckboxes] = useState([]);
   const { setOntologyForPagination } = useContext(myContext);
@@ -132,7 +133,11 @@ export const FilterOntology = ({
     ? apiPreferencesTerm
     : apiPreferences;
 
-  const existingFilters = Object.values(preferenceType?.self || {}).flat();
+  const prefTypeKey = Object.keys(preferenceType)[0];
+
+  const existingFilters = Object.values(
+    preferenceType[prefTypeKey] || {}
+  )?.flat();
 
   const flattenedFilters = existingFilters
     .flatMap(item =>
@@ -151,15 +156,30 @@ export const FilterOntology = ({
     })
   );
 
+  useEffect(() => {
+    form.setFieldsValue({
+      existing_filters: flattenedFilters?.map((ff, index) =>
+        JSON.stringify({
+          ontology: ff,
+        })
+      ),
+    });
+  }, [apiPreferencesTerm, existingFilters, initialChecked, form]);
+
   return (
     <>
       <div className="modal_checkbox_wrapper">
-        {Object.keys(preferenceType?.self?.api_preference || {}).some(
-          key => preferenceType?.self?.api_preference[key]?.length > 0
+        {Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).some(
+          key => preferenceType[prefTypeKey]?.api_preference[key]?.length > 0
         ) && (
           <>
             <div className="onto_reset">
-              <h4>Ontology Filters</h4> <FilterReset table={table} />
+              <h4>Ontology Filters</h4>{' '}
+              <FilterReset
+                table={table}
+                component={table}
+                terminology={terminology}
+              />
             </div>
             <Form.Item
               initialValue={initialChecked}
@@ -171,20 +191,18 @@ export const FilterOntology = ({
                 },
               ]}
             >
-              {flattenedFilters?.length > 0 ? (
+              {flattenedFilters?.length > 0 && (
                 <Checkbox.Group
                   className="mappings_checkbox"
-                  options={flattenedFilters?.map((po, index) => {
+                  options={flattenedFilters?.map((ff, index) => {
                     return {
                       value: JSON.stringify({
-                        ontology: po,
+                        ontology: ff,
                       }),
-                      label: existingDisplay(po, index),
+                      label: existingDisplay(ff, index),
                     };
                   })}
                 />
-              ) : (
-                ''
               )}
             </Form.Item>
           </>
