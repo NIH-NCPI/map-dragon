@@ -107,7 +107,7 @@ export const StudyDetails = () => {
                   <div className="study_dropdown">
                     <SettingsDropdownStudy study={study} />
                   </div>
-                  <div className="study_url">URL: {study?.url}</div>
+                  <div className="study_url">System: {study?.url}</div>
                 </div>
               </Col>
             </div>

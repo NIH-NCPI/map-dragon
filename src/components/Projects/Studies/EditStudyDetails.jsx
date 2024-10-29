@@ -87,8 +87,10 @@ export const EditStudyDetails = ({ form, study, setStudy, edit, setEdit }) => {
             </Form.Item>
             <Form.Item
               name="url"
-              label="URL"
-              rules={[{ required: true, message: 'Please input Study URL.' }]}
+              label="System"
+              rules={[
+                { required: true, message: 'Please input Study system.' },
+              ]}
             >
               <Input />
             </Form.Item>

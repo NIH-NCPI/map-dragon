@@ -152,8 +152,10 @@ export const UploadTable = ({ addTable, setAddTable }) => {
             </Form.Item>
             <Form.Item
               name="url"
-              label="URL"
-              rules={[{ required: true, message: 'Please input Table URL.' }]}
+              label="System"
+              rules={[
+                { required: true, message: 'Please input Table system.' },
+              ]}
             >
               <Input />
             </Form.Item>
