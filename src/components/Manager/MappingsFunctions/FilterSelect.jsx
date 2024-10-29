@@ -135,7 +135,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
       `${vocabUrl}/Table/${(component = table
         ? table?.id
         : tableId)}/${(component = table
-        ? `filter`
+        ? `filter/self`
         : `filter/${cleanedName(terminology?.name)}`)}`,
       {
         method: method,
