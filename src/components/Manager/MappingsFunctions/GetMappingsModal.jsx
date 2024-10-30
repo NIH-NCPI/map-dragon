@@ -16,6 +16,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { OntologyFilterCodeSubmit } from './OntologyFilterCodeSubmit';
+import { useParams } from 'react-router-dom';
 
 export const GetMappingsModal = ({
   componentString,
@@ -27,17 +28,19 @@ export const GetMappingsModal = ({
   mappingDesc,
   table,
 }) => {
+  const { tableId } = useParams();
   const [form] = Form.useForm();
   const { Search } = Input;
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
   const {
-    apiPreferences,
+    preferenceType,
     defaultOntologies,
     setFacetCounts,
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
-    setApiPreferencesTerm,
+    preferenceTypeSet,
+    prefTypeKey,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 2500;
@@ -75,10 +78,12 @@ export const GetMappingsModal = ({
         notification,
         apiPreferencesCode,
         setUnformattedPref,
-        table
+        tableId
       );
     }
   }, [searchProp]);
+
+  console.log('component', component);
 
   useEffect(() => {
     if (apiPreferencesCode !== undefined) fetchResults(0, searchProp);
@@ -178,7 +183,8 @@ export const GetMappingsModal = ({
         OntologyFilterCodeSubmit(
           apiPreferencesCode,
           setApiPreferencesCode,
-          apiPreferences,
+          preferenceType,
+          prefTypeKey,
           mappingProp,
           table,
           vocabUrl,
@@ -199,12 +205,12 @@ export const GetMappingsModal = ({
 
     if (
       //If there are api preferences and one of them is OLS, it gets the preferred ontologies
-      apiPreferences?.self?.api_preference &&
-      'ols' in apiPreferences?.self?.api_preference
+      preferenceType[prefTypeKey]?.api_preference &&
+      'ols' in preferenceType[prefTypeKey]?.api_preference
     ) {
       const apiPreferenceOntologies = () => {
-        if (apiPreferences?.self?.api_preference?.ols) {
-          return apiPreferences.self.api_preference.ols.join(',');
+        if (preferenceType[prefTypeKey]?.api_preference?.ols) {
+          return preferenceType[prefTypeKey].api_preference.ols.join(',');
         } else {
           // else if there are no preferred ontologies, it uses the default ontologies
           return defaultOntologies;
@@ -403,7 +409,7 @@ export const GetMappingsModal = ({
                 <div className="result_container">
                   <Form form={form} layout="vertical" preserve={false}>
                     <div className="all_checkboxes_container">
-                      <OntologyCheckboxes apiPreferences={apiPreferences} />
+                      <OntologyCheckboxes preferenceType={preferenceType} />
                       <div className="result_form">
                         {displaySelectedMappings?.length > 0 && (
                           <Form.Item

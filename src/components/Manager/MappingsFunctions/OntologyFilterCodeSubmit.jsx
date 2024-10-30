@@ -2,7 +2,8 @@ import { notification } from 'antd';
 
 export const OntologyFilterCodeSubmit = (
   apiPreferencesCode,
-  apiPreferences,
+  preferenceType,
+  prefTypeKey,
   mappingProp,
   table,
   vocabUrl,
@@ -15,7 +16,7 @@ export const OntologyFilterCodeSubmit = (
   if (
     apiPreferencesCode &&
     JSON.stringify(
-      Object.values(apiPreferences?.self?.api_preference)[0].sort()
+      Object.values(preferenceType[prefTypeKey]?.api_preference)[0].sort()
     ) !== JSON.stringify(apiPreferencesCode?.sort())
   ) {
     apiPreference.api_preference.ols = apiPreferencesCode;

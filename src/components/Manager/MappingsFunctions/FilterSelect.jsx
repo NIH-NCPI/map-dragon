@@ -28,8 +28,9 @@ export const FilterSelect = ({ component, table, terminology }) => {
     ontologyApis,
     setOntologyApis,
     apiPreferences,
-    apiPreferencesTerm,
     preferenceTypeSet,
+    preferenceType,
+    prefTypeKey,
   } = useContext(SearchContext);
   const [searchText, setSearchText] = useState('');
 
@@ -189,14 +190,6 @@ export const FilterSelect = ({ component, table, terminology }) => {
       })
       .finally(() => setLoading(false));
   };
-
-  // Checks if there are apiPreferences (table) or apiPreferencesTerm (terminology) and returns the appropriate one
-  const preferenceType = apiPreferencesTerm
-    ? apiPreferencesTerm
-    : apiPreferences;
-
-  // The first key is different depending if it's coming from a table or terminology. This dynamically gets the first key
-  const prefTypeKey = Object?.keys(preferenceType)[0];
 
   // Creates a dynamic api preference object
   const apiPrefObject = preferenceType[prefTypeKey]?.api_preference;

@@ -3,15 +3,16 @@ import { ontologyCounts } from '../Utilitiy';
 import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
 
-export const OntologyCheckboxes = ({ apiPreferences }) => {
+export const OntologyCheckboxes = ({ preferenceType }) => {
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
     facetCounts,
     ontologyApis,
+    prefTypeKey,
   } = useContext(SearchContext);
   const { Search } = Input;
-
+  console.log('api pref code', apiPreferencesCode);
   const [checkedOntologies, setCheckedOntologies] = useState([]);
   const [searchText, setSearchText] = useState('');
 
@@ -30,15 +31,15 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
 
   const existingOntologies = apiPreferencesCode
     ? processedApiPreferencesCode
-    : apiPreferences &&
-      apiPreferences?.self &&
-      apiPreferences?.self?.api_preference
-    ? Object?.values(apiPreferences?.self?.api_preference).flat()
+    : preferenceType &&
+      preferenceType?.self &&
+      preferenceType[prefTypeKey]?.api_preference
+    ? Object?.values(preferenceType[prefTypeKey]?.api_preference).flat()
     : defaultOntologies;
 
   useEffect(() => {
     setCheckedOntologies(existingOntologies);
-  }, [apiPreferences]);
+  }, [preferenceType]);
 
   const onCheckboxChange = e => {
     const { value, checked } = e.target;

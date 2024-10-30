@@ -235,21 +235,14 @@ export const getFiltersByCode = (
   notification,
   apiPreferencesCode,
   setUnformattedPref,
-  table
+  tableId
 ) => {
-  return fetch(
-    `${vocabUrl}/${
-      component === table
-        ? component?.terminology?.reference
-        : `Terminology/${component?.id}`
-    }/filter/${mappingProp}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
+  return fetch(`${vocabUrl}/Table/${tableId}/filter/${mappingProp}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
     .then(res => {
       if (res.ok) {
         return res.json();
