@@ -239,17 +239,12 @@ export const getFiltersByCode = (
   tableId,
   terminology
 ) => {
-  return fetch(
-    `${vocabUrl}/Table/${tableId}/filter/${(component = terminology
-      ? cleanedName(terminology?.name)
-      : mappingProp)}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
+  return fetch(`${vocabUrl}/Table/${tableId}/filter/${mappingProp}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
     .then(res => {
       if (res.ok) {
         return res.json();
