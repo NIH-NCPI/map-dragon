@@ -7,6 +7,7 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
+import { useParams } from 'react-router-dom';
 
 export const MappingReset = ({
   searchProp,
@@ -17,8 +18,10 @@ export const MappingReset = ({
   component,
   mappingProp,
   table,
+  terminology,
 }) => {
   const { searchUrl, vocabUrl } = useContext(myContext);
+  const { tableId } = useParams();
   const {
     apiPreferences,
     defaultOntologies,
@@ -63,9 +66,9 @@ export const MappingReset = ({
         mappingProp,
         setApiPreferencesCode,
         notification,
-        apiPreferencesCode,
         setUnformattedPref,
-        table
+        tableId,
+        terminology
       );
     }
   }, [searchProp]);
@@ -417,13 +420,12 @@ export const MappingReset = ({
               </div>
             </>
           ) : (
-        <div className="loading_spinner">
-          <ModalSpinner />
-        </div>
+            <div className="loading_spinner">
+              <ModalSpinner />
+            </div>
           )}
-      </>
-    </div >
+        </>
+      </div>
     </>
   );
 };
- 

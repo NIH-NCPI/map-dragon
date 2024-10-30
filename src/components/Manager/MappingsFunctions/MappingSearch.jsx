@@ -7,6 +7,7 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
+import { useParams } from 'react-router-dom';
 
 export const MappingSearch = ({
   setEditMappings,
@@ -17,7 +18,7 @@ export const MappingSearch = ({
   mappingDesc,
   component,
   mappingProp,
-  table,
+  terminology,
 }) => {
   const { searchUrl, vocabUrl } = useContext(myContext);
   const {
@@ -28,6 +29,7 @@ export const MappingSearch = ({
     apiPreferencesCode,
     setUnformattedPref,
   } = useContext(SearchContext);
+  const { tableId } = useParams();
 
   const [page, setPage] = useState(0);
   const entriesPerPage = 2500;
@@ -67,9 +69,9 @@ export const MappingSearch = ({
         mappingProp,
         setApiPreferencesCode,
         notification,
-        apiPreferencesCode,
         setUnformattedPref,
-        table
+        tableId,
+        terminology
       );
     }
   }, [searchProp]);

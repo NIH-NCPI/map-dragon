@@ -5,10 +5,13 @@ export const OntologyFilterCodeSubmit = (
   preferenceType,
   prefTypeKey,
   mappingProp,
-  table,
   vocabUrl,
-  component
+  tableId
 ) => {
+  console.log('key', prefTypeKey);
+  console.log('code preferences', JSON.stringify(apiPreferencesCode?.sort()));
+  console.log('preferences', preferenceType[prefTypeKey]?.api_preference[0]);
+
   const apiPreference = {
     api_preference: { 'ols': [] },
   };
@@ -16,23 +19,18 @@ export const OntologyFilterCodeSubmit = (
   if (
     apiPreferencesCode &&
     JSON.stringify(
-      Object.values(preferenceType[prefTypeKey]?.api_preference)[0].sort()
+      Object.values(preferenceType[prefTypeKey]?.api_preference)[0]?.sort()
     ) !== JSON.stringify(apiPreferencesCode?.sort())
   ) {
     apiPreference.api_preference.ols = apiPreferencesCode;
 
-    fetch(
-      `${vocabUrl}/${(component = table
-        ? `Table/${component?.id}`
-        : `Terminology/${component?.id}`)}/filter/${mappingProp}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(apiPreference),
-      }
-    )
+    fetch(`${vocabUrl}/Table/${tableId}/filter/${mappingProp}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(apiPreference),
+    })
       .then(res => {
         if (res.ok) {
           return res.json();

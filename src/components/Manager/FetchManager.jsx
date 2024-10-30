@@ -1,4 +1,4 @@
-import { ontologyReducer } from './Utilitiy';
+import { cleanedName, ontologyReducer } from './Utilitiy';
 
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {
@@ -219,7 +219,9 @@ export const olsFilterOntologiesSearch = (
       //the results are set to res (the filtered, concatenated results)
 
       setResults(res.results);
-      setFilteredResultsCount(res?.filteredResults?.length);
+      setFilteredResultsCount(
+        prevState => prevState + res?.filteredResults?.length
+      );
       // resultsCount is set to the length of the filtered, concatenated results for pagination
       setResultsCount(res.results.length);
       setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
@@ -233,16 +235,21 @@ export const getFiltersByCode = (
   mappingProp,
   setApiPreferencesCode,
   notification,
-  apiPreferencesCode,
   setUnformattedPref,
-  tableId
+  tableId,
+  terminology
 ) => {
-  return fetch(`${vocabUrl}/Table/${tableId}/filter/${mappingProp}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  return fetch(
+    `${vocabUrl}/Table/${tableId}/filter/${(component = terminology
+      ? cleanedName(terminology?.name)
+      : mappingProp)}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
     .then(res => {
       if (res.ok) {
         return res.json();

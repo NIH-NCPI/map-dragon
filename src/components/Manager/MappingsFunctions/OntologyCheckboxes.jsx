@@ -12,7 +12,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     prefTypeKey,
   } = useContext(SearchContext);
   const { Search } = Input;
-  console.log('api pref code', apiPreferencesCode);
+
   const [checkedOntologies, setCheckedOntologies] = useState([]);
   const [searchText, setSearchText] = useState('');
 

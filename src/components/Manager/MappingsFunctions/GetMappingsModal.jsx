@@ -27,6 +27,7 @@ export const GetMappingsModal = ({
   mappingProp,
   mappingDesc,
   table,
+  terminology,
 }) => {
   const { tableId } = useParams();
   const [form] = Form.useForm();
@@ -43,7 +44,7 @@ export const GetMappingsModal = ({
     prefTypeKey,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 2500;
+  const entriesPerPage = 15;
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
@@ -76,14 +77,12 @@ export const GetMappingsModal = ({
         mappingProp,
         setApiPreferencesCode,
         notification,
-        apiPreferencesCode,
         setUnformattedPref,
-        tableId
+        tableId,
+        terminology
       );
     }
   }, [searchProp]);
-
-  console.log('component', component);
 
   useEffect(() => {
     if (apiPreferencesCode !== undefined) fetchResults(0, searchProp);
@@ -100,7 +99,7 @@ export const GetMappingsModal = ({
   This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
   Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
   useEffect(() => {
-    if (results?.length > 0 && page > 0) {
+    if (results?.length > 0 && page > 0 && ref.current) {
       const container = ref.current.closest('.ant-modal-body');
       const scrollTop = ref.current.offsetTop - container.offsetTop;
       container.scrollTop = scrollTop;
@@ -182,13 +181,11 @@ export const GetMappingsModal = ({
       .then(() =>
         OntologyFilterCodeSubmit(
           apiPreferencesCode,
-          setApiPreferencesCode,
           preferenceType,
           prefTypeKey,
           mappingProp,
-          table,
           vocabUrl,
-          component
+          tableId
         )
       )
       .finally(() => setLoading(false));
@@ -482,12 +479,12 @@ export const GetMappingsModal = ({
                       inconsistencies in results numbers per page. */}
                     <Tooltip
                       placement="bottom"
-                      title="Redundant entries have been removed"
+                      title={`${filteredResultsCount} redundant entries have been removed`}
                     >
                       Displaying {resultsCount}
                       &nbsp;of&nbsp;{totalCount}
                     </Tooltip>
-                    {totalCount - filteredResultsCount !== resultsCount && (
+                    {resultsCount < totalCount - filteredResultsCount && (
                       <span
                         className="view_more_link"
                         onClick={e => {

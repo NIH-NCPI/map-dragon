@@ -401,6 +401,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           <GetMappingsModal
             componentString={'Terminology'}
             component={terminology}
+            terminology={terminology}
             setTerminology={setTerminology}
             searchProp={
               getMappings?.display ? getMappings.display : getMappings?.code
