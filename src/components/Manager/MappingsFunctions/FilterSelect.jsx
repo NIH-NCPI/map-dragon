@@ -6,9 +6,13 @@ import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { cleanedName } from '../Utilitiy';
+import { useParams } from 'react-router-dom';
 
-export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
+export const FilterSelect = ({ component, table, terminology }) => {
   const [form] = Form.useForm();
+  const { tableId } = useParams();
+
   const [addFilter, setAddFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -20,7 +24,13 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
   const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(false);
   const { user, vocabUrl, ontologyForPagination } = useContext(myContext);
-  const { ontologyApis, setOntologyApis } = useContext(SearchContext);
+  const {
+    ontologyApis,
+    setOntologyApis,
+    apiPreferences,
+    apiPreferencesTerm,
+    preferenceTypeSet,
+  } = useContext(SearchContext);
   const [searchText, setSearchText] = useState('');
 
   // Gets the ontologyAPIs on first load, automatically sets active to the first of the list to display on the page
@@ -36,6 +46,7 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
       .finally(() => setLoading(false));
   }, []);
 
+  // Sets the first API in the list as active
   useEffect(() => {
     setActive(ontologyApis[0]?.api_id);
   }, [addFilter]);
@@ -115,17 +126,25 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
     };
 
     const method =
-      Object.keys(apiPreferences?.self?.api_preference || {}).length === 0
+      Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).length ===
+      0
         ? 'POST'
         : 'PUT';
 
-    fetch(`${vocabUrl}/${table?.terminology?.reference}/filter`, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(apiPreferenceDTO),
-    })
+    fetch(
+      `${vocabUrl}/Table/${(component = table
+        ? table?.id
+        : tableId)}/${(component = table
+        ? `filter/self`
+        : `filter/${cleanedName(terminology?.name)}`)}`,
+      {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(apiPreferenceDTO),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -134,12 +153,17 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
         }
       })
       .then(() =>
-        fetch(`${vocabUrl}/${table?.terminology?.reference}/filter/self`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
+        fetch(
+          `${vocabUrl}/Table/${tableId}/filter/${(component = table
+            ? `self`
+            : `${cleanedName(terminology?.name)}`)}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
       )
       .then(res => {
         if (res.ok) {
@@ -149,7 +173,7 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
         }
       })
       .then(data => {
-        setApiPreferences(data);
+        preferenceTypeSet(data);
         form.resetFields();
         setAddFilter(false);
         message.success('Preferred ontologies saved successfully.');
@@ -166,9 +190,18 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
       .finally(() => setLoading(false));
   };
 
-  const apiPrefObject = apiPreferences?.self?.api_preference;
+  // Checks if there are apiPreferences (table) or apiPreferencesTerm (terminology) and returns the appropriate one
+  const preferenceType = apiPreferencesTerm
+    ? apiPreferencesTerm
+    : apiPreferences;
 
-  // // Calculate the total length of all arrays
+  // The first key is different depending if it's coming from a table or terminology. This dynamically gets the first key
+  const prefTypeKey = Object?.keys(preferenceType)[0];
+
+  // Creates a dynamic api preference object
+  const apiPrefObject = preferenceType[prefTypeKey]?.api_preference;
+
+  // Calculates the total length of all arrays to display number of ontology filters
   const apiPrefLength =
     apiPrefObject &&
     Object.values(apiPrefObject)?.reduce((acc, arr) => acc + arr.length, 0);
@@ -284,6 +317,7 @@ export const FilterSelect = ({ table, apiPreferences, setApiPreferences }) => {
               paginatedOntologies={paginatedOntologies}
               apiPreferences={apiPreferences}
               table={table}
+              terminology={terminology}
             />
           )}
         </Modal>

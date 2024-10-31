@@ -18,13 +18,20 @@ import { Submenu } from '../../Manager/Submenu';
 import { LoadCodes } from './LoadCodes';
 import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
+import { cleanedName } from '../../Manager/Utilitiy';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
 
   const { terminologyId, tableId } = useParams();
   const { vocabUrl, user } = useContext(myContext);
-  const { setPrefTerminologies, prefTerminologies } = useContext(SearchContext);
+  const {
+    setPrefTerminologies,
+    prefTerminologies,
+    setApiPreferencesTerm,
+    apiPreferencesTerm,
+  } = useContext(SearchContext);
   const {
     editMappings,
     setEditMappings,
@@ -43,6 +50,13 @@ export const Terminology = () => {
   useEffect(() => {
     localStorage.setItem('pageSize', pageSize);
   }, [pageSize]);
+
+  useEffect(
+    () => () => {
+      setApiPreferencesTerm(undefined);
+    },
+    []
+  );
 
   const [loading, setLoading] = useState(true);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
@@ -180,6 +194,26 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         } else {
           setTerminology(data);
           if (data) {
+            cleanedName(data?.name);
+            fetch(
+              `${vocabUrl}/Table/${tableId}/filter/${cleanedName(data?.name)}`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            )
+              .then(res => {
+                if (res.ok) {
+                  return res.json();
+                } else {
+                  throw new Error('An unknown error occurred.');
+                }
+              })
+              .then(data => {
+                setApiPreferencesTerm(data);
+              });
             getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
               .then(data => setMapping(data.codes))
               .catch(error => {
@@ -218,7 +252,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading the Terminology.',
+            description:
+              'An error occurred loading the the ontology preferences.',
           });
         }
         return error;
@@ -321,6 +356,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           </Row>
           <div className="table_container">
             <div className="add_row_buttons">
+              <FilterSelect component={terminology} terminology={terminology} />
+
               <PreferredTerminology
                 terminology={terminology}
                 setTerminology={setTerminology}

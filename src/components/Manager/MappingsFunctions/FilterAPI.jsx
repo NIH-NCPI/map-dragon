@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Checkbox, Form } from 'antd';
+import { Checkbox, Form, Tooltip } from 'antd';
 import { ModalSpinner, OntologySpinner } from '../Spinner';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
@@ -23,6 +23,7 @@ export const FilterAPI = ({
   paginatedOntologies,
   apiPreferences,
   table,
+  terminology,
 }) => {
   const { vocabUrl } = useContext(myContext);
   const [ontology, setOntology] = useState([]);
@@ -124,7 +125,11 @@ export const FilterAPI = ({
         <Form form={form} preserve={false}>
           <div style={{ display: 'flex' }}>
             <div style={{ flex: '0 0 25%' }}>
-              <div className="api_label">APIs</div>
+              <div className="api_label">
+                <Tooltip title="Default search with OLS using HP, MAXO, MONDO, NCIT">
+                  APIs
+                </Tooltip>
+              </div>
 
               <Form.Item name={'selected_apis'} valuePropName="value">
                 <Checkbox.Group
@@ -161,6 +166,7 @@ export const FilterAPI = ({
                   paginatedOntologies={paginatedOntologies}
                   apiPreferences={apiPreferences}
                   table={table}
+                  terminology={terminology}
                 />
               )}
             </div>

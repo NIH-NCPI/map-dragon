@@ -1,7 +1,8 @@
-import { Checkbox, Form, Pagination } from 'antd';
+import { Checkbox, Form } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterReset } from './FilterReset';
+import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const FilterOntology = ({
   ontology,
@@ -15,9 +16,11 @@ export const FilterOntology = ({
   paginatedOntologies,
   apiPreferences,
   table,
+  terminology,
 }) => {
   const [allCheckboxes, setAllCheckboxes] = useState([]);
   const { setOntologyForPagination } = useContext(myContext);
+  const { apiPreferencesTerm } = useContext(SearchContext);
 
   useEffect(() => {
     setOntologyForPagination(ontology);
@@ -98,6 +101,7 @@ export const FilterOntology = ({
       </>
     );
   };
+
   const checkBoxDisplay = (ont, i) => {
     return (
       <>
@@ -112,6 +116,7 @@ export const FilterOntology = ({
       </>
     );
   };
+
   const existingDisplay = (ont, i) => {
     return (
       <>
@@ -126,7 +131,17 @@ export const FilterOntology = ({
     );
   };
 
-  const existingFilters = Object.values(apiPreferences?.self || {}).flat();
+  // Checks if there are apiPreferences (table) or apiPreferencesTerm (terminology) and returns the appropriate one
+  const preferenceType = apiPreferencesTerm
+    ? apiPreferencesTerm
+    : apiPreferences;
+
+  // The first key is different depending if it's coming from a table or terminology. This dynamically gets the first key
+  const prefTypeKey = Object.keys(preferenceType)[0];
+
+  const existingFilters = Object.values(
+    preferenceType[prefTypeKey] || {}
+  )?.flat();
 
   const flattenedFilters = existingFilters
     .flatMap(item =>
@@ -148,12 +163,13 @@ export const FilterOntology = ({
   return (
     <>
       <div className="modal_checkbox_wrapper">
-        {Object.keys(apiPreferences?.self?.api_preference || {}).some(
-          key => apiPreferences?.self?.api_preference[key]?.length > 0
+        {Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).some(
+          key => preferenceType[prefTypeKey]?.api_preference[key]?.length > 0
         ) && (
           <>
             <div className="onto_reset">
-              <h4>Ontology Filters</h4> <FilterReset table={table} />
+              <h4>Ontology Filters</h4>{' '}
+              <FilterReset table={table} terminology={terminology} />
             </div>
             <Form.Item
               initialValue={initialChecked}
@@ -165,20 +181,18 @@ export const FilterOntology = ({
                 },
               ]}
             >
-              {flattenedFilters?.length > 0 ? (
+              {flattenedFilters?.length > 0 && (
                 <Checkbox.Group
                   className="mappings_checkbox"
-                  options={flattenedFilters?.map((po, index) => {
+                  options={flattenedFilters?.map((ff, index) => {
                     return {
                       value: JSON.stringify({
-                        ontology: po,
+                        ontology: ff,
                       }),
-                      label: existingDisplay(po, index),
+                      label: existingDisplay(ff, index),
                     };
                   })}
                 />
-              ) : (
-                ''
               )}
             </Form.Item>
           </>
@@ -204,8 +218,8 @@ export const FilterOntology = ({
             </Form.Item>
           </>
         )}
-        {(Object.keys(apiPreferences?.self?.api_preference || {}).some(
-          key => apiPreferences?.self?.api_preference[key]?.length > 0
+        {(Object.keys(preferenceType?.self?.api_preference || {}).some(
+          key => preferenceType?.self?.api_preference[key]?.length > 0
         ) ||
           displaySelectedOntologies.length > 0) && <h4>Ontologies</h4>}
         <Form.Item name={'ontologies'} valuePropName="value">

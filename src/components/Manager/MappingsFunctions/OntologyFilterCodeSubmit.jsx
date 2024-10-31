@@ -2,7 +2,6 @@ import { notification } from 'antd';
 
 export const OntologyFilterCodeSubmit = (
   apiPreferencesCode,
-  setApiPreferencesCode,
   apiPreferences,
   mappingProp,
   table,
@@ -23,7 +22,7 @@ export const OntologyFilterCodeSubmit = (
 
     fetch(
       `${vocabUrl}/${(component = table
-        ? table?.terminology?.reference
+        ? `Table/${component?.id}`
         : `Terminology/${component?.id}`)}/filter/${mappingProp}`,
       {
         method: 'POST',

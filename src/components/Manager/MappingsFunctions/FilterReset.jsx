@@ -3,22 +3,32 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { useParams } from 'react-router-dom';
+import { cleanedName } from '../Utilitiy';
 
-export const FilterReset = ({ table }) => {
+export const FilterReset = ({ table, terminology }) => {
   const { confirm } = Modal;
+  const { tableId } = useParams();
 
   const { user, vocabUrl } = useContext(myContext);
-  const { setApiPreferences } = useContext(SearchContext);
+  const { preferenceTypeSet } = useContext(SearchContext);
   const [remove, setRemove] = useState(false);
 
   const deleteOntologies = evt => {
-    return fetch(`${vocabUrl}/${table?.terminology?.reference}/filter/self`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ editor: user.email }),
-    })
+    // If deleting from a table, 'self' in endpoint
+    // If deleting from a terminology, the terminology code in endpoint
+    return fetch(
+      `${vocabUrl}/Table/${tableId}/filter/${
+        table ? 'self' : cleanedName(terminology?.name)
+      }`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ editor: user.email }),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json().then(data => {
@@ -31,7 +41,35 @@ export const FilterReset = ({ table }) => {
           });
         }
       })
-      .then(data => setApiPreferences(data));
+      .then(() =>
+        // Fetch the updated api preferences
+        fetch(
+          `${vocabUrl}/Table/${tableId}/filter/${
+            table ? `self` : `${cleanedName(terminology?.name)}`
+          }`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+      )
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          notification.error({
+            message: 'Error',
+            description: `An error occurred loading the ${
+              table ? 'table' : 'terminology'
+            }.`,
+          });
+        }
+      })
+      .then(data => {
+        preferenceTypeSet(data);
+      });
   };
 
   const showConfirm = () => {
