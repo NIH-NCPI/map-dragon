@@ -18,8 +18,12 @@ export const FilterReset = ({ table, terminology }) => {
     // If deleting from a table, 'self' in endpoint
     // If deleting from a terminology, the terminology code in endpoint
     return fetch(
-      `${vocabUrl}/Table/${tableId}/filter/${
-        table ? 'self' : cleanedName(terminology?.name)
+      `${vocabUrl}/${
+        table
+          ? `Table/${table.id}/filter/self`
+          : `Terminology/${terminology.id}/filter/${cleanedName(
+              terminology.name
+            )}`
       }`,
       {
         method: 'DELETE',
@@ -44,8 +48,12 @@ export const FilterReset = ({ table, terminology }) => {
       .then(() =>
         // Fetch the updated api preferences
         fetch(
-          `${vocabUrl}/Table/${tableId}/filter/${
-            table ? `self` : `${cleanedName(terminology?.name)}`
+          `${vocabUrl}/${
+            table
+              ? `Table/${table.id}/filter/self`
+              : `Terminology/${terminology.id}/filter/${cleanedName(
+                  terminology.name
+                )}`
           }`,
           {
             method: 'GET',

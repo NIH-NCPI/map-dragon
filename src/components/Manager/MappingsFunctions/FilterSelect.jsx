@@ -133,11 +133,11 @@ export const FilterSelect = ({ component, table, terminology }) => {
         : 'PUT';
 
     fetch(
-      `${vocabUrl}/Table/${(component = table
-        ? table?.id
-        : tableId)}/${(component = table
-        ? `filter/self`
-        : `filter/${cleanedName(terminology?.name)}`)}`,
+      `${vocabUrl}/${(component = table
+        ? `Table/${table.id}/filter/self`
+        : `Terminology/${terminology.id}/filter/${cleanedName(
+            terminology.name
+          )}`)}`,
       {
         method: method,
         headers: {
@@ -155,9 +155,11 @@ export const FilterSelect = ({ component, table, terminology }) => {
       })
       .then(() =>
         fetch(
-          `${vocabUrl}/Table/${tableId}/filter/${(component = table
-            ? `self`
-            : `${cleanedName(terminology?.name)}`)}`,
+          `${vocabUrl}/${(component = table
+            ? `Table/${table.id}/filter/self`
+            : `Terminology/${terminology.id}/filter/${cleanedName(
+                terminology.name
+              )}`)}`,
           {
             method: 'GET',
             headers: {

@@ -137,15 +137,12 @@ export const TableDetails = () => {
                 return error;
               })
               .then(() =>
-                fetch(
-                  `${vocabUrl}/${data?.terminology?.reference}/filter/self`,
-                  {
-                    method: 'GET',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                  }
-                )
+                fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                })
               )
               .then(res => {
                 if (res.ok) {
