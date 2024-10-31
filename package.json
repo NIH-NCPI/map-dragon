@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build-dev": "vite build --mode dev",
-    "build-qa": "vite build --mode qa",
+    "build-qaack": "vite build --mode qa",
     "build-alpha": "vite build --mode alpha",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
