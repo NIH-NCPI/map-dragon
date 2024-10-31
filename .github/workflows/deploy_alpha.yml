@@ -30,8 +30,8 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
-        with:
-          ref: release # release is deployed, not the default or working branch
+        # with:
+        #   ref: release # release is deployed, not the default or working branch
         
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
