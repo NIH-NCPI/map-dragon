@@ -17,6 +17,7 @@ import { ResetTableMappings } from './ResetTableMappings';
 import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { OntologyFilterCodeSubmit } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmit';
 
 export const EditMappingsTableModal = ({
   editMappings,
@@ -35,7 +36,12 @@ export const EditMappingsTableModal = ({
   const [editSearch, setEditSearch] = useState(false);
   const { setSelectedMappings, setDisplaySelectedMappings } =
     useContext(MappingContext);
-  const { setApiPreferencesCode } = useContext(SearchContext);
+  const {
+    apiPreferencesCode,
+    setApiPreferencesCode,
+    preferenceType,
+    prefTypeKey,
+  } = useContext(SearchContext);
 
   useEffect(() => {
     fetchMappings();
@@ -193,6 +199,7 @@ export const EditMappingsTableModal = ({
       .finally(() => setLoading(false));
   };
 
+  const mappingProp = editMappings?.code;
   // Function to send a PUT call to update the mappings after code name change.
   // The existing and new mappings are JSON.parsed and combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
@@ -240,6 +247,17 @@ export const EditMappingsTableModal = ({
         }
         return error;
       })
+      .then(() =>
+        OntologyFilterCodeSubmit(
+          apiPreferencesCode,
+          preferenceType,
+          prefTypeKey,
+          mappingProp,
+          vocabUrl,
+          table
+        )
+      )
+
       .finally(() => setLoading(false));
   };
 

@@ -32,7 +32,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   const existingOntologies = apiPreferencesCode
     ? processedApiPreferencesCode
     : preferenceType &&
-      preferenceType?.self &&
+      preferenceType[prefTypeKey] &&
       preferenceType[prefTypeKey]?.api_preference
     ? Object?.values(preferenceType[prefTypeKey]?.api_preference).flat()
     : defaultOntologies;

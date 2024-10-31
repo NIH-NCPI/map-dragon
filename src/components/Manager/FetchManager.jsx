@@ -236,15 +236,22 @@ export const getFiltersByCode = (
   setApiPreferencesCode,
   notification,
   setUnformattedPref,
-  tableId,
+  table,
   terminology
 ) => {
-  return fetch(`${vocabUrl}/Table/${tableId}/filter/${mappingProp}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  return fetch(
+    `${vocabUrl}/${
+      table
+        ? `Table/${table.id}/filter/${mappingProp}`
+        : `Terminology/${terminology.id}/filter/${mappingProp}`
+    }`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
     .then(res => {
       if (res.ok) {
         return res.json();

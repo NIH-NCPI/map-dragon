@@ -15,10 +15,11 @@ export const MappingSearch = ({
   mappingsForSearch,
   onClose,
   searchProp,
+  mappingProp,
   mappingDesc,
   component,
-  mappingProp,
   terminology,
+  table,
 }) => {
   const { searchUrl, vocabUrl } = useContext(myContext);
   const {
@@ -32,7 +33,7 @@ export const MappingSearch = ({
   const { tableId } = useParams();
 
   const [page, setPage] = useState(0);
-  const entriesPerPage = 2500;
+  const entriesPerPage = 2000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
@@ -70,7 +71,7 @@ export const MappingSearch = ({
         setApiPreferencesCode,
         notification,
         setUnformattedPref,
-        tableId,
+        table,
         terminology
       );
     }
@@ -94,7 +95,7 @@ export const MappingSearch = ({
   This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
   Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
   useEffect(() => {
-    if (results?.length > 0 && page > 0) {
+    if (results?.length > 0 && page > 0 && ref.current) {
       const container = ref.current.closest('.ant-modal-body');
       const scrollTop = ref.current.offsetTop - container.offsetTop;
       container.scrollTop = scrollTop;
@@ -492,7 +493,7 @@ export const MappingSearch = ({
                       Displaying {resultsCount}
                       &nbsp;of&nbsp;{totalCount}
                     </Tooltip>
-                    {totalCount - filteredResultsCount !== resultsCount && (
+                    {resultsCount < totalCount - filteredResultsCount && (
                       <span
                         className="view_more_link"
                         onClick={e => {

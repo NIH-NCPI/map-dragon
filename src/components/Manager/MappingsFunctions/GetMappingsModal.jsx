@@ -15,7 +15,10 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
-import { OntologyFilterCodeSubmit } from './OntologyFilterCodeSubmit';
+import {
+  OntologyFilterCodeSubmit,
+  OntologyFilterCodeSubmitTerm,
+} from './OntologyFilterCodeSubmit';
 import { useParams } from 'react-router-dom';
 
 export const GetMappingsModal = ({
@@ -44,7 +47,7 @@ export const GetMappingsModal = ({
     prefTypeKey,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 15;
+  const entriesPerPage = 2000;
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
@@ -78,7 +81,7 @@ export const GetMappingsModal = ({
         setApiPreferencesCode,
         notification,
         setUnformattedPref,
-        tableId,
+        table,
         terminology
       );
     }
@@ -179,14 +182,23 @@ export const GetMappingsModal = ({
         message.success('Changes saved successfully.');
       })
       .then(() =>
-        OntologyFilterCodeSubmit(
-          apiPreferencesCode,
-          preferenceType,
-          prefTypeKey,
-          mappingProp,
-          vocabUrl,
-          tableId
-        )
+        table
+          ? OntologyFilterCodeSubmit(
+              apiPreferencesCode,
+              preferenceType,
+              prefTypeKey,
+              mappingProp,
+              vocabUrl,
+              table
+            )
+          : OntologyFilterCodeSubmitTerm(
+              apiPreferencesCode,
+              preferenceType,
+              prefTypeKey,
+              searchProp,
+              vocabUrl,
+              terminology
+            )
       )
       .finally(() => setLoading(false));
   };
