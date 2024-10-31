@@ -1,0 +1,64 @@
+# This workflow build and push a Docker container to Google Artifact Registry
+# and deploy it on Cloud Run when manually triggered.
+
+name: 'Build and Deploy Alpha to  Cloud Run'
+
+on:
+    workflow_dispatch
+
+env:
+
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  REGION: ${{ secrets.REGION_LOC_1 }}
+  SERVICE: 'map-dragon'
+  IMAGE_NAME: 'map-dragon_img'
+  GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
+
+
+jobs:
+  
+  deploy:
+    runs-on: 'ubuntu-latest'
+
+    
+    environment:
+      name: alpha
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ env.GCP_CREDENTIALS }}'
+
+      - name: Generate .env.alpha file
+        run: |
+          echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.alpha
+          echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.alpha
+          echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.alpha
+      - name: 'Docker Auth'
+        run: |-
+          gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
+
+      - name: 'Build Docker Image' # New step to build the image
+        run: |-
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          docker build -t "${DOCKER_TAG}" .
+
+      - name: 'Push Docker Image'
+        run: |-
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          docker push "${DOCKER_TAG}"
+
+      - name: 'Deploy to Cloud Run'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: '${{ env.SERVICE }}'
+          region: '${{ env.REGION }}'
+          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
