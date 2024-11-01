@@ -186,7 +186,6 @@ export const MappingSearch = ({
         setFacetCounts
       );
   };
-
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
   const handleViewMore = e => {
     e.preventDefault();

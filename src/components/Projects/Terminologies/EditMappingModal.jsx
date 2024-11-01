@@ -16,10 +16,7 @@ import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import {
-  OntologyFilterCodeSubmit,
-  OntologyFilterCodeSubmitTerm,
-} from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmit';
+import { OntologyFilterCodeSubmitTerm } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmitTerm';
 
 export const EditMappingsModal = ({
   editMappings,
@@ -255,17 +252,15 @@ export const EditMappingsModal = ({
         }
         return error;
       })
-      .then(() =>
-        OntologyFilterCodeSubmitTerm(
-          apiPreferencesCode,
-          preferenceType,
-          prefTypeKey,
-          searchProp,
-          vocabUrl,
-          terminology
-        )
-      )
       .finally(() => setLoading(false));
+    OntologyFilterCodeSubmitTerm(
+      apiPreferencesCode,
+      preferenceType,
+      prefTypeKey,
+      searchProp,
+      vocabUrl,
+      terminology
+    );
   };
 
   return (
@@ -372,7 +367,7 @@ export const EditMappingsModal = ({
           reset={reset}
           onClose={form.resetFields}
           searchProp={
-            editMappings?.display ? editMappings.display : editMappings?.code
+            editMappings?.display ? editMappings?.display : editMappings?.code
           }
           mappingProp={editMappings?.code}
           mappingDesc={editMappings?.description}

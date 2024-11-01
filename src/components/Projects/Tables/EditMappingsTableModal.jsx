@@ -247,18 +247,15 @@ export const EditMappingsTableModal = ({
         }
         return error;
       })
-      .then(() =>
-        OntologyFilterCodeSubmit(
-          apiPreferencesCode,
-          preferenceType,
-          prefTypeKey,
-          mappingProp,
-          vocabUrl,
-          table
-        )
-      )
-
       .finally(() => setLoading(false));
+    OntologyFilterCodeSubmit(
+      apiPreferencesCode,
+      preferenceType,
+      prefTypeKey,
+      mappingProp,
+      vocabUrl,
+      table
+    );
   };
 
   return (
@@ -358,14 +355,14 @@ export const EditMappingsTableModal = ({
           form={form}
           reset={reset}
           onClose={form.resetFields}
-          searchProp={editMappings.name}
+          searchProp={editMappings?.name}
           mappingDesc={
-            editMappings.description
-              ? editMappings.description
+            editMappings?.description
+              ? editMappings?.description
               : 'No Description'
           }
           component={table}
-          mappingProp={editMappings.code}
+          mappingProp={editMappings?.code}
           table={table}
         />
       ) : (

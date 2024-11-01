@@ -256,7 +256,10 @@ export const getFiltersByCode = (
       if (res.ok) {
         return res.json();
       } else {
-        throw new Error('An unknown error occurred.');
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred loading the ontology preferences.',
+        });
       }
     })
     .then(data => {
@@ -271,14 +274,5 @@ export const getFiltersByCode = (
       } else {
         setApiPreferencesCode(''); // Fallback if no ols found
       }
-    })
-    .catch(error => {
-      if (error) {
-        notification.error({
-          message: 'Error',
-          description: 'An error occurred loading the ontology preferences.',
-        });
-      }
-      return error;
     });
 };
