@@ -16,6 +16,8 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { OntologyFilterCodeSubmit } from './OntologyFilterCodeSubmit';
+import { OntologyFilterCodeSubmitTerm } from './OntologyFilterCodeSubmitTerm';
+import { useParams } from 'react-router-dom';
 
 export const GetMappingsModal = ({
   componentString,
@@ -26,21 +28,24 @@ export const GetMappingsModal = ({
   mappingProp,
   mappingDesc,
   table,
+  terminology,
 }) => {
+  const { tableId } = useParams();
   const [form] = Form.useForm();
   const { Search } = Input;
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
   const {
-    apiPreferences,
+    preferenceType,
     defaultOntologies,
     setFacetCounts,
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
-    setApiPreferencesTerm,
+    preferenceTypeSet,
+    prefTypeKey,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 2500;
+  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
@@ -73,9 +78,9 @@ export const GetMappingsModal = ({
         mappingProp,
         setApiPreferencesCode,
         notification,
-        apiPreferencesCode,
         setUnformattedPref,
-        table
+        table,
+        terminology
       );
     }
   }, [searchProp]);
@@ -95,7 +100,7 @@ export const GetMappingsModal = ({
   This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
   Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
   useEffect(() => {
-    if (results?.length > 0 && page > 0) {
+    if (results?.length > 0 && page > 0 && ref.current) {
       const container = ref.current.closest('.ant-modal-body');
       const scrollTop = ref.current.offsetTop - container.offsetTop;
       container.scrollTop = scrollTop;
@@ -174,18 +179,24 @@ export const GetMappingsModal = ({
         setGetMappings(null);
         message.success('Changes saved successfully.');
       })
-      .then(() =>
-        OntologyFilterCodeSubmit(
-          apiPreferencesCode,
-          setApiPreferencesCode,
-          apiPreferences,
-          mappingProp,
-          table,
-          vocabUrl,
-          component
-        )
-      )
       .finally(() => setLoading(false));
+    table
+      ? OntologyFilterCodeSubmit(
+          apiPreferencesCode,
+          preferenceType,
+          prefTypeKey,
+          mappingProp,
+          vocabUrl,
+          table
+        )
+      : OntologyFilterCodeSubmitTerm(
+          apiPreferencesCode,
+          preferenceType,
+          prefTypeKey,
+          searchProp,
+          vocabUrl,
+          terminology
+        );
   };
 
   const fetchResults = (page, query) => {
@@ -199,12 +210,12 @@ export const GetMappingsModal = ({
 
     if (
       //If there are api preferences and one of them is OLS, it gets the preferred ontologies
-      apiPreferences?.self?.api_preference &&
-      'ols' in apiPreferences?.self?.api_preference
+      preferenceType[prefTypeKey]?.api_preference &&
+      'ols' in preferenceType[prefTypeKey]?.api_preference
     ) {
       const apiPreferenceOntologies = () => {
-        if (apiPreferences?.self?.api_preference?.ols) {
-          return apiPreferences.self.api_preference.ols.join(',');
+        if (preferenceType[prefTypeKey]?.api_preference?.ols) {
+          return preferenceType[prefTypeKey].api_preference.ols.join(',');
         } else {
           // else if there are no preferred ontologies, it uses the default ontologies
           return defaultOntologies;
@@ -357,7 +368,6 @@ export const GetMappingsModal = ({
   };
 
   const filteredResultsArray = getFilteredResults();
-
   return (
     <>
       <Modal
@@ -403,7 +413,7 @@ export const GetMappingsModal = ({
                 <div className="result_container">
                   <Form form={form} layout="vertical" preserve={false}>
                     <div className="all_checkboxes_container">
-                      <OntologyCheckboxes apiPreferences={apiPreferences} />
+                      <OntologyCheckboxes preferenceType={preferenceType} />
                       <div className="result_form">
                         {displaySelectedMappings?.length > 0 && (
                           <Form.Item
@@ -449,7 +459,7 @@ export const GetMappingsModal = ({
                                           display: d.label,
                                           description: d.description[0],
                                           system: systemsMatch(
-                                            d?.obo_id.split(':')[0]
+                                            d?.obo_id?.split(':')[0]
                                           ),
                                         }),
                                         label: checkBoxDisplay(d, index),
@@ -476,12 +486,12 @@ export const GetMappingsModal = ({
                       inconsistencies in results numbers per page. */}
                     <Tooltip
                       placement="bottom"
-                      title="Redundant entries have been removed"
+                      title={`${filteredResultsCount} redundant entries have been removed`}
                     >
                       Displaying {resultsCount}
                       &nbsp;of&nbsp;{totalCount}
                     </Tooltip>
-                    {totalCount - filteredResultsCount !== resultsCount && (
+                    {resultsCount < totalCount - filteredResultsCount && (
                       <span
                         className="view_more_link"
                         onClick={e => {

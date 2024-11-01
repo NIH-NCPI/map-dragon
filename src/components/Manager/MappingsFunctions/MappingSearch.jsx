@@ -7,6 +7,7 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
+import { useParams } from 'react-router-dom';
 
 export const MappingSearch = ({
   setEditMappings,
@@ -14,9 +15,10 @@ export const MappingSearch = ({
   mappingsForSearch,
   onClose,
   searchProp,
+  mappingProp,
   mappingDesc,
   component,
-  mappingProp,
+  terminology,
   table,
 }) => {
   const { searchUrl, vocabUrl } = useContext(myContext);
@@ -28,9 +30,10 @@ export const MappingSearch = ({
     apiPreferencesCode,
     setUnformattedPref,
   } = useContext(SearchContext);
+  const { tableId } = useParams();
 
   const [page, setPage] = useState(0);
-  const entriesPerPage = 2500;
+  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
@@ -67,9 +70,9 @@ export const MappingSearch = ({
         mappingProp,
         setApiPreferencesCode,
         notification,
-        apiPreferencesCode,
         setUnformattedPref,
-        table
+        table,
+        terminology
       );
     }
   }, [searchProp]);
@@ -92,7 +95,7 @@ export const MappingSearch = ({
   This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
   Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
   useEffect(() => {
-    if (results?.length > 0 && page > 0) {
+    if (results?.length > 0 && page > 0 && ref.current) {
       const container = ref.current.closest('.ant-modal-body');
       const scrollTop = ref.current.offsetTop - container.offsetTop;
       container.scrollTop = scrollTop;
@@ -183,7 +186,6 @@ export const MappingSearch = ({
         setFacetCounts
       );
   };
-
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
   const handleViewMore = e => {
     e.preventDefault();
@@ -490,7 +492,7 @@ export const MappingSearch = ({
                       Displaying {resultsCount}
                       &nbsp;of&nbsp;{totalCount}
                     </Tooltip>
-                    {totalCount - filteredResultsCount !== resultsCount && (
+                    {resultsCount < totalCount - filteredResultsCount && (
                       <span
                         className="view_more_link"
                         onClick={e => {

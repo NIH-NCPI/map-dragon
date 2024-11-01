@@ -196,7 +196,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           if (data) {
             cleanedName(data?.name);
             fetch(
-              `${vocabUrl}/Table/${tableId}/filter/${cleanedName(data?.name)}`,
+              `${vocabUrl}/Terminology/${data?.id}/filter/${cleanedName(
+                data?.name
+              )}`,
               {
                 method: 'GET',
                 headers: {
@@ -401,6 +403,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           <GetMappingsModal
             componentString={'Terminology'}
             component={terminology}
+            terminology={terminology}
             setTerminology={setTerminology}
             searchProp={
               getMappings?.display ? getMappings.display : getMappings?.code

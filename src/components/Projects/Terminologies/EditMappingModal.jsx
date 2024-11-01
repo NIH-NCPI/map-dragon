@@ -16,6 +16,7 @@ import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { OntologyFilterCodeSubmitTerm } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmitTerm';
 
 export const EditMappingsModal = ({
   editMappings,
@@ -24,13 +25,17 @@ export const EditMappingsModal = ({
   setMapping,
   mappingDesc,
   terminology,
-
 }) => {
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
-  const { setApiPreferencesCode } = useContext(SearchContext);
+  const {
+    apiPreferencesCode,
+    setApiPreferencesCode,
+    preferenceType,
+    prefTypeKey,
+  } = useContext(SearchContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
@@ -149,6 +154,10 @@ export const EditMappingsModal = ({
     );
   };
 
+  const searchProp = editMappings?.display
+    ? editMappings.display
+    : editMappings?.code;
+
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and mappings are turned into objects in the mappings array.
   const updateMappings = values => {
@@ -244,7 +253,16 @@ export const EditMappingsModal = ({
         return error;
       })
       .finally(() => setLoading(false));
+    OntologyFilterCodeSubmitTerm(
+      apiPreferencesCode,
+      preferenceType,
+      prefTypeKey,
+      searchProp,
+      vocabUrl,
+      terminology
+    );
   };
+
   return (
     <Modal
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
@@ -327,7 +345,6 @@ export const EditMappingsModal = ({
                 : editMappings?.code}
             </h3>
             <span className="search-desc">{mappingDesc}</span>
-
           </div>
           <Form form={form} layout="vertical" preserve={false}>
             <Form.Item
@@ -350,9 +367,11 @@ export const EditMappingsModal = ({
           reset={reset}
           onClose={form.resetFields}
           searchProp={
-            editMappings?.display ? editMappings.display : editMappings?.code
+            editMappings?.display ? editMappings?.display : editMappings?.code
           }
+          mappingProp={editMappings?.code}
           mappingDesc={editMappings?.description}
+          terminology={terminology}
         />
       ) : (
         reset && (
@@ -366,6 +385,8 @@ export const EditMappingsModal = ({
             reset={reset}
             onClose={form.resetFields}
             mappingDesc={editMappings?.description}
+            mappingProp={editMappings?.code}
+            terminology={terminology}
           />
         )
       )}

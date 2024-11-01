@@ -21,7 +21,7 @@ export const APIResults = ({
   This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
   Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
   useEffect(() => {
-    if (apiResults && apiPage > 0) {
+    if (apiResults && apiPage > 0 && ref.current) {
       const container = ref.current.closest('.ant-modal-body');
       const scrollTop = ref.current.offsetTop - container.offsetTop;
       container.scrollTop = scrollTop;
@@ -131,7 +131,7 @@ export const APIResults = ({
               Displaying {apiResultsCount}
               &nbsp;of&nbsp;{apiTotalCount}
             </Tooltip>
-            {apiTotalCount - filteredResultsCount !== apiResultsCount && (
+            {apiResultsCount < apiTotalCount - filteredResultsCount && (
               <span
                 className="view_more_link"
                 onClick={e => {

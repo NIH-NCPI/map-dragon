@@ -7,6 +7,7 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
+import { useParams } from 'react-router-dom';
 
 export const MappingReset = ({
   searchProp,
@@ -17,6 +18,7 @@ export const MappingReset = ({
   component,
   mappingProp,
   table,
+  terminology,
 }) => {
   const { searchUrl, vocabUrl } = useContext(myContext);
   const {
@@ -28,7 +30,7 @@ export const MappingReset = ({
     setUnformattedPref,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 15;
+  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
@@ -63,9 +65,9 @@ export const MappingReset = ({
         mappingProp,
         setApiPreferencesCode,
         notification,
-        apiPreferencesCode,
         setUnformattedPref,
-        table
+        table,
+        terminology
       );
     }
   }, [searchProp]);
@@ -88,7 +90,7 @@ export const MappingReset = ({
   This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
   Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
   useEffect(() => {
-    if (results?.length > 0 && page > 0) {
+    if (results?.length > 0 && page > 0 && ref.current) {
       const container = ref.current.closest('.ant-modal-body');
       const scrollTop = ref.current.offsetTop - container.offsetTop;
       container.scrollTop = scrollTop;
@@ -370,7 +372,7 @@ export const MappingReset = ({
                                         display: d.label,
                                         // description: d.description[0],
                                         system: systemsMatch(
-                                          d?.obo_id.split(':')[0]
+                                          d?.obo_id?.split(':')[0]
                                         ),
                                       }),
                                       label: checkBoxDisplay(d, index),
@@ -402,7 +404,7 @@ export const MappingReset = ({
                     Displaying {resultsCount}
                     &nbsp;of&nbsp;{totalCount}
                   </Tooltip>
-                  {totalCount - filteredResultsCount !== resultsCount && (
+                  {resultsCount < totalCount - filteredResultsCount && (
                     <span
                       className="view_more_link"
                       onClick={e => {
@@ -417,13 +419,12 @@ export const MappingReset = ({
               </div>
             </>
           ) : (
-        <div className="loading_spinner">
-          <ModalSpinner />
-        </div>
+            <div className="loading_spinner">
+              <ModalSpinner />
+            </div>
           )}
-      </>
-    </div >
+        </>
+      </div>
     </>
   );
 };
- 

@@ -1,4 +1,4 @@
-import { ontologyReducer } from './Utilitiy';
+import { cleanedName, ontologyReducer } from './Utilitiy';
 
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {
@@ -219,7 +219,9 @@ export const olsFilterOntologiesSearch = (
       //the results are set to res (the filtered, concatenated results)
 
       setResults(res.results);
-      setFilteredResultsCount(res?.filteredResults?.length);
+      setFilteredResultsCount(
+        prevState => prevState + res?.filteredResults?.length
+      );
       // resultsCount is set to the length of the filtered, concatenated results for pagination
       setResultsCount(res.results.length);
       setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
@@ -233,16 +235,16 @@ export const getFiltersByCode = (
   mappingProp,
   setApiPreferencesCode,
   notification,
-  apiPreferencesCode,
   setUnformattedPref,
-  table
+  table,
+  terminology
 ) => {
   return fetch(
     `${vocabUrl}/${
-      component === table
-        ? component?.terminology?.reference
-        : `Terminology/${component?.id}`
-    }/filter/${mappingProp}`,
+      table
+        ? `Table/${table.id}/filter/${mappingProp}`
+        : `Terminology/${terminology.id}/filter/${mappingProp}`
+    }`,
     {
       method: 'GET',
       headers: {
@@ -254,29 +256,27 @@ export const getFiltersByCode = (
       if (res.ok) {
         return res.json();
       } else {
-        throw new Error('An unknown error occurred.');
-      }
-    })
-    .then(data => {
-      setUnformattedPref(data);
-
-      // Dynamically derive the mappingProp based on a condition or the structure of the data
-      const codeToSearch = Object.keys(data)[0]; // Example: get the first key in the object
-      if (data?.[codeToSearch]?.api_preference?.ols) {
-        const joinedOntologies =
-          data[codeToSearch].api_preference.ols.join(',');
-        setApiPreferencesCode(joinedOntologies); // Set state to the comma-separated string
-      } else {
-        setApiPreferencesCode(''); // Fallback if no ols found
-      }
-    })
-    .catch(error => {
-      if (error) {
         notification.error({
           message: 'Error',
           description: 'An error occurred loading the ontology preferences.',
         });
       }
-      return error;
+    })
+    .then(data => {
+      setUnformattedPref(data);
+      const codeToSearch = Object.keys(data)?.[0];
+
+      const ols = data?.[codeToSearch]?.api_preference?.ols;
+
+      if (Array.isArray(ols)) {
+        // If ols in api_preference is an array, use it as is
+        setApiPreferencesCode(ols); // Set state to the array
+      } else if (typeof ols === 'string') {
+        // If ols in api_preference is a string, split it into an array
+        const splitOntologies = ols.split(',');
+        setApiPreferencesCode(splitOntologies); // Set state to the array
+      } else {
+        setApiPreferencesCode([]); // Fallback if no ols found
+      }
     });
 };

@@ -3,12 +3,13 @@ import { ontologyCounts } from '../Utilitiy';
 import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
 
-export const OntologyCheckboxes = ({ apiPreferences }) => {
+export const OntologyCheckboxes = ({ preferenceType }) => {
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
     facetCounts,
     ontologyApis,
+    prefTypeKey,
   } = useContext(SearchContext);
   const { Search } = Input;
 
@@ -30,15 +31,15 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
 
   const existingOntologies = apiPreferencesCode
     ? processedApiPreferencesCode
-    : apiPreferences &&
-      apiPreferences?.self &&
-      apiPreferences?.self?.api_preference
-    ? Object?.values(apiPreferences?.self?.api_preference).flat()
+    : preferenceType &&
+      preferenceType[prefTypeKey] &&
+      preferenceType[prefTypeKey]?.api_preference
+    ? Object?.values(preferenceType[prefTypeKey]?.api_preference).flat()
     : defaultOntologies;
 
   useEffect(() => {
     setCheckedOntologies(existingOntologies);
-  }, [apiPreferences]);
+  }, [preferenceType]);
 
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
@@ -77,7 +78,7 @@ export const OntologyCheckboxes = ({ apiPreferences }) => {
     return acc;
   }, {});
 
-  // // Build the new data structure
+  // Build the new data structure
   const countsResult = Object.keys(sortedData[0]?.ontologies).map(key => {
     return { [key]: countsMap[key] || 0, api: sortedData[0]?.api_id };
   });

@@ -12,15 +12,13 @@ export const FilterOntology = ({
   setSelectedBoxes,
   displaySelectedOntologies,
   setDisplaySelectedOntologies,
-  searchText,
   paginatedOntologies,
-  apiPreferences,
   table,
   terminology,
 }) => {
   const [allCheckboxes, setAllCheckboxes] = useState([]);
   const { setOntologyForPagination } = useContext(myContext);
-  const { apiPreferencesTerm } = useContext(SearchContext);
+  const { preferenceType, prefTypeKey } = useContext(SearchContext);
 
   useEffect(() => {
     setOntologyForPagination(ontology);
@@ -131,13 +129,7 @@ export const FilterOntology = ({
     );
   };
 
-  // Checks if there are apiPreferences (table) or apiPreferencesTerm (terminology) and returns the appropriate one
-  const preferenceType = apiPreferencesTerm
-    ? apiPreferencesTerm
-    : apiPreferences;
-
   // The first key is different depending if it's coming from a table or terminology. This dynamically gets the first key
-  const prefTypeKey = Object.keys(preferenceType)[0];
 
   const existingFilters = Object.values(
     preferenceType[prefTypeKey] || {}
