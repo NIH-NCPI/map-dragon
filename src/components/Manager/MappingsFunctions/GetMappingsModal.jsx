@@ -368,7 +368,6 @@ export const GetMappingsModal = ({
   };
 
   const filteredResultsArray = getFilteredResults();
-
   return (
     <>
       <Modal

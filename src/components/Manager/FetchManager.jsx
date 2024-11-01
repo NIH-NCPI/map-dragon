@@ -264,15 +264,19 @@ export const getFiltersByCode = (
     })
     .then(data => {
       setUnformattedPref(data);
+      const codeToSearch = Object.keys(data)?.[0];
 
-      // Dynamically derive the mappingProp based on a condition or the structure of the data
-      const codeToSearch = Object.keys(data)[0]; // Example: get the first key in the object
-      if (data?.[codeToSearch]?.api_preference?.ols) {
-        const joinedOntologies =
-          data[codeToSearch].api_preference.ols.join(',');
-        setApiPreferencesCode(joinedOntologies); // Set state to the comma-separated string
+      const ols = data?.[codeToSearch]?.api_preference?.ols;
+
+      if (Array.isArray(ols)) {
+        // If ols in api_preference is an array, use it as is
+        setApiPreferencesCode(ols); // Set state to the array
+      } else if (typeof ols === 'string') {
+        // If ols in api_preference is a string, split it into an array
+        const splitOntologies = ols.split(',');
+        setApiPreferencesCode(splitOntologies); // Set state to the array
       } else {
-        setApiPreferencesCode(''); // Fallback if no ols found
+        setApiPreferencesCode([]); // Fallback if no ols found
       }
     });
 };
