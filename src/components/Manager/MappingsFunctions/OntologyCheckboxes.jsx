@@ -78,7 +78,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     return acc;
   }, {});
 
-  // // Build the new data structure
+  // Build the new data structure
   const countsResult = Object.keys(sortedData[0]?.ontologies).map(key => {
     return { [key]: countsMap[key] || 0, api: sortedData[0]?.api_id };
   });

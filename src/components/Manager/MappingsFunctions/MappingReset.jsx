@@ -30,7 +30,7 @@ export const MappingReset = ({
     setUnformattedPref,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 2000;
+  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();

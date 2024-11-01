@@ -45,7 +45,7 @@ export const GetMappingsModal = ({
     prefTypeKey,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 2000;
+  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
@@ -460,7 +460,7 @@ export const GetMappingsModal = ({
                                           display: d.label,
                                           description: d.description[0],
                                           system: systemsMatch(
-                                            d?.obo_id.split(':')[0]
+                                            d?.obo_id?.split(':')[0]
                                           ),
                                         }),
                                         label: checkBoxDisplay(d, index),
