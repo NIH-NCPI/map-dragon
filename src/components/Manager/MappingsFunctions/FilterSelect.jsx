@@ -31,8 +31,9 @@ export const FilterSelect = ({ component, table, terminology }) => {
     preferenceTypeSet,
     preferenceType,
     prefTypeKey,
+    searchText,
+    setSearchText,
   } = useContext(SearchContext);
-  const [searchText, setSearchText] = useState('');
 
   // Gets the ontologyAPIs on first load, automatically sets active to the first of the list to display on the page
   useEffect(() => {
@@ -72,6 +73,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setSelectedOntologies([]);
     setSelectedBoxes([]);
     setDisplaySelectedOntologies([]);
+    setSearchText('');
   };
 
   // If the api doesn't exist in api_preference, creates an empty array for it
@@ -201,8 +203,9 @@ export const FilterSelect = ({ component, table, terminology }) => {
     apiPrefObject &&
     Object.values(apiPrefObject)?.reduce((acc, arr) => acc + arr.length, 0);
 
-  // Makes a set of ontologies to exclude from the list of available ones to select(excludes those that have already been selected)
-  // Converts the ontologies object into an array and filter based on the ontologiesToExclude
+  // Makes a set of ontologies to exclude from the list of available (excludes those that have already been selected)
+  // Converts the ontologies object into an array and filters based on the ontologiesToExclude
+  // Then filters that object based on the searchText in the search bar
   const filterOntologies = () => {
     if (ontologyForPagination) {
       const firstOntology = ontologyForPagination[0];
@@ -218,7 +221,10 @@ export const FilterSelect = ({ component, table, terminology }) => {
           }))
           .filter(obj => {
             return !ontologiesToExclude.has(obj.ontology_code);
-          });
+          })
+          .filter(item =>
+            item?.curie.toLowerCase().includes(searchText.toLowerCase())
+          );
 
         return filteredOntologies;
       }
@@ -227,7 +233,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
 
   const filteredOntologiesArray = filterOntologies();
 
-  // // Pagination
+  // Pagination
   const paginatedOntologies = filteredOntologiesArray?.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize

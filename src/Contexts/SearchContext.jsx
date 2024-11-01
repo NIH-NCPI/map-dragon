@@ -18,6 +18,7 @@ export function SearchContextRoot() {
   const [facetCounts, setFacetCounts] = useState([]);
   const [ontologyApis, setOntologyApis] = useState([]);
   const [apiPreferencesTerm, setApiPreferencesTerm] = useState(undefined);
+  const [searchText, setSearchText] = useState('');
 
   const defaultOntologies = 'mondo,hp,maxo,ncit';
   const preferenceTypeSet = data =>
@@ -63,6 +64,8 @@ export function SearchContextRoot() {
     preferenceTypeSet,
     preferenceType,
     prefTypeKey,
+    searchText,
+    setSearchText,
   };
 
   return (

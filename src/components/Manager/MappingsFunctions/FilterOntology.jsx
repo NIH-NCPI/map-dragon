@@ -1,4 +1,4 @@
-import { Checkbox, Form } from 'antd';
+import { Checkbox, Form, Input } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterReset } from './FilterReset';
@@ -16,9 +16,11 @@ export const FilterOntology = ({
   table,
   terminology,
 }) => {
+  const { Search } = Input;
   const [allCheckboxes, setAllCheckboxes] = useState([]);
   const { setOntologyForPagination } = useContext(myContext);
-  const { preferenceType, prefTypeKey } = useContext(SearchContext);
+  const { preferenceType, prefTypeKey, searchText, setSearchText } =
+    useContext(SearchContext);
 
   useEffect(() => {
     setOntologyForPagination(ontology);
@@ -155,6 +157,12 @@ export const FilterOntology = ({
   return (
     <>
       <div className="modal_checkbox_wrapper">
+        <Search
+          placeholder="Search ontologies"
+          className="api_onto_search_bar"
+          value={searchText}
+          onChange={e => setSearchText(e.target.value)}
+        />
         {Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).some(
           key => preferenceType[prefTypeKey]?.api_preference[key]?.length > 0
         ) && (

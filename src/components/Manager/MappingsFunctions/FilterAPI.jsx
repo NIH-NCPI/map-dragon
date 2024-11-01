@@ -15,7 +15,6 @@ export const FilterAPI = ({
   ontologyApis,
   active,
   setActive,
-  searchText,
   currentPage,
   setCurrentPage,
   pageSize,
@@ -158,7 +157,6 @@ export const FilterAPI = ({
                   setSelectedBoxes={setSelectedBoxes}
                   displaySelectedOntologies={displaySelectedOntologies}
                   setDisplaySelectedOntologies={setDisplaySelectedOntologies}
-                  searchText={searchText}
                   currentPage={currentPage}
                   setCurrentPage={setCurrentPage}
                   pageSize={pageSize}
