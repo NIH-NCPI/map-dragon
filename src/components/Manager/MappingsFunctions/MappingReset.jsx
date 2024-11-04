@@ -348,7 +348,7 @@ export const MappingReset = ({
                             ))}
                           </div>
                         </Form.Item>
-                      )}{' '}
+                      )}
                       {results?.length > 0 ? (
                         <>
                           <Form.Item

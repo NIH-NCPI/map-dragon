@@ -7,6 +7,8 @@ import { myContext } from '../../../App';
 export const EditStudyDetails = ({ form, study, setStudy, edit, setEdit }) => {
   const [loading, setLoading] = useState(false);
   const { vocabUrl } = useContext(myContext);
+  const { TextArea } = Input;
+
   // Sets the initial values displayed in the form and esnures they are current
   const changeHandler = () => {
     form.setFieldsValue({
@@ -66,7 +68,7 @@ export const EditStudyDetails = ({ form, study, setStudy, edit, setEdit }) => {
             <h2>{study.name ? study.name : study.id}</h2>
             <Form.Item
               name="name"
-              label="Name"
+              label="Name / Short Code"
               rules={[{ required: true, message: 'Please input Study name.' }]}
             >
               <Input />
@@ -83,7 +85,7 @@ export const EditStudyDetails = ({ form, study, setStudy, edit, setEdit }) => {
               label="Description"
               rules={[{ required: false }]}
             >
-              <Input />
+              <TextArea />
             </Form.Item>
             <Form.Item
               name="url"
