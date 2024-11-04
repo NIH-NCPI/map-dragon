@@ -80,7 +80,7 @@ export const MappingReset = ({
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
   // The function is run when the code and when the page changes.
   useEffect(() => {
-    if (!!currentSearchProp) {
+    if (!!currentSearchProp && apiPreferencesCode !== undefined) {
       fetchResults(page, currentSearchProp);
     }
   }, [page, currentSearchProp]);
@@ -354,12 +354,7 @@ export const MappingReset = ({
                           <Form.Item
                             name={['filtered_mappings']}
                             valuePropName="value"
-                            rules={[
-                              {
-                                required: true,
-                                message: 'Please make a selection.',
-                              },
-                            ]}
+                            rules={[{ required: false }]}
                           >
                             {filteredResultsArray?.length > 0 ? (
                               <Checkbox.Group

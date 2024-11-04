@@ -85,7 +85,7 @@ export const MappingSearch = ({
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
   // The function is run when the code and when the page changes.
   useEffect(() => {
-    if (!!currentSearchProp) {
+    if (!!currentSearchProp && apiPreferencesCode !== undefined) {
       fetchResults(page, currentSearchProp);
     }
   }, [page, currentSearchProp]);
