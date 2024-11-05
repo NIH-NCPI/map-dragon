@@ -5,20 +5,6 @@
   top: 25vh;
 }
 
-.all_checkboxes_container {
-  display: flex;
-  flex-direction: row;
-}
-.ontology_form {
-  width: 10.5vw;
-  height: 50vh;
-  overflow: auto;
-  position: fixed;
-}
-.result_form {
-  margin-left: 11vw;
-}
-
 .modal_search_results_header {
   background-color: white;
   top: 0;
@@ -44,6 +30,20 @@
     flex: 0 0 100%;
     margin-bottom: 1rem;
   }
+}
+
+.all_checkboxes_container {
+  display: flex;
+  flex-direction: row;
+}
+.ontology_form {
+  width: 10.5vw;
+  height: 50vh;
+  overflow: auto;
+  position: fixed;
+}
+.result_form {
+  margin-left: 11vw;
 }
 
 .inactive_term,

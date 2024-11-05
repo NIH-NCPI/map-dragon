@@ -82,7 +82,9 @@ export const MappingSearch = ({
   }, [searchProp]);
 
   useEffect(() => {
-    fetchResults(page, currentSearchProp);
+    if (apiPreferencesCode !== undefined) {
+      fetchResults(page, currentSearchProp);
+    }
   }, [page]);
 
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
