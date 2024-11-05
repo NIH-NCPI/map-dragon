@@ -4,7 +4,7 @@ import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
-import { Col, Form, notification, Row, Table, Button } from 'antd';
+import { Button, Col, Form, notification, Row, Table, Tooltip } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { EditMappingsModal } from './EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
@@ -137,7 +137,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map(code => (
         <div className="mapping" key={code.display}>
-          <span className="mapping-display">{code.display}</span>
+          <span className="mapping-display">
+            <Tooltip title={code.code}>{code.display}</Tooltip>
+          </span>
           <span
             className="remove-mapping"
             onClick={() => handleRemoveMapping(variableMappings, code)}
