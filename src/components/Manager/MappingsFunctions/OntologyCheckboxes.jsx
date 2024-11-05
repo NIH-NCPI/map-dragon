@@ -2,6 +2,7 @@ import { Checkbox, Form, Input } from 'antd';
 import { ontologyCounts } from '../Utilitiy';
 import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import './MappingsFunctions.scss';
 
 export const OntologyCheckboxes = ({ preferenceType }) => {
   const {
