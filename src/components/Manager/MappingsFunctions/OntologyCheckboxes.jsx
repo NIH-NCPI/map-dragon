@@ -112,8 +112,20 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
         <div className="modal_display_results">
           {getFilteredItems(searchText)
             ?.sort((a, b) => {
-              const aValue = Object.values(a)[0];
-              const bValue = Object.values(b)[0];
+              const aKey = Object.keys(a)[0]; // gets the key from the first object in array
+              const bKey = Object.keys(b)[0]; // gets the key from the second object in array
+              const aValue = a[aKey]; // gets the value from the first key
+              const bValue = b[bKey]; // gets the value from the second key
+
+              // checks if one or both keys are in apiPreferencesCode
+              const aInPreferences = apiPreferencesCode?.includes(aKey);
+              const bInPreferences = apiPreferencesCode?.includes(bKey);
+
+              // If one of them is in apiPreferencesCode and the other isn't, prioritizes the one in apiPreferencesCode
+              if (aInPreferences && !bInPreferences) return -1; // if a is in apiPreferencesCode, it comes before b
+              if (!aInPreferences && bInPreferences) return 1; //if b is in apiPreferencesCode, it comes before a
+
+              // If both are in apiPreferencesCode or both are not, sorts by value
               return bValue - aValue;
             })
             .map((fc, i) => {
