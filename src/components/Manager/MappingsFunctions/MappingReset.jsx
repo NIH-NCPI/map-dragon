@@ -7,7 +7,6 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
-import { useParams } from 'react-router-dom';
 
 export const MappingReset = ({
   searchProp,
@@ -73,17 +72,23 @@ export const MappingReset = ({
   }, [searchProp]);
 
   useEffect(() => {
-    if (apiPreferencesCode !== undefined) fetchResults(0, searchProp);
-  }, [apiPreferencesCode, searchProp]);
+    if (apiPreferencesCode !== undefined) {
+      fetchResults(0, searchProp);
+    }
+  }, [searchProp]);
+
+  useEffect(() => {
+    fetchResults(page, currentSearchProp);
+  }, [page]);
 
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
-  // The function is run when the code and when the page changes.
+  // The function is run when the query changes and when the preferred ontology changes.
   useEffect(() => {
     if (!!currentSearchProp && apiPreferencesCode !== undefined) {
       fetchResults(page, currentSearchProp);
     }
-  }, [page, currentSearchProp]);
+  }, [currentSearchProp, apiPreferencesCode]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
