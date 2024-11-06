@@ -9,6 +9,7 @@ import {
   Card,
   Col,
   Form,
+  message,
   notification,
   Row,
   Table,
@@ -93,7 +94,7 @@ export const TableDetails = () => {
         setMapping(data.codes);
         setEditMappings(null);
         form.resetFields();
-        notification.success({ description: 'Mapping removed.' });
+        message.success('Mapping removed.');
       })
       .catch(error => {
         console.log(error, 'error');
@@ -107,19 +108,6 @@ export const TableDetails = () => {
         return error;
       })
       .finally(() => setLoading(false));
-  };
-
-  const alphabetizeOntologies = ontologies => {
-    // Sort the keys alphabetically
-    const sortedKeys = Object.keys(ontologies).sort();
-
-    // Rebuild object using the sorted keys
-    const sortedOntologies = {};
-    sortedKeys.forEach(key => {
-      sortedOntologies[key] = ontologies[key];
-    });
-
-    return sortedOntologies;
   };
 
   // fetches the table and sets 'table' to the response
