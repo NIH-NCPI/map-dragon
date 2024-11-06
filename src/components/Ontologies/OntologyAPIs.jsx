@@ -61,7 +61,7 @@ export const OntologyInfo = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="about_container">
+    <div className="studies_container">
       <h2>Ontology Information</h2>
 
       <div className="ontology_container">

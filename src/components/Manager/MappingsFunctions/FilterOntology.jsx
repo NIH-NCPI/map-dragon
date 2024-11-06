@@ -60,7 +60,7 @@ export const FilterOntology = ({
   const onSelectedChange = checkedValues => {
     if (checkedValues.length > 0) {
       const selected = JSON.parse(checkedValues[0]);
-      const selectedOntology = ontologyForCheckboxes().find(
+      const selectedOntology = allCheckboxes?.find(
         item => item.ontology_code === selected.ontology
       );
 
@@ -80,7 +80,7 @@ export const FilterOntology = ({
       ]);
 
       // Filters out the selected ontologies from the available ones
-      const updatedOntologies = ontologyForCheckboxes().filter(
+      const updatedOntologies = allCheckboxes?.filter(
         ont => ont.ontology_code !== selected.ontology
       );
       setOntologiesForSelection(updatedOntologies);
