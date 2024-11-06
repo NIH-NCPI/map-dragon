@@ -407,7 +407,7 @@ export const MappingSearch = ({
                         >
                           {mappingsForSearch?.length > 0 && (
                             <Checkbox.Group
-                              className="mappings_checkbox"
+                              className="mappings_checkbox existing_display"
                               options={mappingsForSearch?.map((d, index) => {
                                 return {
                                   value: JSON.stringify({
@@ -429,7 +429,6 @@ export const MappingSearch = ({
                             valuePropName="value"
                             rules={[{ required: false }]}
                           >
-                            {' '}
                             <div className="modal_display_results">
                               {displaySelectedMappings?.map((sm, i) => (
                                 <Checkbox

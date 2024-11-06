@@ -4,7 +4,16 @@ import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
-import { Button, Col, Form, notification, Row, Table, Tooltip } from 'antd';
+import {
+  Button,
+  Col,
+  Form,
+  message,
+  notification,
+  Row,
+  Table,
+  Tooltip,
+} from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { EditMappingsModal } from './EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
@@ -88,7 +97,7 @@ export const Terminology = () => {
         setMapping(data.codes);
         setEditMappings(null);
         form.resetFields();
-        notification.success({ description: 'Mapping removed.' });
+        message.success('Mapping removed.');
       })
       .catch(error => {
         console.log(error, 'error');
