@@ -257,7 +257,7 @@ export const EditMappingsModal = ({
       apiPreferencesCode,
       preferenceType,
       prefTypeKey,
-      searchProp,
+      editMappings.code,
       vocabUrl,
       terminology
     );

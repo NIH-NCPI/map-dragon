@@ -28,7 +28,6 @@ nav.navbar {
     }
   }
 
-
   .nav_body {
     width: 100%;
     display: grid;
@@ -94,15 +93,15 @@ nav.navbar {
   padding: 0 10vw;
   position: sticky;
   top: 115px;
-  background:#eeeeee;
+  background: #eeeeee;
 
   li {
     list-style: none;
     font-size: 14px;
     line-height: 1.5714285714285714;
     color: rgba(0, 0, 0, 0.45);
-    
-    &>a {
+
+    & > a {
       color: rgba(0, 0, 0, 0.45);
       text-decoration: none;
       transition: color 0.2s;
@@ -122,7 +121,6 @@ nav.navbar {
   & * {
     text-transform: capitalize;
   }
-
 }
 
 footer {

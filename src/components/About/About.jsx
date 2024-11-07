@@ -7,7 +7,7 @@ import { Spinner } from '../Manager/Spinner';
 import './About.scss';
 
 export const About = () => {
-  const { vocabUrl } = useContext(myContext);
+  const { vocabUrl, mapDragonVersion } = useContext(myContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [version, setVersion] = useState({});
@@ -31,12 +31,22 @@ export const About = () => {
   const items = [
     {
       key: '1',
-      label: 'Version',
+      label: 'Locutus version',
       children: `${version?.version}`,
-      labelStyle: { width: '150px' },
-      contentStyle: { width: '150px' },
+      labelStyle: { width: '120px' },
+      contentStyle: { width: '170px' },
     },
   ];
+
+  if (mapDragonVersion) {
+    items.push({
+      key: '2',
+      label: 'Map Dragon version',
+      children: `${mapDragonVersion}`,
+      labelStyle: { width: '120px' },
+      contentStyle: { width: '170px' },
+    });
+  }
 
   return (
     <>
@@ -46,7 +56,7 @@ export const About = () => {
         <div className="studies_container">
           <h2>About</h2>
           <div className="about_description">
-            <Descriptions title="Version" bordered items={items} />
+            <Descriptions title="Version" bordered column={1} items={items} />
           </div>
         </div>
       )}

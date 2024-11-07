@@ -203,7 +203,7 @@ export const GetMappingsModal = ({
           apiPreferencesCode,
           preferenceType,
           prefTypeKey,
-          searchProp,
+          mappingProp,
           vocabUrl,
           terminology
         );

@@ -4,7 +4,7 @@ export const OntologyFilterCodeSubmitTerm = (
   apiPreferencesCode,
   preferenceType,
   prefTypeKey,
-  searchProp,
+  mappingProp,
   vocabUrl,
   terminology
 ) => {
@@ -21,7 +21,7 @@ export const OntologyFilterCodeSubmitTerm = (
   ) {
     apiPreference.api_preference.ols = apiPreferencesCode;
 
-    fetch(`${vocabUrl}/Terminology/${terminology.id}/filter/${searchProp}`, {
+    fetch(`${vocabUrl}/Terminology/${terminology.id}/filter/${mappingProp}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

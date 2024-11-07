@@ -23,7 +23,6 @@ import { AddCode } from './AddCode';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { TerminologyMenu } from './TerminologyMenu';
-import { Submenu } from '../../Manager/Submenu';
 import { LoadCodes } from './LoadCodes';
 import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -35,12 +34,8 @@ export const Terminology = () => {
 
   const { terminologyId, tableId } = useParams();
   const { vocabUrl, user } = useContext(myContext);
-  const {
-    setPrefTerminologies,
-    prefTerminologies,
-    setApiPreferencesTerm,
-    apiPreferencesTerm,
-  } = useContext(SearchContext);
+  const { setPrefTerminologies, prefTerminologies, setApiPreferencesTerm } =
+    useContext(SearchContext);
   const {
     editMappings,
     setEditMappings,
@@ -48,6 +43,7 @@ export const Terminology = () => {
     setGetMappings,
     mapping,
     setMapping,
+    setAssignMappings,
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
@@ -122,18 +118,16 @@ code in the terminology, AND the mappings array length for the code is > 0, the 
 and returns the length of the mapping array (i.e. returns the number of codes mapped to the terminology code). 
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
 
-  const noMapping = variable => {
-    return (
-      <Button
-        onClick={() =>
-          setGetMappings({ name: variable.name, code: variable.code })
-        }
-      >
-        Get Mappings
-      </Button>
-    );
-  };
-
+  const noMapping = variable => (
+    <Button
+      onClick={() => {
+        setGetMappings({ display: variable.display, code: variable.code });
+      }}
+    >
+      {prefTerminologies.length > 0 ? 'Assign Mappings' : 'Get Mappings'}
+    </Button>
+  );
+  console.log(prefTerminologies);
   const matchCode = variable => {
     if (!mapping?.length) {
       return noMapping(variable);
@@ -330,7 +324,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         <Spinner />
       ) : (
         <div className="terminology_container">
-          <Submenu prop={terminology} />
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>
