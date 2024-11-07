@@ -73,6 +73,6 @@ jobs:
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: '${{ env.SERVICE }}'
+          service: '${{ env.SERVICE }}-${{ github.event.inputs.environment }}'
           region: '${{ env.REGION }}'
           image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${{ github.event.inputs.environment }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
