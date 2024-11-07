@@ -41,12 +41,11 @@ export const GetMappingsModal = ({
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
-    preferenceTypeSet,
     prefTypeKey,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 1000;
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
   const [resultsCount, setResultsCount] = useState();
@@ -74,13 +73,13 @@ export const GetMappingsModal = ({
     if (!!searchProp) {
       getFiltersByCode(
         vocabUrl,
-        component,
         mappingProp,
         setApiPreferencesCode,
         notification,
         setUnformattedPref,
         table,
-        terminology
+        terminology,
+        setLoading
       );
     }
   }, [searchProp]);
@@ -204,7 +203,7 @@ export const GetMappingsModal = ({
           apiPreferencesCode,
           preferenceType,
           prefTypeKey,
-          searchProp,
+          mappingProp,
           vocabUrl,
           terminology
         );

@@ -10,6 +10,7 @@ function App() {
   const monarchUrl = import.meta.env.VITE_MONARCH_SEARCH;
   const vocabUrl = import.meta.env.VITE_VOCAB_ENDPOINT;
   const clientId = import.meta.env.VITE_CLIENT_ID;
+  const mapDragonVersion = import.meta.env.VITE_MAPDRAGON_VERSION;
 
   const [results, setResults] = useState({}); //search results for mappings
   const [tablesDD, setTablesDD] = useState([]); //the tables in a data dictionary
@@ -49,6 +50,7 @@ function App() {
           searchUrl,
           monarchUrl,
           vocabUrl,
+          mapDragonVersion,
           tablesDD,
           setTablesDD,
           studyDDs,

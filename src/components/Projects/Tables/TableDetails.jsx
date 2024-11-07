@@ -27,7 +27,6 @@ import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsMod
 import { AddVariable } from './AddVariable';
 import { ExpandedRowTable } from './ExpandedRowTable';
 import { TableMenu } from './TableMenu';
-import { Submenu } from '../../Manager/Submenu';
 import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
@@ -320,7 +319,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         <Spinner />
       ) : (
         <div className="table_id_container">
-          <Submenu prop={table} />
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>

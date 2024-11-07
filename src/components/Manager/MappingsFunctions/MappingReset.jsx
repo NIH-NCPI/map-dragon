@@ -14,7 +14,6 @@ export const MappingReset = ({
   setEditMappings,
   form,
   onClose,
-  component,
   mappingProp,
   table,
   terminology,
@@ -60,13 +59,13 @@ export const MappingReset = ({
     if (!!searchProp) {
       getFiltersByCode(
         vocabUrl,
-        component,
         mappingProp,
         setApiPreferencesCode,
         notification,
         setUnformattedPref,
         table,
-        terminology
+        terminology,
+        setLoading
       );
     }
   }, [searchProp]);

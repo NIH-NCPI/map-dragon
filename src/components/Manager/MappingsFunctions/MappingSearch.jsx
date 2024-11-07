@@ -16,7 +16,6 @@ export const MappingSearch = ({
   searchProp,
   mappingProp,
   mappingDesc,
-  component,
   terminology,
   table,
 }) => {
@@ -64,13 +63,13 @@ export const MappingSearch = ({
     if (!!searchProp) {
       getFiltersByCode(
         vocabUrl,
-        component,
         mappingProp,
         setApiPreferencesCode,
         notification,
         setUnformattedPref,
         table,
-        terminology
+        terminology,
+        setLoading
       );
     }
   }, [searchProp]);

@@ -184,7 +184,6 @@ export const olsFilterOntologiesSearch = (
   results,
   setFacetCounts
 ) => {
-  setLoading(true);
   return fetch(
     `${searchUrl}q=${query}&ontology=${ontologiesToSearch}&rows=${entriesPerPage}&start=${pageStart}`,
     {
@@ -231,14 +230,15 @@ export const olsFilterOntologiesSearch = (
 
 export const getFiltersByCode = (
   vocabUrl,
-  component,
   mappingProp,
   setApiPreferencesCode,
   notification,
   setUnformattedPref,
   table,
-  terminology
+  terminology,
+  setLoading
 ) => {
+  setLoading(true);
   return fetch(
     `${vocabUrl}/${
       table

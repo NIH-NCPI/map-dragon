@@ -29,7 +29,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   } else if (typeof apiPreferencesCode === 'string') {
     processedApiPreferencesCode = apiPreferencesCode.split(',');
   }
-
+  console.log(apiPreferencesCode);
   const existingOntologies = apiPreferencesCode
     ? processedApiPreferencesCode
     : preferenceType &&
