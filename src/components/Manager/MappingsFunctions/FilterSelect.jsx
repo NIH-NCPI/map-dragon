@@ -137,9 +137,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
     fetch(
       `${vocabUrl}/${(component = table
         ? `Table/${table.id}/filter/self`
-        : `Terminology/${terminology.id}/filter/${cleanedName(
-            terminology.name
-          )}`)}`,
+        : `Terminology/${terminology.id}/filter`)}`,
       {
         method: method,
         headers: {
