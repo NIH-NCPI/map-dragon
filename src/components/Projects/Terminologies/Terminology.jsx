@@ -124,10 +124,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         setGetMappings({ display: variable.display, code: variable.code });
       }}
     >
-      {prefTerminologies.length > 0 ? 'Assign Mappings' : 'Get Mappings'}
+      Get Mappings
     </Button>
   );
-  console.log(prefTerminologies);
   const matchCode = variable => {
     if (!mapping?.length) {
       return noMapping(variable);
