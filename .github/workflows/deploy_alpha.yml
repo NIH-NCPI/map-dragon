@@ -4,7 +4,18 @@
 name: 'Build and Deploy Alpha to  Cloud Run'
 
 on:
-    workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment (e.g., dev, qa, prod, alpha)'
+        required: true
+        type: string
+        default: 'dev'
+      tag:
+        description: 'Optional version for the deployment'
+        required: false
+        type: string
+        default: 'dispatch'
 
 env:
 
@@ -21,7 +32,7 @@ jobs:
     runs-on: 'ubuntu-latest'
 
     environment:
-      name: alpha
+      name: ${{ github.event.inputs.environment }}
 
     permissions:
       contents: 'read'
@@ -44,18 +55,19 @@ jobs:
           echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.alpha
           echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.alpha
           echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.alpha
+          echo "VITE_MAPDRAGON_VERSION= ${{ github.event.inputs.tag }}" >> .env.alpha
       - name: 'Docker Auth'
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
 
       - name: 'Build Docker Image' # New step to build the image
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          docker build -t "${DOCKER_TAG}" --build-arg ENV=alpha .
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${{ github.event.inputs.environment }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          docker build -t "${DOCKER_TAG}" --build-arg ENV=${{ github.event.inputs.environment }} .
 
       - name: 'Push Docker Image'
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${{ github.event.inputs.environment }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           docker push "${DOCKER_TAG}"
 
       - name: 'Deploy to Cloud Run'
@@ -63,4 +75,4 @@ jobs:
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
-          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${{ github.event.inputs.environment }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
