@@ -4,9 +4,7 @@
 name: 'Build and Deploy to Cloud Run'
 on:
   pull_request_review:
-    branches:
-      - main
-    types: [submitted]
+    types: [submitted, edited] # submitted, reviewer edits the PR (ex comments)
     
 env:
 
@@ -22,7 +20,8 @@ jobs:
   deploy:
     runs-on: 'ubuntu-latest'
     
-    if: github.event.review.state == 'approved'
+    # If PR is approved and the PR is for the 'main' branch
+    if: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'main'
     
     environment:
       name: dev
@@ -41,11 +40,18 @@ jobs:
         with:
           credentials_json: '${{ env.GCP_CREDENTIALS }}'
 
+      - name: Extract Version from PR Number
+        id: extract_version
+        run: |
+          VERSION=${{ github.event.pull_request.number }} 
+          echo "Extracted Version: ${VERSION}"
+
       - name: Generate .env.dev file
         run: |
           echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.dev
           echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.dev
           echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.dev
+          echo "VITE_MAPDRAGON_VERSION=${VERSION}" >> .env.dev
       
       - name: 'Docker Auth'
         run: |-
