@@ -1,7 +1,7 @@
 # This workflow build and push a Docker container to Google Artifact Registry
 # and deploy it on Cloud Run when manually triggered.
 
-name: 'Build and Deploy Alpha to  Cloud Run'
+name: 'Dispatch Deploy'
 
 on:
   workflow_dispatch:
@@ -13,9 +13,14 @@ on:
         default: 'dev'
       tag:
         description: 'Optional version for the deployment'
-        required: false
+        required: true
         type: string
-        default: 'dispatch'
+        default: 'v0.0.0-env'
+      deploy_branch:
+        description: 'Branch to deploy to the environment'
+        required: true
+        type: string
+        default: 'main'
 
 env:
 
@@ -41,8 +46,8 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
-        # with:
-        #   ref: release # release is deployed, not the default or working branch
+        with:
+          ref: ${{ github.event.inputs.environment }} # This branch is deployed
         
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -50,12 +55,12 @@ jobs:
         with:
           credentials_json: '${{ env.GCP_CREDENTIALS }}'
 
-      - name: Generate .env.alpha file
+      - name: Generate .env.${{ github.event.inputs.environment }} file
         run: |
-          echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.alpha
-          echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.alpha
-          echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.alpha
-          echo "VITE_MAPDRAGON_VERSION= ${{ github.event.inputs.tag }}" >> .env.alpha
+          echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.${{ github.event.inputs.environment }}
+          echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.${{ github.event.inputs.environment }}
+          echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.${{ github.event.inputs.environment }}
+          echo "VITE_MAPDRAGON_VERSION= ${{ github.event.inputs.tag }}" >> .env.${{ github.event.inputs.environment }}
       - name: 'Docker Auth'
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
