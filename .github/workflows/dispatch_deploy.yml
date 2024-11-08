@@ -11,7 +11,7 @@ on:
         required: true
         type: string
         default: 'dev'
-      tag:
+      version:
         description: 'Optional version for the deployment'
         required: true
         type: string
@@ -60,7 +60,7 @@ jobs:
           echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.${{ github.event.inputs.environment }}
           echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.${{ github.event.inputs.environment }}
           echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.${{ github.event.inputs.environment }}
-          echo "VITE_MAPDRAGON_VERSION= ${{ github.event.inputs.tag }}" >> .env.${{ github.event.inputs.environment }}
+          echo "VITE_MAPDRAGON_VERSION= ${{ github.event.inputs.version }}" >> .env.${{ github.event.inputs.environment }}
       - name: 'Docker Auth'
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
