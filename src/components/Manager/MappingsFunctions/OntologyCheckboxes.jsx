@@ -29,13 +29,28 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   } else if (typeof apiPreferencesCode === 'string') {
     processedApiPreferencesCode = apiPreferencesCode.split(',');
   }
-  const existingOntologies = apiPreferencesCode
-    ? processedApiPreferencesCode
-    : preferenceType &&
-      preferenceType[prefTypeKey] &&
-      preferenceType[prefTypeKey]?.api_preference
-    ? Object?.values(preferenceType[prefTypeKey]?.api_preference).flat()
-    : defaultOntologies;
+
+  let existingOntologies;
+
+  // Checks if apiPreferencesCode exists and is non-empty, if so, assigns processedApiPreferencesCode to existingOntologies
+  if (Array.isArray(apiPreferencesCode) && apiPreferencesCode.length > 0) {
+    existingOntologies = processedApiPreferencesCode;
+  }
+  // Checks if preferenceType[prefTypeKey].api_preference exists and is non-empty, if so, assigns the values to existingOntologies
+  else if (
+    preferenceType &&
+    preferenceType[prefTypeKey] &&
+    preferenceType[prefTypeKey].api_preference &&
+    Object.keys(preferenceType[prefTypeKey].api_preference).length > 0
+  ) {
+    existingOntologies = Object.values(
+      preferenceType[prefTypeKey].api_preference
+    ).flat();
+  }
+  // If the above are false, defaultOntologies are used for the search
+  else {
+    existingOntologies = defaultOntologies;
+  }
 
   useEffect(() => {
     setCheckedOntologies(existingOntologies);

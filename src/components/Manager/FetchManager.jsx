@@ -184,6 +184,7 @@ export const olsFilterOntologiesSearch = (
   results,
   setFacetCounts
 ) => {
+  setLoading(true);
   return fetch(
     `${searchUrl}q=${query}&ontology=${ontologiesToSearch}&rows=${entriesPerPage}&start=${pageStart}`,
     {

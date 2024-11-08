@@ -158,7 +158,7 @@ export const MappingSearch = ({
       return olsFilterOntologiesSearch(
         searchUrl,
         query,
-        apiPreferencesCode !== ''
+        apiPreferencesCode?.length > 0
           ? apiPreferencesCode
           : apiPreferenceOntologies(),
         page,
@@ -177,7 +177,7 @@ export const MappingSearch = ({
       return olsFilterOntologiesSearch(
         searchUrl,
         query,
-        apiPreferencesCode !== '' ? apiPreferencesCode : defaultOntologies,
+        apiPreferencesCode?.length > 0 ? apiPreferencesCode : defaultOntologies,
         page,
         entriesPerPage,
         pageStart,
