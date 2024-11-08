@@ -47,7 +47,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
         with:
-          ref: ${{ github.event.inputs.environment }} # This branch is deployed
+          ref: ${{ github.event.inputs.deploy_branch }} # This branch is deployed
         
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
