@@ -370,6 +370,14 @@ export const MappingSearch = ({
 
   const filteredResultsArray = getFilteredResults();
 
+  // Peforms search on Tab key press
+  const searchOnTab = e => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      handleSearch(e.target.value);
+    }
+  };
+
   return (
     <>
       <div className="results_modal_container">
@@ -384,6 +392,7 @@ export const MappingSearch = ({
                       onSearch={handleSearch}
                       value={inputValue}
                       onChange={handleChange}
+                      onKeyDown={searchOnTab}
                     />
                   </div>
                   <span className="search-desc">{mappingDesc}</span>
