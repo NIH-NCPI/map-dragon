@@ -1,5 +1,5 @@
 # This workflow build and push a Docker container to Google Artifact Registry
-# and deploy it on Cloud Run when a PR has been approved by a reviewer.
+# and deploy it on Cloud Run when a PR to 'main' has been approved by a reviewer.
 
 name: 'Build and Deploy to Cloud Run'
 on:

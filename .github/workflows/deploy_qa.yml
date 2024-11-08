@@ -1,7 +1,7 @@
 # This workflow build and push a Docker container to Google Artifact Registry
 # and deploy it on Cloud Run when a PR to the `release` branch is made.
 
-name: 'Build and Deploy QA to Cloud Run'
+name: 'Build and Deploy UAT to Cloud Run'
 
 on:
   pull_request:
@@ -25,7 +25,7 @@ jobs:
     runs-on: 'ubuntu-latest'
 
     environment:
-      name: qa
+      name: uat
 
     permissions:
       contents: 'read'
@@ -47,12 +47,12 @@ jobs:
           VERSION=$(echo "${{ github.event.pull_request.title }}" | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+\(-[a-zA-Z]*\)\?') 
           echo "Extracted Version: ${VERSION}"
 
-      - name: Generate .env.qa file
+      - name: Generate .env.uat file
         run: |
-          echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.qa
-          echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.qa
-          echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.qa
-          echo "VITE_MAPDRAGON_VERSION=${VERSION}" >> .env.qa
+          echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.uat
+          echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.uat
+          echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.uat
+          echo "VITE_MAPDRAGON_VERSION=${VERSION}" >> .env.uat
 
 
       - name: 'Docker Auth'
@@ -62,7 +62,7 @@ jobs:
       - name: 'Build Docker Image' # New step to build the image
         run: |-
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-uat/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          docker build -t "${DOCKER_TAG}" --build-arg ENV=qa .
+          docker build -t "${DOCKER_TAG}" --build-arg ENV=uat .
 
       - name: 'Push Docker Image'
         run: |-

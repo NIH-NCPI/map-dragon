@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment (e.g., dev, qa, prod, alpha)'
+        description: 'Deployment environment (e.g., dev, uat, prod, alpha)'
         required: true
         type: string
         default: 'dev'
