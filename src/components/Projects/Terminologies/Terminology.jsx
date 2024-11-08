@@ -64,8 +64,6 @@ export const Terminology = () => {
     []
   );
 
-  console.log(prefTerminologies);
-
   const [loading, setLoading] = useState(true);
   const initialTerminology = { url: '', description: '', name: '', codes: [] }; //initial state of terminology
   const [terminology, setTerminology] = useState(initialTerminology);
@@ -135,9 +133,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             });
       }}
     >
-      {prefTerminologies && prefTerminologies.length > 0
-        ? 'Assign Mappings'
-        : 'Get Mappings'}
+      {prefTerminologies?.length > 0 ? 'Assign Mappings' : 'Get Mappings'}
     </Button>
   );
 
@@ -200,7 +196,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
   useEffect(() => {
     setDataSource(tableData(terminology));
-  }, [terminology, mapping]);
+  }, [terminology, mapping, prefTerminologies]);
 
   // Fetches the terminology using the terminologyId param and sets 'terminology' to the response.
   // Fetches the mappings for the terminology and sets the response to 'mapping'
