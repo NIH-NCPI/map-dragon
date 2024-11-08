@@ -13,6 +13,7 @@ export const About = () => {
   const [version, setVersion] = useState({});
 
   useEffect(() => {
+    document.title = 'About - Map Dragon';
     setLoading(true);
     getAll(vocabUrl, 'version', navigate)
       .then(data => setVersion(data))

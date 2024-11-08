@@ -61,7 +61,9 @@ export const DDDetails = () => {
   // fetches the specified DD. Sets response to 'dataDictionary'.
   // if a DD was fetched, calls the getDDTables function to fetch the tables.
   // otherwise sets loading to false.
-
+  useEffect(() => {
+    document.title = 'Data Dictionary - Map Dragon';
+  }, []);
   useEffect(() => {
     setLoading(true);
     getById(vocabUrl, 'DataDictionary', DDId)
