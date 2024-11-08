@@ -28,6 +28,7 @@ import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { cleanedName } from '../../Manager/Utilitiy';
+import { AssignMappingsViaButton } from './AssignMappingsViaButton';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -43,12 +44,12 @@ export const Terminology = () => {
     setGetMappings,
     mapping,
     setMapping,
-    setAssignMappings,
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
     parseInt(localStorage.getItem('pageSize'), 10) || 10
   );
+  const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
   const handleTableChange = (current, size) => {
     setPageSize(size);
   };
@@ -121,12 +122,21 @@ It then shows the mappings as table data and alows the user to delete a mapping 
   const noMapping = variable => (
     <Button
       onClick={() => {
-        setGetMappings({ display: variable.display, code: variable.code });
+        prefTerminologies.length > 0
+          ? setAssignMappingsViaButton({
+              display: variable.display,
+              code: variable.code,
+            })
+          : setGetMappings({
+              display: variable.display,
+              code: variable.code,
+            });
       }}
     >
-      Get Mappings
+      {prefTerminologies?.length > 0 ? 'Assign Mappings' : 'Get Mappings'}
     </Button>
   );
+
   const matchCode = variable => {
     if (!mapping?.length) {
       return noMapping(variable);
@@ -140,7 +150,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       return variableMappings.mappings.map(code => (
         <div className="mapping" key={code.display}>
           <span className="mapping-display">
-            <Tooltip title={code.code}>{code.display}</Tooltip>
+            <Tooltip title={code.code}>
+              {code.display ? code.display : code.code}
+            </Tooltip>
           </span>
           <span
             className="remove-mapping"
@@ -184,7 +196,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
   useEffect(() => {
     setDataSource(tableData(terminology));
-  }, [terminology, mapping]);
+  }, [terminology, mapping, prefTerminologies]);
 
   // Fetches the terminology using the terminologyId param and sets 'terminology' to the response.
   // Fetches the mappings for the terminology and sets the response to 'mapping'
@@ -432,6 +444,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           <LoadCodes
             terminology={terminology}
             setTerminology={setTerminology}
+          />
+          <AssignMappingsViaButton
+            assignMappingsViaButton={assignMappingsViaButton}
+            setAssignMappingsViaButton={setAssignMappingsViaButton}
+            terminology={terminology}
           />
         </div>
       )}
