@@ -22,6 +22,7 @@ export const Login = () => {
       <GoogleLogin
         theme="filled_black"
         onSuccess={credentialResponse => {
+          localStorage.setItem('googleToken', credentialResponse.access_token); 
           const credentialResponseDecoded = jwtDecode(
             credentialResponse.credential
           );
