@@ -144,14 +144,17 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
     setPreferredData([]);
   };
 
-  // Filters the terminologies that have already been selected out of the main terminology array to avoid duplicates
+  // Filters terminologies that have already been selected (by combination of name and url) out of the main terminology array to avoid duplicates
   const filterTerminologies = () => {
     const terminologiesToExclude = new Set([
-      ...prefTerminologies?.map(pt => pt?.id),
-      ...displaySelectedTerminologies?.map(dst => dst?.id),
-      ...preferredData?.map(ep => ep?.id),
+      ...prefTerminologies?.map(pt => `${pt?.name}|${pt?.url}`),
+      ...displaySelectedTerminologies?.map(dst => `${dst?.name}|${dst?.url}`),
+      ...preferredData?.map(ep => `${ep?.name}|${ep?.url}`),
     ]);
-    return terminologies.filter(t => !terminologiesToExclude?.has(t.id));
+
+    return terminologies.filter(
+      t => !terminologiesToExclude.has(`${t?.name}|${t?.url}`)
+    );
   };
 
   const filteredTerminologyArray = filterTerminologies();
