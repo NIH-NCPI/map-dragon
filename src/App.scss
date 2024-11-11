@@ -1,11 +1,16 @@
 .approuter_div {
   display: flex;
+  min-height: 100vh;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .outlet_div {
-  min-height: 100vh;
-  height: 100%;
   position: relative;
+}
+
+.header {
+  z-index: 100;
+  position: sticky;
+  top:0;
 }

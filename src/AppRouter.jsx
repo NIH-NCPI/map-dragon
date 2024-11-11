@@ -34,8 +34,10 @@ export const AppRouter = () => {
           element={
             <>
               <div className="approuter_div">
-                <NavBar />
-                <Breadcrumbs />
+                <div className="header">
+                  <NavBar />
+                  <Breadcrumbs />
+                </div>
                 <div className="outlet_div">
                   <Outlet />
                 </div>
