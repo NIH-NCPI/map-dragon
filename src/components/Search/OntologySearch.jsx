@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './OntologySearch.scss';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,6 +8,9 @@ export const OntologySearch = () => {
   const navigate = useNavigate();
   const ref = useRef();
 
+  useEffect(() => {
+    document.title = 'Map Dragon';
+  }, []);
   const searchOnEnter = e => {
     /* if the input field has a value (i.e. term being searched), the value is transposed into the address bar. 
     The user is then redirected to the search page, which completes the search for the search term.

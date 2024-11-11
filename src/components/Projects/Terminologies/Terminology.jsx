@@ -27,7 +27,6 @@ import { LoadCodes } from './LoadCodes';
 import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
-import { cleanedName } from '../../Manager/Utilitiy';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
 
 export const Terminology = () => {
@@ -53,6 +52,11 @@ export const Terminology = () => {
   const handleTableChange = (current, size) => {
     setPageSize(size);
   };
+
+  useEffect(() => {
+    document.title = 'Terminology - Map Dragon';
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('pageSize', pageSize);
   }, [pageSize]);
@@ -210,18 +214,12 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         } else {
           setTerminology(data);
           if (data) {
-            cleanedName(data?.name);
-            fetch(
-              `${vocabUrl}/Terminology/${data?.id}/filter/${cleanedName(
-                data?.name
-              )}`,
-              {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              }
-            )
+            fetch(`${vocabUrl}/Terminology/${data?.id}/filter`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
               .then(res => {
                 if (res.ok) {
                   return res.json();

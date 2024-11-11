@@ -6,13 +6,18 @@ export const OntologyTable = ({ ontology }) => {
   const [filter, setFilter] = useState(null);
 
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10);
+    parseInt(localStorage.getItem('pageSize'), 10) || 10
+  );
   const handleTableChange = (current, size) => {
     setPageSize(size);
   };
   useEffect(() => {
     localStorage.setItem('pageSize', pageSize);
   }, [pageSize]);
+
+  useEffect(() => {
+    document.title = 'Ontologies - Map Dragon';
+  }, []);
 
   const ontologyTitle = () => {
     return (
@@ -93,8 +98,6 @@ export const OntologyTable = ({ ontology }) => {
       version: ont.version,
     }))
   );
-
-
 
   return (
     <Table

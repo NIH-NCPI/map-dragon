@@ -92,7 +92,7 @@ export const ShowHistory = ({
         maskClosable={true}
         footer={[
           <Button type="primary" onClick={handleOk}>
-            OK
+            Close
           </Button>,
         ]}
       >

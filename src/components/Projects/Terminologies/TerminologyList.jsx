@@ -15,10 +15,15 @@ export const TerminologyList = () => {
   const [filter, setFilter] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10);
+    parseInt(localStorage.getItem('pageSize'), 10) || 10
+  );
   const { vocabUrl } = useContext(myContext);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = 'Terminology Index - Map Dragon';
+  }, []);
 
   const inputRef = useRef(null);
 
@@ -29,7 +34,7 @@ export const TerminologyList = () => {
         setTerms(data);
       })
       .finally(() => setLoading(false));
-      localStorage.setItem('pageSize', pageSize);
+    localStorage.setItem('pageSize', pageSize);
   }, [pageSize]);
 
   const terminologyTitle = () => {
@@ -46,8 +51,8 @@ export const TerminologyList = () => {
       {item.name ? item.name : item.id}
     </Link>
   );
-  const handleTableChange = (current, size) => { 
-    setPageSize(size);     
+  const handleTableChange = (current, size) => {
+    setPageSize(size);
   };
 
   const columns = [
@@ -149,12 +154,12 @@ export const TerminologyList = () => {
           columns={columns}
           dataSource={dataSource}
           getPopupContainer={trigger => trigger.parentNode}
-          pagination={{ 
+          pagination={{
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '30'],
             pageSize: pageSize, // Use the stored pageSize
             onChange: handleTableChange, // Capture pagination changes
-          }} 
+          }}
         />
       </div>
       <DeleteTerminology

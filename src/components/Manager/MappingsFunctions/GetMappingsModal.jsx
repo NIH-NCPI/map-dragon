@@ -235,7 +235,7 @@ export const GetMappingsModal = ({
       return olsFilterOntologiesSearch(
         searchUrl,
         query,
-        apiPreferencesCode !== ''
+        apiPreferencesCode?.length > 0
           ? apiPreferencesCode
           : apiPreferenceOntologies(),
         page,
@@ -254,7 +254,7 @@ export const GetMappingsModal = ({
       return olsFilterOntologiesSearch(
         searchUrl,
         query,
-        apiPreferencesCode !== '' ? apiPreferencesCode : defaultOntologies,
+        apiPreferencesCode?.length > 0 ? apiPreferencesCode : defaultOntologies,
         page,
         entriesPerPage,
         pageStart,
@@ -378,6 +378,15 @@ export const GetMappingsModal = ({
   };
 
   const filteredResultsArray = getFilteredResults();
+
+  // Peforms search on Tab key press
+  const searchOnTab = e => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      handleSearch(e.target.value);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -415,6 +424,7 @@ export const GetMappingsModal = ({
                       onSearch={handleSearch}
                       value={inputValue}
                       onChange={handleChange}
+                      onKeyDown={searchOnTab}
                     />
                   </div>
                   <span className="search-desc">{mappingDesc}</span>

@@ -4,7 +4,6 @@ import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { useParams } from 'react-router-dom';
-import { cleanedName } from '../Utilitiy';
 
 export const FilterReset = ({ table, terminology }) => {
   const { confirm } = Modal;
@@ -21,9 +20,7 @@ export const FilterReset = ({ table, terminology }) => {
       `${vocabUrl}/${
         table
           ? `Table/${table.id}/filter/self`
-          : `Terminology/${terminology.id}/filter/${cleanedName(
-              terminology.name
-            )}`
+          : `Terminology/${terminology.id}/filter}`
       }`,
       {
         method: 'DELETE',
@@ -51,9 +48,7 @@ export const FilterReset = ({ table, terminology }) => {
           `${vocabUrl}/${
             table
               ? `Table/${table.id}/filter/self`
-              : `Terminology/${terminology.id}/filter/${cleanedName(
-                  terminology.name
-                )}`
+              : `Terminology/${terminology.id}/filter}`
           }`,
           {
             method: 'GET',

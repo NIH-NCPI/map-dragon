@@ -1,4 +1,4 @@
-import { cleanedName, ontologyReducer } from './Utilitiy';
+import { ontologyReducer } from './Utilitiy';
 
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {
@@ -184,6 +184,7 @@ export const olsFilterOntologiesSearch = (
   results,
   setFacetCounts
 ) => {
+  setLoading(true);
   return fetch(
     `${searchUrl}q=${query}&ontology=${ontologiesToSearch}&rows=${entriesPerPage}&start=${pageStart}`,
     {

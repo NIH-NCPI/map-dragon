@@ -6,7 +6,6 @@ import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { cleanedName } from '../Utilitiy';
 import { useParams } from 'react-router-dom';
 
 export const FilterSelect = ({ component, table, terminology }) => {
@@ -157,9 +156,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
         fetch(
           `${vocabUrl}/${(component = table
             ? `Table/${table.id}/filter/self`
-            : `Terminology/${terminology.id}/filter/${cleanedName(
-                terminology.name
-              )}`)}`,
+            : `Terminology/${terminology.id}/filter`)}`,
           {
             method: 'GET',
             headers: {

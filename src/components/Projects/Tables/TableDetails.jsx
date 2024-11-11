@@ -64,6 +64,10 @@ export const TableDetails = () => {
   const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
+    document.title = 'Table - Map Dragon';
+  }, []);
+
+  useEffect(() => {
     setDataSource(tableData(table));
     localStorage.setItem('pageSize', pageSize);
   }, [table, mapping, pageSize]);

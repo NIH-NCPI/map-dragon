@@ -23,6 +23,9 @@ export const StudyDetails = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    document.title = 'Study - Map Dragon';
+  }, []);
   /* Function that maps through the datadictionary array in a study.
   For each DD, it makes a fetch call to the id of the DD.
   Promise.all fulfills all of the fetch calls. The response is set to studyDDs  */
