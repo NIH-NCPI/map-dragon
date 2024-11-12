@@ -62,3 +62,14 @@ export const ontologyCounts = arr => {
 };
 
 export const cleanedName = data => data?.toLowerCase().replaceAll(' ', '_');
+
+export const mappingTooltip = code => {
+  return (
+    <>
+      <div className="mapping_tooltip">
+        <div>{code.code}</div>
+        <div>{code?.display}</div>
+      </div>
+    </>
+  );
+};

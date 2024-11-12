@@ -15,7 +15,11 @@ import {
   Table,
   Tooltip,
 } from 'antd';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  UpCircleOutlined,
+  DownCircleOutlined,
+} from '@ant-design/icons';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
@@ -31,6 +35,7 @@ import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTa
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { ellipsisString } from '../../Manager/Utilitiy';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -248,16 +253,26 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     const variableMappings = mapping.find(
       item => item?.code === variable?.code
     );
-
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map(code => (
-        <div className="mapping" key={code.display}>
+        <div className="mapping" key={code.code}>
+          <span className="mapping_votes mapping_actions">
+            <UpCircleOutlined style={{ color: 'blue' }} />
+            <DownCircleOutlined style={{ color: 'green' }} />
+          </span>
           <span className="mapping-display">
-            {' '}
-            <Tooltip title={code.code}>{code.display}</Tooltip>
+            <Tooltip
+              title={
+                (code.display ? code.display : code.code).length > 25
+                  ? mappingTooltip(code)
+                  : code.code
+              }
+            >
+              {ellipsisString(code.display ? code.display : code.code, '25')}
+            </Tooltip>
           </span>
           <span
-            className="remove-mapping"
+            className="mapping_actions"
             onClick={() => handleRemoveMapping(variableMappings, code)}
           >
             <CloseCircleOutlined style={{ color: 'red' }} />

@@ -16,8 +16,8 @@ import {
 } from 'antd';
 import {
   CloseCircleOutlined,
-  DownOutlined,
-  UpOutlined,
+  DownCircleOutlined,
+  UpCircleOutlined,
 } from '@ant-design/icons';
 import { EditMappingsModal } from './EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
@@ -32,6 +32,7 @@ import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
+import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -153,24 +154,26 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     const variableMappings = mapping.find(
       item => item?.code === variable?.code
     );
-
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map(code => (
-        <div className="mapping" key={code.display}>
-          <span className="mapping_votes remove-mapping">
-            {/* <span
-            id="remove-mapping"
-          > */}
-            <UpOutlined style={{ color: 'blue' }} />
-            <DownOutlined style={{ color: 'green' }} />
+        <div className="mapping" key={code.code}>
+          <span className="mapping_votes mapping_actions">
+            <UpCircleOutlined style={{ color: 'blue' }} />
+            <DownCircleOutlined style={{ color: 'green' }} />
           </span>
           <span className="mapping-display">
-            <Tooltip title={code.code}>
-              {code.display ? code.display : code.code}
+            <Tooltip
+              title={
+                (code.display ? code.display : code.code).length > 25
+                  ? mappingTooltip(code)
+                  : code.code
+              }
+            >
+              {ellipsisString(code.display ? code.display : code.code, '25')}
             </Tooltip>
           </span>
           <span
-            className="remove-mapping"
+            className="mapping_actions"
             onClick={() => handleRemoveMapping(variableMappings, code)}
           >
             <CloseCircleOutlined style={{ color: 'red' }} />
@@ -304,8 +307,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     {
       title: 'Description',
       dataIndex: 'description',
+      width: 300,
     },
-    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 90 },
+    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 120 },
     {
       title: '',
       dataIndex: 'delete_column',
