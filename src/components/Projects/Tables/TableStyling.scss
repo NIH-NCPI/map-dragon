@@ -81,14 +81,13 @@ input::file-selector-button:hover {
     white-space: nowrap;
   }
   display: flex;
+  &:hover .remove-mapping {
+    transition: all 0.4s linear;
+    opacity: 1;
+  }
   .remove-mapping {
-    padding-left:.25rem;
+    padding-left: 0.25rem;
     cursor: pointer;
     opacity: 0;
-
-    &:hover {
-      transition: all .4s linear;
-      opacity: 1;
-    }
   }
 }
