@@ -33,7 +33,7 @@ export const MappingVotes = (
       if (error) {
         notification.error({
           message: 'Error',
-          description: 'An error occurred saving the ontology preferences.',
+          description: 'An error occurred saving the vote.',
         });
       }
       return error;

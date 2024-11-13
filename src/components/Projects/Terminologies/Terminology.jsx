@@ -17,6 +17,7 @@ import {
 import {
   CloseCircleOutlined,
   DownOutlined,
+  MessageOutlined,
   UpOutlined,
 } from '@ant-design/icons';
 import { EditMappingsModal } from './EditMappingModal';
@@ -34,6 +35,7 @@ import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
 import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
 import { MappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
+import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -55,6 +57,7 @@ export const Terminology = () => {
     parseInt(localStorage.getItem('pageSize'), 10) || 10
   );
   const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
+  const [comment, setComment] = useState(false);
   const handleTableChange = (current, size) => {
     setPageSize(size);
   };
@@ -160,6 +163,16 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map(code => (
         <div className="mapping" key={code.code}>
+          <span className="mapping_actions">
+            <MessageOutlined
+              onClick={() =>
+                setComment({
+                  code: code.code,
+                  variableMappings: variableMappings.code,
+                })
+              }
+            />
+          </span>
           <span className="mapping_votes mapping_actions">
             <UpOutlined
               style={{ color: 'blue' }}
@@ -492,6 +505,12 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             assignMappingsViaButton={assignMappingsViaButton}
             setAssignMappingsViaButton={setAssignMappingsViaButton}
             terminology={terminology}
+          />
+          <MappingComments
+            code={comment?.code}
+            variableMappings={comment?.variableMappings}
+            setComment={setComment}
+            terminologyId={terminologyId}
           />
         </div>
       )}
