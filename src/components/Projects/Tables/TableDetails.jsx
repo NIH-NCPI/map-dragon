@@ -235,13 +235,15 @@ and returns the length of the mapping array (i.e. returns the number of variable
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
   const noMapping = variable => {
     return (
-      <Button
-        onClick={() =>
-          setGetMappings({ name: variable.name, code: variable.code })
-        }
-      >
-        Get Mappings
-      </Button>
+      <div className="no_mapping_button">
+        <Button
+          onClick={() =>
+            setGetMappings({ name: variable.name, code: variable.code })
+          }
+        >
+          Get Mappings
+        </Button>
+      </div>
     );
   };
 

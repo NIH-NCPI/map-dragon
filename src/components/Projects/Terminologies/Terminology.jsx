@@ -16,8 +16,8 @@ import {
 } from 'antd';
 import {
   CloseCircleOutlined,
-  DownCircleOutlined,
-  UpCircleOutlined,
+  DownOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import { EditMappingsModal } from './EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
@@ -33,6 +33,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
 import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
+import { MappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -129,21 +130,23 @@ and returns the length of the mapping array (i.e. returns the number of codes ma
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
 
   const noMapping = variable => (
-    <Button
-      onClick={() => {
-        prefTerminologies.length > 0
-          ? setAssignMappingsViaButton({
-              display: variable.display,
-              code: variable.code,
-            })
-          : setGetMappings({
-              display: variable.display,
-              code: variable.code,
-            });
-      }}
-    >
-      {prefTerminologies?.length > 0 ? 'Assign Mappings' : 'Get Mappings'}
-    </Button>
+    <div className="no_mapping_button">
+      <Button
+        onClick={() => {
+          prefTerminologies.length > 0
+            ? setAssignMappingsViaButton({
+                display: variable.display,
+                code: variable.code,
+              })
+            : setGetMappings({
+                display: variable.display,
+                code: variable.code,
+              });
+        }}
+      >
+        {prefTerminologies?.length > 0 ? 'Assign Mappings' : 'Get Mappings'}
+      </Button>
+    </div>
   );
 
   const matchCode = variable => {
@@ -158,8 +161,35 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       return variableMappings.mappings.map(code => (
         <div className="mapping" key={code.code}>
           <span className="mapping_votes mapping_actions">
-            <UpCircleOutlined style={{ color: 'blue' }} />
-            <DownCircleOutlined style={{ color: 'green' }} />
+            <UpOutlined
+              style={{ color: 'blue' }}
+              onClick={() =>
+                MappingVotes(
+                  variableMappings,
+                  code,
+                  user,
+                  'up',
+                  vocabUrl,
+                  terminologyId,
+                  notification
+                )
+              }
+            />
+            0
+            <DownOutlined
+              style={{ color: 'green' }}
+              onClick={() =>
+                MappingVotes(
+                  variableMappings,
+                  code,
+                  user,
+                  'down',
+                  vocabUrl,
+                  terminologyId,
+                  notification
+                )
+              }
+            />
           </span>
           <span className="mapping-display">
             <Tooltip

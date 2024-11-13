@@ -81,6 +81,7 @@ input::file-selector-button:hover {
     white-space: nowrap;
   }
   display: flex;
+  align-items: center;
   &:hover .mapping_actions {
     transition: all 0.4s linear;
     opacity: 1;
@@ -94,6 +95,13 @@ input::file-selector-button:hover {
 
 .mapping_votes {
   display: flex;
-  gap: 2px;
+  flex-direction: column;
+  align-items: center;
+  // gap: 2px;
   padding-right: 0.25rem;
+  font-size: 0.7rem;
+}
+
+.no_mapping_button {
+  padding-left: 2rem;
 }
