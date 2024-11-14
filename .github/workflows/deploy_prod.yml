@@ -4,17 +4,16 @@
 name: 'Build and Deploy PROD to  Cloud Run'
 
 on:
-    pull_request:
-      branches:
-        - release
-      types:
-        - closed
+  pull_request:
+    branches:
+      - release
+    types: [closed, edited] # PR opened, edited(PR title, etc)
 
 env:
 
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION_LOC_1 }}
-  SERVICE: 'map-dragon'
+  SERVICE: 'mapdragon'
   IMAGE_NAME: 'map-dragon_img'
   GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
 
@@ -24,7 +23,8 @@ jobs:
   deploy:
     runs-on: 'ubuntu-latest'
 
-    
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'release'
+
     environment:
       name: prod
 
@@ -44,11 +44,18 @@ jobs:
         with:
           credentials_json: '${{ env.GCP_CREDENTIALS }}'
 
+      - name: Extract Version from PR Title # Assumes PR title contains the tag. ex v0.0.0 or v0.0.0-abc
+        run: |
+          VERSION=$(echo "${{ github.event.pull_request.title }}" | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+\(-[a-zA-Z]*\)\?') 
+          echo "Extracted Version: ${VERSION}"
+
       - name: Generate .env.prod file
         run: |
           echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.prod
           echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.prod
           echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.prod
+          echo "VITE_MAPDRAGON_VERSION=${VERSION}" >> .env.prod
+
       - name: 'Docker Auth'
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
