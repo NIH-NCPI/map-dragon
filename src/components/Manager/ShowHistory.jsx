@@ -81,7 +81,11 @@ export const ShowHistory = ({
       old_value: prov.old_value,
       new_value: prov.new_value,
       editor: prov.editor,
-    })) ?? [];
+    })).sort((a, b) => {
+      const dateA = new Date(a.timestamp);
+      const dateB = new Date(b.timestamp);
+      return dateB - dateA;
+    }) ?? [];
 
   const handleTableChange = (current, size) => {
     setPageSize(size);
@@ -110,7 +114,6 @@ export const ShowHistory = ({
             <div>
               <h4>{code}</h4>
             </div>
-
             <Table
               columns={columns}
               dataSource={dataSource}
