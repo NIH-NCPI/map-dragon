@@ -16,6 +16,7 @@ export const ShowHistory = ({
   const { vocabUrl } = useContext(myContext);
   const [provData, setProvData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pageSize, setPageSize] = useState(10);
 
   // If the showHistory key matches the key of the row clicked, the provenance data is fetched
   useEffect(() => {
@@ -81,6 +82,12 @@ export const ShowHistory = ({
       new_value: prov.new_value,
       editor: prov.editor,
     })) ?? [];
+
+  const handleTableChange = (current, size) => {
+    setPageSize(size);
+  };
+
+
   return (
     showHistory === tableData.key && (
       <Modal
@@ -107,7 +114,12 @@ export const ShowHistory = ({
             <Table
               columns={columns}
               dataSource={dataSource}
-              pagination={false}
+              pagination={{
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '30'],
+                pageSize: pageSize, // Use the stored pageSize
+                onChange: handleTableChange
+              }} // Capture pagination changes
               size="small"
             />
           </>
