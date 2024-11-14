@@ -4,7 +4,8 @@ import {
   Outlet,
   Route,
   Routes,
-  Navigate, 
+  Navigate,
+  useLocation
 } from 'react-router-dom';
 import { NavBar } from './components/Nav/NavBar';
 import { Login } from './components/Auth/Login.jsx';
@@ -37,7 +38,19 @@ export const AppRouter = () => {
     }
   }
 
+ 
+
+  function ProtectedRoute({ children }) {
+    const location = useLocation();
   
+    // If the user is not logged in, redirect to login with the intended destination path
+    if (!isLoggedIn()) {
+      return <Navigate to="/login" replace state={{ from: location }} />;
+    }
+  
+    // Otherwise, render the child component (e.g., DDDetails)
+    return children;
+  }
 
   return (
     <BrowserRouter>
@@ -61,17 +74,18 @@ export const AppRouter = () => {
           <Route element={<PageLayout />}>
             <Route path="/search/:query" element={<SearchResults />} />
             <Route path="/404" element={<Error404 />} />
-            <Route path="/ontologies" element={isLoggedIn() ? <OntologyInfo />: <Navigate to="/login" />} />
+            
+            <Route path="/ontologies" element={ <ProtectedRoute><OntologyInfo /></ProtectedRoute>} />
             <Route path="/about" element={<About />} />
-            <Route path="/terminologies" element={isLoggedIn() ? <TerminologyList />: <Navigate to="/login" />} />
-            <Route path="/login" element={isLoggedIn() ? <Navigate to="/"/> : <LoginPage />} />
+            <Route path="/terminologies" element={<ProtectedRoute><TerminologyList /></ProtectedRoute>} />
+            <Route path="/login" element={<LoginPage/>}/>
             <Route
               path="/terminology"
               element={<Navigate to="/terminologies" />}
             />
             <Route element={<MappingContextRoot />}>
               <Route element={<SearchContextRoot />}>
-                <Route path="/studies" element={isLoggedIn() ? <StudyList />: <Navigate to="/login" />} />
+                <Route path="/studies" element={<ProtectedRoute><StudyList /></ProtectedRoute>} />
                 <Route path="/study" element={<Navigate to="/studies" />} />
                 <Route path="/Study/:studyId">
                   <Route index element={isLoggedIn() ? <StudyDetails />: <Navigate to="/login" />} />
