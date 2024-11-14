@@ -168,6 +168,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               onClick={() =>
                 setComment({
                   code: code.code,
+                  display: code.display,
                   variableMappings: variableMappings.code,
                 })
               }
@@ -508,6 +509,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           />
           <MappingComments
             code={comment?.code}
+            codeDisplay={comment?.display}
             variableMappings={comment?.variableMappings}
             setComment={setComment}
             terminologyId={terminologyId}

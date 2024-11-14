@@ -4,6 +4,7 @@ import { myContext } from '../../../App';
 
 export const MappingComments = ({
   code,
+  codeDisplay,
   variableMappings,
   setComment,
   terminologyId,
@@ -66,6 +67,7 @@ export const MappingComments = ({
         closeIcon={false}
         destroyOnClose={true}
       >
+        {variableMappings} : {codeDisplay}
         <Form
           form={form}
           layout="inline"
