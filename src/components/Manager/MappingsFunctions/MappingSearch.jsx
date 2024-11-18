@@ -131,10 +131,14 @@ export const MappingSearch = ({
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
   // The function is run when the query changes and when the preferred ontology changes.
   useEffect(() => {
-    if (!!currentSearchProp && apiPreferencesCode !== undefined) {
+    if (
+      active === 'search' &&
+      !!currentSearchProp &&
+      apiPreferencesCode !== undefined
+    ) {
       fetchResults(page, currentSearchProp);
     }
-  }, [currentSearchProp, apiPreferencesCode]);
+  }, [currentSearchProp, apiPreferencesCode, active]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -271,31 +275,6 @@ export const MappingSearch = ({
 
     setDisplaySelectedMappings(prevState => [...prevState, selected]);
   };
-
-  // const onSelectedChange = checkedValues => {
-  //   const selected = JSON.parse(checkedValues?.[0]);
-  //   const selectedMapping = results.find(
-  //     result => result.obo_id === selected.code
-  //   );
-
-  //   // Updates selectedMappings and displaySelectedMappings to include the new selected items
-  //   setSelectedMappings(prevState => [...prevState, selectedMapping]);
-
-  //   // Adds the selectedMappings to the selectedBoxes to ensure they are checked
-  //   setSelectedBoxes(prevState => {
-  //     const updated = [...prevState, selectedMapping];
-  //     form.setFieldsValue({ selected_mappings: updated });
-  //     return updated;
-  //   });
-
-  //   setDisplaySelectedMappings(prevState => [...prevState, selectedMapping]);
-
-  //   // Filters out the selected checkboxes from the results being displayed
-  //   const updatedResults = results.filter(
-  //     result => result.obo_id !== selected.code
-  //   );
-  //   setResults(updatedResults);
-  // };
 
   // The display for the checkboxes. The index is set to the count of the results before you fetch the new batch of results
   // again + 1, to move the scrollbar to the first result of the new batch.
@@ -523,22 +502,24 @@ export const MappingSearch = ({
                               >
                                 <b>Preferred Terminologies</b>
                               </div>
-                              {terminologiesToMap.map((term, i) => (
-                                <div
-                                  key={i}
-                                  className={
-                                    active === term.id
-                                      ? 'active_term'
-                                      : active !== term.id &&
-                                        active !== 'search'
-                                      ? 'inactive_term'
-                                      : active === 'search' && 'hidden_term'
-                                  }
-                                  onClick={() => setActive(term.id)}
-                                >
-                                  {term.name}
-                                </div>
-                              ))}
+                              <div className="">
+                                {terminologiesToMap.map((term, i) => (
+                                  <div
+                                    key={i}
+                                    className={
+                                      active === term.id
+                                        ? 'active_term'
+                                        : active !== term.id &&
+                                          active !== 'search'
+                                        ? 'inactive_term'
+                                        : active === 'search' && 'hidden_term'
+                                    }
+                                    onClick={() => setActive(term.id)}
+                                  >
+                                    {term.name}
+                                  </div>
+                                ))}
+                              </div>
                               <div
                                 onClick={() => setActive('search')}
                                 className={

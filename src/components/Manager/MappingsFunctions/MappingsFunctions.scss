@@ -35,7 +35,7 @@
 .result_container {
   // display: flex;
   // flex-direction: row;
-  background-color: lightcoral;
+  background-color: forestgreen;
 }
 .all_checkboxes_container {
   display: flex;
@@ -64,8 +64,9 @@
 .pref_tab {
   padding: 10px;
   cursor: pointer;
-  width: 15vw;
+  width: 13vw;
   border-bottom: white 2px solid;
+  text-wrap: wrap;
 }
 
 .active_term {
