@@ -275,9 +275,6 @@ export const EditMappingsModal = ({
         form
           .validateFields()
           .then(values => {
-            {
-              /* Performs the updateMappings PUT call on 'Save' button click */
-            }
             editSearch || reset
               ? editUpdatedMappings(values)
               : updateMappings(values);

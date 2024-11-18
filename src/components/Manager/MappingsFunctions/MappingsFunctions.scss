@@ -32,6 +32,11 @@
   }
 }
 
+.result_container {
+  // display: flex;
+  // flex-direction: row;
+  background-color: lightcoral;
+}
 .all_checkboxes_container {
   display: flex;
   flex-direction: row;
@@ -42,12 +47,21 @@
   overflow: auto;
   position: fixed;
 }
+
+.ontology_form_pref {
+  width: 10.5vw;
+  height: 45vh;
+  overflow: auto;
+  position: fixed;
+}
+
 .result_form {
   margin-left: 11vw;
 }
 
 .inactive_term,
-.active_term {
+.active_term,
+.pref_tab {
   padding: 10px;
   cursor: pointer;
   width: 15vw;
@@ -61,6 +75,13 @@
 
 .inactive_term {
   background-color: $lightBlue;
+}
+
+.hidden_term {
+  display: none;
+}
+.pref_tab {
+  background-color: rgb(233, 233, 233);
 }
 
 .assign_map_checkbox_container {
