@@ -14,7 +14,6 @@ export const Breadcrumbs = () => {
 
   useEffect(() => {
     const controller = new AbortController(); // For canceling stale requests
-
     const fetchBreadcrumbData = async () => {
       const pathArr = pathParts.map((path) => ({ title: path, path: path }));
 
@@ -24,13 +23,18 @@ export const Breadcrumbs = () => {
           if (i + 1 < pathArr.length) {
             promises.push(
               getById(vocabUrl, pathArr[i].path, pathArr[i + 1].path, { signal: controller.signal }).then((result) => {
-                pathArr[i + 1] = { ...pathArr[i + 1], title: result.name };
+                pathArr[i + 1] = { path: pathArr[i].path + '/' + result.id, title: result.name };
               })
             );
           }
         }
 
         await Promise.all(promises); // Wait for all `getById` calls to finish
+        if (pathArr.length !== 1) {
+          pathArr.splice(0, 1);
+          pathArr.splice(1, 1);
+          pathArr.splice(2, 1);
+        }
         setUpdatedPathArr([...pathArr]);
       } catch (error) {
         if (error.name === 'AbortError') {
