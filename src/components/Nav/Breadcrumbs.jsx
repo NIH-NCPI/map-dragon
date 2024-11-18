@@ -34,6 +34,7 @@ export const Breadcrumbs = () => {
           pathArr.splice(0, 1);
           pathArr.splice(1, 1);
           pathArr.splice(2, 1);
+          pathArr.splice(3, 1);
         }
         setUpdatedPathArr([...pathArr]);
       } catch (error) {
