@@ -32,31 +32,31 @@
   }
 }
 
-.result_container {
-  // display: flex;
-  // flex-direction: row;
-  background-color: forestgreen;
-}
 .all_checkboxes_container {
   display: flex;
   flex-direction: row;
 }
+
+.mapping_modal_left {
+  position: fixed;
+}
 .ontology_form {
-  width: 10.5vw;
+  width: 13vw;
   height: 50vh;
   overflow: auto;
   position: fixed;
 }
 
 .ontology_form_pref {
-  width: 10.5vw;
-  height: 45vh;
+  width: 13vw;
+  padding-right: 20px;
+  height: 44%;
   overflow: auto;
   position: fixed;
 }
 
 .result_form {
-  margin-left: 11vw;
+  margin-left: 15vw;
 }
 
 .inactive_term,
@@ -87,6 +87,7 @@
 
 .assign_map_checkbox_container {
   display: flex;
+  position: sticky;
 }
 
 .assign_map_checkboxes {
@@ -138,7 +139,7 @@
 }
 
 .view_more_wrapper {
-  margin-left: 11vw;
+  margin-left: 15vw;
 }
 
 .api_onto_search_bar,

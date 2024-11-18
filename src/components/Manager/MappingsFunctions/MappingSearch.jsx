@@ -545,106 +545,11 @@ export const MappingSearch = ({
                           />
                         )}
                       </div>
-                    </div>
-                    <div>
-                      <div className="result_form">
-                        <Form.Item
-                          initialValue={initialChecked}
-                          name={['existing_mappings']}
-                          valuePropName="value"
-                          rules={[
-                            {
-                              required: false,
-                            },
-                          ]}
-                        >
-                          {mappingsForSearch?.length > 0 && (
-                            <Checkbox.Group
-                              className="mappings_checkbox existing_display"
-                              options={mappingsForSearch?.map((d, index) => {
-                                return {
-                                  value: JSON.stringify({
-                                    code: d.code,
-                                    display: d.display,
-                                    description: d.description,
-                                    system: d.system,
-                                  }),
-                                  label: existingMappingDisplay(d, index),
-                                };
-                              })}
-                              onChange={onExistingChange}
-                            />
-                          )}
-                        </Form.Item>
-                        {displaySelectedMappings?.length > 0 && (
+                      <div>
+                        <div className="result_form">
                           <Form.Item
-                            name="selected_mappings"
-                            valuePropName="value"
-                            rules={[{ required: false }]}
-                          >
-                            <div className="modal_display_results">
-                              {displaySelectedMappings?.map((sm, i) => (
-                                <Checkbox
-                                  key={i}
-                                  onChange={e => onCheckboxChange(e, sm)}
-                                  checked={
-                                    active === 'search'
-                                      ? selectedBoxes.some(
-                                          box => box.obo_id === sm.obo_id
-                                        )
-                                      : selectedBoxes.some(
-                                          box => box.code === sm.code
-                                        )
-                                  }
-                                  value={sm}
-                                >
-                                  {selectedTermsDisplay(sm, i)}
-                                </Checkbox>
-                              ))}
-                            </div>
-                          </Form.Item>
-                        )}
-                        {active === 'search' ? (
-                          results?.length > 0 ? (
-                            <>
-                              <Form.Item
-                                name={['filtered_mappings']}
-                                valuePropName="value"
-                                rules={[
-                                  {
-                                    required: false,
-                                  },
-                                ]}
-                              >
-                                {filteredResultsArray?.length > 0 && (
-                                  <Checkbox.Group
-                                    className="mappings_checkbox"
-                                    options={filteredResultsArray?.map(
-                                      (d, index) => {
-                                        return {
-                                          value: JSON.stringify({
-                                            code: d.obo_id,
-                                            display: d.label,
-                                            description: d.description[0],
-                                            system: systemsMatch(
-                                              d?.obo_id?.split(':')[0]
-                                            ),
-                                          }),
-                                          label: newSearchDisplay(d, index),
-                                        };
-                                      }
-                                    )}
-                                    onChange={onSelectedChange}
-                                  />
-                                )}
-                              </Form.Item>
-                            </>
-                          ) : (
-                            <h3>No results found</h3>
-                          )
-                        ) : (
-                          <Form.Item
-                            name={['mappings']}
+                            initialValue={initialChecked}
+                            name={['existing_mappings']}
                             valuePropName="value"
                             rules={[
                               {
@@ -652,55 +557,152 @@ export const MappingSearch = ({
                               },
                             ]}
                           >
-                            <Checkbox.Group
-                              className="mappings_checkbox"
-                              options={allCheckboxes
-                                .filter(
-                                  checkbox =>
-                                    !displaySelectedMappings.some(
-                                      dsm => checkbox.code === dsm.code
-                                    )
-                                )
-                                .map((code, index) => ({
-                                  value: JSON.stringify({
-                                    code: code.code,
-                                    display: code.display,
-                                    description: code.description,
-                                    system: code.system,
-                                  }),
-                                  label: checkBoxDisplay(code, index),
-                                }))}
-                              onChange={onSelectedChange}
-                            />
+                            {mappingsForSearch?.length > 0 && (
+                              <Checkbox.Group
+                                className="mappings_checkbox existing_display"
+                                options={mappingsForSearch?.map((d, index) => {
+                                  return {
+                                    value: JSON.stringify({
+                                      code: d.code,
+                                      display: d.display,
+                                      description: d.description,
+                                      system: d.system,
+                                    }),
+                                    label: existingMappingDisplay(d, index),
+                                  };
+                                })}
+                                onChange={onExistingChange}
+                              />
+                            )}
                           </Form.Item>
-                        )}
+                          {displaySelectedMappings?.length > 0 && (
+                            <Form.Item
+                              name="selected_mappings"
+                              valuePropName="value"
+                              rules={[{ required: false }]}
+                            >
+                              <div className="modal_display_results">
+                                {displaySelectedMappings?.map((sm, i) => (
+                                  <Checkbox
+                                    key={i}
+                                    onChange={e => onCheckboxChange(e, sm)}
+                                    checked={
+                                      active === 'search'
+                                        ? selectedBoxes.some(
+                                            box => box.obo_id === sm.obo_id
+                                          )
+                                        : selectedBoxes.some(
+                                            box => box.code === sm.code
+                                          )
+                                    }
+                                    value={sm}
+                                  >
+                                    {selectedTermsDisplay(sm, i)}
+                                  </Checkbox>
+                                ))}
+                              </div>
+                            </Form.Item>
+                          )}
+                          {active === 'search' ? (
+                            results?.length > 0 ? (
+                              <>
+                                <Form.Item
+                                  name={['filtered_mappings']}
+                                  valuePropName="value"
+                                  rules={[
+                                    {
+                                      required: false,
+                                    },
+                                  ]}
+                                >
+                                  {filteredResultsArray?.length > 0 && (
+                                    <Checkbox.Group
+                                      className="mappings_checkbox"
+                                      options={filteredResultsArray?.map(
+                                        (d, index) => {
+                                          return {
+                                            value: JSON.stringify({
+                                              code: d.obo_id,
+                                              display: d.label,
+                                              description: d.description[0],
+                                              system: systemsMatch(
+                                                d?.obo_id?.split(':')[0]
+                                              ),
+                                            }),
+                                            label: newSearchDisplay(d, index),
+                                          };
+                                        }
+                                      )}
+                                      onChange={onSelectedChange}
+                                    />
+                                  )}
+                                </Form.Item>
+                              </>
+                            ) : (
+                              <h3>No results found</h3>
+                            )
+                          ) : (
+                            <Form.Item
+                              name={['mappings']}
+                              valuePropName="value"
+                              rules={[
+                                {
+                                  required: false,
+                                },
+                              ]}
+                            >
+                              <Checkbox.Group
+                                className="mappings_checkbox"
+                                options={allCheckboxes
+                                  .filter(
+                                    checkbox =>
+                                      !displaySelectedMappings.some(
+                                        dsm => checkbox.code === dsm.code
+                                      )
+                                  )
+                                  .map((code, index) => ({
+                                    value: JSON.stringify({
+                                      code: code.code,
+                                      display: code.display,
+                                      description: code.description,
+                                      system: code.system,
+                                    }),
+                                    label: checkBoxDisplay(code, index),
+                                  }))}
+                                onChange={onSelectedChange}
+                              />
+                            </Form.Item>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </Form>
-                  <div className="view_more_wrapper">
-                    {/* 'View More' pagination displaying the number of results being displayed
+                  {active === 'search' && (
+                    <div className="view_more_wrapper">
+                      {/* 'View More' pagination displaying the number of results being displayed
                       out of the total number of results. Because of the filter to filter out the duplicates,
                       there is a tooltip informing the user that redundant entries have been removed to explain any
                       inconsistencies in results numbers per page. */}
-                    <Tooltip
-                      placement="bottom"
-                      title="Redundant entries have been removed"
-                    >
-                      Displaying {resultsCount}
-                      &nbsp;of&nbsp;{totalCount}
-                    </Tooltip>
-                    {resultsCount < totalCount - filteredResultsCount && (
-                      <span
-                        className="view_more_link"
-                        onClick={e => {
-                          handleViewMore(e);
-                          setLastCount(resultsCount);
-                        }}
+                      <Tooltip
+                        placement="bottom"
+                        title="Redundant entries have been removed"
                       >
-                        View More
-                      </span>
-                    )}
-                  </div>
+                        Displaying {resultsCount}
+                        &nbsp;of&nbsp;{totalCount}
+                      </Tooltip>
+                      {resultsCount < totalCount - filteredResultsCount && (
+                        <span
+                          className="view_more_link"
+                          onClick={e => {
+                            handleViewMore(e);
+                            setLastCount(resultsCount);
+                          }}
+                        >
+                          View More
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </>
