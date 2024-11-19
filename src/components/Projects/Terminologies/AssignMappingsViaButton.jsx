@@ -23,6 +23,7 @@ export const AssignMappingsViaButton = ({
 
   const onClose = () => {
     setApiResults([]);
+    setSelectedBoxes([]);
   };
   const fetchTerminologies = () => {
     setLoading(true);

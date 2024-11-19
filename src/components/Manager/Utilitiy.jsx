@@ -39,6 +39,7 @@ export const systemsMatch = (ontologyCode, ontologyApis) => {
   }
   return null; // If not found, return null or handle accordingly
 };
+
 // Iterates over the facet counts in the result to make an object of search results per ontology
 export const ontologyCounts = arr => {
   let result = [];

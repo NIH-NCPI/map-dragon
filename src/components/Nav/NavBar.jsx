@@ -1,9 +1,23 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import './NavBar.scss';
 import { Login } from '../Auth/Login';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { useContext, useState } from 'react'
+import { myContext } from '../../App';
+import { RequiredLogin } from '../Auth/RequiredLogin';
 
 export const NavBar = () => {
+  const [routeTo, setRouteTo] = useState(null);
+  const { user } = useContext(myContext);
+  const navigate = useNavigate();
+  const handleSuccess = () => {
+    navigate(routeTo);
+  };
+  const login = RequiredLogin({ handleSuccess: handleSuccess });
+  const handleLogin = (route) => {
+    setRouteTo(route);
+    login();
+  }
+  
   return (
     <>
       <nav className="navbar">
@@ -19,12 +33,24 @@ export const NavBar = () => {
             <NavLink to="/">
               <li className="nav_link">Search</li>
             </NavLink>
-            <NavLink to="/studies">
+            <div onClick={() => {
+              if (user) {
+                navigate('/studies')
+              } else {
+                handleLogin('/studies')
+              }
+            }}>
               <li className="nav_link">Studies</li>
-            </NavLink>
-            <NavLink to="/terminologies">
+            </div>
+            <div onClick={() => {
+              if (user) {
+                navigate('/terminologies')
+              } else {
+                handleLogin('/terminologies')
+              }
+            }}>
               <li className="nav_link">Terminologies</li>
-            </NavLink>
+            </div>
             {/* Placeholder elements below. No functionality at this time.*/}
             <NavLink to="/about">
               <li className="nav_link">About</li>
@@ -38,7 +64,7 @@ export const NavBar = () => {
             <Login />
           </div>
         </ul>
-      </nav>
+      </nav >
     </>
   );
 };

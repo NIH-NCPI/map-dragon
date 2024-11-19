@@ -42,6 +42,7 @@ export const GetMappingsModal = ({
     setUnformattedPref,
     prefTypeKey,
     ontologyApis,
+    setPrefTerminologies,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 1000;
@@ -142,6 +143,7 @@ export const GetMappingsModal = ({
     setApiPreferencesCode(undefined);
     setSelectedBoxes([]);
     setSelectedKey(null);
+    setPrefTerminologies([]);
   };
 
   // Sets currentSearchProp to the value of the search bar and sets page to 0.
