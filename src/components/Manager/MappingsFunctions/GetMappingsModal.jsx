@@ -30,7 +30,6 @@ export const GetMappingsModal = ({
   table,
   terminology,
 }) => {
-  const { tableId } = useParams();
   const [form] = Form.useForm();
   const { Search } = Input;
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
@@ -43,6 +42,7 @@ export const GetMappingsModal = ({
     setUnformattedPref,
     prefTypeKey,
     ontologyApis,
+    setPrefTerminologies,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 1000;
@@ -62,7 +62,6 @@ export const GetMappingsModal = ({
     setSelectedBoxes,
   } = useContext(MappingContext);
   let ref = useRef();
-
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
   // if there is a searchProp being passed, it evaluates to true and runs the search function.
   // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
@@ -144,6 +143,7 @@ export const GetMappingsModal = ({
     setApiPreferencesCode(undefined);
     setSelectedBoxes([]);
     setSelectedKey(null);
+    setPrefTerminologies([]);
   };
 
   // Sets currentSearchProp to the value of the search bar and sets page to 0.

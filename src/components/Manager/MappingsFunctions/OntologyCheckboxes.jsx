@@ -11,6 +11,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     facetCounts,
     ontologyApis,
     prefTypeKey,
+    active,
+    prefTerminologies,
   } = useContext(SearchContext);
   const { Search } = Input;
 
@@ -111,7 +113,13 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   };
 
   return (
-    <div className="ontology_form">
+    <div
+      className={
+        active === 'search' || prefTerminologies.length === 0
+          ? 'ontology_form'
+          : 'ontology_form_pref'
+      }
+    >
       <Search
         placeholder="Ontologies"
         className="onto_search_bar"

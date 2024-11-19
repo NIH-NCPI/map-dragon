@@ -17,6 +17,7 @@ export const APIResults = ({
     apiTotalCount,
     ontologyApis,
   } = useContext(SearchContext);
+
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
 
@@ -115,7 +116,7 @@ export const APIResults = ({
                       display: d.label,
                       description: d.description[0],
                       system: systemsMatch(
-                        d?.obo_id?.split(':')[0],
+                        d?.obo_id.split(':')[0],
                         ontologyApis
                       ),
                     }),

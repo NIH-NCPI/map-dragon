@@ -208,10 +208,11 @@ export const EditMappingsModal = ({
   const editUpdatedMappings = values => {
     setLoading(true);
     const selectedMappings = values?.selected_mappings?.map(item => ({
-      code: item.obo_id,
-      display: item.label,
-      description: item.description[0],
-      system: systemsMatch(item.obo_id.split(':')[0], ontologyApis),
+      code: item.code,
+      display: item.display,
+      description: item.description,
+      system:
+        item.system || systemsMatch(item.obo_id.split(':')[0], ontologyApis),
     }));
     const mappingsDTO = {
       mappings: [
@@ -276,9 +277,6 @@ export const EditMappingsModal = ({
         form
           .validateFields()
           .then(values => {
-            {
-              /* Performs the updateMappings PUT call on 'Save' button click */
-            }
             editSearch || reset
               ? editUpdatedMappings(values)
               : updateMappings(values);
