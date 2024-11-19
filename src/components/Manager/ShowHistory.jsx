@@ -115,6 +115,10 @@ export const ShowHistory = ({
               <h4>{code}</h4>
             </div>
             <Table
+              scroll={{
+                x: 'max-content',
+                y: 60 * 5,
+              }}
               columns={columns}
               dataSource={dataSource}
               pagination={{
