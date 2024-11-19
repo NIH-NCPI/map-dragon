@@ -127,7 +127,8 @@ export const MappingSearch = ({
   useEffect(() => {
     setActive(terminologiesToMap?.[0]?.id);
   }, [terminologiesToMap]);
-
+  console.log(active);
+  console.log(prefTerminologies.length);
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
   // The function is run when the query changes and when the preferred ontology changes.
@@ -139,7 +140,11 @@ export const MappingSearch = ({
       apiPreferencesCode !== undefined
     ) {
       fetchResults(page, currentSearchProp);
-    } else if (!!currentSearchProp && apiPreferencesCode !== undefined) {
+    } else if (
+      prefTerminologies.length === 0 &&
+      !!currentSearchProp &&
+      apiPreferencesCode !== undefined
+    ) {
       fetchResults(page, currentSearchProp);
     }
   }, [currentSearchProp, apiPreferencesCode, active]);

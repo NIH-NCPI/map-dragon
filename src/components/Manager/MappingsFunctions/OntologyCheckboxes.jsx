@@ -12,6 +12,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     ontologyApis,
     prefTypeKey,
     active,
+    prefTerminologies,
   } = useContext(SearchContext);
   const { Search } = Input;
 
@@ -113,7 +114,11 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   return (
     <div
-      className={active === 'search' ? 'ontology_form' : 'ontology_form_pref'}
+      className={
+        active === 'search' || prefTerminologies.length === 0
+          ? 'ontology_form'
+          : 'ontology_form_pref'
+      }
     >
       <Search
         placeholder="Ontologies"
