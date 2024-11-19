@@ -27,20 +27,18 @@ export const ontologyReducer = d =>
     { results: [], filteredResults: [] }
   );
 
-/* The backend API does not yet have a way to affix the system URL to each ontology. 
-  This displays the system for each ontology searched. */
-export const ontologySystems = {
-  MONDO: 'http://purl.obolibrary.org/obo/mondo.owl',
-  HP: 'http://purl.obolibrary.org/obo/hp.owl',
-  MAXO: 'http://purl.obolibrary.org/obo/maxo.owl',
-  NCIT: 'http://purl.obolibrary.org/obo/ncit.owl',
-};
-
 // This function matches the ontology prop to its system (listed in object above) in the object that will be sent to the API
-export const systemsMatch = ont => {
-  return ontologySystems[ont];
+export const systemsMatch = (ontologyCode, ontologyApis) => {
+  // Search for the ontology that contains the requested ontology code
+  const ontologyApi = ontologyApis.find(
+    api => api.ontologies[ontologyCode.toLowerCase()]
+  );
+  if (ontologyApi) {
+    // Return the system URL for the matching ontology
+    return ontologyApi.ontologies[ontologyCode.toLowerCase()].system;
+  }
+  return null; // If not found, return null or handle accordingly
 };
-
 // Iterates over the facet counts in the result to make an object of search results per ontology
 export const ontologyCounts = arr => {
   let result = [];

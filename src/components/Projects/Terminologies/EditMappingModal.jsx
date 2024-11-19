@@ -35,6 +35,7 @@ export const EditMappingsModal = ({
     setApiPreferencesCode,
     preferenceType,
     prefTypeKey,
+    ontologyApis,
   } = useContext(SearchContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
@@ -210,7 +211,8 @@ export const EditMappingsModal = ({
       code: item.code,
       display: item.display,
       description: item.description,
-      system: item.system || systemsMatch(item.code.split(':')?.[0]),
+      system:
+        item.system || systemsMatch(item.obo_id.split(':')[0], ontologyApis),
     }));
     const mappingsDTO = {
       mappings: [

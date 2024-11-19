@@ -30,6 +30,7 @@ export const MappingSearch = ({
     setUnformattedPref,
     prefTerminologies,
     setApiResults,
+    ontologyApis,
   } = useContext(SearchContext);
 
   const [page, setPage] = useState(0);
@@ -132,10 +133,13 @@ export const MappingSearch = ({
   // The function is run when the query changes and when the preferred ontology changes.
   useEffect(() => {
     if (
+      prefTerminologies.length > 0 &&
       active === 'search' &&
       !!currentSearchProp &&
       apiPreferencesCode !== undefined
     ) {
+      fetchResults(page, currentSearchProp);
+    } else if (!!currentSearchProp && apiPreferencesCode !== undefined) {
       fetchResults(page, currentSearchProp);
     }
   }, [currentSearchProp, apiPreferencesCode, active]);
@@ -538,7 +542,9 @@ export const MappingSearch = ({
                             </div>
                           </div>
                         )}
-                        {active === 'search' && (
+                        {((prefTerminologies.length > 0 &&
+                          active === 'search') ||
+                          prefTerminologies.length === 0) && (
                           <OntologyCheckboxes
                             apiPreferences={apiPreferences}
                             active={active}
@@ -603,7 +609,9 @@ export const MappingSearch = ({
                               </div>
                             </Form.Item>
                           )}
-                          {active === 'search' ? (
+                          {(prefTerminologies.length > 0 &&
+                            active === 'search') ||
+                          prefTerminologies.length === 0 ? (
                             results?.length > 0 ? (
                               <>
                                 <Form.Item
@@ -626,7 +634,8 @@ export const MappingSearch = ({
                                               display: d.label,
                                               description: d.description[0],
                                               system: systemsMatch(
-                                                d?.obo_id?.split(':')[0]
+                                                d?.obo_id?.split(':')[0],
+                                                ontologyApis
                                               ),
                                             }),
                                             label: newSearchDisplay(d, index),

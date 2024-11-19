@@ -42,6 +42,7 @@ export const GetMappingsModal = ({
     apiPreferencesCode,
     setUnformattedPref,
     prefTypeKey,
+    ontologyApis,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 1000;
@@ -61,7 +62,6 @@ export const GetMappingsModal = ({
     setSelectedBoxes,
   } = useContext(MappingContext);
   let ref = useRef();
-
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
   // if there is a searchProp being passed, it evaluates to true and runs the search function.
   // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
@@ -159,7 +159,7 @@ export const GetMappingsModal = ({
       code: item.obo_id,
       display: item.label,
       description: item.description[0],
-      system: systemsMatch(item.obo_id.split(':')[0]),
+      system: systemsMatch(item.obo_id.split(':')[0], ontologyApis),
     }));
     const mappingsDTO = {
       mappings: selectedMappings,
@@ -479,7 +479,8 @@ export const GetMappingsModal = ({
                                           display: d.label,
                                           description: d.description[0],
                                           system: systemsMatch(
-                                            d?.obo_id?.split(':')[0]
+                                            d?.obo_id?.split(':')[0],
+                                            ontologyApis
                                           ),
                                         }),
                                         label: checkBoxDisplay(d, index),
