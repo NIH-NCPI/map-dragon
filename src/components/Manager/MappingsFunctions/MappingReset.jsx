@@ -26,6 +26,7 @@ export const MappingReset = ({
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
+    ontologyApis,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 1000;
@@ -380,7 +381,8 @@ export const MappingReset = ({
                                           display: d.label,
                                           // description: d.description[0],
                                           system: systemsMatch(
-                                            d?.obo_id?.split(':')[0]
+                                            d?.obo_id?.split(':')[0],
+                                            ontologyApis
                                           ),
                                         }),
                                         label: checkBoxDisplay(d, index),

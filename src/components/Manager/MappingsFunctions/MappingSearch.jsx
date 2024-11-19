@@ -27,6 +27,7 @@ export const MappingSearch = ({
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
+    ontologyApis,
   } = useContext(SearchContext);
 
   const [page, setPage] = useState(0);
@@ -475,7 +476,8 @@ export const MappingSearch = ({
                                           display: d.label,
                                           description: d.description[0],
                                           system: systemsMatch(
-                                            d?.obo_id?.split(':')[0]
+                                            d?.obo_id?.split(':')[0],
+                                            ontologyApis
                                           ),
                                         }),
                                         label: newSearchDisplay(d, index),
