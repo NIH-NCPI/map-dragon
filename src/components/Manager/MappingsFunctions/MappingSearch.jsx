@@ -127,11 +127,10 @@ export const MappingSearch = ({
   useEffect(() => {
     setActive(terminologiesToMap?.[0]?.id);
   }, [terminologiesToMap]);
-  console.log(active);
-  console.log(prefTerminologies.length);
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
   // The function is run when the query changes and when the preferred ontology changes.
+  // If there are preferred terminologies, it runs when the OLS search bar is clicked (i.e. active)
   useEffect(() => {
     if (
       prefTerminologies.length > 0 &&
@@ -558,17 +557,17 @@ export const MappingSearch = ({
                       </div>
                       <div>
                         <div className="result_form">
-                          <Form.Item
-                            initialValue={initialChecked}
-                            name={['existing_mappings']}
-                            valuePropName="value"
-                            rules={[
-                              {
-                                required: false,
-                              },
-                            ]}
-                          >
-                            {mappingsForSearch?.length > 0 && (
+                          {mappingsForSearch?.length > 0 && (
+                            <Form.Item
+                              initialValue={initialChecked}
+                              name={['existing_mappings']}
+                              valuePropName="value"
+                              rules={[
+                                {
+                                  required: false,
+                                },
+                              ]}
+                            >
                               <Checkbox.Group
                                 className="mappings_checkbox existing_display"
                                 options={mappingsForSearch?.map((d, index) => {
@@ -584,8 +583,8 @@ export const MappingSearch = ({
                                 })}
                                 onChange={onExistingChange}
                               />
-                            )}
-                          </Form.Item>
+                            </Form.Item>
+                          )}
                           {displaySelectedMappings?.length > 0 && (
                             <Form.Item
                               name="selected_mappings"
@@ -691,7 +690,8 @@ export const MappingSearch = ({
                       </div>
                     </div>
                   </Form>
-                  {active === 'search' && (
+                  {((prefTerminologies.length > 0 && active === 'search') ||
+                    prefTerminologies.length === 0) && (
                     <div className="view_more_wrapper">
                       {/* 'View More' pagination displaying the number of results being displayed
                       out of the total number of results. Because of the filter to filter out the duplicates,

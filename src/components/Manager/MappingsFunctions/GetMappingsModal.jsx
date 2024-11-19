@@ -30,7 +30,6 @@ export const GetMappingsModal = ({
   table,
   terminology,
 }) => {
-  const { tableId } = useParams();
   const [form] = Form.useForm();
   const { Search } = Input;
   const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);

@@ -27,9 +27,9 @@ export const ontologyReducer = d =>
     { results: [], filteredResults: [] }
   );
 
-// This function matches the ontology prop to its system (listed in object above) in the object that will be sent to the API
+// This function matches the ontology prop to its system in the object that will be sent to the API
 export const systemsMatch = (ontologyCode, ontologyApis) => {
-  // Search for the ontology that contains the requested ontology code
+  // Searches for the ontology that contains the requested ontology code
   const ontologyApi = ontologyApis.find(
     api => api.ontologies[ontologyCode.toLowerCase()]
   );

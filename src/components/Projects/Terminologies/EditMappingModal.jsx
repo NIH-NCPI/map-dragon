@@ -207,6 +207,7 @@ export const EditMappingsModal = ({
   // The existing and new mappings are JSON.parsed combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
     setLoading(true);
+    console.log(values);
     const selectedMappings = values?.selected_mappings?.map(item => ({
       code: item.code,
       display: item.display,
