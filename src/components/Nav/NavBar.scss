@@ -70,6 +70,8 @@ nav.navbar {
     padding: 0 4px;
     width: $navHeight;
     border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
   }
 
   .nav_link:hover {

@@ -7,7 +7,6 @@ export const Logout = ({ user, setUser }) => {
   const logOut = () => {
     googleLogout();
     setUser(null);
-    localStorage.removeItem('googleToken');
     localStorage.removeItem('user');
   };
 

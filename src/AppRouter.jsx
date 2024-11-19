@@ -5,8 +5,9 @@ import {
   Route,
   Routes,
   Navigate,
-  useLocation
 } from 'react-router-dom';
+import { useContext } from 'react';
+import { myContext } from './App.jsx';
 import { NavBar } from './components/Nav/NavBar';
 import { Login } from './components/Auth/Login.jsx';
 import { LoginPage } from './components/Auth/LoginPage.jsx';
@@ -28,30 +29,17 @@ import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
 
 export const AppRouter = () => {
+ const {user} = useContext(myContext);
 
   const isLoggedIn = () => {
-    const token = localStorage.getItem('googleToken');
-    if (token) {
+    const storedUser = localStorage.getItem('user');
+    
+    if (storedUser) {
       return true;
     } else {
       return false;
     }
   }
-
- 
-
-  function ProtectedRoute({ children }) {
-    const location = useLocation();
-  
-    // If the user is not logged in, redirect to login with the intended destination path
-    if (!isLoggedIn()) {
-      return <Navigate to="/login" replace state={{ from: location }} />;
-    }
-  
-    // Otherwise, render the child component (e.g., DDDetails)
-    return children;
-  }
-
   return (
     <BrowserRouter>
       <Routes>
@@ -75,9 +63,9 @@ export const AppRouter = () => {
             <Route path="/search/:query" element={<SearchResults />} />
             <Route path="/404" element={<Error404 />} />
             
-            <Route path="/ontologies" element={ <ProtectedRoute><OntologyInfo /></ProtectedRoute>} />
+            <Route path="/ontologies" element={<OntologyInfo />} />
             <Route path="/about" element={<About />} />
-            <Route path="/terminologies" element={<ProtectedRoute><TerminologyList /></ProtectedRoute>} />
+            <Route path="/terminologies" element={ isLoggedIn() ? <TerminologyList />:<Navigate to="/login" /> } />
             <Route path="/login" element={<LoginPage/>}/>
             <Route
               path="/terminology"
@@ -85,7 +73,7 @@ export const AppRouter = () => {
             />
             <Route element={<MappingContextRoot />}>
               <Route element={<SearchContextRoot />}>
-                <Route path="/studies" element={<ProtectedRoute><StudyList /></ProtectedRoute>} />
+                <Route path="/studies" element={isLoggedIn() ? <StudyList />: <Navigate to="/login" />} />
                 <Route path="/study" element={<Navigate to="/studies" />} />
                 <Route path="/Study/:studyId">
                   <Route index element={isLoggedIn() ? <StudyDetails />: <Navigate to="/login" />} />

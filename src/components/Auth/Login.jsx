@@ -3,12 +3,10 @@ import { jwtDecode } from 'jwt-decode';
 import { useContext, useEffect } from 'react';
 import { Logout } from './Logout';
 import { myContext } from '../../App';
-import { useLocation, useNavigate } from 'react-router-dom';
+
 export const Login = () => {
   const { user, setUser } = useContext(myContext);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const from = location.state?.from?.pathname || '/'
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -24,7 +22,6 @@ export const Login = () => {
       <GoogleLogin
         theme="filled_black"
         onSuccess={credentialResponse => {
-          localStorage.setItem('googleToken', credentialResponse.access_token); 
           const credentialResponseDecoded = jwtDecode(
             credentialResponse.credential
           );
@@ -33,8 +30,6 @@ export const Login = () => {
             'user',
             JSON.stringify(credentialResponseDecoded)
           );
-          navigate(from, { replace: true });
-          
         }}
         onError={() => {
           console.log('Login Failed');
