@@ -3,9 +3,10 @@ import { jwtDecode } from 'jwt-decode';
 import { useContext, useEffect } from 'react';
 import { Logout } from './Logout';
 import { myContext } from '../../App';
+import { startSession } from '../Manager/SessionsManager';
 
 export const Login = () => {
-  const { user, setUser } = useContext(myContext);
+  const { user, setUser, vocabUrl } = useContext(myContext);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -30,6 +31,9 @@ export const Login = () => {
             'user',
             JSON.stringify(credentialResponseDecoded)
           );
+          startSession(vocabUrl,credentialResponseDecoded.email);
+          
+
         }}
         onError={() => {
           console.log('Login Failed');
