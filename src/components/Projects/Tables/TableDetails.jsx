@@ -45,6 +45,8 @@ export const TableDetails = () => {
     setMapping,
     setEditMappings,
     editMappings,
+    relationshipOptions,
+    setRelationshipOptions,
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -169,6 +171,10 @@ export const TableDetails = () => {
         return error;
       })
       .finally(() => setLoading(false));
+
+    getById(vocabUrl, 'Terminology', 'ftd-concept-map-relationship').then(
+      data => setRelationshipOptions(data.codes)
+    );
   }, []);
 
   // sets table to an empty object on dismount

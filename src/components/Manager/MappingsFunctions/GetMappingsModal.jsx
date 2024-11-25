@@ -17,7 +17,7 @@ import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { OntologyFilterCodeSubmit } from './OntologyFilterCodeSubmit';
 import { OntologyFilterCodeSubmitTerm } from './OntologyFilterCodeSubmitTerm';
-import { useParams } from 'react-router-dom';
+import { MappingRelationship } from './MappingRelationship';
 
 export const GetMappingsModal = ({
   componentString,
@@ -54,18 +54,21 @@ export const GetMappingsModal = ({
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
+
   const {
     setSelectedMappings,
     displaySelectedMappings,
     setDisplaySelectedMappings,
     selectedBoxes,
     setSelectedBoxes,
+    idsForSelect,
   } = useContext(MappingContext);
   let ref = useRef();
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
   // if there is a searchProp being passed, it evaluates to true and runs the search function.
   // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
   // The function is run when the code changes.
+
   useEffect(() => {
     setInputValue(searchProp);
     setCurrentSearchProp(searchProp);
@@ -137,11 +140,7 @@ export const GetMappingsModal = ({
 
   const onClose = () => {
     setPage(0);
-    setResults([]);
-    setSelectedMappings([]);
-    setDisplaySelectedMappings([]);
     setApiPreferencesCode(undefined);
-    setSelectedBoxes([]);
     setSelectedKey(null);
     setPrefTerminologies([]);
   };
@@ -161,11 +160,14 @@ export const GetMappingsModal = ({
       display: item.label,
       description: item.description[0],
       system: systemsMatch(item.obo_id.split(':')[0], ontologyApis),
+      mapping_relationship: idsForSelect[item.obo_id],
     }));
+
     const mappingsDTO = {
       mappings: selectedMappings,
       editor: user.email,
     };
+
     setLoading(true);
     fetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
@@ -186,9 +188,22 @@ export const GetMappingsModal = ({
       })
       .then(data => {
         setMapping(data.codes);
-        form.resetFields();
         setGetMappings(null);
         message.success('Changes saved successfully.');
+        form.resetFields();
+        setResults([]);
+        setSelectedMappings([]);
+        setDisplaySelectedMappings([]);
+        setSelectedBoxes([]);
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the mapping.',
+          });
+        }
+        return error;
       })
       .finally(() => setLoading(false));
     table
@@ -321,6 +336,9 @@ export const GetMappingsModal = ({
                   {d?.obo_id}
                 </a>
               </div>
+              <div>
+                <MappingRelationship mapping={d} />
+              </div>
             </div>
             <div>{ellipsisString(d?.description[0], '100')}</div>
           </div>
@@ -404,8 +422,13 @@ export const GetMappingsModal = ({
         }}
         onCancel={() => {
           onClose();
+          setResults([]);
           form.resetFields();
           setGetMappings(null);
+          setResults([]);
+          setSelectedMappings([]);
+          setDisplaySelectedMappings([]);
+          setSelectedBoxes([]);
         }}
         maskClosable={false}
         destroyOnClose={true}
