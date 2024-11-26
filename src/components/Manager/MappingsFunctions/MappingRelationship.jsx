@@ -29,8 +29,10 @@ export const MappingRelationship = ({ mapping }) => {
       placeholder="Mapping Quality"
       popupMatchSelectWidth={false}
       allowClear
-      value={idsForSelect[mapping.obo_id]}
-      onChange={value => handleSelectChange(mapping.obo_id, value)}
+      value={idsForSelect[mapping.obo_id || mapping.code]}
+      onChange={value =>
+        handleSelectChange(mapping.obo_id || mapping.code, value)
+      }
     />
   );
 };

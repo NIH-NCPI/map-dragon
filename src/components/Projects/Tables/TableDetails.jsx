@@ -45,7 +45,6 @@ export const TableDetails = () => {
     setMapping,
     setEditMappings,
     editMappings,
-    relationshipOptions,
     setRelationshipOptions,
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
@@ -139,6 +138,13 @@ export const TableDetails = () => {
                 return error;
               })
               .then(() =>
+                getById(
+                  vocabUrl,
+                  'Terminology',
+                  'ftd-concept-map-relationship'
+                ).then(data => setRelationshipOptions(data.codes))
+              )
+              .then(() =>
                 fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
                   method: 'GET',
                   headers: {
@@ -171,10 +177,6 @@ export const TableDetails = () => {
         return error;
       })
       .finally(() => setLoading(false));
-
-    getById(vocabUrl, 'Terminology', 'ftd-concept-map-relationship').then(
-      data => setRelationshipOptions(data.codes)
-    );
   }, []);
 
   // sets table to an empty object on dismount
