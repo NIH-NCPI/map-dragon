@@ -23,10 +23,11 @@ export const MappingRelationship = ({ mapping }) => {
   return (
     <Select
       options={options}
+      defaultValue={mapping?.mapping_relationship || undefined}
       style={{
         width: 120,
       }}
-      placeholder="Mapping Quality"
+      placeholder="Quality"
       popupMatchSelectWidth={false}
       allowClear
       value={idsForSelect[mapping.obo_id || mapping.code]}

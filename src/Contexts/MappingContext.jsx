@@ -15,6 +15,7 @@ export function MappingContextRoot() {
   const [selectedBoxes, setSelectedBoxes] = useState([]);
   const [relationshipOptions, setRelationshipOptions] = useState([]);
   const [idsForSelect, setIdsForSelect] = useState([]);
+  const [showOptions, setShowOptions] = useState(false);
 
   const context = {
     editMappings,
@@ -39,6 +40,8 @@ export function MappingContextRoot() {
     setRelationshipOptions,
     idsForSelect,
     setIdsForSelect,
+    showOptions,
+    setShowOptions,
   };
 
   return (

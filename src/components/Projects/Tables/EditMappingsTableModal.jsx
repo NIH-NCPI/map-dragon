@@ -18,6 +18,7 @@ import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { OntologyFilterCodeSubmit } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmit';
+import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
 
 export const EditMappingsTableModal = ({
   editMappings,
@@ -34,8 +35,14 @@ export const EditMappingsTableModal = ({
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
-  const { setSelectedMappings, setDisplaySelectedMappings } =
-    useContext(MappingContext);
+  const {
+    setSelectedMappings,
+    setDisplaySelectedMappings,
+    relationshipOptions,
+    setShowOptions,
+    showOptions,
+    idsForSelect,
+  } = useContext(MappingContext);
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
@@ -124,6 +131,16 @@ export const EditMappingsTableModal = ({
     }
   };
 
+  // Find the object in relationshipOptions where the code matches the mappings's mapping_relationship
+  // If there is a match, return the display. If not, return null.
+  const displayRelationship = item => {
+    const findDisplay = relationshipOptions.find(
+      ro => ro.code === item.mapping_relationship
+    );
+
+    return findDisplay ? findDisplay.display : null;
+  };
+
   // The label for the checkbox for each mapping. Displays JSX to show the display and code.
   // The description field is commented out to be integrated when there is API support.
   const editMappingsLabel = (item, index) => {
@@ -135,10 +152,18 @@ export const EditMappingsTableModal = ({
               <div>
                 <b>{item?.display}</b>
               </div>
-              <div>
-                {/* <a href={item.iri} target="_blank"> */}
-                {item?.code}
-                {/* </a> */}
+              <div>{item?.code}</div>
+              <div
+              // className="mapping_relationship"
+              // onClick={setShowOptions(item.mapping_relationship)}
+              >
+                <MappingRelationship mapping={item} />
+
+                {/* {item?.mapping_relationship && !showOptions
+                  ? displayRelationship(item)
+                  : (!item.mapping_relationship || !!showOptions) && (
+                      <MappingRelationship mapping={item} />
+                    )} */}
               </div>
             </div>
             <div>
@@ -164,10 +189,21 @@ export const EditMappingsTableModal = ({
   // Each mapping in the mappings array being edited is JSON.parsed and turned into objects in the mappings array.
   const updateMappings = values => {
     setLoading(true);
+    // If there are changes in the mapping relationship dropdown, the changes are matched to the code and added to the mapping object.
     const mappingsDTO = {
-      mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
+      mappings:
+        values?.mappings?.map(v => {
+          const parsedMapping = JSON.parse(v);
+          if (idsForSelect[parsedMapping.code]) {
+            parsedMapping.mapping_relationship =
+              idsForSelect[parsedMapping.code];
+          }
+
+          return parsedMapping;
+        }) ?? [],
       editor: user.email,
     };
+
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'PUT',
       headers: {
@@ -272,9 +308,6 @@ export const EditMappingsTableModal = ({
         form
           .validateFields()
           .then(values => {
-            {
-              /* Performs the updateMappings PUT call on 'Save' button click */
-            }
             editSearch || reset
               ? editUpdatedMappings(values)
               : updateMappings(values);

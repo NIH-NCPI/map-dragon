@@ -17,6 +17,8 @@ import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { OntologyFilterCodeSubmitTerm } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmitTerm';
+import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const EditMappingsModal = ({
   editMappings,
@@ -30,6 +32,8 @@ export const EditMappingsModal = ({
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
+  const { setShowOptions, showOptions, idsForSelect } =
+    useContext(MappingContext);
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
@@ -130,10 +134,18 @@ export const EditMappingsModal = ({
               <div>
                 <b>{item?.display}</b>
               </div>
-              <div>
-                {/* <a href={item.iri} target="_blank"> */}
-                {item?.code}
-                {/* </a> */}
+              <div>{item?.code}</div>
+              <div
+              // className="mapping_relationship"
+              // onClick={setShowOptions(item.mapping_relationship)}
+              >
+                <MappingRelationship mapping={item} />
+
+                {/* {item?.mapping_relationship && !showOptions
+                  ? displayRelationship(item)
+                  : (!item.mapping_relationship || !!showOptions) && (
+                      <MappingRelationship mapping={item} />
+                    )} */}
               </div>
             </div>
             <div>
@@ -164,7 +176,16 @@ export const EditMappingsModal = ({
   const updateMappings = values => {
     setLoading(true);
     const mappingsDTO = {
-      mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
+      mappings:
+        values?.mappings?.map(v => {
+          const parsedMapping = JSON.parse(v);
+          if (idsForSelect[parsedMapping.code]) {
+            parsedMapping.mapping_relationship =
+              idsForSelect[parsedMapping.code];
+          }
+
+          return parsedMapping;
+        }) ?? [],
       editor: user.email,
     };
     fetch(
