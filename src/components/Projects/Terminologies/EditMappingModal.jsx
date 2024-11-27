@@ -19,7 +19,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { OntologyFilterCodeSubmitTerm } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmitTerm';
 import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { EditMappingsLabel } from '../Tables/EditMappingsLabel';
+import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
 
 export const EditMappingsModal = ({
   editMappings,

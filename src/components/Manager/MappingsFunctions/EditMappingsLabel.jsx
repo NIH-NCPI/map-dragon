@@ -1,13 +1,12 @@
 import { useContext } from 'react';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ellipsisString } from '../../Manager/Utilitiy';
-import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
+import { ellipsisString } from '../Utilitiy';
+import { MappingRelationship } from './MappingRelationship';
 import { Tooltip } from 'antd';
 
 export const EditMappingsLabel = ({ item, index }) => {
-  const { showOptions, setShowOptions, relationshipOptions } =
+  const { showOptions, setShowOptions, relationshipOptions, idsForSelect } =
     useContext(MappingContext);
-
   // Find the object in relationshipOptions where the code matches the mappings's mapping_relationship
   // If there is a match, return the display. If not, return null.
   const displayRelationship = item => {

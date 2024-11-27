@@ -261,8 +261,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       return variableMappings.mappings.map(code => (
         <div className="mapping" key={code.display}>
           <span className="mapping-display">
-            {' '}
-            <Tooltip title={code.code}>{code.display}</Tooltip>
+            <Tooltip title={code.code}>
+              {code.display ? code.display : code.code}
+            </Tooltip>
           </span>
           <span
             className="remove-mapping"
