@@ -68,7 +68,7 @@ jobs:
       - name: 'Build Docker Image'
         run: |-
           if [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
-            SERVICE='${{ env.SERVICE }}
+            SERVICE='${{ env.SERVICE }}'
           else 
             SERVICE='${{ env.SERVICE }}-${{ github.event.inputs.environment }}'
           fi
