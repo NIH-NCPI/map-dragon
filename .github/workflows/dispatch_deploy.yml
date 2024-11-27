@@ -67,16 +67,14 @@ jobs:
 
       - name: 'Build Docker Image'
         run: |-
-          set -eux  # Enable debugging and exit on error
-          
-          ENVIRONMENT="${{ github.event.inputs.environment }}"
-          if [[ "$ENVIRONMENT" == "prod" ]]; then
-            DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          else
-            DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${ENVIRONMENT}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          if [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
+            SERVICE='${{ env.SERVICE }}
+          else 
+            SERVICE='${{ env.SERVICE }}-${{ github.event.inputs.environment }}'
           fi
-          echo "Environment: $ENVIRONMENT"
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/SERVICE/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_ENV 
+          echo "SERVICE=${SERVICE}" >> $GITHUB_ENV 
           docker build -t "${DOCKER_TAG}" --build-arg ENV=${{ github.event.inputs.environment }} .
 
       - name: 'Push Docker Image'
@@ -86,6 +84,6 @@ jobs:
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: '${{ env.SERVICE }}-${{ github.event.inputs.environment }}'
+          service: "${SERVICE}"
           region: '${{ env.REGION }}'
           image: "${DOCKER_TAG}"
