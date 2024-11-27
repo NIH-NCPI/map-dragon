@@ -67,11 +67,15 @@ jobs:
 
       - name: 'Build Docker Image'
         run: |-
-          if [ "${{ github.event.inputs.environment }}" == "prod" ]; then
+          set -eux  # Enable debugging and exit on error
+          
+          ENVIRONMENT="${{ github.event.inputs.environment }}"
+          if [[ "$ENVIRONMENT" == "prod" ]]; then
             DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           else
-            DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${{ github.event.inputs.environment }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+            DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${ENVIRONMENT}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           fi
+          echo "Environment: $ENVIRONMENT"
           echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_ENV 
           docker build -t "${DOCKER_TAG}" --build-arg ENV=${{ github.event.inputs.environment }} .
 
