@@ -1,12 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  Form,
-  message,
-  Modal,
-  notification,
-  Tooltip,
-} from 'antd';
+import { Button, Checkbox, Form, message, Modal, notification } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
@@ -14,11 +6,11 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ResetTableMappings } from './ResetTableMappings';
-import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
+import { systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { OntologyFilterCodeSubmit } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmit';
-import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
+import { EditMappingsLabel } from './EditMappingsLabel';
 
 export const EditMappingsTableModal = ({
   editMappings,
@@ -38,9 +30,7 @@ export const EditMappingsTableModal = ({
   const {
     setSelectedMappings,
     setDisplaySelectedMappings,
-    relationshipOptions,
     setShowOptions,
-    showOptions,
     idsForSelect,
   } = useContext(MappingContext);
   const {
@@ -63,6 +53,7 @@ export const EditMappingsTableModal = ({
     setEditSearch(false);
     setSelectedKey(null);
     setApiPreferencesCode(undefined);
+    setShowOptions(false);
   };
 
   const fetchMappings = () => {
@@ -112,7 +103,11 @@ export const EditMappingsTableModal = ({
             mappings.push(val); // For each mapping in the mappings array, push the stringified object above to the mappings array.
             // For each mapping in the mappings array, push the stringified object above to the options array
             // as the value for the value field for the ant.design checkbox. The label for the checkbox is returned in edditMappingsLabel function.
-            options.push({ value: val, label: editMappingsLabel(m, index) });
+            options.push({
+              value: val,
+              label: <EditMappingsLabel item={m} index={index} />,
+              // label: editMappingsLabel(m, index),
+            });
           });
           // termMappings are set to the mappings array. Options are set to the options array.
           setTermMappings(mappings);
@@ -129,60 +124,6 @@ export const EditMappingsTableModal = ({
         })
         .finally(() => setLoading(false));
     }
-  };
-
-  // Find the object in relationshipOptions where the code matches the mappings's mapping_relationship
-  // If there is a match, return the display. If not, return null.
-  const displayRelationship = item => {
-    const findDisplay = relationshipOptions.find(
-      ro => ro.code === item.mapping_relationship
-    );
-
-    return findDisplay ? findDisplay.display : null;
-  };
-
-  // The label for the checkbox for each mapping. Displays JSX to show the display and code.
-  // The description field is commented out to be integrated when there is API support.
-  const editMappingsLabel = (item, index) => {
-    return (
-      <>
-        <div key={index} className="modal_search_result">
-          <div>
-            <div className="modal_term_ontology">
-              <div>
-                <b>{item?.display}</b>
-              </div>
-              <div>{item?.code}</div>
-              <div
-              // className="mapping_relationship"
-              // onClick={setShowOptions(item.mapping_relationship)}
-              >
-                <MappingRelationship mapping={item} />
-
-                {/* {item?.mapping_relationship && !showOptions
-                  ? displayRelationship(item)
-                  : (!item.mapping_relationship || !!showOptions) && (
-                      <MappingRelationship mapping={item} />
-                    )} */}
-              </div>
-            </div>
-            <div>
-              {item?.description?.length > 100 ? (
-                <Tooltip
-                  mouseEnterDelay={0.5}
-                  title={item?.description}
-                  placement="topRight"
-                >
-                  {ellipsisString(item?.description, '100')}
-                </Tooltip>
-              ) : (
-                ellipsisString(item?.description, '100')
-              )}
-            </div>
-          </div>
-        </div>
-      </>
-    );
   };
 
   // Function to send a PUT call to update the mappings.

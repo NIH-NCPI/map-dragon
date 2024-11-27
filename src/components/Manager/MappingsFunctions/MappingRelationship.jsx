@@ -34,6 +34,7 @@ export const MappingRelationship = ({ mapping }) => {
       onChange={value =>
         handleSelectChange(mapping.obo_id || mapping.code, value)
       }
+      onClick={e => e.preventDefault()}
     />
   );
 };
