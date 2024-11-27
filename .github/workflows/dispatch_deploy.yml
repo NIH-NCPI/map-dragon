@@ -84,6 +84,6 @@ jobs:
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: "${SERVICE}"
+          service: ${SERVICE}
           region: '${{ env.REGION }}'
           image: "${DOCKER_TAG}"
