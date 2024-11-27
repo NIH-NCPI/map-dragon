@@ -188,10 +188,19 @@ export const EditMappingsTableModal = ({
       description: item.description,
       system:
         item.system || systemsMatch(item.obo_id.split(':')[0], ontologyApis),
+      mapping_relationship: idsForSelect[item.code],
     }));
     const mappingsDTO = {
       mappings: [
-        ...(values.existing_mappings?.map(v => JSON.parse(v)) ?? []),
+        ...(values.existing_mappings?.map(v => {
+          const parsedMapping = JSON.parse(v);
+          if (idsForSelect[parsedMapping.code]) {
+            parsedMapping.mapping_relationship =
+              idsForSelect[parsedMapping.code];
+          }
+
+          return parsedMapping;
+        }) ?? []),
         ...(selectedMappings ?? []),
       ],
       editor: user.email,
