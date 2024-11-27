@@ -88,4 +88,4 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           region: '${{ env.REGION }}'
-          image: "${DOCKER_TAG}"
+          image: ${{ env.DOCKER_TAG }}
