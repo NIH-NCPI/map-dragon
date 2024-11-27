@@ -65,14 +65,18 @@ jobs:
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
 
-      - name: 'Build Docker Image' # New step to build the image
+      - name: 'Build Docker Image'
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${{ github.event.inputs.environment }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          if [ "${{ github.event.inputs.environment }}" == "prod" ]; then
+            DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          else
+            DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${{ github.event.inputs.environment }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          fi
+          echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_ENV 
           docker build -t "${DOCKER_TAG}" --build-arg ENV=${{ github.event.inputs.environment }} .
 
       - name: 'Push Docker Image'
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${{ github.event.inputs.environment }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           docker push "${DOCKER_TAG}"
 
       - name: 'Deploy to Cloud Run'
@@ -80,4 +84,4 @@ jobs:
         with:
           service: '${{ env.SERVICE }}-${{ github.event.inputs.environment }}'
           region: '${{ env.REGION }}'
-          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-${{ github.event.inputs.environment }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          image: "${DOCKER_TAG}"
