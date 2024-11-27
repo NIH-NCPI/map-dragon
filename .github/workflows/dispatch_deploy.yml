@@ -72,7 +72,7 @@ jobs:
           else 
             SERVICE='${{ env.SERVICE }}-${{ github.event.inputs.environment }}'
           fi
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/SERVICE/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${SERVICE}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_ENV 
           echo "SERVICE=${SERVICE}" >> $GITHUB_ENV 
           docker build -t "${DOCKER_TAG}" --build-arg ENV=${{ github.event.inputs.environment }} .
