@@ -68,13 +68,15 @@ jobs:
       - name: 'Build Docker Image'
         run: |-
           if [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
-            SERVICE='${{ env.SERVICE }}'
+            SERVICE="${{ env.SERVICE }}"
           else 
-            SERVICE='${{ env.SERVICE }}-${{ github.event.inputs.environment }}'
+            SERVICE="${{ env.SERVICE }}-${{ github.event.inputs.environment }}"
           fi
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${SERVICE}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+
           echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_ENV 
           echo "SERVICE=${SERVICE}" >> $GITHUB_ENV 
+
           docker build -t "${DOCKER_TAG}" --build-arg ENV=${{ github.event.inputs.environment }} .
 
       - name: 'Push Docker Image'
@@ -84,6 +86,6 @@ jobs:
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: ${SERVICE}
+          service: ${{ env.SERVICE }}
           region: '${{ env.REGION }}'
           image: "${DOCKER_TAG}"
