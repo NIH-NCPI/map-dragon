@@ -8,6 +8,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { APISearchBar } from '../../Projects/Terminologies/APISearchBar';
+import { MappingRelationship } from './MappingRelationship';
 
 export const MappingSearch = ({
   setEditMappings,
@@ -343,6 +344,9 @@ export const MappingSearch = ({
                   </a>
                 )}
               </div>
+              <div>
+                <MappingRelationship mapping={d} />
+              </div>
             </div>
             <div>
               {d?.description?.length > 85 ? (
@@ -388,6 +392,9 @@ export const MappingSearch = ({
                 <b>{d.display}</b>
               </div>
               <div>{d.code}</div>
+              <div>
+                <MappingRelationship mapping={d} />
+              </div>
             </div>
             <div>
               {d?.description?.length > 100 ? (

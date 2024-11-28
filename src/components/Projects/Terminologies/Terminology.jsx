@@ -43,6 +43,7 @@ export const Terminology = () => {
     setGetMappings,
     mapping,
     setMapping,
+    setRelationshipOptions,
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
@@ -241,6 +242,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 }
                 return error;
               })
+              .then(() =>
+                getById(
+                  vocabUrl,
+                  'Terminology',
+                  'ftd-concept-map-relationship'
+                ).then(data => setRelationshipOptions(data.codes))
+              )
               .then(() =>
                 getById(
                   vocabUrl,

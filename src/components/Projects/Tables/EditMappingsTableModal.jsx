@@ -1,12 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  Form,
-  message,
-  Modal,
-  notification,
-  Tooltip,
-} from 'antd';
+import { Button, Checkbox, Form, message, Modal, notification } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
@@ -14,10 +6,11 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ResetTableMappings } from './ResetTableMappings';
-import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
+import { systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { OntologyFilterCodeSubmit } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmit';
+import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
 
 export const EditMappingsTableModal = ({
   editMappings,
@@ -34,8 +27,12 @@ export const EditMappingsTableModal = ({
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
-  const { setSelectedMappings, setDisplaySelectedMappings } =
-    useContext(MappingContext);
+  const {
+    setSelectedMappings,
+    setDisplaySelectedMappings,
+    setShowOptions,
+    idsForSelect,
+  } = useContext(MappingContext);
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
@@ -56,6 +53,7 @@ export const EditMappingsTableModal = ({
     setEditSearch(false);
     setSelectedKey(null);
     setApiPreferencesCode(undefined);
+    setShowOptions(false);
   };
 
   const fetchMappings = () => {
@@ -105,7 +103,11 @@ export const EditMappingsTableModal = ({
             mappings.push(val); // For each mapping in the mappings array, push the stringified object above to the mappings array.
             // For each mapping in the mappings array, push the stringified object above to the options array
             // as the value for the value field for the ant.design checkbox. The label for the checkbox is returned in edditMappingsLabel function.
-            options.push({ value: val, label: editMappingsLabel(m, index) });
+            options.push({
+              value: val,
+              label: <EditMappingsLabel item={m} index={index} />,
+              // label: editMappingsLabel(m, index),
+            });
           });
           // termMappings are set to the mappings array. Options are set to the options array.
           setTermMappings(mappings);
@@ -124,50 +126,25 @@ export const EditMappingsTableModal = ({
     }
   };
 
-  // The label for the checkbox for each mapping. Displays JSX to show the display and code.
-  // The description field is commented out to be integrated when there is API support.
-  const editMappingsLabel = (item, index) => {
-    return (
-      <>
-        <div key={index} className="modal_search_result">
-          <div>
-            <div className="modal_term_ontology">
-              <div>
-                <b>{item?.display}</b>
-              </div>
-              <div>
-                {/* <a href={item.iri} target="_blank"> */}
-                {item?.code}
-                {/* </a> */}
-              </div>
-            </div>
-            <div>
-              {item?.description?.length > 100 ? (
-                <Tooltip
-                  mouseEnterDelay={0.5}
-                  title={item?.description}
-                  placement="topRight"
-                >
-                  {ellipsisString(item?.description, '100')}
-                </Tooltip>
-              ) : (
-                ellipsisString(item?.description, '100')
-              )}
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  };
-
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and turned into objects in the mappings array.
   const updateMappings = values => {
     setLoading(true);
+    // If there are changes in the mapping relationship dropdown, the changes are matched to the code and added to the mapping object.
     const mappingsDTO = {
-      mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
+      mappings:
+        values?.mappings?.map(v => {
+          const parsedMapping = JSON.parse(v);
+          if (idsForSelect[parsedMapping.code]) {
+            parsedMapping.mapping_relationship =
+              idsForSelect[parsedMapping.code];
+          }
+
+          return parsedMapping;
+        }) ?? [],
       editor: user.email,
     };
+
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'PUT',
       headers: {
@@ -211,10 +188,19 @@ export const EditMappingsTableModal = ({
       description: item.description,
       system:
         item.system || systemsMatch(item.obo_id.split(':')[0], ontologyApis),
+      mapping_relationship: idsForSelect[item.code],
     }));
     const mappingsDTO = {
       mappings: [
-        ...(values.existing_mappings?.map(v => JSON.parse(v)) ?? []),
+        ...(values.existing_mappings?.map(v => {
+          const parsedMapping = JSON.parse(v);
+          if (idsForSelect[parsedMapping.code]) {
+            parsedMapping.mapping_relationship =
+              idsForSelect[parsedMapping.code];
+          }
+
+          return parsedMapping;
+        }) ?? []),
         ...(selectedMappings ?? []),
       ],
       editor: user.email,
@@ -272,9 +258,6 @@ export const EditMappingsTableModal = ({
         form
           .validateFields()
           .then(values => {
-            {
-              /* Performs the updateMappings PUT call on 'Save' button click */
-            }
             editSearch || reset
               ? editUpdatedMappings(values)
               : updateMappings(values);

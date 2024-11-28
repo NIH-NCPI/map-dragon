@@ -7,6 +7,7 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
+import { MappingRelationship } from './MappingRelationship';
 
 export const MappingReset = ({
   searchProp,
@@ -343,6 +344,9 @@ export const MappingReset = ({
                     {d?.obo_id}
                   </a>
                 )}
+              </div>
+              <div>
+                <MappingRelationship mapping={d} />
               </div>
             </div>
             <div>
