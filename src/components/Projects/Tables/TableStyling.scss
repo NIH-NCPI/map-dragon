@@ -105,3 +105,13 @@ input::file-selector-button:hover {
 .no_mapping_button {
   padding-left: 2rem;
 }
+
+.mapping_relationship {
+  padding: 2px 6px;
+  border: 1px solid $greyColor;
+  border-radius: 4px;
+  &:hover {
+    background-color: rgb(245, 245, 245);
+    transition: all 0.3s linear;
+  }
+}

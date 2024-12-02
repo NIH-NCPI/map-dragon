@@ -1,18 +1,16 @@
 # This workflow build and push a Docker container to Google Artifact Registry
-# and deploy it on Cloud Run when a PR has been approved by a reviewer.
+# and deploy it on Cloud Run when a PR to 'main' has been approved by a reviewer.
 
 name: 'Build and Deploy to Cloud Run'
 on:
   pull_request_review:
-    branches:
-      - main
-    types: [submitted]
+    types: [submitted, edited] # submitted, reviewer edits the PR (ex comments)
     
 env:
 
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION_LOC_1 }}
-  SERVICE: 'map-dragon'
+  SERVICE: 'mapdragon'
   IMAGE_NAME: 'map-dragon_img'
   GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
 
@@ -22,7 +20,8 @@ jobs:
   deploy:
     runs-on: 'ubuntu-latest'
     
-    if: github.event.review.state == 'approved'
+    # If PR is approved and the PR is for the 'main' branch
+    if: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'main'
     
     environment:
       name: dev
@@ -41,11 +40,18 @@ jobs:
         with:
           credentials_json: '${{ env.GCP_CREDENTIALS }}'
 
+      - name: Extract Version from PR Number
+        id: extract_version
+        run: |
+          VERSION=${{ github.event.pull_request.number }} 
+          echo "Extracted Version: ${VERSION}"
+
       - name: Generate .env.dev file
         run: |
           echo "VITE_CLIENT_ID = ${{ secrets.VITE_CLIENT_ID }}" > .env.dev
           echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.dev
           echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.dev
+          echo "VITE_MAPDRAGON_VERSION=${VERSION}" >> .env.dev
       
       - name: 'Docker Auth'
         run: |-
@@ -54,17 +60,17 @@ jobs:
       - name: 'Build Docker Image' # New step to build the image
 
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-dev/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           docker build -t "${DOCKER_TAG}" --build-arg ENV=dev .
 
       - name: 'Push Docker Image'
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-dev/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           docker push "${DOCKER_TAG}"
 
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: '${{ env.SERVICE }}'
+          service: '${{ env.SERVICE }}-dev'
           region: '${{ env.REGION }}'
-          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-dev/${{ env.IMAGE_NAME }}:${{ github.sha }}"

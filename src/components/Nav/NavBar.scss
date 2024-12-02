@@ -11,8 +11,6 @@ nav.navbar {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  position: sticky;
-  top: 0;
 
   li {
     list-style-type: none;
@@ -70,6 +68,8 @@ nav.navbar {
     padding: 0 4px;
     width: $navHeight;
     border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
   }
 
   .nav_link:hover {

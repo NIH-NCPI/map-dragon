@@ -15,7 +15,8 @@ export const AssignMappingsViaButton = ({
 
   const { vocabUrl, user } = useContext(myContext);
   const { prefTerminologies, setApiResults } = useContext(SearchContext);
-  const { setMapping } = useContext(MappingContext);
+  const { setMapping, idsForSelect, setIdsForSelect } =
+    useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mappingProp, setMappingProp] = useState('');
@@ -23,6 +24,8 @@ export const AssignMappingsViaButton = ({
 
   const onClose = () => {
     setApiResults([]);
+    setSelectedBoxes([]);
+    setIdsForSelect([]);
   };
   const fetchTerminologies = () => {
     setLoading(true);
@@ -57,6 +60,7 @@ export const AssignMappingsViaButton = ({
         ? item.description[0]
         : item.description,
       system: item.system,
+      mapping_relationship: idsForSelect[item.obo_id || item.code],
     }));
     const mappingsDTO = {
       mappings: selectedMappings,

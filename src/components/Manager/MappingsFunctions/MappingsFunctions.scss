@@ -36,22 +36,37 @@
   display: flex;
   flex-direction: row;
 }
+
+.mapping_modal_left {
+  position: fixed;
+}
 .ontology_form {
-  width: 10.5vw;
+  width: 13vw;
   height: 50vh;
   overflow: auto;
   position: fixed;
 }
+
+.ontology_form_pref {
+  width: 13vw;
+  padding-right: 20px;
+  height: 44%;
+  overflow: auto;
+  position: fixed;
+}
+
 .result_form {
-  margin-left: 11vw;
+  margin-left: 15vw;
 }
 
 .inactive_term,
-.active_term {
+.active_term,
+.pref_tab {
   padding: 10px;
   cursor: pointer;
-  width: 15vw;
+  width: 13vw;
   border-bottom: white 2px solid;
+  text-wrap: wrap;
 }
 
 .active_term {
@@ -63,8 +78,16 @@
   background-color: $lightBlue;
 }
 
+.hidden_term {
+  display: none;
+}
+.pref_tab {
+  background-color: rgb(233, 233, 233);
+}
+
 .assign_map_checkbox_container {
   display: flex;
+  position: sticky;
 }
 
 .assign_map_checkboxes {
@@ -116,7 +139,7 @@
 }
 
 .view_more_wrapper {
-  margin-left: 11vw;
+  margin-left: 15vw;
 }
 
 .api_onto_search_bar,

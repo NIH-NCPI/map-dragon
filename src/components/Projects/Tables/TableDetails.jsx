@@ -35,7 +35,7 @@ import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTa
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { ellipsisString } from '../../Manager/Utilitiy';
+import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -50,6 +50,7 @@ export const TableDetails = () => {
     setMapping,
     setEditMappings,
     editMappings,
+    setRelationshipOptions,
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -141,6 +142,13 @@ export const TableDetails = () => {
                 }
                 return error;
               })
+              .then(() =>
+                getById(
+                  vocabUrl,
+                  'Terminology',
+                  'ftd-concept-map-relationship'
+                ).then(data => setRelationshipOptions(data.codes))
+              )
               .then(() =>
                 fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
                   method: 'GET',
