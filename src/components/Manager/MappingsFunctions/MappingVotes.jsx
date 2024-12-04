@@ -1,4 +1,4 @@
-export const MappingVotes = (
+export const mappingVotes = (
   variableMappings,
   code,
   user,
@@ -13,7 +13,7 @@ export const MappingVotes = (
   };
 
   return fetch(
-    `${vocabUrl}/Terminology/${terminologyId}/user_input/${variableMappings?.code}/${code?.code}/mapping_votes`,
+    `${vocabUrl}/Terminology/${terminologyId}/user_input/${variableMappings?.code}/mapping/${code?.code}/mapping_votes`,
     {
       method: 'PUT',
       headers: {

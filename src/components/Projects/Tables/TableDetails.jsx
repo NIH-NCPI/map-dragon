@@ -15,11 +15,7 @@ import {
   Table,
   Tooltip,
 } from 'antd';
-import {
-  CloseCircleOutlined,
-  UpCircleOutlined,
-  DownCircleOutlined,
-} from '@ant-design/icons';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
@@ -266,10 +262,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map(code => (
         <div className="mapping" key={code.code}>
-          <span className="mapping_votes mapping_actions">
-            <UpCircleOutlined style={{ color: 'blue' }} />
-            <DownCircleOutlined style={{ color: 'green' }} />
-          </span>
           <span className="mapping-display">
             <Tooltip
               title={

@@ -34,7 +34,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
 import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
-import { MappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
+import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 
 export const Terminology = () => {
@@ -52,13 +52,14 @@ export const Terminology = () => {
     mapping,
     setMapping,
     setRelationshipOptions,
+    comment,
+    setComment,
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
     parseInt(localStorage.getItem('pageSize'), 10) || 10
   );
   const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
-  const [comment, setComment] = useState(false);
   const handleTableChange = (current, size) => {
     setPageSize(size);
   };
@@ -179,7 +180,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             <UpOutlined
               style={{ color: 'blue' }}
               onClick={() =>
-                MappingVotes(
+                mappingVotes(
                   variableMappings,
                   code,
                   user,
@@ -194,7 +195,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             <DownOutlined
               style={{ color: 'green' }}
               onClick={() =>
-                MappingVotes(
+                mappingVotes(
                   variableMappings,
                   code,
                   user,
@@ -515,12 +516,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             setAssignMappingsViaButton={setAssignMappingsViaButton}
             terminology={terminology}
           />
+
           <MappingComments
-            code={comment?.code}
-            codeDisplay={comment?.display}
+            mappingCode={comment?.code}
+            mappingDisplay={comment?.display}
             variableMappings={comment?.variableMappings}
             setComment={setComment}
-            terminologyId={terminologyId}
+            idProp={terminologyId}
           />
         </div>
       )}
