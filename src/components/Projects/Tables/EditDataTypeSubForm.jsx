@@ -37,7 +37,6 @@ function EditDataTypeSubForm({ type, form, editRow, tableData }) {
       });
     }
   };
-  console.log(tableData);
 
   return (
     <>
