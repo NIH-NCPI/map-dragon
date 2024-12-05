@@ -32,11 +32,12 @@ function EditDataTypeSubForm({ type, form, editRow, tableData }) {
     if (editRow === tableData.key && tableData.data_type === 'ENUMERATION') {
       form.setFieldsValue({
         enumerations: {
-          reference: tableData.enumeration.props.to.slice(1),
+          reference: tableData?.variable?.enumerations?.reference,
         },
       });
     }
   };
+  console.log(tableData);
 
   return (
     <>
