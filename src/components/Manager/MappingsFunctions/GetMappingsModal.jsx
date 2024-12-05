@@ -137,11 +137,7 @@ export const GetMappingsModal = ({
 
   const onClose = () => {
     setPage(0);
-    setResults([]);
-    setSelectedMappings([]);
-    setDisplaySelectedMappings([]);
     setApiPreferencesCode(undefined);
-    setSelectedBoxes([]);
     setSelectedKey(null);
     setPrefTerminologies([]);
   };
@@ -164,7 +160,7 @@ export const GetMappingsModal = ({
     }));
     const mappingsDTO = {
       mappings: selectedMappings,
-      editor: user.email,
+      // editor: user.email,
     };
     setLoading(true);
     fetch(
@@ -186,9 +182,22 @@ export const GetMappingsModal = ({
       })
       .then(data => {
         setMapping(data.codes);
-        form.resetFields();
         setGetMappings(null);
         message.success('Changes saved successfully.');
+        form.resetFields();
+        setResults([]);
+        setSelectedMappings([]);
+        setDisplaySelectedMappings([]);
+        setSelectedBoxes([]);
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the mapping.',
+          });
+        }
+        return error;
       })
       .finally(() => setLoading(false));
     table
@@ -406,6 +415,10 @@ export const GetMappingsModal = ({
           onClose();
           form.resetFields();
           setGetMappings(null);
+          setResults([]);
+          setSelectedMappings([]);
+          setDisplaySelectedMappings([]);
+          setSelectedBoxes([]);
         }}
         maskClosable={false}
         destroyOnClose={true}

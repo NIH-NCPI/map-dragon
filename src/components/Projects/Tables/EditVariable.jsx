@@ -74,7 +74,6 @@ export const EditVariable = ({
     if (!table.variables.some(item => item?.name === values?.name)) {
       handlePatch(vocabUrl, 'Table', table, {
         ...updatedName,
-        editor: user.email,
       })
         .catch(error => {
           if (error) {
@@ -91,7 +90,8 @@ export const EditVariable = ({
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ ...values, editor: user.email }),
+            body: JSON.stringify(values),
+            // body: JSON.stringify({ ...values, editor: user.email }),
           })
             .then(res => {
               if (res.ok) {
@@ -129,7 +129,7 @@ export const EditVariable = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...values, editor: user.email }),
+        // body: JSON.stringify({ ...values, editor: user.email }),
       })
         .then(res => {
           if (res.ok) {
@@ -144,6 +144,16 @@ export const EditVariable = ({
           setEditRow('');
           message.success('Changes saved successfully.');
         })
+        .catch(error => {
+          if (error) {
+            notification.error({
+              message: 'Error',
+              description: 'An error occurred editing the variable.',
+            });
+          }
+          return error;
+        })
+        .finally(() => setLoading(false))
 
         .then(() =>
           getById(vocabUrl, 'Table', `${tableId}/mapping`)

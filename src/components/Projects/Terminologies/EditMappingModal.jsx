@@ -165,7 +165,7 @@ export const EditMappingsModal = ({
     setLoading(true);
     const mappingsDTO = {
       mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
-      editor: user.email,
+      // editor: user.email,
     };
     fetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
@@ -219,7 +219,7 @@ export const EditMappingsModal = ({
         ...(values.existing_mappings?.map(v => JSON.parse(v)) ?? []),
         ...(selectedMappings ?? []),
       ],
-      editor: user.email,
+      // editor: user.email,
     };
 
     fetch(

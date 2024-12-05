@@ -76,7 +76,7 @@ export const EditCode = ({
 
     handlePatch(vocabUrl, 'Terminology', terminology, {
       ...updatedRowDTO,
-      editor: user.email,
+      // editor: user.email,
     })
       .then(data => {
         setTerminology(data);

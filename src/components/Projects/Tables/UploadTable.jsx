@@ -37,7 +37,7 @@ export const UploadTable = ({ addTable, setAddTable }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...values, editor: user.email }),
+      body: JSON.stringify(values),
     })
       .then(res => {
         if (res.status === 400) {

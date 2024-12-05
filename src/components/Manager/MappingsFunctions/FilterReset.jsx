@@ -20,14 +20,13 @@ export const FilterReset = ({ table, terminology }) => {
       `${vocabUrl}/${
         table
           ? `Table/${table.id}/filter/self`
-          : `Terminology/${terminology.id}/filter}`
+          : `Terminology/${terminology.id}/filter`
       }`,
       {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ editor: user.email }),
       }
     )
       .then(res => {
@@ -48,7 +47,7 @@ export const FilterReset = ({ table, terminology }) => {
           `${vocabUrl}/${
             table
               ? `Table/${table.id}/filter/self`
-              : `Terminology/${terminology.id}/filter}`
+              : `Terminology/${terminology.id}/filter`
           }`,
           {
             method: 'GET',

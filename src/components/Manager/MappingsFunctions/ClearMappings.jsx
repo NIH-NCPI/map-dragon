@@ -21,7 +21,7 @@ export const ClearMappings = ({ propId, component }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ editor: user.email }),
+      // body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

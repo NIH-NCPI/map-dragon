@@ -74,10 +74,10 @@ export const Terminology = () => {
   const navigate = useNavigate();
 
   const updateMappings = (mapArr, mappingCode) => {
-    // setLoading(true);
+    setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user.email,
+      // editor: user.email,
     };
 
     fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping/${mappingCode}`, {
@@ -97,8 +97,8 @@ export const Terminology = () => {
       .then(data => {
         setMapping(data.codes);
         setEditMappings(null);
-        form.resetFields();
         message.success('Mapping removed.');
+        form.resetFields();
       })
       .catch(error => {
         console.log(error, 'error');

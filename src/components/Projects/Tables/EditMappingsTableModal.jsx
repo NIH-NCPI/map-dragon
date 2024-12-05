@@ -166,7 +166,7 @@ export const EditMappingsTableModal = ({
     setLoading(true);
     const mappingsDTO = {
       mappings: values?.mappings?.map(v => JSON.parse(v)) ?? [],
-      editor: user.email,
+      // editor: user.email,
     };
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'PUT',
@@ -217,7 +217,6 @@ export const EditMappingsTableModal = ({
         ...(values.existing_mappings?.map(v => JSON.parse(v)) ?? []),
         ...(selectedMappings ?? []),
       ],
-      editor: user.email,
     };
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {

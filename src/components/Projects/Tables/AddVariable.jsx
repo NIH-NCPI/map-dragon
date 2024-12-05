@@ -1,6 +1,15 @@
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Select,
+  Space,
+} from 'antd';
 import DataTypeSubForm from './DataTypeSubForm';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
@@ -27,7 +36,8 @@ export const AddVariable = ({ table, setTable }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...values, editor: user.email }),
+      body: JSON.stringify(values),
+      // body: JSON.stringify({ ...values, editor: user.email }),
     })
       .then(res => {
         if (res.ok) {
@@ -40,9 +50,18 @@ export const AddVariable = ({ table, setTable }) => {
         setTable(data);
         form.resetFields();
         setAddRow(false);
+        message.success('Variable added successfully.');
       })
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Variable added successfully.'))
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the variable.',
+          });
+        }
+        return error;
+      })
+
       .finally(() => setLoading(false));
   };
 
