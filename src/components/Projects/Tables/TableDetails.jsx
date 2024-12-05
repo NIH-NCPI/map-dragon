@@ -101,7 +101,7 @@ export const TableDetails = () => {
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user.email,
+      // editor: user.email,
     };
 
     fetch(

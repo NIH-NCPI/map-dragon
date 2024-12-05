@@ -192,7 +192,7 @@ export const GetMappingsModal = ({
 
     const mappingsDTO = {
       mappings: selectedMappings,
-      editor: user.email,
+      // editor: user.email,
     };
 
     setLoadingResults(true);

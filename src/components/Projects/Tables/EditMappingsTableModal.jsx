@@ -217,7 +217,6 @@ export const EditMappingsTableModal = ({
 
     const mappingsDTO = {
       mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
-      editor: user.email,
     };
 
     fetch(

@@ -95,7 +95,6 @@ export const Terminology = () => {
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user?.email,
     };
 
     fetch(
@@ -120,8 +119,8 @@ export const Terminology = () => {
       .then(data => {
         setMapping(data.codes);
         setEditMappings(null);
-        form.resetFields();
         message.success('Mapping removed.');
+        form.resetFields();
       })
       .catch(error => {
         console.log(error, 'error');

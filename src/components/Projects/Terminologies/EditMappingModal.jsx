@@ -150,7 +150,6 @@ export const EditMappingsModal = ({
 
           return parsedMapping;
         }) ?? [],
-      editor: user.email,
     };
     fetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
@@ -212,7 +211,6 @@ export const EditMappingsModal = ({
 
     const mappingsDTO = {
       mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
-      editor: user.email,
     };
 
     fetch(

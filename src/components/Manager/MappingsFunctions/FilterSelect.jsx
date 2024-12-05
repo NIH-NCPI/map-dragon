@@ -107,7 +107,6 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setLoading(true);
     const apiPreferenceDTO = {
       api_preference: {},
-      editor: user?.email,
     };
 
     Object.keys(existingOntologies).forEach(api => {

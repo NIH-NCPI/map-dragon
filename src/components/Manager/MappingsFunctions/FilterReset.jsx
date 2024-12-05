@@ -26,7 +26,6 @@ export const FilterReset = ({ table, terminology, setExistingOntologies }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ editor: user.email }),
       }
     )
       .then(res => {

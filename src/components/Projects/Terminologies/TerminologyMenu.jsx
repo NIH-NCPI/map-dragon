@@ -73,7 +73,6 @@ export const TerminologyMenu = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ editor: user.email }),
       }
     )
       .then(res => {

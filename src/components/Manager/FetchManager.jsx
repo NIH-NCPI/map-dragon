@@ -52,7 +52,7 @@ export const handleDelete = (evt, vocabUrl, name, component, user) => {
     options.headers = {
       'Content-Type': 'application/json',
     };
-    options.body = JSON.stringify({ editor: user.email });
+    // options.body = JSON.stringify({ editor: user.email });
   }
   return fetch(`${vocabUrl}/${name}/${component.id}`, options)
     .then(response => {
