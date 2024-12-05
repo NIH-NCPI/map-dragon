@@ -1,3 +1,5 @@
+import { getById } from '../FetchManager';
+
 export const mappingVotes = (
   variableMappings,
   code,
@@ -5,7 +7,8 @@ export const mappingVotes = (
   vote,
   vocabUrl,
   terminologyId,
-  notification
+  notification,
+  setMapping
 ) => {
   const mappingVoteDTO = {
     editor: user?.email,
@@ -37,5 +40,22 @@ export const mappingVotes = (
         });
       }
       return error;
-    });
+    })
+    .then(() =>
+      getById(
+        vocabUrl,
+        'Terminology',
+        `${terminologyId}/mapping?user_input=True`
+      )
+        .then(data => setMapping(data.codes))
+        .catch(error => {
+          if (error) {
+            notification.error({
+              message: 'Error',
+              description: 'An error occurred loading mappings.',
+            });
+          }
+          return error;
+        })
+    );
 };

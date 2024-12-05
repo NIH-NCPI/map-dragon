@@ -4,7 +4,6 @@ import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
-import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { ResetTableMappings } from './ResetTableMappings';
 import { systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
@@ -294,7 +293,12 @@ export const EditMappingsTableModal = ({
                   <ResetTableMappings
                     tableId={tableId}
                     editMappings={editMappings}
-                    setReset={setReset}
+                    setReset={resp => {
+                      setReset(resp);
+                      if (resp) {
+                        setMappingsForSearch([]);
+                      }
+                    }}
                   />
                   <Button onClick={() => setEditSearch(true)}>
                     Edit / Add
@@ -331,44 +335,20 @@ export const EditMappingsTableModal = ({
             </Form.Item>
           </Form>
         </>
-      ) : // If reset or editSearch is true the MappingSearch modal opens to perform the search for the table code
-      editSearch ? (
+      ) : (
+        // If reset or editSearch is true the MappingSearch modal opens to perform the search for the table code
+
         <MappingSearch
-          editMappings={editMappings}
           setEditMappings={setEditMappings}
           mappingsForSearch={mappingsForSearch}
           form={form}
-          reset={reset}
           onClose={form.resetFields}
           searchProp={editMappings?.name}
-          mappingDesc={
-            editMappings?.description
-              ? editMappings?.description
-              : 'No Description'
-          }
+          mappingDesc={editMappings?.description ?? 'No Description'}
           component={table}
           mappingProp={editMappings?.code}
           table={table}
         />
-      ) : (
-        reset && (
-          <MappingReset
-            searchProp={editMappings.name}
-            mappingDesc={
-              editMappings.description
-                ? editMappings.description
-                : 'No Description'
-            }
-            setEditMappings={setEditMappings}
-            mappingsForSearch={mappingsForSearch}
-            form={form}
-            reset={reset}
-            onClose={form.resetFields}
-            component={table}
-            mappingProp={editMappings.code}
-            table={table}
-          />
-        )
       )}
     </Modal>
   );

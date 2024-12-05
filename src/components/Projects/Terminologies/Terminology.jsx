@@ -154,6 +154,12 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     </div>
   );
 
+  const votesCount = code => {
+    const calculatedCount =
+      code.user_input?.votes_count.up - code.user_input?.votes_count.down;
+    return calculatedCount;
+  };
+
   const matchCode = variable => {
     if (!mapping?.length) {
       return noMapping(variable);
@@ -162,11 +168,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     const variableMappings = mapping.find(
       item => item?.code === variable?.code
     );
+
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map(code => (
         <div className="mapping" key={code.code}>
-          <span className="mapping_actions">
+          <span>
             <MessageOutlined
+              className="mapping_actions"
               onClick={() =>
                 setComment({
                   code: code.code,
@@ -176,8 +184,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               }
             />
           </span>
-          <span className="mapping_votes mapping_actions">
+          <span className="mapping_votes">
             <UpOutlined
+              className="mapping_actions"
               style={{ color: 'blue' }}
               onClick={() =>
                 mappingVotes(
@@ -187,12 +196,30 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                   'up',
                   vocabUrl,
                   terminologyId,
-                  notification
+                  notification,
+                  setMapping
                 )
               }
             />
-            0
+            <Tooltip
+              title={`up: ${code.user_input?.votes_count.up},
+                down: ${code.user_input?.votes_count.down}`}
+              mouseEnterDelay={0.75}
+            >
+              <span
+                className={
+                  (code.user_input?.votes_count.down !== 0 ||
+                    code.user_input?.votes_count.up !== 0) &&
+                  votesCount(code) === 0
+                    ? 'red_votes_count'
+                    : 'votes_count'
+                }
+              >
+                {votesCount(code)}
+              </span>
+            </Tooltip>
             <DownOutlined
+              className="mapping_actions"
               style={{ color: 'green' }}
               onClick={() =>
                 mappingVotes(
@@ -202,7 +229,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                   'down',
                   vocabUrl,
                   terminologyId,
-                  notification
+                  notification,
+                  setMapping
                 )
               }
             />
@@ -214,6 +242,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                   ? mappingTooltip(code)
                   : code.code
               }
+              mouseEnterDelay={0.75}
             >
               {ellipsisString(code.display ? code.display : code.code, '25')}
             </Tooltip>
@@ -222,7 +251,10 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             className="mapping_actions"
             onClick={() => handleRemoveMapping(variableMappings, code)}
           >
-            <CloseCircleOutlined style={{ color: 'red' }} />
+            <CloseCircleOutlined
+              className="mapping_actions"
+              style={{ color: 'red' }}
+            />
           </span>
         </div>
       ));
@@ -290,7 +322,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               .then(data => {
                 setApiPreferencesTerm(data);
               });
-            getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`)
+            getById(
+              vocabUrl,
+              'Terminology',
+              `${terminologyId}/mapping?user_input=True`
+            )
               .then(data => setMapping(data.codes))
               .catch(error => {
                 if (error) {

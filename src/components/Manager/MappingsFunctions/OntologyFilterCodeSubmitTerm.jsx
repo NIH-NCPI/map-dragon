@@ -45,29 +45,3 @@ export const OntologyFilterCodeSubmitTerm = (
       });
   }
 };
-
-//   apiPreference.api_preference.ols = apiPreferencesCode;
-
-//       fetch(`${vocabUrl}/Terminology/${terminology.id}/filter/${searchProp}`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(apiPreference),
-//       })
-//         .then(res => {
-//           if (res.ok) {
-//             return res.json();
-//           } else {
-//             throw new Error('An unknown error occurred.');
-//           }
-//         })
-//         .catch(error => {
-//           if (error) {
-//             notification.error({
-//               message: 'Error',
-//               description: 'An error occurred saving the ontology preferences.',
-//             });
-//           }
-//           return error;
-//         });
