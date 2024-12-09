@@ -45,7 +45,7 @@ export const mappingVotes = (
       getById(
         vocabUrl,
         'Terminology',
-        `${terminologyId}/mapping?user_input=True`
+        `${terminologyId}/mapping?user_input=True&user=${user?.email}`
       )
         .then(data => setMapping(data.codes))
         .catch(error => {

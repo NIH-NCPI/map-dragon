@@ -144,7 +144,7 @@ export const EditMappingsModal = ({
       editor: user.email,
     };
     fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {
@@ -208,7 +208,7 @@ export const EditMappingsModal = ({
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {

@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { ModalSpinner } from '../Spinner';
+import { getById } from '../FetchManager';
 
 export const MappingComments = ({
   mappingCode,
@@ -10,6 +11,7 @@ export const MappingComments = ({
   variableMappings,
   setComment,
   idProp,
+  setMapping,
 }) => {
   const [form] = Form.useForm();
   const { vocabUrl, user } = useContext(myContext);
@@ -91,7 +93,24 @@ export const MappingComments = ({
           });
         }
         return error;
-      });
+      })
+      .then(() =>
+        getById(
+          vocabUrl,
+          'Terminology',
+          `${idProp}/mapping?user_input=True&user=${user?.email}`
+        )
+          .then(data => setMapping(data.codes))
+          .catch(error => {
+            if (error) {
+              notification.error({
+                message: 'Error',
+                description: 'An error occurred loading mappings.',
+              });
+            }
+            return error;
+          })
+      );
   };
 
   const formattedDate = dateString => {
