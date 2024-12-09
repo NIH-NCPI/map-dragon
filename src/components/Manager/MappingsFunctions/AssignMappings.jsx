@@ -17,7 +17,8 @@ export const AssignMappings = ({
 
   const { vocabUrl, user } = useContext(myContext);
   const { prefTerminologies, setApiResults } = useContext(SearchContext);
-  const { setMapping } = useContext(MappingContext);
+  const { setMapping, idsForSelect, setIdsForSelect } =
+    useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mappingProp, setMappingProp] = useState('');
@@ -27,6 +28,7 @@ export const AssignMappings = ({
     setSelectedKey(null);
     setMappingProp('');
     setApiResults([]);
+    setIdsForSelect([]);
   };
   const fetchTerminologies = () => {
     setLoading(true);
@@ -64,6 +66,7 @@ export const AssignMappings = ({
         ? item.description[0]
         : item.description,
       system: item.system,
+      mapping_relationship: idsForSelect[item.obo_id || item.code],
     }));
     const mappingsDTO = {
       mappings: selectedMappings,

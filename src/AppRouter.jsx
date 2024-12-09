@@ -29,10 +29,11 @@ import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
 
 export const AppRouter = () => {
-  const { user } = useContext(myContext);
-
+  const { user, vocabUrl } = useContext(myContext);
   const isLoggedIn = () => {
-    if (user) {
+    const storedUser = localStorage.getItem('user');
+
+    if (storedUser) {
       return true;
     } else {
       return false;

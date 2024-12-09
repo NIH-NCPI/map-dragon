@@ -45,6 +45,7 @@ export const TableDetails = () => {
     setMapping,
     setEditMappings,
     editMappings,
+    setRelationshipOptions,
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -136,6 +137,13 @@ export const TableDetails = () => {
                 }
                 return error;
               })
+              .then(() =>
+                getById(
+                  vocabUrl,
+                  'Terminology',
+                  'ftd-concept-map-relationship'
+                ).then(data => setRelationshipOptions(data.codes))
+              )
               .then(() =>
                 fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
                   method: 'GET',
@@ -253,8 +261,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       return variableMappings.mappings.map(code => (
         <div className="mapping" key={code.display}>
           <span className="mapping-display">
-            {' '}
-            <Tooltip title={code.code}>{code.display}</Tooltip>
+            <Tooltip title={code.code}>
+              {code.display ? code.display : code.code}
+            </Tooltip>
           </span>
           <span
             className="remove-mapping"

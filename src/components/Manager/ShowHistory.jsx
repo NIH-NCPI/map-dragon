@@ -34,7 +34,7 @@ export const ShowHistory = ({
   const valuesRender = text => {
     if (!text) return null;
     return text
-      .split(',')
+      ?.split(',')
       .map((item, index) => <div key={index}>{item.trim()}</div>);
   };
 
@@ -74,23 +74,24 @@ export const ShowHistory = ({
   };
 
   const dataSource =
-    provData?.changes?.map((prov, index) => ({
-      key: index,
-      timestamp: prov.timestamp,
-      action: prov.action,
-      old_value: prov.old_value,
-      new_value: prov.new_value,
-      editor: prov.editor,
-    })).sort((a, b) => {
-      const dateA = new Date(a.timestamp);
-      const dateB = new Date(b.timestamp);
-      return dateB - dateA;
-    }) ?? [];
+    provData?.changes
+      ?.map((prov, index) => ({
+        key: index,
+        timestamp: prov.timestamp,
+        action: prov.action,
+        old_value: prov.old_value,
+        new_value: prov.new_value,
+        editor: prov.editor,
+      }))
+      .sort((a, b) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        return dateB - dateA;
+      }) ?? [];
 
   const handleTableChange = (current, size) => {
     setPageSize(size);
   };
-
 
   return (
     showHistory === tableData.key && (
@@ -125,7 +126,7 @@ export const ShowHistory = ({
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '30'],
                 pageSize: pageSize, // Use the stored pageSize
-                onChange: handleTableChange
+                onChange: handleTableChange,
               }} // Capture pagination changes
               size="small"
             />

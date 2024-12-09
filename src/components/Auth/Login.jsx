@@ -32,6 +32,7 @@ export const Login = () => {
             JSON.stringify(credentialResponseDecoded)
           );
           startSession(vocabUrl, credentialResponseDecoded.email);
+          setUser(credentialResponseDecoded);
         }}
         onError={() => {
           console.log('Login Failed');
