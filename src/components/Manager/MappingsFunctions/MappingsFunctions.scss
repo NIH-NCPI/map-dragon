@@ -154,3 +154,27 @@
 .existing_display {
   border-bottom: solid 1px #eeee;
 }
+
+.comment_code_display {
+  font-weight: 600;
+}
+
+.comment_textarea {
+  margin: 0 0 15px 0;
+}
+
+.comment_container {
+  margin: 10px 0 0 0;
+  border: 1px darkgray solid;
+  width: fit-content;
+  border-radius: 5px;
+  padding: 5px 8px;
+}
+
+.comment_date_user {
+  display: flex;
+  gap: 5px;
+  font-size: 0.7rem;
+  color: gray;
+  margin: 6px 0 0 0;
+}

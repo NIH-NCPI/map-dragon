@@ -12,7 +12,6 @@ import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetMappings } from './ResetMappings';
-import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
 import { systemsMatch } from '../../Manager/Utilitiy';
 import { getById } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -145,7 +144,7 @@ export const EditMappingsModal = ({
       editor: user.email,
     };
     fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {
@@ -209,7 +208,7 @@ export const EditMappingsModal = ({
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {
@@ -301,7 +300,12 @@ export const EditMappingsModal = ({
                   <ResetMappings
                     terminologyId={terminologyId}
                     editMappings={editMappings}
-                    setReset={setReset}
+                    setReset={resp => {
+                      setReset(resp);
+                      if (resp) {
+                        setMappingsForSearch([]);
+                      }
+                    }}
                   />
                   <Button onClick={() => setEditSearch(true)}>
                     Edit / Add
@@ -342,38 +346,20 @@ export const EditMappingsModal = ({
             </Form.Item>
           </Form>
         </>
-      ) : // If reset or editSearch is true the MappingSearch modal opens to perform the search for the terminology code
-      editSearch ? (
+      ) : (
+        // If reset or editSearch is true the MappingSearch modal opens to perform the search for the terminology code
         <MappingSearch
-          editMappings={editMappings}
           setEditMappings={setEditMappings}
           mappingsForSearch={mappingsForSearch}
           form={form}
-          reset={reset}
           onClose={form.resetFields}
           searchProp={
             editMappings?.display ? editMappings?.display : editMappings?.code
           }
           mappingProp={editMappings?.code}
-          mappingDesc={editMappings?.description}
+          mappingDesc={editMappings?.description ?? 'No description'}
           terminology={terminology}
         />
-      ) : (
-        reset && (
-          <MappingReset
-            searchProp={
-              editMappings?.display ? editMappings.display : editMappings?.code
-            }
-            setEditMappings={setEditMappings}
-            mappingsForSearch={mappingsForSearch}
-            form={form}
-            reset={reset}
-            onClose={form.resetFields}
-            mappingDesc={editMappings?.description}
-            mappingProp={editMappings?.code}
-            terminology={terminology}
-          />
-        )
       )}
     </Modal>
   );

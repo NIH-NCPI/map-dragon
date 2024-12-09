@@ -170,7 +170,7 @@ export const GetMappingsModal = ({
 
     setLoading(true);
     fetch(
-      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {
@@ -340,7 +340,7 @@ export const GetMappingsModal = ({
                 <MappingRelationship mapping={d} />
               </div>
             </div>
-            <div>{ellipsisString(d?.description[0], '100')}</div>
+            <div>{ellipsisString(d?.description?.[0], '100')}</div>
           </div>
         </div>
       </>

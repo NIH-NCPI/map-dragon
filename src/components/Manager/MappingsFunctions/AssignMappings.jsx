@@ -73,13 +73,16 @@ export const AssignMappings = ({
       editor: user.email,
     };
 
-    fetch(`${vocabUrl}/Terminology/${terminology.id}/mapping/${mappingProp}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(mappingsDTO),
-    })
+    fetch(
+      `${vocabUrl}/Terminology/${terminology.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
