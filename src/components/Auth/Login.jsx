@@ -8,12 +8,12 @@ import { startSession } from '../Manager/SessionsManager';
 export const Login = () => {
   const { user, setUser, vocabUrl } = useContext(myContext);
 
-  // useEffect(() => {
-  //   const storedUser = localStorage.getItem('user');
-  //   if (storedUser) {
-  //     setUser(JSON.parse(storedUser));
-  //   }
-  // }, []);
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
   // If there is a user, it displays the Logout function with user information. Otherwise, it displays the login button
   return user ? (
     <Logout user={user} setUser={setUser} />
@@ -27,10 +27,10 @@ export const Login = () => {
             credentialResponse.credential
           );
           setUser(credentialResponseDecoded);
-          // localStorage.setItem(
-          //   'user',
-          //   JSON.stringify(credentialResponseDecoded)
-          // );
+          localStorage.setItem(
+            'user',
+            JSON.stringify(credentialResponseDecoded)
+          );
           startSession(vocabUrl, credentialResponseDecoded.email);
         }}
         onError={() => {
