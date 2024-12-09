@@ -192,7 +192,7 @@ export const GetMappingsModal = ({
 
     const mappingsDTO = {
       mappings: selectedMappings,
-      // editor: user.email,
+      // editor: user?.email,
     };
 
     setLoadingResults(true);
@@ -383,6 +383,9 @@ export const GetMappingsModal = ({
               </div>
               <div>
                 <MappingRelationship mapping={d} variable={searchProp} />
+              </div>
+              <div>
+                <MappingRelationship mapping={d} />
               </div>
             </div>
             <div>

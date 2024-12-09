@@ -152,7 +152,6 @@ export const EditMappingsTableModal = ({
 
           return parsedMapping;
         }) ?? [],
-      editor: user.email,
     };
 
     fetch(

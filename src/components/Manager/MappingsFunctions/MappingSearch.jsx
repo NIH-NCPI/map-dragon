@@ -396,6 +396,9 @@ export const MappingSearch = ({
               <div>
                 <MappingRelationship mapping={d} variable={searchProp} />
               </div>
+              <div>
+                <MappingRelationship mapping={d} />
+              </div>
             </div>
             <div>
               {d?.description?.length > 85 ? (
