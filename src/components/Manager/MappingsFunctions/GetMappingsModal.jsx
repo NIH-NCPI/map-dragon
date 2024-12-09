@@ -170,7 +170,7 @@ export const GetMappingsModal = ({
 
     setLoading(true);
     fetch(
-      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true`,
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {

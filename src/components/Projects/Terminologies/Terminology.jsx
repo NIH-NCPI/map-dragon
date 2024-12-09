@@ -325,18 +325,18 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             getById(
               vocabUrl,
               'Terminology',
-              `${terminologyId}/mapping?user_input=True`
+              `${terminologyId}/mapping?user_input=True+user=${user?.email}`
             )
               .then(data => setMapping(data.codes))
-              .catch(error => {
-                if (error) {
-                  notification.error({
-                    message: 'Error',
-                    description: 'An error occurred loading mappings.',
-                  });
-                }
-                return error;
-              })
+              // .catch(error => {
+              //   if (error) {
+              //     notification.error({
+              //       message: 'Error',
+              //       description: 'An error occurred loading mappings.',
+              //     });
+              //   }
+              //   return error;
+              // })
               .then(() =>
                 getById(
                   vocabUrl,
