@@ -13,6 +13,12 @@ export function MappingContextRoot() {
   const [selectedMappings, setSelectedMappings] = useState([]);
   const [displaySelectedMappings, setDisplaySelectedMappings] = useState([]);
   const [selectedBoxes, setSelectedBoxes] = useState([]);
+  const [relationshipOptions, setRelationshipOptions] = useState([]);
+  const [idsForSelect, setIdsForSelect] = useState([]);
+  const [showOptions, setShowOptions] = useState(false);
+  const [voteCount, setVoteCount] = useState(0);
+  const [mappingComments, setMappingComments] = useState([]);
+  const [comment, setComment] = useState(false);
 
   const context = {
     editMappings,
@@ -33,6 +39,18 @@ export function MappingContextRoot() {
     setSelectedBoxes,
     assignMappings,
     setAssignMappings,
+    relationshipOptions,
+    setRelationshipOptions,
+    idsForSelect,
+    setIdsForSelect,
+    showOptions,
+    setShowOptions,
+    voteCount,
+    setVoteCount,
+    mappingComments,
+    setMappingComments,
+    comment,
+    setComment,
   };
 
   return (

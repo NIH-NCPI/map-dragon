@@ -19,6 +19,9 @@ export const SearchResults = () => {
   const navigate = useNavigate();
   const ref = useRef();
 
+  useEffect(() => {
+    document.title = 'Map Dragon';
+  }, []);
   // sets the page and current page to the page number of the paginator
   const onChange = page => {
     setCurrent(page);

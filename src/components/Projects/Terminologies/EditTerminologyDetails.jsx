@@ -74,7 +74,7 @@ export const EditTerminologyDetails = ({
               name="name"
               label="Name"
               rules={[
-                { required: true, message: 'Please input terminology name.' },
+                { required: true, message: 'Please input Terminology name.' },
               ]}
             >
               <Input />
@@ -88,9 +88,9 @@ export const EditTerminologyDetails = ({
             </Form.Item>
             <Form.Item
               name="url"
-              label="URL"
+              label="System"
               rules={[
-                { required: true, message: 'Please input terminology URL.' },
+                { required: true, message: 'Please input Terminology system.' },
               ]}
             >
               <Input />

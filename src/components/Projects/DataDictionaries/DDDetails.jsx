@@ -21,7 +21,6 @@ import { EditDDDetails } from './EditDDDetails';
 import { UploadTable } from '../Tables/UploadTable';
 import { RemoveTableDD } from './RemoveTableDD';
 import { DeleteDD } from './DeleteDD';
-import { Submenu } from '../../Manager/Submenu';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 
 export const DDDetails = () => {
@@ -62,7 +61,9 @@ export const DDDetails = () => {
   // fetches the specified DD. Sets response to 'dataDictionary'.
   // if a DD was fetched, calls the getDDTables function to fetch the tables.
   // otherwise sets loading to false.
-
+  useEffect(() => {
+    document.title = 'Data Dictionary - Map Dragon';
+  }, []);
   useEffect(() => {
     setLoading(true);
     getById(vocabUrl, 'DataDictionary', DDId)
@@ -100,7 +101,6 @@ export const DDDetails = () => {
         <Spinner />
       ) : (
         <div className="studies_container">
-          <Submenu prop={dataDictionary} />
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>

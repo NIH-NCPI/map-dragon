@@ -149,9 +149,9 @@ export const AddTerminology = () => {
             </Form.Item>
             <Form.Item
               name="url"
-              label="URL"
+              label="System"
               rules={[
-                { required: true, message: 'Please input Terminology URL.' },
+                { required: true, message: 'Please input Terminology system.' },
               ]}
             >
               <Input />

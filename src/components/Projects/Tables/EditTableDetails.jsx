@@ -1,4 +1,4 @@
-import { Form, Input, message, Modal } from 'antd';
+import { Form, Input, message, Modal, notification } from 'antd';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { handleUpdate } from '../../Manager/FetchManager';
@@ -35,6 +35,12 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
       })
       // Displays a self-closing message that the udpates have been successfully saved.
       .then(() => message.success('Changes saved successfully.'))
+      .catch(error => {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred editing the Table.',
+        });
+      })
       .finally(() => setLoading(false));
   };
   return (
@@ -84,8 +90,10 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
             </Form.Item>
             <Form.Item
               name="url"
-              label="URL"
-              rules={[{ required: true, message: 'Please input Table URL.' }]}
+              label="System"
+              rules={[
+                { required: true, message: 'Please input Table system.' },
+              ]}
             >
               <Input />
             </Form.Item>{' '}

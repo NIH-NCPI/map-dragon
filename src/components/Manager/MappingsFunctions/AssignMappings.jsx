@@ -17,7 +17,8 @@ export const AssignMappings = ({
 
   const { vocabUrl, user } = useContext(myContext);
   const { prefTerminologies, setApiResults } = useContext(SearchContext);
-  const { setMapping } = useContext(MappingContext);
+  const { setMapping, idsForSelect, setIdsForSelect } =
+    useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mappingProp, setMappingProp] = useState('');
@@ -27,6 +28,7 @@ export const AssignMappings = ({
     setSelectedKey(null);
     setMappingProp('');
     setApiResults([]);
+    setIdsForSelect([]);
   };
   const fetchTerminologies = () => {
     setLoading(true);
@@ -64,19 +66,23 @@ export const AssignMappings = ({
         ? item.description[0]
         : item.description,
       system: item.system,
+      mapping_relationship: idsForSelect[item.obo_id || item.code],
     }));
     const mappingsDTO = {
       mappings: selectedMappings,
       editor: user.email,
     };
 
-    fetch(`${vocabUrl}/Terminology/${terminology.id}/mapping/${mappingProp}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(mappingsDTO),
-    })
+    fetch(
+      `${vocabUrl}/Terminology/${terminology.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();

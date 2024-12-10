@@ -7,8 +7,10 @@ export const myContext = createContext();
 
 function App() {
   const searchUrl = import.meta.env.VITE_SEARCH_ENDPOINT;
+  const monarchUrl = import.meta.env.VITE_MONARCH_SEARCH;
   const vocabUrl = import.meta.env.VITE_VOCAB_ENDPOINT;
   const clientId = import.meta.env.VITE_CLIENT_ID;
+  const mapDragonVersion = import.meta.env.VITE_MAPDRAGON_VERSION;
 
   const [results, setResults] = useState({}); //search results for mappings
   const [tablesDD, setTablesDD] = useState([]); //the tables in a data dictionary
@@ -40,14 +42,15 @@ function App() {
     top: '25vh',
   });
   return (
-    
     <GoogleOAuthProvider clientId={clientId}>
       <myContext.Provider
         value={{
           results,
           setResults,
           searchUrl,
+          monarchUrl,
           vocabUrl,
+          mapDragonVersion,
           tablesDD,
           setTablesDD,
           studyDDs,

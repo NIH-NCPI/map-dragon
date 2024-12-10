@@ -24,6 +24,7 @@ export const StudyList = () => {
   const login = RequiredLogin({ handleSuccess: handleSuccess });
   // API call to fetch all studies. Sets response to 'studies' then sets loading to false
   useEffect(() => {
+    document.title = 'Studies - Map Dragon';
     setLoading(true);
     getAll(vocabUrl, 'Study', navigate)
       .then(data => setStudies(data))
