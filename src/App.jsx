@@ -43,7 +43,7 @@ function App() {
     top: '25vh',
   });
   useEffect(() => {
-    getSessionStatus(vocabUrl);
+    // getSessionStatus(vocabUrl);
   });
   return (
     <GoogleOAuthProvider clientId={clientId}>
