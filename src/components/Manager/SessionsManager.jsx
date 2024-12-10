@@ -5,6 +5,7 @@ export const startSession = (vocabUrl, email) => {
   };
   return fetch(`${vocabUrl}/session/start`, {
     method: 'POST',
+    credentials: 'include',
     body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json',
@@ -46,8 +47,9 @@ export const endSession = vocabUrl => {
 export const getSessionStatus = vocabUrl => {
   return fetch(`${vocabUrl}/session/status`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
   }).then(async res => {
     if (res.ok) {
