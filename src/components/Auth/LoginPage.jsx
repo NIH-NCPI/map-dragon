@@ -10,6 +10,5 @@ export const LoginPage = () => {
         <div style={{ height:"5rem",display:"flex",flexDirection:"column",justifyContent:"space-around",alignItems:"center"}}>
             <Login />
         </div>
-        <button onClick={()=>getSessionStatus(vocabUrl)}>check status</button>
     </div>
 }
