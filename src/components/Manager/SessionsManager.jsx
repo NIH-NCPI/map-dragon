@@ -11,35 +11,32 @@ export const startSession = (vocabUrl, email) => {
       'Content-Type': 'application/json',
     },
   }).then(async res => {
+    const data = await res.json();
     if (res.ok) {
-      const data = await res.json();
-      console.log(data, 'Session Successful');
+      console.log(data.message);
       return data;
-    } else if (res.status === 401) {
-      navigate('/login');
     } else {
-      return res.json().then(error => {
-        throw new Error(error);
-      });
+      throw new Error(data.message || 'Unknown error occurred'); 
     }
   });
 };
 
 export const endSession = vocabUrl => {
+  
   return fetch(`${vocabUrl}/session/terminate`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
   }).then(async res => {
+    const data = await res.json();
     if (res.ok) {
-      const data = await res.json();
-      console.log(data, 'Session Ended');
-      return res.json();
+      console.log(data.message,'ended');
+      
+      return data;
     } else {
-      return res.json().then(error => {
-        throw new Error(error);
-      });
+      throw new Error(data.message || 'Unknown error occurred'); 
     }
   });
 };
@@ -52,14 +49,12 @@ export const getSessionStatus = vocabUrl => {
       'Content-Type': 'application/json'
     },
   }).then(async res => {
+    const data = await res.json();
     if (res.ok) {
-      const data = await res.json();
-      console.log(data, 'Session Info');
-      return res.json();
+      console.log(data.message);
+      return data;
     } else {
-      return res.json().then(error => {
-        throw new Error(error.message);
-      });
+      throw new Error(data.message || 'Unknown error occurred'); 
     }
   });
 };
