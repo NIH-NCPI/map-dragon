@@ -35,6 +35,7 @@ function App() {
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
+  const [userPic, setUserPic] = useState(null);
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
   const [ucumCodes, setUcumCodes] = useState([]);
   const [version, setVersion] = useState({});
@@ -78,6 +79,8 @@ function App() {
           setExportState,
           user,
           setUser,
+          userPic,
+          setUserPic,
           importState,
           setImportState,
           ontologyForPagination,
