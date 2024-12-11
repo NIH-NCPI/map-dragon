@@ -37,6 +37,7 @@ function App() {
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
+  const [userPic, setUserPic] = useState(null);
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
 
   message.config({
@@ -79,6 +80,8 @@ function App() {
           setExportState,
           user,
           setUser,
+          userPic,
+          setUserPic,
           importState,
           setImportState,
           ontologyForPagination,
