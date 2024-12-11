@@ -27,7 +27,7 @@ export const MappingRelationship = ({ mapping }) => {
       style={{
         width: 120,
       }}
-      placeholder="Quality"
+      placeholder="Relationship"
       popupMatchSelectWidth={false}
       allowClear
       value={idsForSelect[mapping.obo_id || mapping.code]}

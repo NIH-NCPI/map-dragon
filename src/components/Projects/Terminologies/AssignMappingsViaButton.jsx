@@ -68,7 +68,7 @@ export const AssignMappingsViaButton = ({
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminology.id}/mapping/${assignMappingsViaButton.code}`,
+      `${vocabUrl}/Terminology/${terminology.id}/mapping/${assignMappingsViaButton.code}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {

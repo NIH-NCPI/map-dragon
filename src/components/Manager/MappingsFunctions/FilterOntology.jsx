@@ -87,21 +87,6 @@ export const FilterOntology = ({
     }
   };
 
-  const selectedOntDisplay = (ont, i) => {
-    return (
-      <>
-        <div key={i} className="modal_search_result">
-          <div>
-            <div className="modal_term_ontology">
-              <div>{ont?.curie}</div>
-            </div>
-            <div>{ont?.ontology_title}</div>
-          </div>
-        </div>
-      </>
-    );
-  };
-
   const checkBoxDisplay = (ont, i) => {
     return (
       <>
@@ -211,7 +196,7 @@ export const FilterOntology = ({
                     value={selected}
                     onChange={e => onCheckboxChange(e, selected)}
                   >
-                    {selectedOntDisplay(selected, i)}
+                    {checkBoxDisplay(selected, i)}
                   </Checkbox>
                 ))}
               </div>

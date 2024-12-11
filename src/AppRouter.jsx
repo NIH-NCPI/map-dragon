@@ -32,14 +32,13 @@ export const AppRouter = () => {
   const { user, vocabUrl } = useContext(myContext);
   const isLoggedIn = () => {
     const storedUser = localStorage.getItem('user');
-
+    
     if (storedUser) {
       return true;
     } else {
       return false;
     }
   };
-
   return (
     <BrowserRouter>
       <Routes>
