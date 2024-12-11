@@ -1,4 +1,4 @@
-export const startSession = (vocabUrl, email) => {
+export const startSession = (vocabUrl, email) => {  
   const body = {
     'user_id': email,
     // 'affiliation': 'affiliation',
@@ -21,8 +21,7 @@ export const startSession = (vocabUrl, email) => {
   });
 };
 
-export const endSession = vocabUrl => {
-  
+export const endSession = vocabUrl => {  
   return fetch(`${vocabUrl}/session/terminate`, {
     method: 'POST',
     credentials: 'include',
