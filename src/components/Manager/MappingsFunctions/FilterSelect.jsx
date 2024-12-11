@@ -124,7 +124,6 @@ export const FilterSelect = ({ component, table, terminology }) => {
 
     const apiPreferenceDTO = {
       api_preference: apiPreference?.api_preference,
-      editor: user.email,
     };
 
     const method =

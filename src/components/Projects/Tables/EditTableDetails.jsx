@@ -26,7 +26,7 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
       ...values,
       filename: table.filename,
       variables: table?.variables,
-      editor: user.email,
+      // editor: user.email,
     })
       .then(data => {
         setTable(data);

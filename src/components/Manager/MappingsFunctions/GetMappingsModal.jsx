@@ -165,10 +165,11 @@ export const GetMappingsModal = ({
 
     const mappingsDTO = {
       mappings: selectedMappings,
-      editor: user.email,
+      // editor: user?.email,
     };
 
     setLoading(true);
+    console.log(user);
     fetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
       {

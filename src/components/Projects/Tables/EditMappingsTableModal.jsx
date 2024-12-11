@@ -141,7 +141,7 @@ export const EditMappingsTableModal = ({
 
           return parsedMapping;
         }) ?? [],
-      editor: user.email,
+      // editor: user.email,
     };
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
@@ -202,7 +202,6 @@ export const EditMappingsTableModal = ({
         }) ?? []),
         ...(selectedMappings ?? []),
       ],
-      editor: user.email,
     };
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {

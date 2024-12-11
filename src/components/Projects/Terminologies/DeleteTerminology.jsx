@@ -17,7 +17,6 @@ export const DeleteTerminology = ({ setTerms, deleteId, setDeleteId }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {
