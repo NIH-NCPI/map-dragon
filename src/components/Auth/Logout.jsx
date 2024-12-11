@@ -7,8 +7,12 @@ import { useContext } from 'react';
 import { myContext } from '../../App';
 
 export const Logout = ({ user, setUser }) => {
+  const { vocabUrl } = useContext(myContext)
+
   const logOut = () => {
+
     googleLogout();
+    endSession(vocabUrl)
     setUser(null);
     localStorage.removeItem('user');
   };
