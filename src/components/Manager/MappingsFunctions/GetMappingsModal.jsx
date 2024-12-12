@@ -174,6 +174,8 @@ export const GetMappingsModal = ({
       `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
       {
         method: 'PUT',
+        credentials: 'include',
+
         headers: {
           'Content-Type': 'application/json',
         },
@@ -181,6 +183,7 @@ export const GetMappingsModal = ({
       }
     )
       .then(res => {
+        alert();
         if (res.ok) {
           return res.json();
         } else {
@@ -198,6 +201,8 @@ export const GetMappingsModal = ({
         setSelectedBoxes([]);
       })
       .catch(error => {
+        console.log(error,'this is the catch');
+        
         if (error) {
           notification.error({
             message: 'Error',
