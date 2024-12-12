@@ -37,7 +37,6 @@ export const AddVariable = ({ table, setTable }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(values),
-      // body: JSON.stringify({ ...values, editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

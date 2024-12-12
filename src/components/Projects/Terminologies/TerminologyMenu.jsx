@@ -71,8 +71,7 @@ export const TerminologyMenu = ({
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-      },
-      // body: JSON.stringify({ editor: user.email }),
+      }
     })
       .then(res => {
         if (res.ok) {

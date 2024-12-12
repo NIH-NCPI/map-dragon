@@ -66,7 +66,6 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
 
     const preferredTermDTO = () => {
       return {
-        // 'editor': user.email,
         'preferred_terminologies': preferredTerminologies,
       };
     };

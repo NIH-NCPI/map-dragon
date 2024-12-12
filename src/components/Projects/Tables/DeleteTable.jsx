@@ -18,7 +18,6 @@ export const DeleteTable = ({ DDId, studyId }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      // body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

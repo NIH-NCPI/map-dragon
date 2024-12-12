@@ -23,6 +23,7 @@ export const FilterReset = ({ table, terminology }) => {
           : `Terminology/${terminology.id}/filter`
       }`,
       {
+        credentials: 'include',
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -50,6 +51,7 @@ export const FilterReset = ({ table, terminology }) => {
               : `Terminology/${terminology.id}/filter`
           }`,
           {
+            credentials: 'include',
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

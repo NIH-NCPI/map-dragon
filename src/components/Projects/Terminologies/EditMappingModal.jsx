@@ -152,7 +152,6 @@ export const EditMappingsModal = ({
 
           return parsedMapping;
         }) ?? [],
-      // editor: user.email,
     };
     fetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
@@ -215,7 +214,6 @@ export const EditMappingsModal = ({
         }) ?? []),
         ...(selectedMappings ?? []),
       ],
-      // editor: user.email,
     };
 
     fetch(

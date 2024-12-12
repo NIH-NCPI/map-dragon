@@ -88,7 +88,6 @@ export const Terminology = () => {
     setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
-      // editor: user.email,
     };
 
     fetch(

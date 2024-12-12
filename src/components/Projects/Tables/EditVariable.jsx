@@ -91,7 +91,6 @@ export const EditVariable = ({
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(values),
-            // body: JSON.stringify({ ...values, editor: user.email }),
           })
             .then(res => {
               if (res.ok) {
@@ -129,7 +128,6 @@ export const EditVariable = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        // body: JSON.stringify({ ...values, editor: user.email }),
       })
         .then(res => {
           if (res.ok) {
