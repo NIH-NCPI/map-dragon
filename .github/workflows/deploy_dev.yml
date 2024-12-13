@@ -6,10 +6,6 @@ on:
   pull_request_review:
     types: [submitted, edited] # submitted, reviewer edits the PR (ex comments)
   workflow_dispatch: # This enables manual triggers
-  pull_request:
-    branches:
-      - main
-    types: [closed, edited] # PR opened, edited(PR title, etc)
 
 env:
 
@@ -25,7 +21,8 @@ jobs:
   deploy:
     runs-on: 'ubuntu-latest'
     
-    # If PR is approved and the PR is for the 'main' branchif: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'main'
+    # If PR is approved and the PR is for the 'main' branch
+    if: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'main'
     
     environment:
       name: dev
