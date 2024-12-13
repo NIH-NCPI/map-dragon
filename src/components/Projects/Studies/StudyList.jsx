@@ -32,7 +32,7 @@ export const StudyList = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred loading studies.',
           });
         }
         return error;

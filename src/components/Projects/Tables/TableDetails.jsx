@@ -36,8 +36,16 @@ import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
 export const TableDetails = () => {
   const [form] = Form.useForm();
 
-  const { vocabUrl, edit, setEdit, table, setTable, user } =
-    useContext(myContext);
+  const {
+    vocabUrl,
+    edit,
+    setEdit,
+    table,
+    setTable,
+    user,
+    ucumCodes,
+    setUcumCodes,
+  } = useContext(myContext);
   const { apiPreferences, setApiPreferences } = useContext(SearchContext);
   const {
     getMappings,
@@ -75,7 +83,7 @@ export const TableDetails = () => {
   }, [table, mapping, pageSize]);
 
   const updateMappings = (mapArr, mappingCode) => {
-    // setLoading(true);
+    setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
       editor: user.email,
@@ -117,6 +125,10 @@ export const TableDetails = () => {
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
+    tableApiCalls();
+  }, []);
+
+  const tableApiCalls = async () => {
     setLoading(true);
     getById(vocabUrl, 'Table', tableId)
       .then(data => {
@@ -162,7 +174,8 @@ export const TableDetails = () => {
               })
               .then(data => {
                 setApiPreferences(data);
-              });
+              })
+              .finally(() => setLoading(false));
           } else {
             setLoading(false);
           }
@@ -172,13 +185,26 @@ export const TableDetails = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading the ontology preferences.',
+            description: 'An error occurred loading table details.',
           });
         }
         return error;
       })
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => {
+    table && tableTypes();
+  }, [table]);
+
+  const tableTypes = () => {
+    const varTypes = table?.variables?.map(tv => tv.data_type);
+    if (varTypes?.includes('INTEGER' || 'QUANTITY')) {
+      getById(vocabUrl, 'Terminology', 'ucum-common').then(data =>
+        setUcumCodes(data.codes)
+      );
+    }
+  };
 
   // sets table to an empty object on dismount
   useEffect(
@@ -296,6 +322,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     updateMappings(variableMappings?.mappings, variableMappings?.code);
   };
 
+  const findType = variable => {
+    const unit = variable?.units?.split(':')[1];
+    const foundType = ucumCodes.filter(item => item.code === unit);
+    return foundType.length > 0 ? foundType[0].display : variable?.units;
+  };
   // data for the table columns. Each table has an array of variables. Each variable has a name, description, and data type.
   // The integer and quantity data types include additional details.
   // The enumeration data type includes a reference to a terminology, which includes further codes with the capability to match the
@@ -311,7 +342,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         data_type: variable.data_type,
         min: variable.min,
         max: variable.max,
-        units: variable.units,
+        units: findType(variable),
         enumeration: variable.data_type === 'ENUMERATION' && (
           <Link
             to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${tableId}/${variable.enumerations.reference}`}
@@ -479,3 +510,39 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     </>
   );
 };
+
+// const tableApiCalls = async () => {
+//   const tableData = await getById(vocabUrl, 'Table', tableId);
+
+//   if (!tableData) {
+//     navigate('/404');
+//   } else {
+//     setTable(tableData);
+
+//     const [tableMappings, tableFilters, mappingRelationships] =
+//       await Promise.all([
+//         getById(vocabUrl, 'Table', `${tableId}/mapping`),
+//         fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
+//           method: 'GET',
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//         }),
+//         getById(vocabUrl, 'Terminology', 'ftd-concept-map-relationship'),
+//       ]);
+
+//     if (tableMappings) {
+//       setMapping(tableMappings.codes);
+//     }
+
+//     if (tableFilters.ok) {
+//       setApiPreferences(tableFilters.json());
+//     } else {
+//       throw new Error('An unknown error occurred.');
+//     }
+//     if (mappingRelationships) {
+//       setRelationshipOptions(mappingRelationships.codes);
+//     }
+//   }
+//   setLoading(false);
+// };

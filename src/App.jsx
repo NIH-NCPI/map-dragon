@@ -37,6 +37,7 @@ function App() {
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
+  const [ucumCodes, setUcumCodes] = useState([]);
 
   message.config({
     top: '25vh',
@@ -79,6 +80,8 @@ function App() {
           setImportState,
           ontologyForPagination,
           setOntologyForPagination,
+          ucumCodes,
+          setUcumCodes,
         }}
       >
         <AppRouter />
