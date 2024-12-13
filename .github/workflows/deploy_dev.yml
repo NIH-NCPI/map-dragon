@@ -5,7 +5,11 @@ name: 'Build and Deploy to Cloud Run'
 on:
   pull_request_review:
     types: [submitted, edited] # submitted, reviewer edits the PR (ex comments)
-    workflow_dispatch: # This enables manual triggers
+  workflow_dispatch: # This enables manual triggers
+  pull_request:
+    branches:
+      - main
+    types: [closed, edited] # PR opened, edited(PR title, etc)
 
 env:
 
