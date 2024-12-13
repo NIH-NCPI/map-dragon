@@ -20,8 +20,7 @@ jobs:
   deploy:
     runs-on: 'ubuntu-latest'
     
-    # If PR is approved and the PR is for the 'main' branch
-    if: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'main'
+    # If PR is approved and the PR is for the 'main' branchif: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'main'
     
     environment:
       name: dev
@@ -44,6 +43,7 @@ jobs:
         id: extract_version
         run: |
           VERSION=${{ github.event.pull_request.number }} 
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
           echo "Extracted Version: ${VERSION}"
 
       - name: Generate .env.dev file
@@ -74,3 +74,4 @@ jobs:
           service: '${{ env.SERVICE }}-dev'
           region: '${{ env.REGION }}'
           image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-dev/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          env_vars: VERSION=${VERSION}
