@@ -423,7 +423,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
       .finally(() => setLoading(false));
   }, []);
-
   // columns for the ant.design table
   const columns = [
     {
