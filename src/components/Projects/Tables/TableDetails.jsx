@@ -186,7 +186,8 @@ export const TableDetails = () => {
           setLoading(false);
         }
         return error;
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
