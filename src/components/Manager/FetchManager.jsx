@@ -4,7 +4,6 @@ import { ontologyReducer } from './Utilitiy';
 export const getAll = (vocabUrl, name, navigate) => {
   return fetch(`${vocabUrl}/${name}`, {
     method: 'GET',
-    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },

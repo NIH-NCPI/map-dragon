@@ -132,65 +132,61 @@ export const TableDetails = () => {
     setLoading(true);
     getById(vocabUrl, 'Table', tableId)
       .then(data => {
-        if (data === null) {
-          navigate('/404');
-        } else {
-          setTable(data);
-          if (data) {
-            getById(vocabUrl, 'Table', `${tableId}/mapping`)
-              .then(data => setMapping(data.codes))
-              .catch(error => {
-                if (error) {
-                  console.log(error, 'error');
+        setTable(data);
+        if (data) {
+          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+            .then(data => setMapping(data.codes))
+            .catch(error => {
+              if (error) {
+                console.log(error, 'error');
 
-                  notification.error({
-                    message: 'Error',
-                    description: 'An error occurred loading mappings.',
-                  });
-                }
-                return error;
+                notification.error({
+                  message: 'Error',
+                  description: 'An error occurred loading mappings.',
+                });
+              }
+              return error;
+            })
+            .then(() =>
+              getById(
+                vocabUrl,
+                'Terminology',
+                'ftd-concept-map-relationship'
+              ).then(data => setRelationshipOptions(data.codes))
+            )
+            .then(() =>
+              fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
               })
-              .then(() =>
-                getById(
-                  vocabUrl,
-                  'Terminology',
-                  'ftd-concept-map-relationship'
-                ).then(data => setRelationshipOptions(data.codes))
-              )
-              .then(() =>
-                fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
-                  method: 'GET',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                })
-              )
-              .then(res => {
-                if (res.ok) {
-                  return res.json();
-                } else {
-                  throw new Error('An unknown error occurred.');
-                }
-              })
-              .then(data => {
-                setApiPreferences(data);
-              })
-              .finally(() => setLoading(false));
-          } else {
-            setLoading(false);
-          }
+            )
+            .then(res => {
+              if (res.ok) {
+                return res.json();
+              } else {
+                throw new Error('An unknown error occurred.');
+              }
+            })
+            .then(data => {
+              setApiPreferences(data);
+            })
+            .finally(() => setLoading(false));
+        } else {
+          setLoading(false);
         }
       })
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading table details.',
+            description: 'An error occurred loading the table.',
           });
+          setLoading(false);
         }
         return error;
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   useEffect(() => {
