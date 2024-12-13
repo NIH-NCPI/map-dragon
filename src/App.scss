@@ -1,11 +1,9 @@
-body{
-
-    background: url('./assets/Background.png');
-    background-size: 100vw;
-    background-repeat: no-repeat;
-    background-position: calc(50% - 50px) 50%;
-    background-attachment: fixed;
-
+body {
+  background: url('./assets/Background.png');
+  background-size: 100vw;
+  background-repeat: no-repeat;
+  background-position: calc(50% - 50px) 50%;
+  background-attachment: fixed;
 }
 .approuter_div {
   display: flex;
@@ -16,13 +14,11 @@ body{
 
 .outlet_div {
   position: relative;
-  background-color: rgba(255,255,255,.3);
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .header {
   z-index: 100;
   position: sticky;
-  top:0;
+  top: 0;
 }
-
-

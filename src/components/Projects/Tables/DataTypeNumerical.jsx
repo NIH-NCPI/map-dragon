@@ -102,7 +102,7 @@ export const DataTypeNumerical = ({ form, type }) => {
               const valueMatch = (option?.value ?? '')
                 .toLowerCase()
                 .includes(input.toLowerCase());
-              return labelMatch || valueMatch;
+              return valueMatch || labelMatch;
             }}
             options={options}
           />
