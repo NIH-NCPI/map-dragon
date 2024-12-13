@@ -5,7 +5,8 @@ name: 'Build and Deploy to Cloud Run'
 on:
   pull_request_review:
     types: [submitted, edited] # submitted, reviewer edits the PR (ex comments)
-    
+  workflow_dispatch: # This enables manual triggers
+
 env:
 
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
@@ -44,6 +45,7 @@ jobs:
         id: extract_version
         run: |
           VERSION=${{ github.event.pull_request.number }} 
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
           echo "Extracted Version: ${VERSION}"
 
       - name: Generate .env.dev file
@@ -74,3 +76,4 @@ jobs:
           service: '${{ env.SERVICE }}-dev'
           region: '${{ env.REGION }}'
           image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-dev/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          env_vars: VERSION=${VERSION}

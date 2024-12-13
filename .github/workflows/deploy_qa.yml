@@ -75,3 +75,4 @@ jobs:
           service: '${{ env.SERVICE }}-uat'
           region: '${{ env.REGION }}'
           image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}-uat/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          env_vars: VERSION=${VERSION}
