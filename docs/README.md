@@ -9,4 +9,5 @@ MapDragon operates on GCP and has been tested for use in Chrome and Microsoft Ed
 - [User Guide](https://docs.google.com/document/d/1nzJacOXqxbY-7EuynXdsvPCGp0tmkc_rm2x56T97PXY/edit?usp=sharing)
 
 - [Onboarding Slides](https://docs.google.com/presentation/d/1Hm1ZXmNlhaHlJ0LIb9WlZ4sH2CTpOJQw94K0_Ul-W40/edit?usp=sharing)
+
   These slides have been used to provide an overview to groups utilizing Map Dragon for their mapping needs.
