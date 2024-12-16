@@ -7,7 +7,6 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
-import { APISearchBar } from '../../Projects/Terminologies/APISearchBar';
 import { MappingRelationship } from './MappingRelationship';
 
 export const MappingSearch = ({
