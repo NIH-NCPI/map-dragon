@@ -54,7 +54,7 @@ export const About = () => {
       {loading ? (
         <Spinner />
       ) : (
-        <div className="studies_container">
+        <div className="about_container">
           <h2>About</h2>
           <div className="about_description">
             <Descriptions title="Version" bordered column={1} items={items} />
