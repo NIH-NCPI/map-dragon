@@ -5,6 +5,7 @@ import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { ModalSpinner } from '../../Manager/Spinner';
+import { OntologyFilterCodeSubmitTerm } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmitTerm';
 
 export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
@@ -14,7 +15,13 @@ export const AssignMappingsViaButton = ({
   const [form] = Form.useForm();
 
   const { vocabUrl, user } = useContext(myContext);
-  const { prefTerminologies, setApiResults } = useContext(SearchContext);
+  const {
+    prefTerminologies,
+    setApiResults,
+    preferenceType,
+    prefTypeKey,
+    apiPreferencesCode,
+  } = useContext(SearchContext);
   const { setMapping, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
@@ -91,6 +98,14 @@ export const AssignMappingsViaButton = ({
         message.success('Changes saved successfully.');
       })
       .finally(() => setLoading(false));
+    OntologyFilterCodeSubmitTerm(
+      apiPreferencesCode,
+      preferenceType,
+      prefTypeKey,
+      assignMappingsViaButton?.code,
+      vocabUrl,
+      terminology
+    );
   };
 
   return (
@@ -127,13 +142,15 @@ export const AssignMappingsViaButton = ({
         <AssignMappingsCheckboxes
           form={form}
           terminologiesToMap={terminologiesToMap}
+          setTerminologiesToMap={setTerminologiesToMap}
           selectedBoxes={selectedBoxes}
           setSelectedBoxes={setSelectedBoxes}
-          searchProp={
+          mappingProp={
             assignMappingsViaButton?.display
               ? assignMappingsViaButton.display
               : assignMappingsViaButton?.code
           }
+          terminology={terminology}
         />
       )}
     </Modal>

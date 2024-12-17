@@ -134,11 +134,13 @@ export const AssignMappings = ({
           <AssignMappingsCheckboxes
             form={form}
             terminologiesToMap={terminologiesToMap}
+            setTerminologiesToMap={setTerminologiesToMap}
             selectedBoxes={selectedBoxes}
             setSelectedBoxes={setSelectedBoxes}
-            searchProp={
+            mappingProp={
               tableData?.display ? tableData.display : tableData?.code
             }
+            terminology={terminology}
           />
         )}
       </Modal>

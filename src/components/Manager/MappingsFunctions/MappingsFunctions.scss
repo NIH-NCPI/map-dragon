@@ -72,10 +72,12 @@
 .active_term {
   background-color: $darkBlue;
   color: white;
+  transition: all 0.3s linear;
 }
 
 .inactive_term {
   background-color: $lightBlue;
+  transition: all 0.3s linear;
 }
 
 .hidden_term {
