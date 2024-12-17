@@ -541,15 +541,9 @@ export const AssignMappingsCheckboxes = ({
                                   <Checkbox
                                     key={i}
                                     onChange={e => onCheckboxChange(e, sm)}
-                                    checked={
-                                      active === 'search'
-                                        ? selectedBoxes.some(
-                                            box => box.obo_id === sm.obo_id
-                                          )
-                                        : selectedBoxes.some(
-                                            box => box.code === sm.code
-                                          )
-                                    }
+                                    checked={selectedBoxes.some(
+                                      box => box.code === sm.code
+                                    )}
                                     value={sm}
                                   >
                                     {selectedTermsDisplay(sm, i)}
@@ -558,9 +552,7 @@ export const AssignMappingsCheckboxes = ({
                               </div>
                             </Form.Item>
                           )}
-                          {(prefTerminologies.length > 0 &&
-                            active === 'search') ||
-                          prefTerminologies.length === 0 ? (
+                          {active === 'search' ? (
                             results?.length > 0 ? (
                               <>
                                 <Form.Item
