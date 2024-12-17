@@ -31,11 +31,11 @@ export const ontologyReducer = d =>
 export const systemsMatch = (ontologyCode, ontologyApis) => {
   // Searches for the ontology that contains the requested ontology code
   const ontologyApi = ontologyApis.find(
-    api => api.ontologies[ontologyCode.toLowerCase()]
+    api => api.ontologies[ontologyCode?.toLowerCase()]
   );
   if (ontologyApi) {
     // Return the system URL for the matching ontology
-    return ontologyApi.ontologies[ontologyCode.toLowerCase()].system;
+    return ontologyApi.ontologies[ontologyCode?.toLowerCase()].system;
   }
   return null; // If not found, return null or handle accordingly
 };
