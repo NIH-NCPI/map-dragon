@@ -71,7 +71,6 @@ export const AssignMappingsViaButton = ({
     }));
     const mappingsDTO = {
       mappings: selectedMappings,
-      editor: user.email,
     };
 
     fetch(

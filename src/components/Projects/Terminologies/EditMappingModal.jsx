@@ -142,6 +142,16 @@ export const EditMappingsModal = ({
           return parsedMapping;
         }) ?? [],
       editor: user.email,
+      mappings:
+        values?.mappings?.map(v => {
+          const parsedMapping = JSON.parse(v);
+          if (idsForSelect[parsedMapping.code]) {
+            parsedMapping.mapping_relationship =
+              idsForSelect[parsedMapping.code];
+          }
+
+          return parsedMapping;
+        }) ?? [],
     };
     fetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
@@ -204,7 +214,6 @@ export const EditMappingsModal = ({
         }) ?? []),
         ...(selectedMappings ?? []),
       ],
-      editor: user.email,
     };
 
     fetch(

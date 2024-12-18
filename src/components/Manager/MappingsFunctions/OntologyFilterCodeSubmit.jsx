@@ -22,6 +22,7 @@ export const OntologyFilterCodeSubmit = (
     apiPreference.api_preference.ols = apiPreferencesCode;
 
     fetch(`${vocabUrl}/Table/${table.id}/filter/${mappingProp}`, {
+      credentials: 'include',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

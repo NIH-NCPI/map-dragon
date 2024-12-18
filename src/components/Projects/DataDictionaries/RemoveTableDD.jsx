@@ -19,6 +19,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
   // Then fetches the updated DD data with the table removed.
   const handleRemove = () => {
     return fetch(`${vocabUrl}/DataDictionary/${DDId}/Table/${table.id}`, {
+      credentials: 'include',
       method: 'DELETE',
     })
       .then(res => {

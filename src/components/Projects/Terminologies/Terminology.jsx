@@ -54,8 +54,6 @@ export const Terminology = () => {
     mapping,
     setMapping,
     setRelationshipOptions,
-    comment,
-    setComment,
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
@@ -87,10 +85,9 @@ export const Terminology = () => {
   const navigate = useNavigate();
 
   const updateMappings = (mapArr, mappingCode) => {
-    // setLoading(true);
+    setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user.email,
     };
 
     fetch(
@@ -113,8 +110,8 @@ export const Terminology = () => {
       .then(data => {
         setMapping(data.codes);
         setEditMappings(null);
-        form.resetFields();
         message.success('Mapping removed.');
+        form.resetFields();
       })
       .catch(error => {
         console.log(error, 'error');

@@ -70,7 +70,6 @@ export const AssignMappings = ({
     }));
     const mappingsDTO = {
       mappings: selectedMappings,
-      editor: user.email,
     };
 
     fetch(

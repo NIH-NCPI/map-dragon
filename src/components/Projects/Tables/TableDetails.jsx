@@ -86,7 +86,6 @@ export const TableDetails = () => {
     setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user.email,
     };
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${mappingCode}`, {
