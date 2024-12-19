@@ -20,7 +20,7 @@ export const FilterReset = ({ table, terminology }) => {
       `${vocabUrl}/${
         table
           ? `Table/${table.id}/filter/self`
-          : `Terminology/${terminology.id}/filter}`
+          : `Terminology/${terminology.id}/filter`
       }`,
       {
         method: 'DELETE',
@@ -48,7 +48,7 @@ export const FilterReset = ({ table, terminology }) => {
           `${vocabUrl}/${
             table
               ? `Table/${table.id}/filter/self`
-              : `Terminology/${terminology.id}/filter}`
+              : `Terminology/${terminology.id}/filter`
           }`,
           {
             method: 'GET',
