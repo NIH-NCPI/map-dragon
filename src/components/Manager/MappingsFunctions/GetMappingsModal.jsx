@@ -35,7 +35,7 @@ export const GetMappingsModal = ({
 }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
-  const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
+  const { vocabUrl, setSelectedKey, user } = useContext(myContext);
   const {
     preferenceType,
     defaultOntologies,
@@ -244,7 +244,7 @@ export const GetMappingsModal = ({
       };
       //fetch call to search OLS with either preferred or default ontologies
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0
           ? apiPreferencesCode
@@ -263,7 +263,7 @@ export const GetMappingsModal = ({
       );
     } else
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0 ? apiPreferencesCode : defaultOntologies,
         page,

@@ -169,7 +169,7 @@ export const getOntologies = vocabUrl => {
 };
 
 export const olsFilterOntologiesSearch = (
-  searchUrl,
+  vocabUrl,
   query,
   ontologiesToSearch,
   page,
@@ -185,15 +185,12 @@ export const olsFilterOntologiesSearch = (
   setFacetCounts
 ) => {
   setLoading(true);
-  return fetch(
-    `${searchUrl}q=${query}&ontology=${ontologiesToSearch}&rows=${entriesPerPage}&start=${pageStart}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
+  return fetch(`${vocabUrl}/ontology_search?keyword=${query}&api=ols`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
     .then(res => res.json())
     .then(data => {
       // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)

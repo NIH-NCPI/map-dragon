@@ -20,7 +20,7 @@ export const MappingSearch = ({
   terminology,
   table,
 }) => {
-  const { searchUrl, vocabUrl } = useContext(myContext);
+  const { vocabUrl } = useContext(myContext);
   const {
     apiPreferences,
     defaultOntologies,
@@ -210,7 +210,7 @@ export const MappingSearch = ({
       };
       //fetch call to search OLS with either preferred or default ontologies
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0
           ? apiPreferencesCode
@@ -229,7 +229,7 @@ export const MappingSearch = ({
       );
     } else
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0 ? apiPreferencesCode : defaultOntologies,
         page,
