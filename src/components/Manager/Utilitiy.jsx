@@ -35,7 +35,7 @@ export const systemsMatch = (ontologyCode, ontologyApis) => {
   );
   if (ontologyApi) {
     // Return the system URL for the matching ontology
-    return ontologyApi.ontologies[ontologyCode.toLowerCase()].system;
+    return ontologyApi.ontologies[ontologyCode?.toLowerCase()].system;
   }
   return null; // If not found, return null or handle accordingly
 };

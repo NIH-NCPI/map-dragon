@@ -184,7 +184,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         <div className="mapping" key={code.code}>
           <span>
             <Tooltip
-              title={code?.user_input?.comments_count}
+              title={code.user_input?.comments_count}
               mouseEnterDelay={0.75}
             >
               <MessageOutlined

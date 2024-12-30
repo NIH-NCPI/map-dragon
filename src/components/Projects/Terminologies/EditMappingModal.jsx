@@ -13,9 +13,8 @@ import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetMappings } from './ResetMappings';
 import { systemsMatch } from '../../Manager/Utilitiy';
-import { getById } from '../../Manager/FetchManager';
+import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { OntologyFilterCodeSubmitTerm } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmitTerm';
 import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
@@ -240,12 +239,13 @@ export const EditMappingsModal = ({
         return error;
       })
       .finally(() => setLoading(false));
-    OntologyFilterCodeSubmitTerm(
+    ontologyFilterCodeSubmit(
       apiPreferencesCode,
       preferenceType,
       prefTypeKey,
       editMappings.code,
       vocabUrl,
+      null,
       terminology
     );
   };

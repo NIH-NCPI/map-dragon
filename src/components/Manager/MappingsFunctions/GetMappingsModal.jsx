@@ -13,10 +13,13 @@ import { ellipsisString, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
+import {
+  getFiltersByCode,
+  olsFilterOntologiesSearch,
+  ontologyFilterCodeSubmit,
+} from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
-import { OntologyFilterCodeSubmit } from './OntologyFilterCodeSubmit';
-import { OntologyFilterCodeSubmitTerm } from './OntologyFilterCodeSubmitTerm';
+
 import { MappingRelationship } from './MappingRelationship';
 
 export const GetMappingsModal = ({
@@ -206,23 +209,15 @@ export const GetMappingsModal = ({
         return error;
       })
       .finally(() => setLoading(false));
-    table
-      ? OntologyFilterCodeSubmit(
-          apiPreferencesCode,
-          preferenceType,
-          prefTypeKey,
-          mappingProp,
-          vocabUrl,
-          table
-        )
-      : OntologyFilterCodeSubmitTerm(
-          apiPreferencesCode,
-          preferenceType,
-          prefTypeKey,
-          mappingProp,
-          vocabUrl,
-          terminology
-        );
+    ontologyFilterCodeSubmit(
+      apiPreferencesCode,
+      preferenceType,
+      prefTypeKey,
+      mappingProp,
+      vocabUrl,
+      table,
+      terminology
+    );
   };
 
   const fetchResults = (page, query) => {

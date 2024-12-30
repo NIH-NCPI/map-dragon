@@ -6,9 +6,8 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetTableMappings } from './ResetTableMappings';
 import { systemsMatch } from '../../Manager/Utilitiy';
-import { getById } from '../../Manager/FetchManager';
+import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { OntologyFilterCodeSubmit } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmit';
 import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
 
 export const EditMappingsTableModal = ({
@@ -235,13 +234,14 @@ export const EditMappingsTableModal = ({
         return error;
       })
       .finally(() => setLoading(false));
-    OntologyFilterCodeSubmit(
+    ontologyFilterCodeSubmit(
       apiPreferencesCode,
       preferenceType,
       prefTypeKey,
       mappingProp,
       vocabUrl,
-      table
+      table,
+      null
     );
   };
 
