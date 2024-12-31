@@ -1,7 +1,7 @@
 import { Checkbox, Form, Input, notification, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
+import { ellipsisString, systemsMatch } from '../Utilitiy';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -219,13 +219,13 @@ export const MappingSearch = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
+        // setTotalCount,
         setResults,
-        setFilteredResultsCount,
-        setResultsCount,
+        // setFilteredResultsCount,
+        // setResultsCount,
         setLoading,
-        results,
-        setFacetCounts
+        results
+        // setFacetCounts
       );
     } else
       return olsFilterOntologiesSearch(
@@ -236,13 +236,13 @@ export const MappingSearch = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
+        // setTotalCount,
         setResults,
-        setFilteredResultsCount,
-        setResultsCount,
+        // setFilteredResultsCount,
+        // setResultsCount,
         setLoading,
-        results,
-        setFacetCounts
+        results
+        // setFacetCounts
       );
   };
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
@@ -300,11 +300,11 @@ export const MappingSearch = ({
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d?.label}</b>
+                <b>{d?.display}</b>
               </div>
               <div>
-                <a href={d?.iri} target="_blank">
-                  {d?.obo_id}
+                <a href={d?.code_iri} target="_blank">
+                  {d?.code}
                 </a>
               </div>
             </div>
@@ -333,13 +333,13 @@ export const MappingSearch = ({
             <div className="modal_term_ontology">
               <div>
                 <div>
-                  <b>{d?.display || d?.label}</b>
+                  <b>{d?.display}</b>
                 </div>
               </div>
               <div>
                 {d?.code || (
                   <a href={d?.iri} target="_blank">
-                    {d?.obo_id}
+                    {d?.code}
                   </a>
                 )}
               </div>
@@ -436,7 +436,7 @@ export const MappingSearch = ({
       ...mappingsForSearch?.map(m => m?.code),
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude?.has(r.obo_id));
+    return results?.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();
@@ -605,7 +605,7 @@ export const MappingSearch = ({
                                     checked={
                                       active === 'search'
                                         ? selectedBoxes.some(
-                                            box => box.obo_id === sm.obo_id
+                                            box => box.code === sm.code
                                           )
                                         : selectedBoxes.some(
                                             box => box.code === sm.code
@@ -640,11 +640,11 @@ export const MappingSearch = ({
                                         (d, index) => {
                                           return {
                                             value: JSON.stringify({
-                                              code: d.obo_id,
-                                              display: d.label,
+                                              code: d.code,
+                                              display: d.display,
                                               description: d.description[0],
                                               system: systemsMatch(
-                                                d?.obo_id?.split(':')[0],
+                                                d?.code?.split(':')[0],
                                                 ontologyApis
                                               ),
                                             }),

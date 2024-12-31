@@ -176,13 +176,13 @@ export const olsFilterOntologiesSearch = (
   entriesPerPage,
   pageStart,
   selectedBoxes,
-  setTotalCount,
+  // setTotalCount,
   setResults,
-  setFilteredResultsCount,
-  setResultsCount,
+  // setFilteredResultsCount,
+  // setResultsCount,
   setLoading,
-  results,
-  setFacetCounts
+  results
+  // setFacetCounts
 ) => {
   setLoading(true);
   return fetch(`${vocabUrl}/ontology_search?keyword=${query}&api=ols`, {
@@ -195,33 +195,33 @@ export const olsFilterOntologiesSearch = (
     .then(data => {
       // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
 
-      let res = ontologyReducer(data?.response?.docs);
-      // if the page > 0 (i.e. if this is not the first batch of results), the new results
-      // are concatenated to the old
-      if (selectedBoxes) {
-        res.results = res.results.filter(
-          d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
-        );
-      }
+      // let res = ontologyReducer(data?.response?.docs);
+      // // if the page > 0 (i.e. if this is not the first batch of results), the new results
+      // // are concatenated to the old
+      // if (selectedBoxes) {
+      //   res.results = res.results.filter(
+      //     d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
+      //   );
+      // }
 
-      if (page > 0 && results.length > 0) {
-        res.results = results.concat(res.results);
+      // if (page > 0 && results.length > 0) {
+      //   res.results = results.concat(res.results);
 
-        // Apply filtering to remove results with obo_id in selectedBoxes
-      } else {
-        // Set the total number of search results for pagination
-        setTotalCount(data.response.numFound);
-      }
+      //   // Apply filtering to remove results with obo_id in selectedBoxes
+      // } else {
+      //   // Set the total number of search results for pagination
+      //   setTotalCount(data.response.numFound);
+      // }
 
       //the results are set to res (the filtered, concatenated results)
 
-      setResults(res.results);
-      setFilteredResultsCount(
-        prevState => prevState + res?.filteredResults?.length
-      );
-      // resultsCount is set to the length of the filtered, concatenated results for pagination
-      setResultsCount(res.results.length);
-      setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
+      setResults(data.results);
+      // setFilteredResultsCount(
+      //   prevState => prevState + res?.filteredResults?.length
+      // );
+      // // resultsCount is set to the length of the filtered, concatenated results for pagination
+      // setResultsCount(res.results.length);
+      // setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
     })
     .finally(() => setLoading(false));
 };

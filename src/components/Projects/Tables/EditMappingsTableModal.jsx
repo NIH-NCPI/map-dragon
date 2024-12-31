@@ -185,7 +185,7 @@ export const EditMappingsTableModal = ({
       display: item.display,
       description: item.description,
       system:
-        item.system || systemsMatch(item.obo_id.split(':')[0], ontologyApis),
+        item.system || systemsMatch(item.code.split(':')[0], ontologyApis),
       mapping_relationship: idsForSelect[item.code],
     }));
     const mappingsDTO = {

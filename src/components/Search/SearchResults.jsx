@@ -7,7 +7,7 @@ import { SearchSpinner } from '../Manager/Spinner';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const { results, setResults, searchUrl } = useContext(myContext);
+  const { results, setResults, vocabUrl } = useContext(myContext);
 
   const [page, setPage] = useState(1); //page number for search results pagination
   /* useParams() gets the search term param from the address bar, 
@@ -51,15 +51,12 @@ export const SearchResults = () => {
   // The response is set to the 'results'. Loading is set to false.
   const requestSearch = (rowCount, firstRowStart) => {
     setLoading(true);
-    fetch(
-      `${searchUrl}q=${query}&ontology=mondo,hp,maxo,ncit&rows=${rowCount}&start=${firstRowStart}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
+    fetch(`${vocabUrl}/ontology_search?keyword=${query}&api=ols`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -70,7 +67,7 @@ export const SearchResults = () => {
           });
         }
       })
-      .then(data => setResults(data.response))
+      .then(data => setResults(data?.results))
       .finally(() => setLoading(false));
   };
 
@@ -139,19 +136,18 @@ The user is then redirected to the search page, which completes the search for t
                 </div>
                 {/* if the length of the results array is greater than 0 (i.e. there is a return with results for the search term),
                 the results are displayed. */}
-                {results?.docs?.length > 0 ? (
-                  results?.docs.map((d, index) => {
+                {results?.length > 0 ? (
+                  results?.map((d, index) => {
                     return (
                       <>
                         <div key={index} className="search_result">
                           <div className="term_ontology">
                             <div>
-                              <b>{d.label}</b>
+                              <b>{d.display}</b>
                             </div>
                             <div>
-                              {' '}
-                              <a href={d.iri} target="_blank">
-                                {d.obo_id}
+                              <a href={d.code_iri} target="_blank">
+                                {d.code}
                               </a>
                             </div>
                           </div>

@@ -67,7 +67,7 @@ export const AssignMappingsViaButton = ({
         ? item.description[0]
         : item.description,
       system: item.system,
-      mapping_relationship: idsForSelect[item.obo_id || item.code],
+      mapping_relationship: idsForSelect[item.code],
     }));
     const mappingsDTO = {
       mappings: selectedMappings,

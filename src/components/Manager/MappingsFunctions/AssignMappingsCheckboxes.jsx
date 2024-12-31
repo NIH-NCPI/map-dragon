@@ -245,13 +245,13 @@ export const AssignMappingsCheckboxes = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
+        // setTotalCount,
         setResults,
-        setFilteredResultsCount,
-        setResultsCount,
+        // setFilteredResultsCount,
+        // setResultsCount,
         setLoading,
-        results,
-        setFacetCounts
+        results
+        // setFacetCounts
       );
     } else
       return olsFilterOntologiesSearch(
@@ -262,13 +262,13 @@ export const AssignMappingsCheckboxes = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
+        // setTotalCount,
         setResults,
-        setFilteredResultsCount,
-        setResultsCount,
+        // setFilteredResultsCount,
+        // setResultsCount,
         setLoading,
-        results,
-        setFacetCounts
+        results
+        // setFacetCounts
       );
   };
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
@@ -309,24 +309,24 @@ export const AssignMappingsCheckboxes = ({
   // The display for the checkboxes. The index is set to the count of the results before you fetch the new batch of results
   // again + 1, to move the scrollbar to the first result of the new batch.
   const newSearchDisplay = (d, index) => {
-    index === lastCount + 1;
+    // index === lastCount + 1;
     return (
       <>
         <div
           key={index}
           // prettier-ignore
-          ref={index === lastCount + 1 ? ref : undefined}
+          // ref={index === lastCount + 1 ? ref : undefined}
           className="modal_search_result"
           id="scrollbar"
         >
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d?.label}</b>
+                <b>{d?.display}</b>
               </div>
               <div>
-                <a href={d?.iri} target="_blank">
-                  {d?.obo_id}
+                <a href={d?.code_iri} target="_blank">
+                  {d?.code}
                 </a>
               </div>
             </div>
@@ -355,13 +355,13 @@ export const AssignMappingsCheckboxes = ({
             <div className="modal_term_ontology">
               <div>
                 <div>
-                  <b>{d?.display || d?.label}</b>
+                  <b>{d?.display}</b>
                 </div>
               </div>
               <div>
                 {d?.code || (
                   <a href={d?.iri} target="_blank">
-                    {d?.obo_id}
+                    {d?.code}
                   </a>
                 )}
               </div>
@@ -404,7 +404,7 @@ export const AssignMappingsCheckboxes = ({
     const codesToExclude = new Set([
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude?.has(r.obo_id));
+    return results.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();
@@ -571,11 +571,11 @@ export const AssignMappingsCheckboxes = ({
                                         (d, index) => {
                                           return {
                                             value: JSON.stringify({
-                                              code: d.obo_id,
-                                              display: d.label,
+                                              code: d.code,
+                                              display: d.display,
                                               description: d.description[0],
                                               system: systemsMatch(
-                                                d?.obo_id?.split(':')[0],
+                                                d?.code?.split(':')[0],
                                                 ontologyApis
                                               ),
                                             }),
@@ -627,33 +627,35 @@ export const AssignMappingsCheckboxes = ({
                       </div>
                     </div>
                   </Form>
-                  {((prefTerminologies.length > 0 && active === 'search') ||
-                    prefTerminologies.length === 0) && (
-                    <div className="view_more_wrapper">
-                      {/* 'View More' pagination displaying the number of results being displayed
-                      out of the total number of results. Because of the filter to filter out the duplicates,
-                      there is a tooltip informing the user that redundant entries have been removed to explain any
-                      inconsistencies in results numbers per page. */}
-                      <Tooltip
-                        placement="bottom"
-                        title="Redundant entries have been removed"
-                      >
-                        Displaying {resultsCount}
-                        &nbsp;of&nbsp;{totalCount}
-                      </Tooltip>
-                      {resultsCount < totalCount - filteredResultsCount && (
-                        <span
-                          className="view_more_link"
-                          onClick={e => {
-                            handleViewMore(e);
-                            setLastCount(resultsCount);
-                          }}
-                        >
-                          View More
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  {
+                    // ((prefTerminologies.length > 0 && active === 'search') ||
+                    //   prefTerminologies.length === 0) && (
+                    //   <div className="view_more_wrapper">
+                    //     {/* 'View More' pagination displaying the number of results being displayed
+                    //     out of the total number of results. Because of the filter to filter out the duplicates,
+                    //     there is a tooltip informing the user that redundant entries have been removed to explain any
+                    //     inconsistencies in results numbers per page. */}
+                    //     <Tooltip
+                    //       placement="bottom"
+                    //       title="Redundant entries have been removed"
+                    //     >
+                    //       Displaying {resultsCount}
+                    //       &nbsp;of&nbsp;{totalCount}
+                    //     </Tooltip>
+                    //     {resultsCount < totalCount - filteredResultsCount && (
+                    //       <span
+                    //         className="view_more_link"
+                    //         onClick={e => {
+                    //           handleViewMore(e);
+                    //           setLastCount(resultsCount);
+                    //         }}
+                    //       >
+                    //         View More
+                    //       </span>
+                    //     )}
+                    //   </div>
+                    // )
+                  }
                 </div>
               </div>
             </>
