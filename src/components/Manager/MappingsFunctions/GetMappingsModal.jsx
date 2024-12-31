@@ -9,7 +9,7 @@ import {
 } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, systemsMatch } from '../Utilitiy';
+import { ellipsisString, systemsMatch } from '../Utility';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -46,6 +46,7 @@ export const GetMappingsModal = ({
     prefTypeKey,
     ontologyApis,
     setPrefTerminologies,
+    checkedOntologies,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const entriesPerPage = 1000;
@@ -57,7 +58,7 @@ export const GetMappingsModal = ({
   // const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
-
+  console.log(checkedOntologies);
   const {
     setSelectedMappings,
     displaySelectedMappings,
@@ -388,7 +389,11 @@ export const GetMappingsModal = ({
     const codesToExclude = new Set([
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude?.has(r.code));
+
+    const filteredByOntology = results.filter(r =>
+      checkedOntologies.includes(r.ontology_prefix.toLowerCase())
+    );
+    return filteredByOntology.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();

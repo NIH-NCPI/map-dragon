@@ -5,7 +5,7 @@ import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetTableMappings } from './ResetTableMappings';
-import { systemsMatch } from '../../Manager/Utilitiy';
+import { systemsMatch } from '../../Manager/Utility';
 import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';

@@ -12,7 +12,7 @@ import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetMappings } from './ResetMappings';
-import { systemsMatch } from '../../Manager/Utilitiy';
+import { systemsMatch } from '../../Manager/Utility';
 import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';

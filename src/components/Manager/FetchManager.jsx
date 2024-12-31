@@ -1,4 +1,4 @@
-import { ontologyReducer } from './Utilitiy';
+import { ontologyReducer } from './Utility';
 
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {

@@ -48,7 +48,7 @@ export const AppRouter = () => {
               <div className="approuter_div">
                 <div className="header">
                   <NavBar />
-                  {/* <Breadcrumbs /> */}
+                  <Breadcrumbs />
                 </div>
                 <div className="outlet_div">
                   <Outlet />

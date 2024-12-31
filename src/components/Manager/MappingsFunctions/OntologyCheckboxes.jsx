@@ -1,5 +1,5 @@
 import { Checkbox, Form, Input } from 'antd';
-import { ontologyCounts } from '../Utilitiy';
+import { ontologyCounts } from '../Utility';
 import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import './MappingsFunctions.scss';
@@ -13,10 +13,11 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     prefTypeKey,
     active,
     prefTerminologies,
+    checkedOntologies,
+    setCheckedOntologies,
   } = useContext(SearchContext);
   const { Search } = Input;
 
-  const [checkedOntologies, setCheckedOntologies] = useState([]);
   const [searchText, setSearchText] = useState('');
 
   const defaultOntologies = ['mondo', 'hp', 'maxo', 'ncit'];

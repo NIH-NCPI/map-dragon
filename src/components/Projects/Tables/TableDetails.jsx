@@ -31,7 +31,7 @@ import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTa
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
+import { ellipsisString, mappingTooltip } from '../../Manager/Utility';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
