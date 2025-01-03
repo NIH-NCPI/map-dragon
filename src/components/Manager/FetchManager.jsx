@@ -186,11 +186,8 @@ export const olsFilterOntologiesSearch = (
 ) => {
   setLoading(true);
 
-  const capitalizedOnts = ontologiesToSearch.toUpperCase();
-
-  console.log('ontologies', ontologiesToSearch);
   return fetch(
-    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${capitalizedOnts}&selected_api=ols`,
+    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=ols`,
     {
       method: 'GET',
       headers: {
@@ -227,7 +224,7 @@ export const olsFilterOntologiesSearch = (
       //   prevState => prevState + res?.filteredResults?.length
       // );
       // // resultsCount is set to the length of the filtered, concatenated results for pagination
-      setResultsCount(data.results.length);
+      setResultsCount(data?.results?.length);
       // setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
     })
     .finally(() => setLoading(false));
@@ -275,10 +272,10 @@ export const getFiltersByCode = (
 
       if (Array.isArray(ols)) {
         // If ols in api_preference is an array, use it as is
-        setApiPreferencesCode(ols); // Set state to the array
+        setApiPreferencesCode(ols.map(item => item.toUpperCase())); // Set state to the array
       } else if (typeof ols === 'string') {
         // If ols in api_preference is a string, split it into an array
-        const splitOntologies = ols.split(',');
+        const splitOntologies = ols.toUpperCase().split(',');
         setApiPreferencesCode(splitOntologies); // Set state to the array
       } else {
         setApiPreferencesCode([]); // Fallback if no ols found

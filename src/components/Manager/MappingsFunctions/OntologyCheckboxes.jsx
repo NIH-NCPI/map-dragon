@@ -20,7 +20,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   const [searchText, setSearchText] = useState('');
 
-  const defaultOntologies = ['mondo', 'hp', 'maxo', 'ncit'];
+  const defaultOntologies = ['MONDO', 'HP', 'MAXO', 'NCIT'];
 
   let processedApiPreferencesCode;
 
@@ -65,8 +65,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     setCheckedOntologies(existingOntologies => {
       const newCheckedOntologies = Array.isArray(existingOntologies)
         ? checked
-          ? [...existingOntologies, value]
-          : existingOntologies.filter(key => key !== value)
+          ? [...existingOntologies, value.toUpperCase()]
+          : existingOntologies.filter(key => key !== value.toUpperCase())
         : [];
 
       setApiPreferencesCode(newCheckedOntologies);
@@ -134,31 +134,25 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
       >
         <div className="modal_display_results">
           {getFilteredItems(searchText)
-            ?.sort((a, b) => {
-              const aKey = Object.keys(a)[0]; // gets the key from the first object in array
-              const bKey = Object.keys(b)[0]; // gets the key from the second object in array
-              const aValue = a[aKey]; // gets the value from the first key
-              const bValue = b[bKey]; // gets the value from the second key
+            .sort((a, b) => {
+              const key1 = Object.keys(a)[0].toUpperCase();
+              const key2 = Object.keys(b)[0].toUpperCase();
 
-              // checks if one or both keys are in apiPreferencesCode
-              const aInPreferences = apiPreferencesCode?.includes(aKey);
-              const bInPreferences = apiPreferencesCode?.includes(bKey);
+              const selectedOnts1 = existingOntologies?.includes(key1);
+              const selectedOnts2 = existingOntologies?.includes(key2);
 
-              // If one of them is in apiPreferencesCode and the other isn't, prioritizes the one in apiPreferencesCode
-              if (aInPreferences && !bInPreferences) return -1; // if a is in apiPreferencesCode, it comes before b
-              if (!aInPreferences && bInPreferences) return 1; //if b is in apiPreferencesCode, it comes before a
-
-              // If both are in apiPreferencesCode or both are not, sorts by value
-              return bValue - aValue;
+              // If both are in existingOntologies, they stay in their relative order
+              // If only one is in existingOntologies, it is displayed to the top
+              return selectedOnts2 - selectedOnts1;
             })
-            .map((fc, i) => {
-              const key = Object.keys(fc)[0];
-              const value = fc[key];
+            .map((item, i) => {
+              const key = Object.keys(item)[0];
+              const value = item[key];
               return (
                 <Checkbox
                   key={i}
                   value={key}
-                  checked={checkedOntologiesArray?.includes(key)}
+                  checked={checkedOntologiesArray?.includes(key.toUpperCase())}
                   onChange={onCheckboxChange}
                 >
                   {`${key.toUpperCase()} ${value !== 0 ? `(${value})` : ''}`}

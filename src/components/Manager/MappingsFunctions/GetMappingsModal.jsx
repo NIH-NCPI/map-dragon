@@ -237,12 +237,15 @@ export const GetMappingsModal = ({
     ) {
       const apiPreferenceOntologies = () => {
         if (preferenceType[prefTypeKey]?.api_preference?.ols) {
-          return preferenceType[prefTypeKey].api_preference.ols.join(',');
+          return preferenceType[prefTypeKey].api_preference.ols
+            .join(',')
+            .toUpperCase();
         } else {
           // else if there are no preferred ontologies, it uses the default ontologies
           return defaultOntologies;
         }
       };
+
       //fetch call to search OLS with either preferred or default ontologies
       return olsFilterOntologiesSearch(
         vocabUrl,

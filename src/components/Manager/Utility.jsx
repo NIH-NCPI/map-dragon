@@ -45,7 +45,7 @@ export const ontologyCounts = arr => {
 
   while (i < arr.length) {
     if (isNaN(arr[i])) {
-      // If element in array, it not a number (i.e. it's a string), it sets it as the key
+      // If element in array, is not a number (i.e. it's a string), it sets it as the key
       const key = arr[i];
       const value = arr[i + 1]; // Gets the first number after the string
       result.push({ [key]: value }); // Pushes the key (string) and value (number) pair to the result array

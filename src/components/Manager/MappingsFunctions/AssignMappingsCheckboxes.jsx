@@ -116,10 +116,10 @@ export const AssignMappingsCheckboxes = ({
 
         if (Array.isArray(ols)) {
           // If ols in api_preference is an array, use it as is
-          setApiPreferencesCode(ols); // Set state to the array
+          setApiPreferencesCode(ols.map(item => item.toUpperCase())); // Set state to the array
         } else if (typeof ols === 'string') {
           // If ols in api_preference is a string, split it into an array
-          const splitOntologies = ols.split(',');
+          const splitOntologies = ols.toUpperCase().split(',');
           setApiPreferencesCode(splitOntologies); // Set state to the array
         } else {
           setApiPreferencesCode([]); // Fallback if no ols found
@@ -404,7 +404,7 @@ export const AssignMappingsCheckboxes = ({
     const codesToExclude = new Set([
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude?.has(r.code));
+    return results?.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();

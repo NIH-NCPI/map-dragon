@@ -21,7 +21,7 @@ export function SearchContextRoot() {
   const [searchText, setSearchText] = useState('');
   const [checkedOntologies, setCheckedOntologies] = useState([]);
 
-  const defaultOntologies = 'mondo,hp,maxo,ncit';
+  const defaultOntologies = 'MONDO,HP,MAXO,NCIT';
   const preferenceTypeSet = data =>
     apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
 
