@@ -222,7 +222,7 @@ export const MappingSearch = ({
         // setTotalCount,
         setResults,
         // setFilteredResultsCount,
-        // setResultsCount,
+        setResultsCount,
         setLoading,
         results
         // setFacetCounts
@@ -239,7 +239,7 @@ export const MappingSearch = ({
         // setTotalCount,
         setResults,
         // setFilteredResultsCount,
-        // setResultsCount,
+        setResultsCount,
         setLoading,
         results
         // setFacetCounts
@@ -703,24 +703,24 @@ export const MappingSearch = ({
                       out of the total number of results. Because of the filter to filter out the duplicates,
                       there is a tooltip informing the user that redundant entries have been removed to explain any
                       inconsistencies in results numbers per page. */}
-                      <Tooltip
+                      {/* <Tooltip
                         placement="bottom"
                         title="Redundant entries have been removed"
                       >
                         Displaying {resultsCount}
                         &nbsp;of&nbsp;{totalCount}
-                      </Tooltip>
-                      {resultsCount < totalCount - filteredResultsCount && (
-                        <span
-                          className="view_more_link"
-                          onClick={e => {
-                            handleViewMore(e);
-                            setLastCount(resultsCount);
-                          }}
-                        >
-                          View More
-                        </span>
-                      )}
+                      </Tooltip> */}
+                      {/* {resultsCount < totalCount - filteredResultsCount && ( */}
+                      <span
+                        className="view_more_link"
+                        onClick={e => {
+                          handleViewMore(e);
+                          setLastCount(resultsCount);
+                        }}
+                      >
+                        View More
+                      </span>
+                      {/* )} */}
                     </div>
                   )}
                 </div>

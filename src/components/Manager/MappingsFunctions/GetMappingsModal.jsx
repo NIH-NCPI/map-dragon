@@ -53,12 +53,12 @@ export const GetMappingsModal = ({
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   // const [totalCount, setTotalCount] = useState();
-  // const [resultsCount, setResultsCount] = useState();
-  // const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
+  const [resultsCount, setResultsCount] = useState();
+  const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   // const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
-  console.log(checkedOntologies);
+
   const {
     setSelectedMappings,
     displaySelectedMappings,
@@ -257,7 +257,7 @@ export const GetMappingsModal = ({
         // setTotalCount,
         setResults,
         // setFilteredResultsCount,
-        // setResultsCount,
+        setResultsCount,
         setLoading,
         results
         // setFacetCounts
@@ -274,7 +274,7 @@ export const GetMappingsModal = ({
         // setTotalCount,
         setResults,
         // setFilteredResultsCount,
-        // setResultsCount,
+        setResultsCount,
         setLoading,
         results
         // setFacetCounts
@@ -296,7 +296,7 @@ export const GetMappingsModal = ({
         <div
           key={index}
           // prettier-ignore
-          // ref={index === lastCount + 1 ? ref : undefined}
+          ref={index === lastCount + 1 ? ref : undefined}
           className="modal_search_result"
           id="scrollbar"
         >
@@ -389,11 +389,7 @@ export const GetMappingsModal = ({
     const codesToExclude = new Set([
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-
-    const filteredByOntology = results.filter(r =>
-      checkedOntologies.includes(r.ontology_prefix.toLowerCase())
-    );
-    return filteredByOntology.filter(r => !codesToExclude?.has(r.code));
+    return results.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();
@@ -525,28 +521,30 @@ export const GetMappingsModal = ({
                     </div>
                   </Form>
                   <div className="view_more_wrapper">
-                    {/* 'View More' pagination displaying the number of results being displayed
-                      out of the total number of results. Because of the filter to filter out the duplicates,
-                      there is a tooltip informing the user that redundant entries have been removed to explain any
-                      inconsistencies in results numbers per page. */}
+                    {/* 'View More' pagination displaying the number of results
+                    being displayed out of the total number of results. Because
+                    of the filter to filter out the duplicates, there is a
+                    tooltip informing the user that redundant entries have been
+                    removed to explain any inconsistencies in results numbers
+                    per page.  */}
                     {/* <Tooltip
                       placement="bottom"
                       title={`${filteredResultsCount} redundant entries have been removed`}
                     >
                       Displaying {resultsCount}
                       &nbsp;of&nbsp;{totalCount}
-                    </Tooltip>
-                    {resultsCount < totalCount - filteredResultsCount && (
-                      <span
-                        className="view_more_link"
-                        onClick={e => {
-                          handleViewMore(e);
-                          setLastCount(resultsCount);
-                        }}
-                      >
-                        View More
-                      </span>
-                    )} */}
+                    </Tooltip> */}
+                    {/* {resultsCount < totalCount - filteredResultsCount && ( */}
+                    <span
+                      className="view_more_link"
+                      onClick={e => {
+                        handleViewMore(e);
+                        setLastCount(resultsCount);
+                      }}
+                    >
+                      View More
+                    </span>
+                    {/* )} */}
                   </div>
                 </div>
               </div>

@@ -25,7 +25,7 @@ export const MappingRelationship = ({ mapping }) => {
       options={options}
       defaultValue={mapping?.mapping_relationship || undefined}
       style={{
-        width: 120,
+        width: 'fit-content',
       }}
       placeholder="Relationship"
       popupMatchSelectWidth={false}

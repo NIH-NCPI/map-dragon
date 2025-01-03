@@ -179,18 +179,25 @@ export const olsFilterOntologiesSearch = (
   // setTotalCount,
   setResults,
   // setFilteredResultsCount,
-  // setResultsCount,
+  setResultsCount,
   setLoading,
   results
   // setFacetCounts
 ) => {
   setLoading(true);
-  return fetch(`${vocabUrl}/ontology_search?keyword=${query}&api=ols`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+
+  const capitalizedOnts = ontologiesToSearch.toUpperCase();
+
+  console.log('ontologies', ontologiesToSearch);
+  return fetch(
+    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${capitalizedOnts}&selected_api=ols`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
     .then(res => res.json())
     .then(data => {
       // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
@@ -220,7 +227,7 @@ export const olsFilterOntologiesSearch = (
       //   prevState => prevState + res?.filteredResults?.length
       // );
       // // resultsCount is set to the length of the filtered, concatenated results for pagination
-      // setResultsCount(res.results.length);
+      setResultsCount(data.results.length);
       // setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
     })
     .finally(() => setLoading(false));
