@@ -60,24 +60,24 @@ export const AppRouter = () => {
         >
           <Route index element={<OntologySearch />} />
           <Route element={<PageLayout />}>
-            <Route path="/search/:query" element={<SearchResults />} />
-            <Route path="/404" element={<Error404 />} />
+            <Route element={<SearchContextRoot />}>
+              <Route path="/search/:query" element={<SearchResults />} />
+              <Route path="/404" element={<Error404 />} />
 
-            <Route path="/ontologies" element={<OntologyInfo />} />
-            <Route path="/about" element={<About />} />
-            <Route
-              path="/terminologies"
-              element={
-                isLoggedIn() ? <TerminologyList /> : <Navigate to="/login" />
-              }
-            />
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/terminology"
-              element={<Navigate to="/terminologies" />}
-            />
-            <Route element={<MappingContextRoot />}>
-              <Route element={<SearchContextRoot />}>
+              <Route path="/ontologies" element={<OntologyInfo />} />
+              <Route path="/about" element={<About />} />
+              <Route
+                path="/terminologies"
+                element={
+                  isLoggedIn() ? <TerminologyList /> : <Navigate to="/login" />
+                }
+              />
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/terminology"
+                element={<Navigate to="/terminologies" />}
+              />
+              <Route element={<MappingContextRoot />}>
                 <Route
                   path="/studies"
                   element={

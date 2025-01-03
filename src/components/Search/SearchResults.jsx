@@ -4,9 +4,11 @@ import { myContext } from '../../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
 import { SearchSpinner } from '../Manager/Spinner';
+import { SearchContext } from '../../Contexts/SearchContext';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const { defaultOntologies } = useContext(SearchContext);
   const { results, setResults, vocabUrl } = useContext(myContext);
 
   const [page, setPage] = useState(1); //page number for search results pagination
@@ -51,12 +53,15 @@ export const SearchResults = () => {
   // The response is set to the 'results'. Loading is set to false.
   const requestSearch = (rowCount, firstRowStart) => {
     setLoading(true);
-    fetch(`${vocabUrl}/ontology_search?keyword=${query}&api=ols`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+    fetch(
+      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies}&selected_api=ols`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
