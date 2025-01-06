@@ -10,6 +10,7 @@
     "build-uat": "vite build --mode uat",
     "build-alpha": "vite build --mode alpha",
     "build-prod": "vite build --mode prod",
+    "build-kf": "vite build --mode kf",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
