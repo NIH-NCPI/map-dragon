@@ -23,16 +23,13 @@ on:
         default: 'main'
 
 env:
-
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION_LOC_1 }}
   SERVICE: ${{ secrets.SERVICE }}
   IMAGE_NAME: 'map-dragon_img'
-  GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
-
+  GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
 
 jobs:
-  
   deploy:
     runs-on: 'ubuntu-latest'
 
@@ -48,10 +45,10 @@ jobs:
         uses: 'actions/checkout@v4'
         with:
           ref: ${{ github.event.inputs.deploy_branch }} # This branch is deployed
-      
-      - name: "Deploying ${{ github.event.inputs.deploy_branch }} to ${{ github.event.inputs.environment }}"
+
+      - name: 'Deploying ${{ github.event.inputs.deploy_branch }} to ${{ github.event.inputs.environment }}'
         run: echo "Deploying ${{ github.event.inputs.deploy_branch }} to ${{ github.event.inputs.environment }}"
-        
+
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v2'
