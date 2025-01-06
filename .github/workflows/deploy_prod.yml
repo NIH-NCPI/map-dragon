@@ -13,7 +13,7 @@ env:
 
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION_LOC_1 }}
-  SERVICE: 'mapdragon'
+  SERVICE: ${{ secrets.SERVICE }}
   IMAGE_NAME: 'map-dragon_img'
   GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
 
@@ -76,3 +76,4 @@ jobs:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
           image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          env_vars: VERSION=${VERSION}
