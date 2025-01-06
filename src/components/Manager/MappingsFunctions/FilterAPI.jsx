@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Checkbox, Form, Input } from 'antd';
+import { Checkbox, Form, Tooltip } from 'antd';
 import { ModalSpinner, OntologySpinner } from '../Spinner';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
@@ -15,20 +15,40 @@ export const FilterAPI = ({
   ontologyApis,
   active,
   setActive,
-  searchText,
-  setSearchText,
   currentPage,
   setCurrentPage,
   pageSize,
   setPageSize,
   paginatedOntologies,
+  apiPreferences,
+  table,
+  terminology,
 }) => {
-  const { Search } = Input;
-
   const { vocabUrl } = useContext(myContext);
   const [ontology, setOntology] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
+
+  // The selected ontology filters that have already been selected
+  const existingFilters = Object.values(apiPreferences?.self || {}).flat();
+
+  // Flattens the existingFilters into a single array
+  const flattenedFilters = existingFilters
+    .flatMap(item =>
+      Object.keys(item).map(key =>
+        item[key].map(value => ({
+          api: key,
+        }))
+      )
+    )
+    .flat();
+
+  // The initial value for the form. The checkboxes for the filters that have already been selected will be checked by default
+  const initialChecked = flattenedFilters?.map(ef =>
+    JSON.stringify({
+      ontology: ef,
+    })
+  );
 
   // Fetches the active ontologyAPI each time the active API changes
   useEffect(() => {
@@ -54,7 +74,20 @@ export const FilterAPI = ({
           }
         })
         .then(data => {
-          setOntology(data);
+          //Alphabetizes the data
+          const sortedData = data.map(api => {
+            const sortedOntologies = Object.fromEntries(
+              Object.entries(api.ontologies).sort((a, b) =>
+                a[1].ontology_code > b[1].ontology_code ? 1 : -1
+              )
+            );
+
+            return {
+              ...api,
+              ontologies: sortedOntologies,
+            };
+          });
+          setOntology(sortedData);
         })
         .finally(() => setTableLoading(false))
     );
@@ -83,51 +116,58 @@ export const FilterAPI = ({
       </>
     );
   };
-
   return loading ? (
     <ModalSpinner />
   ) : (
     <div>
       <div className="api_list">
-        <Form form={form}>
-          <div>
-            <div className="api_label">APIs</div>
-
-            <Form.Item name={'selected_apis'} valuePropName="value">
-              <Checkbox.Group
-                className="mappings_checkbox"
-                options={ontologyApis.map((api, index) => {
-                  return {
-                    value: JSON.stringify({ api_preference: api?.api_id }),
-                    label: checkboxDisplay(api, index),
-                  };
-                })}
-              />
-            </Form.Item>
-          </div>
-          <div className="ontology_list">
-            {tableLoading ? (
-              <div className="ontology_spinner_div">
-                <OntologySpinner />
+        <Form form={form} preserve={false}>
+          <div style={{ display: 'flex' }}>
+            <div style={{ flex: '0 0 25%' }}>
+              <div className="api_label">
+                <Tooltip title="Default search with OLS using HP, MAXO, MONDO, NCIT">
+                  APIs
+                </Tooltip>
               </div>
-            ) : (
-              <FilterOntology
-                ontology={ontology}
-                form={form}
-                selectedOntologies={selectedOntologies}
-                setSelectedOntologies={setSelectedOntologies}
-                selectedBoxes={selectedBoxes}
-                setSelectedBoxes={setSelectedBoxes}
-                displaySelectedOntologies={displaySelectedOntologies}
-                setDisplaySelectedOntologies={setDisplaySelectedOntologies}
-                searchText={searchText}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                pageSize={pageSize}
-                setPageSize={setPageSize}
-                paginatedOntologies={paginatedOntologies}
-              />
-            )}
+
+              <Form.Item name={'selected_apis'} valuePropName="value">
+                <Checkbox.Group
+                  className="mappings_checkbox"
+                  options={ontologyApis.map((api, index) => {
+                    return {
+                      value: JSON.stringify({ api_preference: api?.api_id }),
+                      label: checkboxDisplay(api, index),
+                    };
+                  })}
+                />
+              </Form.Item>
+            </div>
+            <div style={{ flex: '0 0 70%' }}>
+              {tableLoading ? (
+                <div className="ontology_spinner_div">
+                  <OntologySpinner />
+                </div>
+              ) : (
+                <FilterOntology
+                  ontology={ontology}
+                  form={form}
+                  selectedOntologies={selectedOntologies}
+                  setSelectedOntologies={setSelectedOntologies}
+                  selectedBoxes={selectedBoxes}
+                  setSelectedBoxes={setSelectedBoxes}
+                  displaySelectedOntologies={displaySelectedOntologies}
+                  setDisplaySelectedOntologies={setDisplaySelectedOntologies}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                  pageSize={pageSize}
+                  setPageSize={setPageSize}
+                  paginatedOntologies={paginatedOntologies}
+                  apiPreferences={apiPreferences}
+                  table={table}
+                  terminology={terminology}
+                />
+              )}
+            </div>
           </div>
         </Form>
       </div>

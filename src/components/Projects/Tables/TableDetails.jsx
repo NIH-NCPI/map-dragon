@@ -4,7 +4,18 @@ import './TableStyling.scss';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
-import { Card, Col, Form, notification, Row, Table, Tooltip } from 'antd';
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  message,
+  notification,
+  Row,
+  Table,
+  Tooltip,
+} from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
@@ -16,16 +27,18 @@ import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsMod
 import { AddVariable } from './AddVariable';
 import { ExpandedRowTable } from './ExpandedRowTable';
 import { TableMenu } from './TableMenu';
-import { Submenu } from '../../Manager/Submenu';
 import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
+import { SearchContext } from '../../../Contexts/SearchContext';
+import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
 
   const { vocabUrl, edit, setEdit, table, setTable, user } =
     useContext(myContext);
+  const { apiPreferences, setApiPreferences } = useContext(SearchContext);
   const {
     getMappings,
     setGetMappings,
@@ -33,12 +46,18 @@ export const TableDetails = () => {
     setMapping,
     setEditMappings,
     editMappings,
+    setRelationshipOptions,
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
-  const [apiPreferences, setApiPreferences] = useState({});
 
+  const [pageSize, setPageSize] = useState(
+    parseInt(localStorage.getItem('pageSize'), 10) || 10
+  );
+  const handleTableChange = (current, size) => {
+    setPageSize(size);
+  };
   const navigate = useNavigate();
 
   const handleSuccess = () => {
@@ -47,8 +66,54 @@ export const TableDetails = () => {
   const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
+    document.title = 'Table - Map Dragon';
+  }, []);
+
+  useEffect(() => {
     setDataSource(tableData(table));
-  }, [table, mapping]);
+    localStorage.setItem('pageSize', pageSize);
+  }, [table, mapping, pageSize]);
+
+  const updateMappings = (mapArr, mappingCode) => {
+    // setLoading(true);
+    const mappingsDTO = {
+      mappings: mapArr,
+      editor: user.email,
+    };
+
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${mappingCode}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mappingsDTO),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .then(data => {
+        setMapping(data.codes);
+        setEditMappings(null);
+        form.resetFields();
+        message.success('Mapping removed.');
+      })
+      .catch(error => {
+        console.log(error, 'error');
+
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred. Please try again.',
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoading(false));
+  };
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
@@ -64,16 +129,24 @@ export const TableDetails = () => {
               .then(data => setMapping(data.codes))
               .catch(error => {
                 if (error) {
+                  console.log(error, 'error');
+
                   notification.error({
                     message: 'Error',
-                    description:
-                      'An error occurred loading mappings. Please try again.',
+                    description: 'An error occurred loading mappings.',
                   });
                 }
                 return error;
               })
               .then(() =>
-                fetch(`${vocabUrl}/${data?.terminology?.reference}/filter`, {
+                getById(
+                  vocabUrl,
+                  'Terminology',
+                  'ftd-concept-map-relationship'
+                ).then(data => setRelationshipOptions(data.codes))
+              )
+              .then(() =>
+                fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
                   method: 'GET',
                   headers: {
                     'Content-Type': 'application/json',
@@ -163,23 +236,65 @@ The variables in the mappings need to be matched up to each variable in the tabl
 The function maps through the mapping array. For each variable, if the mapping variable is equal to the 
 variable in the table, AND the mappings array length for the variable is > 0, the mappings array is mapped through
 and returns the length of the mapping array (i.e. returns the number of variables mapped to the table variable). 
-There is then a tooltip that displays the variables on hover.*/
-  const matchCode = variable =>
-    mapping?.length > 0 &&
-    mapping?.map(
-      (item, index) =>
-        item?.code === variable?.code &&
-        item?.mappings?.length > 0 && (
-          <Tooltip
-            title={item.mappings.map(code => {
-              return <div key={index}>{code.code}</div>;
-            })}
-            key={index}
-          >
-            {item?.mappings?.length}
-          </Tooltip>
-        )
+It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
+  const noMapping = variable => {
+    return (
+      <div className="no_mapping_button">
+        <Button
+          onClick={() =>
+            setGetMappings({ name: variable.name, code: variable.code })
+          }
+        >
+          Get Mappings
+        </Button>
+      </div>
     );
+  };
+
+  const matchCode = variable => {
+    if (!mapping?.length) {
+      return noMapping(variable);
+    }
+
+    const variableMappings = mapping.find(
+      item => item?.code === variable?.code
+    );
+    if (variableMappings && variableMappings.mappings?.length) {
+      return variableMappings.mappings.map(code => (
+        <div className="mapping" key={code.code}>
+          <span className="mapping-display">
+            <Tooltip
+              title={
+                (code.display ? code.display : code.code).length > 25
+                  ? mappingTooltip(code)
+                  : code.code
+              }
+            >
+              {ellipsisString(code.display ? code.display : code.code, '25')}
+            </Tooltip>
+          </span>
+          <span
+            className="mapping_actions"
+            onClick={() => handleRemoveMapping(variableMappings, code)}
+          >
+            <CloseCircleOutlined style={{ color: 'red' }} />
+          </span>
+        </div>
+      ));
+    } else {
+      return noMapping(variable);
+    }
+  };
+
+  const handleRemoveMapping = (variableMappings, code) => {
+    const mappingToRemove = variableMappings.mappings.indexOf(code);
+    //remove mapping from mappings
+    {
+      mappingToRemove !== -1 &&
+        variableMappings.mappings.splice(mappingToRemove, 1);
+    }
+    updateMappings(variableMappings?.mappings, variableMappings?.code);
+  };
 
   // data for the table columns. Each table has an array of variables. Each variable has a name, description, and data type.
   // The integer and quantity data types include additional details.
@@ -198,7 +313,11 @@ There is then a tooltip that displays the variables on hover.*/
         max: variable.max,
         units: variable.units,
         enumeration: variable.data_type === 'ENUMERATION' && (
-          <Link to={`/${variable.enumerations.reference}`}>View/Edit</Link>
+          <Link
+            to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${tableId}/${variable.enumerations.reference}`}
+          >
+            View/Edit
+          </Link>
         ),
         mapped_terms: matchCode(variable),
       };
@@ -221,7 +340,6 @@ There is then a tooltip that displays the variables on hover.*/
         <Spinner />
       ) : (
         <div className="table_id_container">
-          <Submenu prop={table} />
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>
@@ -272,11 +390,7 @@ There is then a tooltip that displays the variables on hover.*/
               <>
                 {' '}
                 <div className="add_row_buttons">
-                  <FilterSelect
-                    table={table}
-                    apiPreferences={apiPreferences}
-                    setApiPreferences={setApiPreferences}
-                  />
+                  <FilterSelect component={table} table={table} />
                   <AddVariable
                     table={table}
                     setTable={setTable}
@@ -295,6 +409,12 @@ There is then a tooltip that displays the variables on hover.*/
                       rowExpandable: record =>
                         record.data_type === 'INTEGER' ||
                         record.data_type === 'QUANTITY',
+                    }}
+                    pagination={{
+                      showSizeChanger: true,
+                      pageSizeOptions: ['10', '20', '30'],
+                      pageSize: pageSize, // Use the stored pageSize
+                      onChange: handleTableChange, // Capture pagination changes
                     }}
                   />
                 </Form>
@@ -342,6 +462,7 @@ There is then a tooltip that displays the variables on hover.*/
         setEditMappings={setEditMappings}
         tableId={tableId}
         setMapping={setMapping}
+        table={table}
       />
       <GetMappingsModal
         component={table}
@@ -352,6 +473,7 @@ There is then a tooltip that displays the variables on hover.*/
         setMapping={setMapping}
         tableId={tableId}
         mappingProp={getMappings?.code}
+        table={table}
       />
       <ClearMappings propId={tableId} component={'Table'} />
     </>

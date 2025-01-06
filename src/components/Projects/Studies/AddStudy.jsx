@@ -9,6 +9,7 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const { vocabUrl, setStudy } = useContext(myContext);
+  const { TextArea } = Input;
 
   const navigate = useNavigate();
   // Submit function for adding a new study.
@@ -75,25 +76,25 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
           <h2>Create Study</h2>
           <Form.Item
             name="name"
-            label="Name"
+            label="Name / Short Code"
             rules={[{ required: true, message: 'Please input Study name.' }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: false }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
             name="title"
             label="Title"
             rules={[{ required: true, message: 'Please input Study title.' }]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: false }]}
+          >
+            <TextArea />
           </Form.Item>
           <Form.Item
             name="identifier_prefix"
@@ -109,8 +110,8 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
           </Form.Item>
           <Form.Item
             name="url"
-            label="URL"
-            rules={[{ required: true, message: 'Please input Study URL.' }]}
+            label="System"
+            rules={[{ required: true, message: 'Please input Study system.' }]}
           >
             <Input />
           </Form.Item>

@@ -1,6 +1,6 @@
 @import '../../Styling/Variables';
 .terminology_container {
-  margin: 17vh 10vw 10vh 10vw;
+  margin: 5vh 10vw 10vh 10vw;
   width: 66vw;
 }
 
@@ -101,6 +101,7 @@
 .modal_display_results {
   display: flex;
   flex-direction: column;
+  border-bottom: solid 1px #eeee;
 }
 .modal_display_result {
   margin: 0 0 10px 0;
@@ -108,6 +109,7 @@
 
 .modal_search_result {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   margin: 0 10px 10px 6px;
@@ -196,4 +198,55 @@ a.terminology_link:hover {
 
 .modal_divider {
   margin-bottom: 15px;
+}
+
+.red_votes_count,
+.votes_count {
+  background-color: rgb(230, 229, 229);
+  padding: 0 3px;
+}
+.red_votes_count {
+  color: red;
+}
+
+.mapping_votes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 0.25rem;
+  font-size: 0.7rem;
+}
+
+.no_mapping_button {
+  padding-left: 2rem;
+}
+
+.mapping_relationship {
+  padding: 2px 6px;
+  border: 1px solid $greyColor;
+  border-radius: 4px;
+  &:hover {
+    background-color: rgb(245, 245, 245);
+    transition: all 0.3s linear;
+  }
+}
+
+.mapping {
+  &-display {
+    white-space: nowrap;
+  }
+  display: flex;
+  align-items: center;
+  .mapping_actions {
+    padding-left: 0.25rem;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s linear;
+  }
+  &:hover .mapping_actions {
+    transition: all 0.4s linear;
+    opacity: 1;
+    visibility: visible;
+  }
 }

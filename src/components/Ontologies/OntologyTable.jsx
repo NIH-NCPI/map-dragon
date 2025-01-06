@@ -1,9 +1,23 @@
 import { Button, Input, Space, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const OntologyTable = ({ ontology }) => {
   const [filter, setFilter] = useState(null);
+
+  const [pageSize, setPageSize] = useState(
+    parseInt(localStorage.getItem('pageSize'), 10) || 10
+  );
+  const handleTableChange = (current, size) => {
+    setPageSize(size);
+  };
+  useEffect(() => {
+    localStorage.setItem('pageSize', pageSize);
+  }, [pageSize]);
+
+  useEffect(() => {
+    document.title = 'Ontologies - Map Dragon';
+  }, []);
 
   const ontologyTitle = () => {
     return (
@@ -91,6 +105,12 @@ export const OntologyTable = ({ ontology }) => {
       dataSource={dataSource}
       scroll={{
         y: 470,
+      }}
+      pagination={{
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '30'],
+        pageSize: pageSize, // Use the stored pageSize
+        onChange: handleTableChange, // Capture pagination changes
       }}
     />
   );

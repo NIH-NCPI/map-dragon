@@ -32,7 +32,7 @@ function EditDataTypeSubForm({ type, form, editRow, tableData }) {
     if (editRow === tableData.key && tableData.data_type === 'ENUMERATION') {
       form.setFieldsValue({
         enumerations: {
-          reference: tableData.enumeration.props.to.slice(1),
+          reference: tableData?.variable?.enumerations?.reference,
         },
       });
     }
@@ -57,13 +57,16 @@ function EditDataTypeSubForm({ type, form, editRow, tableData }) {
               }}
               placeholder="Search to Select"
               optionFilterProp="children"
-              filterOption={(input, option) =>
-                (option?.label ?? '').includes(input)
-              }
+              // Searches by terminology name, accounting for spaces in the name
+              filterOption={(input, option) => {
+                const trimmedInput = input.toLowerCase().trim();
+                const optionLabel = (option?.label).toLowerCase().trim();
+                return optionLabel.includes(trimmedInput);
+              }}
               filterSort={(optionA, optionB) =>
-                (optionA?.label ?? '')
+                (optionA?.label)
                   .toLowerCase()
-                  .localeCompare((optionB?.label ?? '').toLowerCase())
+                  .localeCompare((optionB?.label).toLowerCase())
               }
               options={terminologies.map(term => {
                 return {

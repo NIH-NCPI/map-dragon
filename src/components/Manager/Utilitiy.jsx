@@ -27,16 +27,48 @@ export const ontologyReducer = d =>
     { results: [], filteredResults: [] }
   );
 
-/* The backend API does not yet have a way to affix the system URL to each ontology. 
-  This displays the system for each ontology searched. */
-export const ontologySystems = {
-  MONDO: 'http://purl.obolibrary.org/obo/mondo.owl',
-  HP: 'http://purl.obolibrary.org/obo/hp.owl',
-  MAXO: 'http://purl.obolibrary.org/obo/maxo.owl',
-  NCIT: 'http://purl.obolibrary.org/obo/ncit.owl',
+// This function matches the ontology prop to its system in the object that will be sent to the API
+export const systemsMatch = (ontologyCode, ontologyApis) => {
+  // Searches for the ontology that contains the requested ontology code
+  const ontologyApi = ontologyApis.find(
+    api => api.ontologies[ontologyCode?.toLowerCase()]
+  );
+  if (ontologyApi) {
+    // Return the system URL for the matching ontology
+    return ontologyApi.ontologies[ontologyCode?.toLowerCase()].system;
+  }
+  return null; // If not found, return null or handle accordingly
 };
 
-// This function matches the ontology prop to its system (listed in object above) in the object that will be sent to the API
-export const systemsMatch = ont => {
-  return ontologySystems[ont];
+// Iterates over the facet counts in the result to make an object of search results per ontology
+export const ontologyCounts = arr => {
+  let result = [];
+  let i = 0;
+
+  while (i < arr.length) {
+    if (isNaN(arr[i])) {
+      // If element in array, it not a number (i.e. it's a string), it sets it as the key
+      const key = arr[i];
+      const value = arr[i + 1]; // Gets the first number after the string
+      result.push({ [key]: value }); // Pushes the key (string) and value (number) pair to the result array
+      i += 2; // Moves to the next letter-number pair
+    } else {
+      i += 1; // If the element is a number, it keeps going until it starts over and finds a string
+    }
+  }
+
+  return result;
+};
+
+export const cleanedName = data => data?.toLowerCase().replaceAll(' ', '_');
+
+export const mappingTooltip = code => {
+  return (
+    <>
+      <div className="mapping_tooltip">
+        <div>{code.code}</div>
+        <div>{code?.display}</div>
+      </div>
+    </>
+  );
 };

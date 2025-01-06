@@ -96,37 +96,6 @@ export const SelectPreferredTerminologies = ({
     setTerminologies(updatedTerminologies);
   };
 
-  const selectedTermsDisplay = (selected, index) => {
-    return (
-      <>
-        <div key={index} className="modal_display_result">
-          <div>
-            <div className="modal_term_ontology">
-              <div>
-                <Link
-                  to={`/Terminology/${selected.id}`}
-                  target="_blank"
-                  className="terminology_link"
-                >
-                  <b>{selected?.name ? selected.name : selected.id}</b>
-                </Link>
-              </div>
-            </div>
-            <div>
-              {selected?.description?.length > 125 ? (
-                <Tooltip title={selected?.description} mouseEnterDelay={0.5}>
-                  {ellipsisString(selected?.description, '125')}
-                </Tooltip>
-              ) : (
-                ellipsisString(selected?.description, '125')
-              )}
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  };
-
   const checkBoxDisplay = (item, index) => {
     return (
       <>
@@ -238,7 +207,7 @@ export const SelectPreferredTerminologies = ({
                         value={selected}
                         onChange={e => onCheckboxChange(e, selected)}
                       >
-                        {selectedTermsDisplay(selected, i)}
+                        {checkBoxDisplay(selected, i)}
                       </Checkbox>
                     ))}
                   </div>

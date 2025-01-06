@@ -12,7 +12,6 @@ import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
 import { AddDD } from '../DataDictionaries/AddDD';
 import { RemoveStudyDD } from './RemoveStudyDD';
-import { Submenu } from '../../Manager/Submenu';
 const { Meta } = Card;
 
 export const StudyDetails = () => {
@@ -24,6 +23,9 @@ export const StudyDetails = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    document.title = 'Study - Map Dragon';
+  }, []);
   /* Function that maps through the datadictionary array in a study.
   For each DD, it makes a fetch call to the id of the DD.
   Promise.all fulfills all of the fetch calls. The response is set to studyDDs  */
@@ -79,7 +81,6 @@ export const StudyDetails = () => {
         <Spinner />
       ) : (
         <div className="studies_container">
-          <Submenu prop={study} />
           <Row gutter={30}>
             <div className="study_details_container">
               <Col span={15}>
@@ -107,7 +108,7 @@ export const StudyDetails = () => {
                   <div className="study_dropdown">
                     <SettingsDropdownStudy study={study} />
                   </div>
-                  <div className="study_url">URL: {study?.url}</div>
+                  <div className="study_url">System: {study?.url}</div>
                 </div>
               </Col>
             </div>

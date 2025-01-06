@@ -22,7 +22,7 @@ export const APISearchBar = ({
     setApiTotalCount,
   } = useContext(SearchContext);
   const [inputValue, setInputValue] = useState(searchProp);
-  const entriesPerPage = 15;
+  const entriesPerPage = 1000;
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
   const [filteredResultsCount, setFilteredResultsCount] = useState(0);
 

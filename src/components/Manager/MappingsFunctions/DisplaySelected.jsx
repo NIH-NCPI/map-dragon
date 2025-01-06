@@ -1,5 +1,6 @@
 import { Checkbox, Form, Tooltip } from 'antd';
 import { ellipsisString } from '../Utilitiy';
+import { MappingRelationship } from './MappingRelationship';
 
 export const DisplaySelected = ({
   displaySelectedMappings,
@@ -13,8 +14,11 @@ export const DisplaySelected = ({
           <div>
             <div className="modal_term_ontology">
               <div>{selected?.code}</div>
+              <div>{selected?.display || selected?.label}</div>
+              <div>
+                <MappingRelationship mapping={selected} />
+              </div>
             </div>
-            <div>{selected?.display || selected?.label}</div>
             <div>
               {selected?.description?.length > 85 ? (
                 <Tooltip

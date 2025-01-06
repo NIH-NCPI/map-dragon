@@ -1,3 +1,5 @@
+import { ontologyReducer } from './Utilitiy';
+
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {
   return fetch(`${vocabUrl}/${name}`, {
@@ -164,4 +166,118 @@ export const getOntologies = vocabUrl => {
       });
     }
   });
+};
+
+export const olsFilterOntologiesSearch = (
+  searchUrl,
+  query,
+  ontologiesToSearch,
+  page,
+  entriesPerPage,
+  pageStart,
+  selectedBoxes,
+  setTotalCount,
+  setResults,
+  setFilteredResultsCount,
+  setResultsCount,
+  setLoading,
+  results,
+  setFacetCounts
+) => {
+  setLoading(true);
+  return fetch(
+    `${searchUrl}q=${query}&ontology=${ontologiesToSearch}&rows=${entriesPerPage}&start=${pageStart}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+    .then(res => res.json())
+    .then(data => {
+      // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
+
+      let res = ontologyReducer(data?.response?.docs);
+      // if the page > 0 (i.e. if this is not the first batch of results), the new results
+      // are concatenated to the old
+      if (selectedBoxes) {
+        res.results = res.results.filter(
+          d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
+        );
+      }
+
+      if (page > 0 && results.length > 0) {
+        res.results = results.concat(res.results);
+
+        // Apply filtering to remove results with obo_id in selectedBoxes
+      } else {
+        // Set the total number of search results for pagination
+        setTotalCount(data.response.numFound);
+      }
+
+      //the results are set to res (the filtered, concatenated results)
+
+      setResults(res.results);
+      setFilteredResultsCount(
+        prevState => prevState + res?.filteredResults?.length
+      );
+      // resultsCount is set to the length of the filtered, concatenated results for pagination
+      setResultsCount(res.results.length);
+      setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
+    })
+    .finally(() => setLoading(false));
+};
+
+export const getFiltersByCode = (
+  vocabUrl,
+  mappingProp,
+  setApiPreferencesCode,
+  notification,
+  setUnformattedPref,
+  table,
+  terminology,
+  setLoading
+) => {
+  setLoading(true);
+  return fetch(
+    `${vocabUrl}/${
+      table
+        ? `Table/${table.id}/filter/${mappingProp}`
+        : `Terminology/${terminology.id}/filter/${mappingProp}`
+    }`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred loading the ontology preferences.',
+        });
+      }
+    })
+    .then(data => {
+      setUnformattedPref(data);
+      const codeToSearch = Object.keys(data)?.[0];
+
+      const ols = data?.[codeToSearch]?.api_preference?.ols;
+
+      if (Array.isArray(ols)) {
+        // If ols in api_preference is an array, use it as is
+        setApiPreferencesCode(ols); // Set state to the array
+      } else if (typeof ols === 'string') {
+        // If ols in api_preference is a string, split it into an array
+        const splitOntologies = ols.split(',');
+        setApiPreferencesCode(splitOntologies); // Set state to the array
+      } else {
+        setApiPreferencesCode([]); // Fallback if no ols found
+      }
+    });
 };
