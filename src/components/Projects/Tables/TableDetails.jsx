@@ -283,8 +283,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       item => item?.code === variable?.code
     );
     if (variableMappings && variableMappings.mappings?.length) {
-      return variableMappings.mappings.map(code => (
-        <div className="mapping" key={code.code}>
+      return variableMappings.mappings.map((code, i) => (
+        <div className="mapping" key={i}>
           <span className="mapping-display">
             <Tooltip
               title={

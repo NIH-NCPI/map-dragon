@@ -20,6 +20,9 @@ export function SearchContextRoot() {
   const [apiPreferencesTerm, setApiPreferencesTerm] = useState(undefined);
   const [searchText, setSearchText] = useState('');
   const [checkedOntologies, setCheckedOntologies] = useState([]);
+  const [moreAvailable, setMoreAvailable] = useState(false);
+
+  const entriesPerPage = 100;
 
   const defaultOntologies = 'MONDO,HP,MAXO,NCIT';
   const preferenceTypeSet = data =>
@@ -69,6 +72,9 @@ export function SearchContextRoot() {
     setSearchText,
     checkedOntologies,
     setCheckedOntologies,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
   };
 
   return (

@@ -104,7 +104,6 @@ export const EditMappingsTableModal = ({
             options.push({
               value: val,
               label: <EditMappingsLabel item={m} index={index} />,
-              // label: editMappingsLabel(m, index),
             });
           });
           // termMappings are set to the mappings array. Options are set to the options array.

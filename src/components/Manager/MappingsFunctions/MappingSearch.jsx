@@ -31,10 +31,12 @@ export const MappingSearch = ({
     prefTerminologies,
     setApiResults,
     ontologyApis,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
   } = useContext(SearchContext);
 
   const [page, setPage] = useState(0);
-  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
@@ -224,7 +226,8 @@ export const MappingSearch = ({
         // setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setMoreAvailable
         // setFacetCounts
       );
     } else
@@ -241,7 +244,8 @@ export const MappingSearch = ({
         // setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setMoreAvailable
         // setFacetCounts
       );
   };
@@ -699,28 +703,19 @@ export const MappingSearch = ({
                   {((prefTerminologies.length > 0 && active === 'search') ||
                     prefTerminologies.length === 0) && (
                     <div className="view_more_wrapper">
-                      {/* 'View More' pagination displaying the number of results being displayed
-                      out of the total number of results. Because of the filter to filter out the duplicates,
-                      there is a tooltip informing the user that redundant entries have been removed to explain any
-                      inconsistencies in results numbers per page. */}
-                      {/* <Tooltip
-                        placement="bottom"
-                        title="Redundant entries have been removed"
-                      >
-                        Displaying {resultsCount}
-                        &nbsp;of&nbsp;{totalCount}
-                      </Tooltip> */}
-                      {/* {resultsCount < totalCount - filteredResultsCount && ( */}
-                      <span
-                        className="view_more_link"
-                        onClick={e => {
-                          handleViewMore(e);
-                          setLastCount(resultsCount);
-                        }}
-                      >
-                        View More
-                      </span>
-                      {/* )} */}
+                      {/* 'View More' pagination */}
+
+                      {moreAvailable && (
+                        <span
+                          className="view_more_link"
+                          onClick={e => {
+                            handleViewMore(e);
+                            setLastCount(resultsCount);
+                          }}
+                        >
+                          View More
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>

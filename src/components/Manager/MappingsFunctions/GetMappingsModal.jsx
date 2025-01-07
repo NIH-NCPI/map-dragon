@@ -47,9 +47,11 @@ export const GetMappingsModal = ({
     ontologyApis,
     setPrefTerminologies,
     checkedOntologies,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   // const [totalCount, setTotalCount] = useState();
@@ -262,7 +264,8 @@ export const GetMappingsModal = ({
         // setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setMoreAvailable
         // setFacetCounts
       );
     } else
@@ -279,7 +282,8 @@ export const GetMappingsModal = ({
         // setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setMoreAvailable
         // setFacetCounts
       );
   };
@@ -293,7 +297,7 @@ export const GetMappingsModal = ({
   // The display for the checkboxes. The index is set to the count of the results before you fetch the new batch of results
   // again + 1, to move the scrollbar to the first result of the new batch.
   const checkBoxDisplay = (d, index) => {
-    // index === lastCount + 1;
+    index === lastCount + 1;
     return (
       <>
         <div
@@ -362,7 +366,7 @@ export const GetMappingsModal = ({
   };
   const onSelectedChange = checkedValues => {
     const selected = JSON.parse(checkedValues?.[0]);
-    const selectedMapping = results.find(
+    const selectedMapping = results?.find(
       result => result.code === selected.code
     );
 
@@ -524,30 +528,19 @@ export const GetMappingsModal = ({
                     </div>
                   </Form>
                   <div className="view_more_wrapper">
-                    {/* 'View More' pagination displaying the number of results
-                    being displayed out of the total number of results. Because
-                    of the filter to filter out the duplicates, there is a
-                    tooltip informing the user that redundant entries have been
-                    removed to explain any inconsistencies in results numbers
-                    per page.  */}
-                    {/* <Tooltip
-                      placement="bottom"
-                      title={`${filteredResultsCount} redundant entries have been removed`}
-                    >
-                      Displaying {resultsCount}
-                      &nbsp;of&nbsp;{totalCount}
-                    </Tooltip> */}
-                    {/* {resultsCount < totalCount - filteredResultsCount && ( */}
-                    <span
-                      className="view_more_link"
-                      onClick={e => {
-                        handleViewMore(e);
-                        setLastCount(resultsCount);
-                      }}
-                    >
-                      View More
-                    </span>
-                    {/* )} */}
+                    {/* 'View More' pagination */}
+
+                    {moreAvailable && (
+                      <span
+                        className="view_more_link"
+                        onClick={e => {
+                          handleViewMore(e);
+                          setLastCount(resultsCount);
+                        }}
+                      >
+                        View More
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

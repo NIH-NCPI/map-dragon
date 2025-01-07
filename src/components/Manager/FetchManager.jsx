@@ -181,13 +181,14 @@ export const olsFilterOntologiesSearch = (
   // setFilteredResultsCount,
   setResultsCount,
   setLoading,
-  results
+  results,
+  setMoreAvailable
   // setFacetCounts
 ) => {
   setLoading(true);
 
   return fetch(
-    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=ols`,
+    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
     {
       method: 'GET',
       headers: {
@@ -197,29 +198,26 @@ export const olsFilterOntologiesSearch = (
   )
     .then(res => res.json())
     .then(data => {
-      // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
+      // if the page > 0 (i.e. if this is not the first batch of results), the new results
+      // are concatenated to the old
+      if (selectedBoxes) {
+        data.results = data.results.filter(
+          d => !selectedBoxes.some(box => box.code === d.code)
+        );
+      }
 
-      // let res = ontologyReducer(data?.response?.docs);
-      // // if the page > 0 (i.e. if this is not the first batch of results), the new results
-      // // are concatenated to the old
-      // if (selectedBoxes) {
-      //   res.results = res.results.filter(
-      //     d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
-      //   );
-      // }
+      if (page > 0 && results?.length > 0) {
+        data.results = results?.concat(data.results);
+      }
 
-      // if (page > 0 && results.length > 0) {
-      //   res.results = results.concat(res.results);
-
-      //   // Apply filtering to remove results with obo_id in selectedBoxes
+      // Apply filtering to remove results with obo_id in selectedBoxes
       // } else {
       //   // Set the total number of search results for pagination
       //   setTotalCount(data.response.numFound);
       // }
 
-      //the results are set to res (the filtered, concatenated results)
-
       setResults(data.results);
+      setMoreAvailable(data.more_results_available);
       // setFilteredResultsCount(
       //   prevState => prevState + res?.filteredResults?.length
       // );

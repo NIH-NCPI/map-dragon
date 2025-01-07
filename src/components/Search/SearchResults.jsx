@@ -8,10 +8,10 @@ import { SearchContext } from '../../Contexts/SearchContext';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const { defaultOntologies } = useContext(SearchContext);
+  const { defaultOntologies, entriesPerPage } = useContext(SearchContext);
   const { results, setResults, vocabUrl } = useContext(myContext);
 
-  const [page, setPage] = useState(1); //page number for search results pagination
+  const [page, setPage] = useState(0); //page number for search results pagination
   /* useParams() gets the search term param from the address bar, 
   which was placed there from the input field in OntologySearch.jsx */
   const [rows, setRows] = useState(20); //number of rows displayed in each page of search results
@@ -20,10 +20,24 @@ export const SearchResults = () => {
   const { query } = useParams();
   const navigate = useNavigate();
   const ref = useRef();
+  const pageRef = useRef();
+  const pageStart = page * entriesPerPage;
 
   useEffect(() => {
     document.title = 'Map Dragon';
   }, []);
+
+  /* Pagination is handled via a "View More" link at the bottom of the page. 
+  Each click on the "View More" link makes an API call to fetch the next 15 results.
+  This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
+  Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
+  useEffect(() => {
+    if (results?.length > 0 && page > 0 && ref.current) {
+      const container = ref.current.closest('.ant-modal-body');
+      const scrollTop = ref.current.offsetTop - container.offsetTop;
+      container.scrollTop = scrollTop;
+    }
+  }, [results]);
   // sets the page and current page to the page number of the paginator
   const onChange = page => {
     setCurrent(page);
@@ -54,7 +68,7 @@ export const SearchResults = () => {
   const requestSearch = (rowCount, firstRowStart) => {
     setLoading(true);
     fetch(
-      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies}&selected_api=ols`,
+      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
       {
         method: 'GET',
         headers: {

@@ -29,10 +29,12 @@ export const AssignMappingsCheckboxes = ({
     prefTerminologies,
     setApiResults,
     ontologyApis,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
   } = useContext(SearchContext);
 
   const [page, setPage] = useState(0);
-  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [totalCount, setTotalCount] = useState();
@@ -250,7 +252,8 @@ export const AssignMappingsCheckboxes = ({
         // setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setMoreAvailable
         // setFacetCounts
       );
     } else
@@ -267,7 +270,8 @@ export const AssignMappingsCheckboxes = ({
         // setFilteredResultsCount,
         setResultsCount,
         setLoading,
-        results
+        results,
+        setMoreAvailable
         // setFacetCounts
       );
   };
@@ -309,13 +313,13 @@ export const AssignMappingsCheckboxes = ({
   // The display for the checkboxes. The index is set to the count of the results before you fetch the new batch of results
   // again + 1, to move the scrollbar to the first result of the new batch.
   const newSearchDisplay = (d, index) => {
-    // index === lastCount + 1;
+    index === lastCount + 1;
     return (
       <>
         <div
           key={index}
           // prettier-ignore
-          // ref={index === lastCount + 1 ? ref : undefined}
+          ref={index === lastCount + 1 ? ref : undefined}
           className="modal_search_result"
           id="scrollbar"
         >
@@ -630,28 +634,19 @@ export const AssignMappingsCheckboxes = ({
                   {((prefTerminologies.length > 0 && active === 'search') ||
                     prefTerminologies.length === 0) && (
                     <div className="view_more_wrapper">
-                      {/* 'View More' pagination displaying the number of results being displayed
-                        out of the total number of results. Because of the filter to filter out the duplicates,
-                        there is a tooltip informing the user that redundant entries have been removed to explain any
-                        inconsistencies in results numbers per page. */}
-                      {/* <Tooltip
-                        placement="bottom"
-                        title="Redundant entries have been removed"
-                      >
-                        Displaying {resultsCount}
-                        &nbsp;of&nbsp;{totalCount}
-                      </Tooltip> */}
-                      {/* {resultsCount < totalCount - filteredResultsCount && ( */}
-                      <span
-                        className="view_more_link"
-                        onClick={e => {
-                          handleViewMore(e);
-                          setLastCount(resultsCount);
-                        }}
-                      >
-                        View More
-                      </span>
-                      {/* )} */}
+                      {/* 'View More' pagination */}
+
+                      {moreAvailable && (
+                        <span
+                          className="view_more_link"
+                          onClick={e => {
+                            handleViewMore(e);
+                            setLastCount(resultsCount);
+                          }}
+                        >
+                          View More
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
