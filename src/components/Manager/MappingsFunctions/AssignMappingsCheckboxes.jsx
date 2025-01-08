@@ -22,7 +22,6 @@ export const AssignMappingsCheckboxes = ({
   const {
     apiPreferences,
     defaultOntologies,
-    setFacetCounts,
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
@@ -32,22 +31,20 @@ export const AssignMappingsCheckboxes = ({
     entriesPerPage,
     moreAvailable,
     setMoreAvailable,
+    resultsCount,
+    setResultsCount,
   } = useContext(SearchContext);
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
-  const [totalCount, setTotalCount] = useState();
-  const [resultsCount, setResultsCount] = useState(); //
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-  const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(mappingProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(mappingProp);
   const [active, setActive] = useState(null);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
 
   const {
-    setExistingMappings,
     setSelectedMappings,
     displaySelectedMappings,
     setDisplaySelectedMappings,
@@ -247,14 +244,11 @@ export const AssignMappingsCheckboxes = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        // setTotalCount,
         setResults,
-        // setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
         setMoreAvailable
-        // setFacetCounts
       );
     } else
       return olsFilterOntologiesSearch(
@@ -265,14 +259,11 @@ export const AssignMappingsCheckboxes = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        // setTotalCount,
         setResults,
-        // setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
         setMoreAvailable
-        // setFacetCounts
       );
   };
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
@@ -635,7 +626,6 @@ export const AssignMappingsCheckboxes = ({
                     prefTerminologies.length === 0) && (
                     <div className="view_more_wrapper">
                       {/* 'View More' pagination */}
-
                       {moreAvailable && (
                         <span
                           className="view_more_link"

@@ -176,14 +176,11 @@ export const olsFilterOntologiesSearch = (
   entriesPerPage,
   pageStart,
   selectedBoxes,
-  // setTotalCount,
   setResults,
-  // setFilteredResultsCount,
   setResultsCount,
   setLoading,
   results,
   setMoreAvailable
-  // setFacetCounts
 ) => {
   setLoading(true);
 
@@ -210,20 +207,10 @@ export const olsFilterOntologiesSearch = (
         data.results = results?.concat(data.results);
       }
 
-      // Apply filtering to remove results with obo_id in selectedBoxes
-      // } else {
-      //   // Set the total number of search results for pagination
-      //   setTotalCount(data.response.numFound);
-      // }
-
       setResults(data.results);
       setMoreAvailable(data.more_results_available);
-      // setFilteredResultsCount(
-      //   prevState => prevState + res?.filteredResults?.length
-      // );
-      // // resultsCount is set to the length of the filtered, concatenated results for pagination
+
       setResultsCount(data?.results?.length);
-      // setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
     })
     .finally(() => setLoading(false));
 };

@@ -24,7 +24,6 @@ export const MappingSearch = ({
   const {
     apiPreferences,
     defaultOntologies,
-    setFacetCounts,
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
@@ -34,15 +33,14 @@ export const MappingSearch = ({
     entriesPerPage,
     moreAvailable,
     setMoreAvailable,
+    resultsCount,
+    setResultsCount,
   } = useContext(SearchContext);
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
-  const [totalCount, setTotalCount] = useState();
-  const [resultsCount, setResultsCount] = useState(); //
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-  const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
@@ -221,14 +219,11 @@ export const MappingSearch = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        // setTotalCount,
         setResults,
-        // setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
         setMoreAvailable
-        // setFacetCounts
       );
     } else
       return olsFilterOntologiesSearch(
@@ -239,14 +234,11 @@ export const MappingSearch = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        // setTotalCount,
         setResults,
-        // setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
         setMoreAvailable
-        // setFacetCounts
       );
   };
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.

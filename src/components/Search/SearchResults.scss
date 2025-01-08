@@ -3,7 +3,7 @@
 
 .results_page_container {
   background: white;
-  margin: 0 30vw 0 5vw;
+  margin: 10px 30vw 0 5vw;
   padding: 1rem;
 }
 
@@ -32,6 +32,7 @@
   padding-top: 10rem;
   background: white;
   width: 63vw;
+  margin-top: 10px;
 }
 
 .search_results {
@@ -49,6 +50,7 @@ div.search_result:nth-child(2) {
   position: fixed;
   top: 8.5rem;
   background: white;
+  margin-top: 10px;
 
   h2 {
     margin: 0;

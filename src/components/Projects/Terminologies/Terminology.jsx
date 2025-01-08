@@ -87,10 +87,9 @@ export const Terminology = () => {
   const navigate = useNavigate();
 
   const updateMappings = (mapArr, mappingCode) => {
-    // setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user.email,
+      editor: user?.email,
     };
 
     fetch(
@@ -128,8 +127,7 @@ export const Terminology = () => {
           });
         }
         return error;
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.

@@ -21,6 +21,7 @@ export function SearchContextRoot() {
   const [searchText, setSearchText] = useState('');
   const [checkedOntologies, setCheckedOntologies] = useState([]);
   const [moreAvailable, setMoreAvailable] = useState(false);
+  const [resultsCount, setResultsCount] = useState();
 
   const entriesPerPage = 100;
 
@@ -75,6 +76,8 @@ export function SearchContextRoot() {
     entriesPerPage,
     moreAvailable,
     setMoreAvailable,
+    resultsCount,
+    setResultsCount,
   };
 
   return (

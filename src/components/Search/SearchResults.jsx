@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useContext } from 'react';
-import { Pagination, notification } from 'antd';
+import { notification } from 'antd';
 import { myContext } from '../../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
@@ -8,64 +8,48 @@ import { SearchContext } from '../../Contexts/SearchContext';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const { defaultOntologies, entriesPerPage } = useContext(SearchContext);
+  const {
+    defaultOntologies,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
+    resultsCount,
+    setResultsCount,
+  } = useContext(SearchContext);
   const { results, setResults, vocabUrl } = useContext(myContext);
 
   const [page, setPage] = useState(0); //page number for search results pagination
+  const [loading, setLoading] = useState(true);
+  const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
+
   /* useParams() gets the search term param from the address bar, 
   which was placed there from the input field in OntologySearch.jsx */
-  const [rows, setRows] = useState(20); //number of rows displayed in each page of search results
-  const [current, setCurrent] = useState(1); //the page of search results currently displayed
-  const [loading, setLoading] = useState(true);
   const { query } = useParams();
   const navigate = useNavigate();
   const ref = useRef();
-  const pageRef = useRef();
+  const pageref = useRef;
   const pageStart = page * entriesPerPage;
 
   useEffect(() => {
     document.title = 'Map Dragon';
   }, []);
 
-  /* Pagination is handled via a "View More" link at the bottom of the page. 
-  Each click on the "View More" link makes an API call to fetch the next 15 results.
-  This useEffect moves the scroll bar on the modal to the first index of the new batch of results.
-  Because the content is in a modal and not the window, the closest class name to the modal is used for the location of the ref. */
+  // calls the search function when there is a change in the rows, page, or query
   useEffect(() => {
-    if (results?.length > 0 && page > 0 && ref.current) {
-      const container = ref.current.closest('.ant-modal-body');
-      const scrollTop = ref.current.offsetTop - container.offsetTop;
+    requestSearch();
+  }, [page, query]);
+
+  useEffect(() => {
+    if (results?.length > 0 && page > 0 && pageref.current) {
+      const container = pageref.current.closest('.search_result');
+      const scrollTop = pageref.current.offsetTop - container.offsetTop;
       container.scrollTop = scrollTop;
     }
   }, [results]);
-  // sets the page and current page to the page number of the paginator
-  const onChange = page => {
-    setCurrent(page);
-    setPage(page);
-  };
-
-  /* updates the number of rows on the result page and the current page displayed 
-  if user changes the number of results displayed per page */
-  const onShowSizeChange = (current, rows) => {
-    setCurrent(current);
-    setRows(rows);
-  };
-
-  // calls the search function when there is a change in the rows, page, or query
-  useEffect(() => {
-    descriptionResults(rows, page);
-  }, [rows, page, query]);
-
-  // defines parameters for the search function. rows = the number of results returned in the search
-  // the OLS API specifies index number of the search result to start the return for each page of results
-  // index begins at 0. (page - 1) * rows calculates the index number of the first result to be displayed on each page
-  const descriptionResults = (rows, page) => {
-    return requestSearch(rows, (page - 1) * rows);
-  };
 
   // API request to OLS ontology search with the rows and index of the first search per page as props.
   // The response is set to the 'results'. Loading is set to false.
-  const requestSearch = (rowCount, firstRowStart) => {
+  const requestSearch = () => {
     setLoading(true);
     fetch(
       `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
@@ -86,7 +70,16 @@ export const SearchResults = () => {
           });
         }
       })
-      .then(data => setResults(data?.results))
+      .then(data => {
+        if (page > 0 && results?.length > 0) {
+          data.results = results?.concat(data.results);
+        }
+
+        setResults(data.results);
+        setMoreAvailable(data.more_results_available);
+
+        setResultsCount(data?.results?.length);
+      })
       .finally(() => setLoading(false));
   };
 
@@ -95,10 +88,16 @@ The user is then redirected to the search page, which completes the search for t
   const searchOnEnter = e => {
     if (e.key === 'Enter') {
       if (ref.current.value) {
-        setPage(1), setCurrent(1), navigate(`/search/${ref.current.value}`);
+        setPage(0), navigate(`/search/${ref.current.value}`);
       }
     }
   };
+
+  const handleViewMore = e => {
+    e.preventDefault();
+    setPage(prevPage => prevPage + 1);
+  };
+
   return (
     <>
       <div className="results_page_container">
@@ -131,9 +130,7 @@ The user is then redirected to the search page, which completes the search for t
                  the value is transposed into the address bar
                   */
                   if (ref.current.value) {
-                    setPage(1),
-                      setCurrent(1),
-                      navigate(`/search/${ref.current.value}`);
+                    setPage(1), navigate(`/search/${ref.current.value}`);
                   }
                 }}
               >
@@ -159,7 +156,11 @@ The user is then redirected to the search page, which completes the search for t
                   results?.map((d, index) => {
                     return (
                       <>
-                        <div key={index} className="search_result">
+                        <div
+                          key={index}
+                          pageref={index === lastCount + 1 ? ref : undefined}
+                          className="search_result"
+                        >
                           <div className="term_ontology">
                             <div>
                               <b>{d.display}</b>
@@ -191,22 +192,16 @@ The user is then redirected to the search page, which completes the search for t
           )}
         </>
         {/* if loading has completed and search results were found, the paginator is displayed */}
-        {loading === false && results?.numFound > 0 ? (
-          <div className="pagination">
-            <Pagination
-              defaultCurrent={1} //default current page is 1
-              defaultPageSize={rows} //default number of results per page is the value of 'rows'
-              total={results?.numFound} //total number of results is from the 'numFound' property in the results
-              onChange={onChange}
-              current={current}
-              onShowSizeChange={onShowSizeChange}
-              showTotal={
-                (total, range) => `${range[0]}-${range[1]} of ${total} items` //displays the range of results out of the total number of results
-              }
-            />
-          </div>
-        ) : (
-          ''
+        {moreAvailable && (
+          <span
+            className="view_more_link"
+            onClick={e => {
+              handleViewMore(e);
+              setLastCount(resultsCount);
+            }}
+          >
+            View More
+          </span>
         )}
       </div>
     </>

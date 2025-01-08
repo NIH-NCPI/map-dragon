@@ -83,7 +83,6 @@ export const TableDetails = () => {
   }, [table, mapping, pageSize]);
 
   const updateMappings = (mapArr, mappingCode) => {
-    setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
       editor: user.email,
@@ -119,8 +118,7 @@ export const TableDetails = () => {
           });
         }
         return error;
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   // fetches the table and sets 'table' to the response

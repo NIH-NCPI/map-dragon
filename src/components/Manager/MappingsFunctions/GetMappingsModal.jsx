@@ -50,12 +50,13 @@ export const GetMappingsModal = ({
     entriesPerPage,
     moreAvailable,
     setMoreAvailable,
+    setResultsCount,
+    resultsCount,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   // const [totalCount, setTotalCount] = useState();
-  const [resultsCount, setResultsCount] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   // const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
