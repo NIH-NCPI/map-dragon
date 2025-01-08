@@ -23,7 +23,7 @@ export const Logout = ({ user, setUser,userPic,setUserPic }) => {
       <div className="logged_in_user">
         <div className="user_email">
           <img className="user_image" src={userPic} />
-          {user}
+          {String(user)}
         </div>
         <Tooltip mouseEnterDelay={0.5} placement="bottom" title="Log out">
           <LogoutOutlined

@@ -16,6 +16,7 @@ export const Login = () => {
       setUserPic(JSON.parse(storedUserPic));
     }
   }, []);
+  
   // If there is a user, it displays the Logout function with user information. Otherwise, it displays the login button
   return user ? (
     <Logout user={user} setUser={setUser} userPic={userPic} setUserPic={setUserPic} />
