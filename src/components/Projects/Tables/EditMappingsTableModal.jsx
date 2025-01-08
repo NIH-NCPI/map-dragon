@@ -5,10 +5,9 @@ import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetTableMappings } from './ResetTableMappings';
-import { systemsMatch } from '../../Manager/Utilitiy';
-import { getById } from '../../Manager/FetchManager';
+import { systemsMatch } from '../../Manager/Utility';
+import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { OntologyFilterCodeSubmit } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmit';
 import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
 
 export const EditMappingsTableModal = ({
@@ -31,6 +30,8 @@ export const EditMappingsTableModal = ({
     setDisplaySelectedMappings,
     setShowOptions,
     idsForSelect,
+    existingMappings,
+    selectedBoxes,
   } = useContext(MappingContext);
   const {
     apiPreferencesCode,
@@ -105,7 +106,6 @@ export const EditMappingsTableModal = ({
             options.push({
               value: val,
               label: <EditMappingsLabel item={m} index={index} />,
-              // label: editMappingsLabel(m, index),
             });
           });
           // termMappings are set to the mappings array. Options are set to the options array.
@@ -181,27 +181,25 @@ export const EditMappingsTableModal = ({
   // The existing and new mappings are JSON.parsed and combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
     setLoading(true);
-    const selectedMappings = values?.selected_mappings?.map(item => ({
+
+    const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
       description: item.description,
-      system:
-        item.system || systemsMatch(item.obo_id.split(':')[0], ontologyApis),
+      system: systemsMatch(item.code.split(':')[0], ontologyApis),
       mapping_relationship: idsForSelect[item.code],
     }));
-    const mappingsDTO = {
-      mappings: [
-        ...(values.existing_mappings?.map(v => {
-          const parsedMapping = JSON.parse(v);
-          if (idsForSelect[parsedMapping.code]) {
-            parsedMapping.mapping_relationship =
-              idsForSelect[parsedMapping.code];
-          }
 
-          return parsedMapping;
-        }) ?? []),
-        ...(selectedMappings ?? []),
-      ],
+    const preexistingMappings = existingMappings?.map(item => ({
+      code: item.code,
+      display: item.display,
+      description: item.description,
+      system: systemsMatch(item?.code?.split(':')[0], ontologyApis),
+      mapping_relationship: idsForSelect[item.code],
+    }));
+
+    const mappingsDTO = {
+      mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
       editor: user.email,
     };
 
@@ -235,13 +233,14 @@ export const EditMappingsTableModal = ({
         return error;
       })
       .finally(() => setLoading(false));
-    OntologyFilterCodeSubmit(
+    ontologyFilterCodeSubmit(
       apiPreferencesCode,
       preferenceType,
       prefTypeKey,
       mappingProp,
       vocabUrl,
-      table
+      table,
+      null
     );
   };
 

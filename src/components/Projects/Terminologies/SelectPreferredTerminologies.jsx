@@ -1,6 +1,6 @@
 import { Checkbox, Form, Input, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
-import { ellipsisString } from '../../Manager/Utilitiy';
+import { ellipsisString } from '../../Manager/Utility';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';

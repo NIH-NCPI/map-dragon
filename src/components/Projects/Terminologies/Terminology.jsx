@@ -35,7 +35,7 @@ import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
-import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
+import { ellipsisString, mappingTooltip } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 
@@ -87,10 +87,9 @@ export const Terminology = () => {
   const navigate = useNavigate();
 
   const updateMappings = (mapArr, mappingCode) => {
-    // setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user.email,
+      editor: user?.email,
     };
 
     fetch(
@@ -128,8 +127,7 @@ export const Terminology = () => {
           });
         }
         return error;
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
@@ -180,11 +178,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     );
 
     if (variableMappings && variableMappings.mappings?.length) {
-      return variableMappings.mappings.map(code => (
-        <div className="mapping" key={code.code}>
+      return variableMappings.mappings.map((code, i) => (
+        <div className="mapping" key={i}>
           <span>
             <Tooltip
-              title={code?.user_input?.comments_count}
+              title={code.user_input?.comments_count}
               mouseEnterDelay={0.75}
             >
               <MessageOutlined

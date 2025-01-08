@@ -19,8 +19,13 @@ export function SearchContextRoot() {
   const [ontologyApis, setOntologyApis] = useState([]);
   const [apiPreferencesTerm, setApiPreferencesTerm] = useState(undefined);
   const [searchText, setSearchText] = useState('');
+  const [checkedOntologies, setCheckedOntologies] = useState([]);
+  const [moreAvailable, setMoreAvailable] = useState(false);
+  const [resultsCount, setResultsCount] = useState();
 
-  const defaultOntologies = 'mondo,hp,maxo,ncit';
+  const entriesPerPage = 100;
+
+  const defaultOntologies = 'MONDO,HP,MAXO,NCIT';
   const preferenceTypeSet = data =>
     apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
 
@@ -66,6 +71,13 @@ export function SearchContextRoot() {
     prefTypeKey,
     searchText,
     setSearchText,
+    checkedOntologies,
+    setCheckedOntologies,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
+    resultsCount,
+    setResultsCount,
   };
 
   return (

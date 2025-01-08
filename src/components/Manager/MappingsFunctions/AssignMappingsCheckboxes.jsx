@@ -1,7 +1,7 @@
 import { Checkbox, Form, Input, notification, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, systemsMatch } from '../Utilitiy';
+import { ellipsisString, systemsMatch } from '../Utility';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -18,34 +18,33 @@ export const AssignMappingsCheckboxes = ({
   form,
   terminology,
 }) => {
-  const { searchUrl, vocabUrl } = useContext(myContext);
+  const { vocabUrl } = useContext(myContext);
   const {
     apiPreferences,
     defaultOntologies,
-    setFacetCounts,
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
     prefTerminologies,
     setApiResults,
     ontologyApis,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
+    resultsCount,
+    setResultsCount,
   } = useContext(SearchContext);
 
   const [page, setPage] = useState(0);
-  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
-  const [totalCount, setTotalCount] = useState();
-  const [resultsCount, setResultsCount] = useState(); //
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-  const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(mappingProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(mappingProp);
   const [active, setActive] = useState(null);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
 
   const {
-    setExistingMappings,
     setSelectedMappings,
     displaySelectedMappings,
     setDisplaySelectedMappings,
@@ -116,10 +115,10 @@ export const AssignMappingsCheckboxes = ({
 
         if (Array.isArray(ols)) {
           // If ols in api_preference is an array, use it as is
-          setApiPreferencesCode(ols); // Set state to the array
+          setApiPreferencesCode(ols.map(item => item.toUpperCase())); // Set state to the array
         } else if (typeof ols === 'string') {
           // If ols in api_preference is a string, split it into an array
-          const splitOntologies = ols.split(',');
+          const splitOntologies = ols.toUpperCase().split(',');
           setApiPreferencesCode(splitOntologies); // Set state to the array
         } else {
           setApiPreferencesCode([]); // Fallback if no ols found
@@ -236,7 +235,7 @@ export const AssignMappingsCheckboxes = ({
       };
       //fetch call to search OLS with either preferred or default ontologies
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0
           ? apiPreferencesCode
@@ -245,30 +244,26 @@ export const AssignMappingsCheckboxes = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
         setResults,
-        setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
-        setFacetCounts
+        setMoreAvailable
       );
     } else
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0 ? apiPreferencesCode : defaultOntologies,
         page,
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
         setResults,
-        setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
-        setFacetCounts
+        setMoreAvailable
       );
   };
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
@@ -322,11 +317,11 @@ export const AssignMappingsCheckboxes = ({
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d?.label}</b>
+                <b>{d?.display}</b>
               </div>
               <div>
-                <a href={d?.iri} target="_blank">
-                  {d?.obo_id}
+                <a href={d?.code_iri} target="_blank">
+                  {d?.code}
                 </a>
               </div>
             </div>
@@ -355,13 +350,13 @@ export const AssignMappingsCheckboxes = ({
             <div className="modal_term_ontology">
               <div>
                 <div>
-                  <b>{d?.display || d?.label}</b>
+                  <b>{d?.display}</b>
                 </div>
               </div>
               <div>
                 {d?.code || (
                   <a href={d?.iri} target="_blank">
-                    {d?.obo_id}
+                    {d?.code}
                   </a>
                 )}
               </div>
@@ -404,7 +399,7 @@ export const AssignMappingsCheckboxes = ({
     const codesToExclude = new Set([
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude?.has(r.obo_id));
+    return results?.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();
@@ -571,11 +566,11 @@ export const AssignMappingsCheckboxes = ({
                                         (d, index) => {
                                           return {
                                             value: JSON.stringify({
-                                              code: d.obo_id,
-                                              display: d.label,
+                                              code: d.code,
+                                              display: d.display,
                                               description: d.description[0],
                                               system: systemsMatch(
-                                                d?.obo_id?.split(':')[0],
+                                                d?.code?.split(':')[0],
                                                 ontologyApis
                                               ),
                                             }),
@@ -630,18 +625,8 @@ export const AssignMappingsCheckboxes = ({
                   {((prefTerminologies.length > 0 && active === 'search') ||
                     prefTerminologies.length === 0) && (
                     <div className="view_more_wrapper">
-                      {/* 'View More' pagination displaying the number of results being displayed
-                      out of the total number of results. Because of the filter to filter out the duplicates,
-                      there is a tooltip informing the user that redundant entries have been removed to explain any
-                      inconsistencies in results numbers per page. */}
-                      <Tooltip
-                        placement="bottom"
-                        title="Redundant entries have been removed"
-                      >
-                        Displaying {resultsCount}
-                        &nbsp;of&nbsp;{totalCount}
-                      </Tooltip>
-                      {resultsCount < totalCount - filteredResultsCount && (
+                      {/* 'View More' pagination */}
+                      {moreAvailable && (
                         <span
                           className="view_more_link"
                           onClick={e => {

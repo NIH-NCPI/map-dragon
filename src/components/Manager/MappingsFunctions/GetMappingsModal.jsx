@@ -9,14 +9,17 @@ import {
 } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, systemsMatch } from '../Utilitiy';
+import { ellipsisString, systemsMatch } from '../Utility';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
+import {
+  getFiltersByCode,
+  olsFilterOntologiesSearch,
+  ontologyFilterCodeSubmit,
+} from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
-import { OntologyFilterCodeSubmit } from './OntologyFilterCodeSubmit';
-import { OntologyFilterCodeSubmitTerm } from './OntologyFilterCodeSubmitTerm';
+
 import { MappingRelationship } from './MappingRelationship';
 
 export const GetMappingsModal = ({
@@ -32,26 +35,30 @@ export const GetMappingsModal = ({
 }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
-  const { searchUrl, vocabUrl, setSelectedKey, user } = useContext(myContext);
+  const { vocabUrl, setSelectedKey, user } = useContext(myContext);
   const {
     preferenceType,
     defaultOntologies,
-    setFacetCounts,
+    // setFacetCounts,
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
     prefTypeKey,
     ontologyApis,
     setPrefTerminologies,
+    checkedOntologies,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
+    setResultsCount,
+    resultsCount,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
-  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
-  const [totalCount, setTotalCount] = useState();
-  const [resultsCount, setResultsCount] = useState();
+  // const [totalCount, setTotalCount] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-  const [filteredResultsCount, setFilteredResultsCount] = useState(0);
+  // const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
 
@@ -156,11 +163,11 @@ export const GetMappingsModal = ({
   // The mappings are turned into objects in the mappings array.
   const handleSubmit = values => {
     const selectedMappings = selectedBoxes?.map(item => ({
-      code: item.obo_id,
-      display: item.label,
+      code: item.code,
+      display: item.display,
       description: item.description[0],
-      system: systemsMatch(item.obo_id.split(':')[0], ontologyApis),
-      mapping_relationship: idsForSelect[item.obo_id],
+      system: systemsMatch(item.code.split(':')[0], ontologyApis),
+      mapping_relationship: idsForSelect[item.code],
     }));
 
     const mappingsDTO = {
@@ -206,23 +213,15 @@ export const GetMappingsModal = ({
         return error;
       })
       .finally(() => setLoading(false));
-    table
-      ? OntologyFilterCodeSubmit(
-          apiPreferencesCode,
-          preferenceType,
-          prefTypeKey,
-          mappingProp,
-          vocabUrl,
-          table
-        )
-      : OntologyFilterCodeSubmitTerm(
-          apiPreferencesCode,
-          preferenceType,
-          prefTypeKey,
-          mappingProp,
-          vocabUrl,
-          terminology
-        );
+    ontologyFilterCodeSubmit(
+      apiPreferencesCode,
+      preferenceType,
+      prefTypeKey,
+      mappingProp,
+      vocabUrl,
+      table,
+      terminology
+    );
   };
 
   const fetchResults = (page, query) => {
@@ -241,15 +240,18 @@ export const GetMappingsModal = ({
     ) {
       const apiPreferenceOntologies = () => {
         if (preferenceType[prefTypeKey]?.api_preference?.ols) {
-          return preferenceType[prefTypeKey].api_preference.ols.join(',');
+          return preferenceType[prefTypeKey].api_preference.ols
+            .join(',')
+            .toUpperCase();
         } else {
           // else if there are no preferred ontologies, it uses the default ontologies
           return defaultOntologies;
         }
       };
+
       //fetch call to search OLS with either preferred or default ontologies
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0
           ? apiPreferencesCode
@@ -258,30 +260,32 @@ export const GetMappingsModal = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
+        // setTotalCount,
         setResults,
-        setFilteredResultsCount,
+        // setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
-        setFacetCounts
+        setMoreAvailable
+        // setFacetCounts
       );
     } else
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0 ? apiPreferencesCode : defaultOntologies,
         page,
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
+        // setTotalCount,
         setResults,
-        setFilteredResultsCount,
+        // setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
-        setFacetCounts
+        setMoreAvailable
+        // setFacetCounts
       );
   };
 
@@ -307,11 +311,11 @@ export const GetMappingsModal = ({
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d.label}</b>
+                <b>{d.display}</b>
               </div>
               <div>
-                <a href={d.iri} target="_blank">
-                  {d.obo_id}
+                <a href={d.code_iri} target="_blank">
+                  {d.code}
                 </a>
               </div>
             </div>
@@ -329,11 +333,11 @@ export const GetMappingsModal = ({
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d?.label}</b>
+                <b>{d?.display}</b>
               </div>
               <div>
-                <a href={d?.iri} target="_blank">
-                  {d?.obo_id}
+                <a href={d?.code_iri} target="_blank">
+                  {d?.code}
                 </a>
               </div>
               <div>
@@ -363,8 +367,8 @@ export const GetMappingsModal = ({
   };
   const onSelectedChange = checkedValues => {
     const selected = JSON.parse(checkedValues?.[0]);
-    const selectedMapping = results.find(
-      result => result.obo_id === selected.code
+    const selectedMapping = results?.find(
+      result => result.code === selected.code
     );
 
     // Updates selectedMappings and displaySelectedMappings to include the new selected items
@@ -382,7 +386,7 @@ export const GetMappingsModal = ({
 
     // Filters out the selected checkboxes from the results being displayed
     const updatedResults = results.filter(
-      result => result.obo_id !== selected.code
+      result => result.code !== selected.code
     );
     setResults(updatedResults);
   };
@@ -393,7 +397,7 @@ export const GetMappingsModal = ({
     const codesToExclude = new Set([
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude?.has(r.obo_id));
+    return results.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();
@@ -470,7 +474,7 @@ export const GetMappingsModal = ({
                                 <Checkbox
                                   key={i}
                                   checked={selectedBoxes.some(
-                                    box => box.obo_id === sm.obo_id
+                                    box => box.code === sm.code
                                   )}
                                   value={sm}
                                   onChange={e => onCheckboxChange(e, sm, i)}
@@ -499,11 +503,11 @@ export const GetMappingsModal = ({
                                     (d, index) => {
                                       return {
                                         value: JSON.stringify({
-                                          code: d.obo_id,
-                                          display: d.label,
+                                          code: d.code,
+                                          display: d.display,
                                           description: d.description[0],
                                           system: systemsMatch(
-                                            d?.obo_id?.split(':')[0],
+                                            d?.code?.split(':')[0],
                                             ontologyApis
                                           ),
                                         }),
@@ -525,18 +529,9 @@ export const GetMappingsModal = ({
                     </div>
                   </Form>
                   <div className="view_more_wrapper">
-                    {/* 'View More' pagination displaying the number of results being displayed
-                      out of the total number of results. Because of the filter to filter out the duplicates,
-                      there is a tooltip informing the user that redundant entries have been removed to explain any
-                      inconsistencies in results numbers per page. */}
-                    <Tooltip
-                      placement="bottom"
-                      title={`${filteredResultsCount} redundant entries have been removed`}
-                    >
-                      Displaying {resultsCount}
-                      &nbsp;of&nbsp;{totalCount}
-                    </Tooltip>
-                    {resultsCount < totalCount - filteredResultsCount && (
+                    {/* 'View More' pagination */}
+
+                    {moreAvailable && (
                       <span
                         className="view_more_link"
                         onClick={e => {

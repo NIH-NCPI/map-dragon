@@ -8,7 +8,7 @@ import { Spinner } from '../../Manager/Spinner';
 import { getAll } from '../../Manager/FetchManager';
 import { Row, Col, Card, notification, Skeleton } from 'antd';
 import { AddStudy } from './AddStudy';
-import { ellipsisString } from '../../Manager/Utilitiy';
+import { ellipsisString } from '../../Manager/Utility';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 const { Meta } = Card;
 

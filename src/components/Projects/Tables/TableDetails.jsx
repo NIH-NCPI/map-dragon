@@ -31,7 +31,7 @@ import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTa
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
+import { ellipsisString, mappingTooltip } from '../../Manager/Utility';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -83,7 +83,6 @@ export const TableDetails = () => {
   }, [table, mapping, pageSize]);
 
   const updateMappings = (mapArr, mappingCode) => {
-    setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
       editor: user.email,
@@ -119,8 +118,7 @@ export const TableDetails = () => {
           });
         }
         return error;
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   // fetches the table and sets 'table' to the response
@@ -283,8 +281,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       item => item?.code === variable?.code
     );
     if (variableMappings && variableMappings.mappings?.length) {
-      return variableMappings.mappings.map(code => (
-        <div className="mapping" key={code.code}>
+      return variableMappings.mappings.map((code, i) => (
+        <div className="mapping" key={i}>
           <span className="mapping-display">
             <Tooltip
               title={

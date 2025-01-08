@@ -1,4 +1,4 @@
-import { ontologyReducer } from './Utilitiy';
+import { ontologyReducer } from './Utility';
 
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {
@@ -169,24 +169,23 @@ export const getOntologies = vocabUrl => {
 };
 
 export const olsFilterOntologiesSearch = (
-  searchUrl,
+  vocabUrl,
   query,
   ontologiesToSearch,
   page,
   entriesPerPage,
   pageStart,
   selectedBoxes,
-  setTotalCount,
   setResults,
-  setFilteredResultsCount,
   setResultsCount,
   setLoading,
   results,
-  setFacetCounts
+  setMoreAvailable
 ) => {
   setLoading(true);
+
   return fetch(
-    `${searchUrl}q=${query}&ontology=${ontologiesToSearch}&rows=${entriesPerPage}&start=${pageStart}`,
+    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
     {
       method: 'GET',
       headers: {
@@ -196,35 +195,22 @@ export const olsFilterOntologiesSearch = (
   )
     .then(res => res.json())
     .then(data => {
-      // filters results through the ontologyReducer function (defined in Manager/Utility.jsx)
-
-      let res = ontologyReducer(data?.response?.docs);
       // if the page > 0 (i.e. if this is not the first batch of results), the new results
       // are concatenated to the old
       if (selectedBoxes) {
-        res.results = res.results.filter(
-          d => !selectedBoxes.some(box => box.obo_id === d.obo_id)
+        data.results = data.results.filter(
+          d => !selectedBoxes.some(box => box.code === d.code)
         );
       }
 
-      if (page > 0 && results.length > 0) {
-        res.results = results.concat(res.results);
-
-        // Apply filtering to remove results with obo_id in selectedBoxes
-      } else {
-        // Set the total number of search results for pagination
-        setTotalCount(data.response.numFound);
+      if (page > 0 && results?.length > 0) {
+        data.results = results?.concat(data.results);
       }
 
-      //the results are set to res (the filtered, concatenated results)
+      setResults(data.results);
+      setMoreAvailable(data.more_results_available);
 
-      setResults(res.results);
-      setFilteredResultsCount(
-        prevState => prevState + res?.filteredResults?.length
-      );
-      // resultsCount is set to the length of the filtered, concatenated results for pagination
-      setResultsCount(res.results.length);
-      setFacetCounts(data?.facet_counts?.facet_fields?.ontologyPreferredPrefix);
+      setResultsCount(data?.results?.length);
     })
     .finally(() => setLoading(false));
 };
@@ -271,13 +257,57 @@ export const getFiltersByCode = (
 
       if (Array.isArray(ols)) {
         // If ols in api_preference is an array, use it as is
-        setApiPreferencesCode(ols); // Set state to the array
+        setApiPreferencesCode(ols.map(item => item.toUpperCase())); // Set state to the array
       } else if (typeof ols === 'string') {
         // If ols in api_preference is a string, split it into an array
-        const splitOntologies = ols.split(',');
+        const splitOntologies = ols.toUpperCase().split(',');
         setApiPreferencesCode(splitOntologies); // Set state to the array
       } else {
         setApiPreferencesCode([]); // Fallback if no ols found
       }
     });
+};
+
+export const ontologyFilterCodeSubmit = (
+  apiPreferencesCode,
+  preferenceType,
+  prefTypeKey,
+  mappingProp,
+  vocabUrl,
+  table,
+  terminology
+) => {
+  const apiPreference = { api_preference: { 'ols': [] } };
+  if (
+    apiPreferencesCode &&
+    (!preferenceType[prefTypeKey]?.api_preference?.[0] ||
+      JSON.stringify(
+        Object.values(preferenceType[prefTypeKey]?.api_preference)[0]?.sort()
+      ) !== JSON.stringify(apiPreferencesCode?.sort()))
+  ) {
+    apiPreference.api_preference.ols = apiPreferencesCode;
+    const fetchUrl = `${vocabUrl}/${
+      !table ? `Terminology/${terminology?.id}` : `Table/${table?.id}`
+    }/filter/${mappingProp}`;
+    fetch(fetchUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(apiPreference),
+    })
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error('An unknown error occurred.');
+        }
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the ontology preferences.',
+          });
+        }
+      });
+  }
 };

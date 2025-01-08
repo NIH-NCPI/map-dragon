@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ellipsisString } from '../Utilitiy';
+import { ellipsisString } from '../Utility';
 import { MappingRelationship } from './MappingRelationship';
 import { Tooltip } from 'antd';
 

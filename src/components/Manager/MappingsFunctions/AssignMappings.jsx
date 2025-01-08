@@ -5,6 +5,7 @@ import { AssignMappingsCheckboxes } from './AssignMappingsCheckboxes';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { ontologyFilterCodeSubmit } from '../FetchManager';
 
 export const AssignMappings = ({
   setSelectedKey,
@@ -16,7 +17,13 @@ export const AssignMappings = ({
   const [form] = Form.useForm();
 
   const { vocabUrl, user } = useContext(myContext);
-  const { prefTerminologies, setApiResults } = useContext(SearchContext);
+  const {
+    prefTerminologies,
+    setApiResults,
+    preferenceType,
+    prefTypeKey,
+    apiPreferencesCode,
+  } = useContext(SearchContext);
   const { setMapping, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
@@ -66,7 +73,7 @@ export const AssignMappings = ({
         ? item.description[0]
         : item.description,
       system: item.system,
-      mapping_relationship: idsForSelect[item.obo_id || item.code],
+      mapping_relationship: idsForSelect[item.code],
     }));
     const mappingsDTO = {
       mappings: selectedMappings,
@@ -97,6 +104,15 @@ export const AssignMappings = ({
         message.success('Changes saved successfully.');
       })
       .finally(() => setLoading(false));
+    ontologyFilterCodeSubmit(
+      apiPreferencesCode,
+      preferenceType,
+      prefTypeKey,
+      mappingProp,
+      vocabUrl,
+      null,
+      terminology
+    );
   };
 
   return (

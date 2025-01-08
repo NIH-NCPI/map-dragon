@@ -6,10 +6,10 @@ export const MappingRelationship = ({ mapping }) => {
   const { relationshipOptions, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
 
-  const handleSelectChange = (obo_id, value) => {
+  const handleSelectChange = (code, value) => {
     setIdsForSelect(prev => ({
       ...prev,
-      [obo_id]: value,
+      [code]: value,
     }));
   };
 
@@ -25,14 +25,14 @@ export const MappingRelationship = ({ mapping }) => {
       options={options}
       defaultValue={mapping?.mapping_relationship || undefined}
       style={{
-        width: 120,
+        width: 'fit-content',
       }}
       placeholder="Relationship"
       popupMatchSelectWidth={false}
       allowClear
-      value={idsForSelect[mapping.obo_id || mapping.code]}
+      value={idsForSelect[mapping.code || mapping.code]}
       onChange={value =>
-        handleSelectChange(mapping.obo_id || mapping.code, value)
+        handleSelectChange(mapping.code || mapping.code, value)
       }
       onClick={e => e.preventDefault()}
     />

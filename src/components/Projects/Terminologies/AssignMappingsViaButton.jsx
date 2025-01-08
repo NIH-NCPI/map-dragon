@@ -5,7 +5,7 @@ import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { ModalSpinner } from '../../Manager/Spinner';
-import { OntologyFilterCodeSubmitTerm } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmitTerm';
+import { ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 
 export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
@@ -67,7 +67,7 @@ export const AssignMappingsViaButton = ({
         ? item.description[0]
         : item.description,
       system: item.system,
-      mapping_relationship: idsForSelect[item.obo_id || item.code],
+      mapping_relationship: idsForSelect[item.code],
     }));
     const mappingsDTO = {
       mappings: selectedMappings,
@@ -98,12 +98,13 @@ export const AssignMappingsViaButton = ({
         message.success('Changes saved successfully.');
       })
       .finally(() => setLoading(false));
-    OntologyFilterCodeSubmitTerm(
+    ontologyFilterCodeSubmit(
       apiPreferencesCode,
       preferenceType,
       prefTypeKey,
       assignMappingsViaButton?.code,
       vocabUrl,
+      null,
       terminology
     );
   };

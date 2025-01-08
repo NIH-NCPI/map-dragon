@@ -15,7 +15,7 @@ import {
 } from 'antd';
 import './DDStyling.scss';
 import { getById } from '../../Manager/FetchManager';
-import { ellipsisString } from '../../Manager/Utilitiy';
+import { ellipsisString } from '../../Manager/Utility';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { EditDDDetails } from './EditDDDetails';
 import { UploadTable } from '../Tables/UploadTable';

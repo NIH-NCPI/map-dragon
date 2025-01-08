@@ -6,7 +6,7 @@ import './StudyStyling.scss';
 import { getById, handleUpdate } from '../../Manager/FetchManager';
 import { Row, Col, Divider, Skeleton, Card, Form, notification } from 'antd';
 
-import { ellipsisString } from '../../Manager/Utilitiy';
+import { ellipsisString } from '../../Manager/Utility';
 import { SettingsDropdownStudy } from '../../Manager/Dropdown/SettingsDropdownStudy';
 import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
