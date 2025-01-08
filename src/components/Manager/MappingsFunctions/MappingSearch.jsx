@@ -54,6 +54,7 @@ export const MappingSearch = ({
     setDisplaySelectedMappings,
     selectedBoxes,
     setSelectedBoxes,
+    existingMappings,
   } = useContext(MappingContext);
 
   let ref = useRef();
@@ -253,7 +254,8 @@ export const MappingSearch = ({
   };
 
   const onExistingChange = checkedValues => {
-    setExistingMappings(checkedValues);
+    const parsedValues = checkedValues.map(cv => JSON.parse(cv));
+    setExistingMappings(parsedValues);
   };
 
   // If the checkbox is checked, it adds the object to the selectedBoxes array
@@ -410,8 +412,12 @@ export const MappingSearch = ({
     );
   };
 
+  // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
+  useEffect(() => {
+    setExistingMappings(mappingsForSearch);
+  }, []);
   // Iterates through the array of previously selected mappings. Returns a JSON stringified object to use as default checked values separate from the search results.
-  const initialChecked = mappingsForSearch.map(m =>
+  const initialChecked = existingMappings.map(m =>
     JSON.stringify({
       code: m?.code,
       display: m?.display,
@@ -419,11 +425,6 @@ export const MappingSearch = ({
       system: m?.system,
     })
   );
-
-  // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
-  useEffect(() => {
-    setExistingMappings(mappingsForSearch);
-  }, []);
 
   // Creates a Set that excludes the mappings that have already been selected.
   // Then filteres the existing mappings out of the results to only display results that have not yet been selected.

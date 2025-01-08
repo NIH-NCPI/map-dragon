@@ -27,7 +27,7 @@ export const SearchResults = () => {
   const { query } = useParams();
   const navigate = useNavigate();
   const ref = useRef();
-  const pageref = useRef;
+  const pageref = useRef();
   const pageStart = page * entriesPerPage;
 
   useEffect(() => {
@@ -158,7 +158,9 @@ The user is then redirected to the search page, which completes the search for t
                       <>
                         <div
                           key={index}
-                          pageref={index === lastCount + 1 ? ref : undefined}
+                          pageref={
+                            index === lastCount + 1 ? pageref : undefined
+                          }
                           className="search_result"
                         >
                           <div className="term_ontology">

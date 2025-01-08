@@ -31,7 +31,8 @@ export const EditMappingsModal = ({
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
-  const { setShowOptions, idsForSelect } = useContext(MappingContext);
+  const { setShowOptions, idsForSelect, selectedBoxes, existingMappings } =
+    useContext(MappingContext);
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
@@ -182,27 +183,24 @@ export const EditMappingsModal = ({
   // The existing and new mappings are JSON.parsed combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
     setLoading(true);
-    const selectedMappings = values?.selected_mappings?.map(item => ({
+    const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
       description: item.description,
-      system:
-        item.system || systemsMatch(item.code.split(':')[0], ontologyApis),
+      system: systemsMatch(item.code.split(':')[0], ontologyApis),
       mapping_relationship: idsForSelect[item.code],
     }));
-    const mappingsDTO = {
-      mappings: [
-        ...(values.existing_mappings?.map(v => {
-          const parsedMapping = JSON.parse(v);
-          if (idsForSelect[parsedMapping.code]) {
-            parsedMapping.mapping_relationship =
-              idsForSelect[parsedMapping.code];
-          }
 
-          return parsedMapping;
-        }) ?? []),
-        ...(selectedMappings ?? []),
-      ],
+    const preexistingMappings = existingMappings?.map(item => ({
+      code: item.code,
+      display: item.display,
+      description: item.description,
+      system: systemsMatch(item?.code?.split(':')[0], ontologyApis),
+      mapping_relationship: idsForSelect[item.code],
+    }));
+
+    const mappingsDTO = {
+      mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
       editor: user.email,
     };
 
