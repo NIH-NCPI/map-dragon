@@ -116,6 +116,7 @@ export const FilterAPI = ({
       </>
     );
   };
+
   return loading ? (
     <ModalSpinner />
   ) : (
@@ -129,18 +130,7 @@ export const FilterAPI = ({
                   APIs
                 </Tooltip>
               </div>
-
-              <Form.Item name={'selected_apis'} valuePropName="value">
-                <Checkbox.Group
-                  className="mappings_checkbox"
-                  options={ontologyApis.map((api, index) => {
-                    return {
-                      value: JSON.stringify({ api_preference: api?.api_id }),
-                      label: checkboxDisplay(api, index),
-                    };
-                  })}
-                />
-              </Form.Item>
+              {ontologyApis.map((api, index) => checkboxDisplay(api, index))}
             </div>
             <div style={{ flex: '0 0 70%' }}>
               {tableLoading ? (

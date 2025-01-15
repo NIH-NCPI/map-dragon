@@ -94,13 +94,6 @@ export const FilterSelect = ({ component, table, terminology }) => {
           apiPreference.api_preference[api].push(ontology_code);
         }
       });
-    } else {
-      // If no ontologies are provided, initialize api preferences from selected_apis
-      values?.selected_apis?.forEach(item => {
-        const apiObj = JSON.parse(item);
-        const apiName = apiObj.api_preference;
-        apiPreference.api_preference[apiName] = []; // Create an empty array for each api_preference
-      });
     }
 
     // Now handle the existing_filters
