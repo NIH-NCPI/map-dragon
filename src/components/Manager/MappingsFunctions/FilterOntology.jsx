@@ -57,8 +57,11 @@ export const FilterOntology = ({
     }
   };
 
-  const onExistingChange = checkedValues => {
-    setExistingOntologies(checkedValues);
+  const onExistingChange = (checkedValues, api) => {
+    setExistingOntologies(prevState => ({
+      ...prevState,
+      [api]: checkedValues,
+    }));
   };
 
   const onSelectedChange = checkedValues => {
@@ -136,11 +139,16 @@ export const FilterOntology = ({
       )
     )
     .flat();
+  console.log(flattenedFilters);
 
-  const initialChecked = flattenedFilters?.map(ef => ef.ontology);
+  let initialChecked = {};
+  Array.from(new Set(flattenedFilters.map(ff => ff.api))).forEach(api => {
+    initialChecked[api] = flattenedFilters
+      .filter(ff => ff.api === api)
+      .map(item => item.ontology);
+  });
+
   const [existingOntologies, setExistingOntologies] = useState(initialChecked);
-
-  console.log('existingOntologies', existingOntologies);
 
   return (
     <>
@@ -156,11 +164,10 @@ export const FilterOntology = ({
         ) && (
           <>
             <div className="onto_reset">
-              <h4>Ontology Filters</h4>{' '}
+              <h4>Ontology Filters</h4>
               <FilterReset table={table} terminology={terminology} />
             </div>
             <Form.Item
-              initialValue={initialChecked}
               name={['existing_filters']}
               valuePropName="value"
               rules={[
@@ -178,7 +185,7 @@ export const FilterOntology = ({
                       );
                       if (apiOntologies.length > 0) {
                         const options = apiOntologies.map((ff, index) => ({
-                          value: ff.ontology, // Use the ontology value here
+                          value: ff.ontology,
                           label: existingDisplay(ff, index),
                         }));
 
@@ -188,9 +195,11 @@ export const FilterOntology = ({
                               {api.toUpperCase()}
                             </div>
                             <Checkbox.Group
-                              value={existingOntologies}
+                              value={existingOntologies[api]}
                               options={options}
-                              onChange={onExistingChange}
+                              onChange={checkedValues =>
+                                onExistingChange(checkedValues, api)
+                              }
                             />
                           </div>
                         );

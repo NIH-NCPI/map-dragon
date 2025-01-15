@@ -6,7 +6,6 @@ import { FilterOntology } from './FilterOntology';
 
 export const FilterAPI = ({
   form,
-  selectedOntologies,
   setSelectedOntologies,
   selectedBoxes,
   setSelectedBoxes,
@@ -15,40 +14,17 @@ export const FilterAPI = ({
   ontologyApis,
   active,
   setActive,
-  currentPage,
-  setCurrentPage,
-  pageSize,
-  setPageSize,
   paginatedOntologies,
   apiPreferences,
   table,
   terminology,
+  existingOntologies,
+  setExistingOntologies,
 }) => {
   const { vocabUrl } = useContext(myContext);
   const [ontology, setOntology] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
-
-  // The selected ontology filters that have already been selected
-  const existingFilters = Object.values(apiPreferences?.self || {}).flat();
-
-  // Flattens the existingFilters into a single array
-  const flattenedFilters = existingFilters
-    .flatMap(item =>
-      Object.keys(item).map(key =>
-        item[key].map(value => ({
-          api: key,
-        }))
-      )
-    )
-    .flat();
-
-  // The initial value for the form. The checkboxes for the filters that have already been selected will be checked by default
-  const initialChecked = flattenedFilters?.map(ef =>
-    JSON.stringify({
-      ontology: ef,
-    })
-  );
 
   // Fetches the active ontologyAPI each time the active API changes
   useEffect(() => {
@@ -141,20 +117,17 @@ export const FilterAPI = ({
                 <FilterOntology
                   ontology={ontology}
                   form={form}
-                  selectedOntologies={selectedOntologies}
                   setSelectedOntologies={setSelectedOntologies}
                   selectedBoxes={selectedBoxes}
                   setSelectedBoxes={setSelectedBoxes}
                   displaySelectedOntologies={displaySelectedOntologies}
                   setDisplaySelectedOntologies={setDisplaySelectedOntologies}
-                  currentPage={currentPage}
-                  setCurrentPage={setCurrentPage}
-                  pageSize={pageSize}
-                  setPageSize={setPageSize}
                   paginatedOntologies={paginatedOntologies}
                   apiPreferences={apiPreferences}
                   table={table}
                   terminology={terminology}
+                  existingOntologies={existingOntologies}
+                  setExistingOntologies={setExistingOntologies}
                 />
               )}
             </div>

@@ -34,6 +34,29 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setSearchText,
   } = useContext(SearchContext);
 
+  const existingFilters = Object.values(
+    preferenceType[prefTypeKey] || {}
+  )?.flat();
+
+  const flattenedFilters = existingFilters
+    .flatMap(item =>
+      Object.keys(item).map(key =>
+        item[key].map(value => ({
+          api: key,
+          ontology: value,
+        }))
+      )
+    )
+    .flat();
+
+  let initialChecked = {};
+  Array.from(new Set(flattenedFilters.map(ff => ff.api))).forEach(api => {
+    initialChecked[api] = flattenedFilters
+      .filter(ff => ff.api === api)
+      .map(item => item.ontology);
+  });
+
+  const [existingOntologies, setExistingOntologies] = useState(initialChecked);
   // Gets the ontologyAPIs on first load, automatically sets active to the first of the list to display on the page
   useEffect(() => {
     setLoading(true);
@@ -79,6 +102,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
   const handleSubmit = values => {
+    console.log(values);
     setLoading(true);
     const apiPreference = {
       api_preference: {},
@@ -288,7 +312,6 @@ export const FilterSelect = ({ component, table, terminology }) => {
           ) : (
             <FilterAPI
               form={form}
-              selectedOntologies={selectedOntologies}
               setSelectedOntologies={setSelectedOntologies}
               selectedBoxes={selectedBoxes}
               setSelectedBoxes={setSelectedBoxes}
@@ -297,16 +320,12 @@ export const FilterSelect = ({ component, table, terminology }) => {
               ontologyApis={ontologyApis}
               active={active}
               setActive={setActive}
-              searchText={searchText}
-              setSearchText={setSearchText}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              pageSize={pageSize}
-              setPageSize={setPageSize}
               paginatedOntologies={paginatedOntologies}
               apiPreferences={apiPreferences}
               table={table}
               terminology={terminology}
+              existingOntologies={existingOntologies}
+              setExistingOntologies={setExistingOntologies}
             />
           )}
         </Modal>
