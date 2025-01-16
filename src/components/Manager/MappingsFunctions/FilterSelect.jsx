@@ -34,6 +34,10 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setSearchText,
   } = useContext(SearchContext);
 
+  useEffect(() => {
+    setExistingOntologies(initialChecked);
+  }, [addFilter]);
+
   const existingFilters = Object.values(
     preferenceType[prefTypeKey] || {}
   )?.flat();
@@ -98,51 +102,36 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setSearchText('');
   };
 
+  console.log('existingOntologies', existingOntologies);
+  console.log('selectedBoxes', selectedBoxes);
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
   const handleSubmit = values => {
-    console.log(values);
     setLoading(true);
-    const apiPreference = {
-      api_preference: {},
-    };
-
-    if (values?.ontologies?.length > 0) {
-      // If there are ontologies, populate apiPreference with them
-      values.ontologies.forEach(({ ontology_code, api }) => {
-        if (!apiPreference.api_preference[api]) {
-          apiPreference.api_preference[api] = [];
-        }
-        if (!apiPreference.api_preference[api].includes(ontology_code)) {
-          apiPreference.api_preference[api].push(ontology_code);
-        }
-      });
-    }
-
-    // Now handle the existing_filters
-    if (values?.existing_filters?.length > 0) {
-      values.existing_filters.forEach(item => {
-        const apiObj = JSON.parse(item); // Parse the JSON string
-        const apiName = apiObj.ontology.api; // Extract the API
-        const ontologyCode = apiObj.ontology.ontology; // Extract the ontology code
-
-        // Ensure the apiName exists in apiPreference.api_preference
-        if (!apiPreference.api_preference[apiName]) {
-          apiPreference.api_preference[apiName] = []; // Initialize if not already present
-        }
-
-        // Add the ontologyCode to the corresponding api, if it's not already included
-        if (!apiPreference.api_preference[apiName].includes(ontologyCode)) {
-          apiPreference.api_preference[apiName].push(ontologyCode);
-        }
-      });
-    }
-
     const apiPreferenceDTO = {
-      api_preference: apiPreference?.api_preference,
-      editor: user.email,
+      api_preference: {},
+      editor: user?.email,
     };
+
+    Object.keys(existingOntologies).forEach(api => {
+      apiPreferenceDTO.api_preference[api] = existingOntologies[api];
+    });
+
+    selectedBoxes.forEach(box => {
+      const api = box.api;
+      const ontology_code = box.ontology_code;
+
+      // If the api already exists, merge with the existing ones
+      if (apiPreferenceDTO.api_preference[api]) {
+        apiPreferenceDTO.api_preference[api] = [
+          ...new Set([...apiPreferenceDTO.api_preference[api], ontology_code]),
+        ];
+      } else {
+        // Otherwise, create a new entry for that api
+        apiPreferenceDTO.api_preference[api] = [ontology_code];
+      }
+    });
 
     const method =
       Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).length ===
@@ -326,6 +315,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
               terminology={terminology}
               existingOntologies={existingOntologies}
               setExistingOntologies={setExistingOntologies}
+              flattenedFilters={flattenedFilters}
             />
           )}
         </Modal>

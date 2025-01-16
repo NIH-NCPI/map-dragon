@@ -20,6 +20,7 @@ export const FilterAPI = ({
   terminology,
   existingOntologies,
   setExistingOntologies,
+  flattenedFilters,
 }) => {
   const { vocabUrl } = useContext(myContext);
   const [ontology, setOntology] = useState([]);
@@ -128,6 +129,7 @@ export const FilterAPI = ({
                   terminology={terminology}
                   existingOntologies={existingOntologies}
                   setExistingOntologies={setExistingOntologies}
+                  flattenedFilters={flattenedFilters}
                 />
               )}
             </div>
