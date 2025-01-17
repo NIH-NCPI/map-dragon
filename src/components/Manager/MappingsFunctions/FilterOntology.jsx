@@ -67,7 +67,6 @@ export const FilterOntology = ({
     }));
   };
 
-  console.log(existingOntologies);
   const onSelectedChange = checkedValues => {
     if (checkedValues.length > 0) {
       const selected = JSON.parse(checkedValues[0]);
@@ -127,32 +126,8 @@ export const FilterOntology = ({
     );
   };
 
-  // The first key is different depending if it's coming from a table or terminology. This dynamically gets the first key
-
-  // const existingFilters = Object.values(
-  //   preferenceType[prefTypeKey] || {}
-  // )?.flat();
-
-  // const flattenedFilters = existingFilters
-  //   .flatMap(item =>
-  //     Object.keys(item).map(key =>
-  //       item[key].map(value => ({
-  //         api: key,
-  //         ontology: value,
-  //       }))
-  //     )
-  //   )
-  //   .flat();
-  // console.log(flattenedFilters);
-
-  // let initialChecked = {};
-  // Array.from(new Set(flattenedFilters.map(ff => ff.api))).forEach(api => {
-  //   initialChecked[api] = flattenedFilters
-  //     .filter(ff => ff.api === api)
-  //     .map(item => item.ontology);
-  // });
-
-  // const [existingOntologies, setExistingOntologies] = useState(initialChecked);
+  console.log('flattenedFilters', flattenedFilters);
+  console.log('displaySelected', displaySelectedOntologies);
 
   return (
     <>

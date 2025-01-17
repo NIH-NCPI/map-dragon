@@ -102,8 +102,6 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setSearchText('');
   };
 
-  console.log('existingOntologies', existingOntologies);
-  console.log('selectedBoxes', selectedBoxes);
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
