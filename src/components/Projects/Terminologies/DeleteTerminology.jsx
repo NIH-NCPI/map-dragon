@@ -14,6 +14,7 @@ export const DeleteTerminology = ({ setTerms, deleteId, setDeleteId }) => {
   const deleteTerm = evt => {
     fetch(`${vocabUrl}/Terminology/${deleteId}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

@@ -23,6 +23,7 @@ export const FilterReset = ({ table, terminology, setExistingOntologies }) => {
       }`,
       {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -51,6 +52,7 @@ export const FilterReset = ({ table, terminology, setExistingOntologies }) => {
           }`,
           {
             method: 'GET',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },

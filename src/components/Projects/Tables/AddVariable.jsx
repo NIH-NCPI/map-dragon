@@ -34,6 +34,7 @@ export const AddVariable = ({ table, setTable }) => {
 
     fetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

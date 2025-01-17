@@ -69,6 +69,7 @@ export const EditMappingsModal = ({
         )}`,
         {
           method: 'GET',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -157,6 +158,7 @@ export const EditMappingsModal = ({
       )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -219,6 +221,7 @@ export const EditMappingsModal = ({
       )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

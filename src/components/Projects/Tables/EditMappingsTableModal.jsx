@@ -70,6 +70,7 @@ export const EditMappingsTableModal = ({
         `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(editMappings.code)}`,
         {
           method: 'GET',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },

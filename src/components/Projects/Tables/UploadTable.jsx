@@ -34,6 +34,7 @@ export const UploadTable = ({ addTable, setAddTable }) => {
     const newTableArray = [...dataDictionary?.tables];
     fetch(`${vocabUrl}/LoadTable`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

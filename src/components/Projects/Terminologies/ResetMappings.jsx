@@ -20,6 +20,7 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
       )}`,
       {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
