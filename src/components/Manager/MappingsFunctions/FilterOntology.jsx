@@ -112,6 +112,26 @@ export const FilterOntology = ({
     );
   };
 
+  const selectedCheckBoxDisplay = (ont, i) => {
+    return (
+      <>
+        <div key={i} className="modal_search_result">
+          <div>
+            <div className="modal_term_ontology">
+              <div>
+                {ont?.curie}{' '}
+                <span className="display_selected_api">
+                  ({ont?.api?.toUpperCase()})
+                </span>
+              </div>
+            </div>
+            <div>{ont?.ontology_title}</div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   const existingDisplay = (ont, i) => {
     return (
       <>
@@ -125,9 +145,6 @@ export const FilterOntology = ({
       </>
     );
   };
-
-  console.log('flattenedFilters', flattenedFilters);
-  console.log('displaySelected', displaySelectedOntologies);
 
   return (
     <>
@@ -144,7 +161,11 @@ export const FilterOntology = ({
           <>
             <div className="onto_reset">
               <h4>Ontology Filters</h4>
-              <FilterReset table={table} terminology={terminology} />
+              <FilterReset
+                table={table}
+                terminology={terminology}
+                setExistingOntologies={setExistingOntologies}
+              />
             </div>
             <Form.Item
               name={['existing_filters']}
@@ -204,7 +225,7 @@ export const FilterOntology = ({
                     value={selected}
                     onChange={e => onCheckboxChange(e, selected)}
                   >
-                    {checkBoxDisplay(selected, i)}
+                    {selectedCheckBoxDisplay(selected, i)}
                   </Checkbox>
                 ))}
               </div>

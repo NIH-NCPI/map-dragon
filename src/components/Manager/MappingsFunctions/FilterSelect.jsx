@@ -6,11 +6,9 @@ import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { useParams } from 'react-router-dom';
 
 export const FilterSelect = ({ component, table, terminology }) => {
   const [form] = Form.useForm();
-  const { tableId } = useParams();
 
   const [addFilter, setAddFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
