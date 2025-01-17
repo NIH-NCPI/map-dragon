@@ -15,6 +15,9 @@ export const FilterOntology = ({
   paginatedOntologies,
   table,
   terminology,
+  existingOntologies,
+  setExistingOntologies,
+  flattenedFilters,
 }) => {
   const { Search } = Input;
   const [allCheckboxes, setAllCheckboxes] = useState([]);
@@ -55,6 +58,13 @@ export const FilterOntology = ({
     } else {
       setSelectedBoxes(prevState => prevState.filter(val => val !== selected));
     }
+  };
+
+  const onExistingChange = (checkedValues, api) => {
+    setExistingOntologies(prevState => ({
+      ...prevState,
+      [api]: checkedValues,
+    }));
   };
 
   const onSelectedChange = checkedValues => {
@@ -102,6 +112,26 @@ export const FilterOntology = ({
     );
   };
 
+  const selectedCheckBoxDisplay = (ont, i) => {
+    return (
+      <>
+        <div key={i} className="modal_search_result">
+          <div>
+            <div className="modal_term_ontology">
+              <div>
+                {ont?.curie}{' '}
+                <span className="display_selected_api">
+                  ({ont?.api?.toUpperCase()})
+                </span>
+              </div>
+            </div>
+            <div>{ont?.ontology_title}</div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   const existingDisplay = (ont, i) => {
     return (
       <>
@@ -115,29 +145,6 @@ export const FilterOntology = ({
       </>
     );
   };
-
-  // The first key is different depending if it's coming from a table or terminology. This dynamically gets the first key
-
-  const existingFilters = Object.values(
-    preferenceType[prefTypeKey] || {}
-  )?.flat();
-
-  const flattenedFilters = existingFilters
-    .flatMap(item =>
-      Object.keys(item).map(key =>
-        item[key].map(value => ({
-          api: key,
-          ontology: value,
-        }))
-      )
-    )
-    .flat();
-
-  const initialChecked = flattenedFilters?.map(ef =>
-    JSON.stringify({
-      ontology: ef,
-    })
-  );
 
   return (
     <>
@@ -153,11 +160,14 @@ export const FilterOntology = ({
         ) && (
           <>
             <div className="onto_reset">
-              <h4>Ontology Filters</h4>{' '}
-              <FilterReset table={table} terminology={terminology} />
+              <h4>Ontology Filters</h4>
+              <FilterReset
+                table={table}
+                terminology={terminology}
+                setExistingOntologies={setExistingOntologies}
+              />
             </div>
             <Form.Item
-              initialValue={initialChecked}
               name={['existing_filters']}
               valuePropName="value"
               rules={[
@@ -167,26 +177,45 @@ export const FilterOntology = ({
               ]}
             >
               {flattenedFilters?.length > 0 && (
-                <Checkbox.Group
-                  className="mappings_checkbox"
-                  options={flattenedFilters?.map((ff, index) => {
-                    return {
-                      value: JSON.stringify({
-                        ontology: ff,
-                      }),
-                      label: existingDisplay(ff, index),
-                    };
-                  })}
-                />
+                <div className="mappings_checkbox bottom_border_div">
+                  {Array.from(new Set(flattenedFilters.map(ff => ff.api))).map(
+                    api => {
+                      const apiOntologies = flattenedFilters.filter(
+                        ff => ff.api === api
+                      );
+                      if (apiOntologies.length > 0) {
+                        const options = apiOntologies.map((ff, index) => ({
+                          value: ff.ontology,
+                          label: existingDisplay(ff, index),
+                        }));
+
+                        return (
+                          <div key={api} className="api_wrapper">
+                            <div className="api_header">
+                              {api.toUpperCase()}
+                            </div>
+                            <Checkbox.Group
+                              value={existingOntologies[api]}
+                              options={options}
+                              onChange={checkedValues =>
+                                onExistingChange(checkedValues, api)
+                              }
+                            />
+                          </div>
+                        );
+                      }
+                      return null;
+                    }
+                  )}
+                </div>
               )}
             </Form.Item>
           </>
         )}
         {displaySelectedOntologies.length > 0 && (
           <>
-            <h4>Selected</h4>
             <Form.Item name={'selected_ontologies'} valuePropName="value">
-              <div className="modal_selected">
+              <div className="modal_selected bottom_border_div">
                 {displaySelectedOntologies?.map((selected, i) => (
                   <Checkbox
                     key={i}
@@ -196,17 +225,14 @@ export const FilterOntology = ({
                     value={selected}
                     onChange={e => onCheckboxChange(e, selected)}
                   >
-                    {checkBoxDisplay(selected, i)}
+                    {selectedCheckBoxDisplay(selected, i)}
                   </Checkbox>
                 ))}
               </div>
             </Form.Item>
           </>
         )}
-        {(Object.keys(preferenceType?.self?.api_preference || {}).some(
-          key => preferenceType?.self?.api_preference[key]?.length > 0
-        ) ||
-          displaySelectedOntologies.length > 0) && <h4>Ontologies</h4>}
+
         <Form.Item name={'ontologies'} valuePropName="value">
           <Checkbox.Group
             className="mappings_checkbox"

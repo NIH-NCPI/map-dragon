@@ -5,9 +5,8 @@ import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { useParams } from 'react-router-dom';
 
-export const FilterReset = ({ table, terminology }) => {
+export const FilterReset = ({ table, terminology, setExistingOntologies }) => {
   const { confirm } = Modal;
-  const { tableId } = useParams();
 
   const { user, vocabUrl } = useContext(myContext);
   const { preferenceTypeSet } = useContext(SearchContext);
@@ -33,6 +32,7 @@ export const FilterReset = ({ table, terminology }) => {
       .then(res => {
         if (res.ok) {
           return res.json().then(data => {
+            setExistingOntologies([]);
             message.success('Ontology filters deleted successfully.');
           });
         } else {
