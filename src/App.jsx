@@ -43,9 +43,6 @@ function App() {
   message.config({
     top: '25vh',
   });
-  useEffect(() => {
-    getSessionStatus(vocabUrl);
-  });
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <myContext.Provider
