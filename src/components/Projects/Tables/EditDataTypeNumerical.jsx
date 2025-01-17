@@ -1,6 +1,18 @@
-import { Form, Input, InputNumber, Space } from 'antd';
+import { Form, InputNumber, Select, Space } from 'antd';
+import { useContext } from 'react';
+import { myContext } from '../../../App';
 
-export const EditDataTypeNumerical = ({ type, form }) => {
+export const EditDataTypeNumerical = ({ type, form, tableData }) => {
+  const { ucumCodes } = useContext(myContext);
+
+  const options = ucumCodes.map((uc, i) => {
+    return {
+      key: i,
+      value: `ucum:${uc.code}`,
+      label: uc.display,
+    };
+  });
+
   // Validation function to ensure values are numbers and min is less than max
   const validateMinMax = () => {
     const min = parseFloat(form.getFieldValue('min'));
@@ -82,11 +94,25 @@ export const EditDataTypeNumerical = ({ type, form }) => {
           />
         </Form.Item>
         <Form.Item preserve={false} label="Units" name={['units']}>
-          <Input
+          <Select
+            showSearch
             style={{
-              width: '15vw',
+              width: '100%',
             }}
-            placeholder="Units"
+            defaultValue={tableData?.units || undefined}
+            placeholder="Select UCUM units"
+            optionFilterProp="children"
+            popupMatchSelectWidth={false}
+            filterOption={(input, option) => {
+              const labelMatch = (option?.label ?? '')
+                .toLowerCase()
+                .includes(input.toLowerCase());
+              const valueMatch = (option?.value ?? '')
+                .toLowerCase()
+                .includes(input.toLowerCase());
+              return labelMatch || valueMatch;
+            }}
+            options={options}
           />
         </Form.Item>
       </Space>

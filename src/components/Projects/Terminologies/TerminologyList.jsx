@@ -1,4 +1,4 @@
-import { Button, Input, Space, Table } from 'antd';
+import { Button, Input, notification, Space, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
@@ -32,6 +32,15 @@ export const TerminologyList = () => {
     getAll(vocabUrl, 'Terminology', navigate)
       .then(data => {
         setTerms(data);
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred loading terminologies.',
+          });
+        }
+        return error;
       })
       .finally(() => setLoading(false));
     localStorage.setItem('pageSize', pageSize);

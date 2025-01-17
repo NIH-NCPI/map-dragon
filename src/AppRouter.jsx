@@ -39,7 +39,6 @@ export const AppRouter = () => {
       return false;
     }
   };
-
   return (
     <BrowserRouter>
       <Routes>

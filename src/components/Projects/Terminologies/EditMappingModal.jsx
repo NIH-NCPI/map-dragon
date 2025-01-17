@@ -12,11 +12,9 @@ import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetMappings } from './ResetMappings';
-import { MappingReset } from '../../Manager/MappingsFunctions/MappingReset';
-import { systemsMatch } from '../../Manager/Utilitiy';
-import { getById } from '../../Manager/FetchManager';
+import { systemsMatch } from '../../Manager/Utility';
+import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { OntologyFilterCodeSubmitTerm } from '../../Manager/MappingsFunctions/OntologyFilterCodeSubmitTerm';
 import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
@@ -33,7 +31,8 @@ export const EditMappingsModal = ({
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
-  const { setShowOptions, idsForSelect } = useContext(MappingContext);
+  const { setShowOptions, idsForSelect, selectedBoxes, existingMappings } =
+    useContext(MappingContext);
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
@@ -143,10 +142,10 @@ export const EditMappingsModal = ({
 
           return parsedMapping;
         }) ?? [],
-      // editor: user.email,
+      editor: user.email,
     };
     fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         credentials: 'include',
@@ -186,32 +185,29 @@ export const EditMappingsModal = ({
   // The existing and new mappings are JSON.parsed combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
     setLoading(true);
-    const selectedMappings = values?.selected_mappings?.map(item => ({
+    const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
       description: item.description,
-      system:
-        item.system || systemsMatch(item.obo_id.split(':')[0], ontologyApis),
+      system: systemsMatch(item.code.split(':')[0], ontologyApis),
       mapping_relationship: idsForSelect[item.code],
     }));
-    const mappingsDTO = {
-      mappings: [
-        ...(values.existing_mappings?.map(v => {
-          const parsedMapping = JSON.parse(v);
-          if (idsForSelect[parsedMapping.code]) {
-            parsedMapping.mapping_relationship =
-              idsForSelect[parsedMapping.code];
-          }
 
-          return parsedMapping;
-        }) ?? []),
-        ...(selectedMappings ?? []),
-      ],
-      // editor: user.email,
+    const preexistingMappings = existingMappings?.map(item => ({
+      code: item.code,
+      display: item.display,
+      description: item.description,
+      system: systemsMatch(item?.code?.split(':')[0], ontologyApis),
+      mapping_relationship: idsForSelect[item.code],
+    }));
+
+    const mappingsDTO = {
+      mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
+      editor: user.email,
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         credentials: 'include',
@@ -244,12 +240,13 @@ export const EditMappingsModal = ({
         return error;
       })
       .finally(() => setLoading(false));
-    OntologyFilterCodeSubmitTerm(
+    ontologyFilterCodeSubmit(
       apiPreferencesCode,
       preferenceType,
       prefTypeKey,
       editMappings.code,
       vocabUrl,
+      null,
       terminology
     );
   };
@@ -304,7 +301,12 @@ export const EditMappingsModal = ({
                   <ResetMappings
                     terminologyId={terminologyId}
                     editMappings={editMappings}
-                    setReset={setReset}
+                    setReset={resp => {
+                      setReset(resp);
+                      if (resp) {
+                        setMappingsForSearch([]);
+                      }
+                    }}
                   />
                   <Button onClick={() => setEditSearch(true)}>
                     Edit / Add
@@ -345,38 +347,20 @@ export const EditMappingsModal = ({
             </Form.Item>
           </Form>
         </>
-      ) : // If reset or editSearch is true the MappingSearch modal opens to perform the search for the terminology code
-      editSearch ? (
+      ) : (
+        // If reset or editSearch is true the MappingSearch modal opens to perform the search for the terminology code
         <MappingSearch
-          editMappings={editMappings}
           setEditMappings={setEditMappings}
           mappingsForSearch={mappingsForSearch}
           form={form}
-          reset={reset}
           onClose={form.resetFields}
           searchProp={
             editMappings?.display ? editMappings?.display : editMappings?.code
           }
           mappingProp={editMappings?.code}
-          mappingDesc={editMappings?.description}
+          mappingDesc={editMappings?.description ?? 'No description'}
           terminology={terminology}
         />
-      ) : (
-        reset && (
-          <MappingReset
-            searchProp={
-              editMappings?.display ? editMappings.display : editMappings?.code
-            }
-            setEditMappings={setEditMappings}
-            mappingsForSearch={mappingsForSearch}
-            form={form}
-            reset={reset}
-            onClose={form.resetFields}
-            mappingDesc={editMappings?.description}
-            mappingProp={editMappings?.code}
-            terminology={terminology}
-          />
-        )
       )}
     </Modal>
   );

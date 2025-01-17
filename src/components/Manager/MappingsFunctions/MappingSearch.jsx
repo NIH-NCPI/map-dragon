@@ -1,13 +1,12 @@
 import { Checkbox, Form, Input, notification, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, ontologyReducer, systemsMatch } from '../Utilitiy';
+import { ellipsisString, systemsMatch } from '../Utility';
 import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
-import { APISearchBar } from '../../Projects/Terminologies/APISearchBar';
 import { MappingRelationship } from './MappingRelationship';
 
 export const MappingSearch = ({
@@ -21,27 +20,27 @@ export const MappingSearch = ({
   terminology,
   table,
 }) => {
-  const { searchUrl, vocabUrl } = useContext(myContext);
+  const { vocabUrl } = useContext(myContext);
   const {
     apiPreferences,
     defaultOntologies,
-    setFacetCounts,
     setApiPreferencesCode,
     apiPreferencesCode,
     setUnformattedPref,
     prefTerminologies,
     setApiResults,
     ontologyApis,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
+    resultsCount,
+    setResultsCount,
   } = useContext(SearchContext);
 
   const [page, setPage] = useState(0);
-  const entriesPerPage = 1000;
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
-  const [totalCount, setTotalCount] = useState();
-  const [resultsCount, setResultsCount] = useState(); //
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-  const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
@@ -55,6 +54,7 @@ export const MappingSearch = ({
     setDisplaySelectedMappings,
     selectedBoxes,
     setSelectedBoxes,
+    existingMappings,
   } = useContext(MappingContext);
 
   let ref = useRef();
@@ -211,7 +211,7 @@ export const MappingSearch = ({
       };
       //fetch call to search OLS with either preferred or default ontologies
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0
           ? apiPreferencesCode
@@ -220,30 +220,26 @@ export const MappingSearch = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
         setResults,
-        setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
-        setFacetCounts
+        setMoreAvailable
       );
     } else
       return olsFilterOntologiesSearch(
-        searchUrl,
+        vocabUrl,
         query,
         apiPreferencesCode?.length > 0 ? apiPreferencesCode : defaultOntologies,
         page,
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        setTotalCount,
         setResults,
-        setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
-        setFacetCounts
+        setMoreAvailable
       );
   };
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
@@ -258,7 +254,8 @@ export const MappingSearch = ({
   };
 
   const onExistingChange = checkedValues => {
-    setExistingMappings(checkedValues);
+    const parsedValues = checkedValues.map(cv => JSON.parse(cv));
+    setExistingMappings(parsedValues);
   };
 
   // If the checkbox is checked, it adds the object to the selectedBoxes array
@@ -301,11 +298,11 @@ export const MappingSearch = ({
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d?.label}</b>
+                <b>{d?.display}</b>
               </div>
               <div>
-                <a href={d?.iri} target="_blank">
-                  {d?.obo_id}
+                <a href={d?.code_iri} target="_blank">
+                  {d?.code}
                 </a>
               </div>
             </div>
@@ -334,13 +331,13 @@ export const MappingSearch = ({
             <div className="modal_term_ontology">
               <div>
                 <div>
-                  <b>{d?.display || d?.label}</b>
+                  <b>{d?.display}</b>
                 </div>
               </div>
               <div>
                 {d?.code || (
                   <a href={d?.iri} target="_blank">
-                    {d?.obo_id}
+                    {d?.code}
                   </a>
                 )}
               </div>
@@ -415,8 +412,12 @@ export const MappingSearch = ({
     );
   };
 
+  // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
+  useEffect(() => {
+    setExistingMappings(mappingsForSearch);
+  }, []);
   // Iterates through the array of previously selected mappings. Returns a JSON stringified object to use as default checked values separate from the search results.
-  const initialChecked = mappingsForSearch.map(m =>
+  const initialChecked = existingMappings.map(m =>
     JSON.stringify({
       code: m?.code,
       display: m?.display,
@@ -425,11 +426,6 @@ export const MappingSearch = ({
     })
   );
 
-  // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
-  useEffect(() => {
-    setExistingMappings(mappingsForSearch);
-  }, []);
-
   // Creates a Set that excludes the mappings that have already been selected.
   // Then filteres the existing mappings out of the results to only display results that have not yet been selected.
   const getFilteredResults = () => {
@@ -437,7 +433,7 @@ export const MappingSearch = ({
       ...mappingsForSearch?.map(m => m?.code),
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude?.has(r.obo_id));
+    return results?.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();
@@ -606,7 +602,7 @@ export const MappingSearch = ({
                                     checked={
                                       active === 'search'
                                         ? selectedBoxes.some(
-                                            box => box.obo_id === sm.obo_id
+                                            box => box.code === sm.code
                                           )
                                         : selectedBoxes.some(
                                             box => box.code === sm.code
@@ -641,11 +637,11 @@ export const MappingSearch = ({
                                         (d, index) => {
                                           return {
                                             value: JSON.stringify({
-                                              code: d.obo_id,
-                                              display: d.label,
+                                              code: d.code,
+                                              display: d.display,
                                               description: d.description[0],
                                               system: systemsMatch(
-                                                d?.obo_id?.split(':')[0],
+                                                d?.code?.split(':')[0],
                                                 ontologyApis
                                               ),
                                             }),
@@ -700,18 +696,9 @@ export const MappingSearch = ({
                   {((prefTerminologies.length > 0 && active === 'search') ||
                     prefTerminologies.length === 0) && (
                     <div className="view_more_wrapper">
-                      {/* 'View More' pagination displaying the number of results being displayed
-                      out of the total number of results. Because of the filter to filter out the duplicates,
-                      there is a tooltip informing the user that redundant entries have been removed to explain any
-                      inconsistencies in results numbers per page. */}
-                      <Tooltip
-                        placement="bottom"
-                        title="Redundant entries have been removed"
-                      >
-                        Displaying {resultsCount}
-                        &nbsp;of&nbsp;{totalCount}
-                      </Tooltip>
-                      {resultsCount < totalCount - filteredResultsCount && (
+                      {/* 'View More' pagination */}
+
+                      {moreAvailable && (
                         <span
                           className="view_more_link"
                           onClick={e => {

@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import './NavBar.scss';
 import { Login } from '../Auth/Login';
-import { useContext, useState } from 'react'
+import { useContext, useState } from 'react';
 import { myContext } from '../../App';
 import { RequiredLogin } from '../Auth/RequiredLogin';
 
@@ -13,11 +13,11 @@ export const NavBar = () => {
     navigate(routeTo);
   };
   const login = RequiredLogin({ handleSuccess: handleSuccess });
-  const handleLogin = (route) => {
+  const handleLogin = route => {
     setRouteTo(route);
     login();
-  }
-  
+  };
+
   return (
     <>
       <nav className="navbar">
@@ -33,27 +33,33 @@ export const NavBar = () => {
             <NavLink to="/">
               <li className="nav_link">Search</li>
             </NavLink>
-            <div onClick={() => {
-              if (user) {
-                navigate('/studies')
-              } else {
-                handleLogin('/studies')
-              }
-            }}>
+            <div
+              onClick={() => {
+                if (user) {
+                  navigate('/studies');
+                } else {
+                  handleLogin('/studies');
+                }
+              }}
+            >
               <li className="nav_link">Studies</li>
             </div>
-            <div onClick={() => {
-              if (user) {
-                navigate('/terminologies')
-              } else {
-                handleLogin('/terminologies')
-              }
-            }}>
+            <div
+              onClick={() => {
+                if (user) {
+                  navigate('/terminologies');
+                } else {
+                  handleLogin('/terminologies');
+                }
+              }}
+            >
               <li className="nav_link">Terminologies</li>
             </div>
-            {/* Placeholder elements below. No functionality at this time.*/}
             <NavLink to="/about">
               <li className="nav_link">About</li>
+            </NavLink>
+            <NavLink to="https://nih-ncpi.github.io/map-dragon" target="_blank">
+              <li className="nav_link">Help</li>
             </NavLink>
 
             <NavLink to="/ontologies">
@@ -64,7 +70,7 @@ export const NavBar = () => {
             <Login />
           </div>
         </ul>
-      </nav >
+      </nav>
     </>
   );
 };

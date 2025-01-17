@@ -31,12 +31,21 @@ import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTa
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { ellipsisString, mappingTooltip } from '../../Manager/Utility';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
 
-  const { vocabUrl, edit, setEdit, table, setTable, user } =
-    useContext(myContext);
+  const {
+    vocabUrl,
+    edit,
+    setEdit,
+    table,
+    setTable,
+    user,
+    ucumCodes,
+    setUcumCodes,
+  } = useContext(myContext);
   const { apiPreferences, setApiPreferences } = useContext(SearchContext);
   const {
     getMappings,
@@ -74,7 +83,6 @@ export const TableDetails = () => {
   }, [table, mapping, pageSize]);
 
   const updateMappings = (mapArr, mappingCode) => {
-    // setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
       // editor: user.email,
@@ -111,74 +119,88 @@ export const TableDetails = () => {
           });
         }
         return error;
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   // fetches the table and sets 'table' to the response
   useEffect(() => {
+    tableApiCalls();
+  }, []);
+
+  const tableApiCalls = async () => {
     setLoading(true);
     getById(vocabUrl, 'Table', tableId)
       .then(data => {
-        if (data === null) {
-          navigate('/404');
-        } else {
-          setTable(data);
-          if (data) {
-            getById(vocabUrl, 'Table', `${tableId}/mapping`)
-              .then(data => setMapping(data.codes))
-              .catch(error => {
-                if (error) {
-                  console.log(error, 'error');
+        setTable(data);
+        if (data) {
+          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+            .then(data => setMapping(data.codes))
+            .catch(error => {
+              if (error) {
+                console.log(error, 'error');
 
-                  notification.error({
-                    message: 'Error',
-                    description: 'An error occurred loading mappings.',
-                  });
-                }
-                return error;
+                notification.error({
+                  message: 'Error',
+                  description: 'An error occurred loading mappings.',
+                });
+              }
+              return error;
+            })
+            .then(() =>
+              getById(
+                vocabUrl,
+                'Terminology',
+                'ftd-concept-map-relationship'
+              ).then(data => setRelationshipOptions(data.codes))
+            )
+            .then(() =>
+              fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
               })
-              .then(() =>
-                getById(
-                  vocabUrl,
-                  'Terminology',
-                  'ftd-concept-map-relationship'
-                ).then(data => setRelationshipOptions(data.codes))
-              )
-              .then(() =>
-                fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
-                  method: 'GET',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                })
-              )
-              .then(res => {
-                if (res.ok) {
-                  return res.json();
-                } else {
-                  throw new Error('An unknown error occurred.');
-                }
-              })
-              .then(data => {
-                setApiPreferences(data);
-              });
-          } else {
-            setLoading(false);
-          }
+            )
+            .then(res => {
+              if (res.ok) {
+                return res.json();
+              } else {
+                throw new Error('An unknown error occurred.');
+              }
+            })
+            .then(data => {
+              setApiPreferences(data);
+            })
+            .finally(() => setLoading(false));
+        } else {
+          setLoading(false);
         }
       })
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading the ontology preferences.',
+            description: 'An error occurred loading the table.',
           });
+          setLoading(false);
         }
         return error;
       })
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => {
+    table && tableTypes();
+  }, [table]);
+
+  const tableTypes = () => {
+    const varTypes = table?.variables?.map(tv => tv.data_type);
+    if (varTypes?.includes('INTEGER' || 'QUANTITY')) {
+      getById(vocabUrl, 'Terminology', 'ucum-common').then(data =>
+        setUcumCodes(data.codes)
+      );
+    }
+  };
 
   // sets table to an empty object on dismount
   useEffect(
@@ -239,13 +261,15 @@ and returns the length of the mapping array (i.e. returns the number of variable
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
   const noMapping = variable => {
     return (
-      <Button
-        onClick={() =>
-          setGetMappings({ name: variable.name, code: variable.code })
-        }
-      >
-        Get Mappings
-      </Button>
+      <div className="no_mapping_button">
+        <Button
+          onClick={() =>
+            setGetMappings({ name: variable.name, code: variable.code })
+          }
+        >
+          Get Mappings
+        </Button>
+      </div>
     );
   };
 
@@ -257,17 +281,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     const variableMappings = mapping.find(
       item => item?.code === variable?.code
     );
-
     if (variableMappings && variableMappings.mappings?.length) {
-      return variableMappings.mappings.map(code => (
-        <div className="mapping" key={code.display}>
+      return variableMappings.mappings.map((code, i) => (
+        <div className="mapping" key={i}>
           <span className="mapping-display">
-            <Tooltip title={code.code}>
-              {code.display ? code.display : code.code}
+            <Tooltip
+              title={
+                (code.display ? code.display : code.code).length > 25
+                  ? mappingTooltip(code)
+                  : code.code
+              }
+            >
+              {ellipsisString(code.display ? code.display : code.code, '25')}
             </Tooltip>
           </span>
           <span
-            className="remove-mapping"
+            className="mapping_actions"
             onClick={() => handleRemoveMapping(variableMappings, code)}
           >
             <CloseCircleOutlined style={{ color: 'red' }} />
@@ -289,6 +318,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     updateMappings(variableMappings?.mappings, variableMappings?.code);
   };
 
+  const findType = variable => {
+    const unit = variable?.units?.split(':')[1];
+    const foundType = ucumCodes.filter(item => item.code === unit);
+    return foundType.length > 0 ? foundType[0].display : variable?.units;
+  };
   // data for the table columns. Each table has an array of variables. Each variable has a name, description, and data type.
   // The integer and quantity data types include additional details.
   // The enumeration data type includes a reference to a terminology, which includes further codes with the capability to match the
@@ -304,7 +338,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         data_type: variable.data_type,
         min: variable.min,
         max: variable.max,
-        units: variable.units,
+        units: findType(variable),
         enumeration: variable.data_type === 'ENUMERATION' && (
           <Link
             to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${tableId}/${variable.enumerations.reference}`}
@@ -472,3 +506,39 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     </>
   );
 };
+
+// const tableApiCalls = async () => {
+//   const tableData = await getById(vocabUrl, 'Table', tableId);
+
+//   if (!tableData) {
+//     navigate('/404');
+//   } else {
+//     setTable(tableData);
+
+//     const [tableMappings, tableFilters, mappingRelationships] =
+//       await Promise.all([
+//         getById(vocabUrl, 'Table', `${tableId}/mapping`),
+//         fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
+//           method: 'GET',
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//         }),
+//         getById(vocabUrl, 'Terminology', 'ftd-concept-map-relationship'),
+//       ]);
+
+//     if (tableMappings) {
+//       setMapping(tableMappings.codes);
+//     }
+
+//     if (tableFilters.ok) {
+//       setApiPreferences(tableFilters.json());
+//     } else {
+//       throw new Error('An unknown error occurred.');
+//     }
+//     if (mappingRelationships) {
+//       setRelationshipOptions(mappingRelationships.codes);
+//     }
+//   }
+//   setLoading(false);
+// };
