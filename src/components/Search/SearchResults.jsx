@@ -55,6 +55,7 @@ export const SearchResults = () => {
       `${searchUrl}q=${query}&ontology=mondo,hp,maxo,ncit&rows=${rowCount}&start=${firstRowStart}`,
       {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

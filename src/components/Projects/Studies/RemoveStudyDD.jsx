@@ -19,6 +19,7 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
   const handleRemove = () => {
     return fetch(`${vocabUrl}/Study/${studyId}/dd/${dd.id}`, {
       method: 'DELETE',
+      credentials: 'include',
     })
       .then(res => {
         if (res.ok) {

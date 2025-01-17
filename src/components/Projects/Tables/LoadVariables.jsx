@@ -16,6 +16,7 @@ export const LoadVariables = ({ load, setLoad }) => {
     setLoading(true);
     fetch(`${vocabUrl}/LoadTable/${table.id}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

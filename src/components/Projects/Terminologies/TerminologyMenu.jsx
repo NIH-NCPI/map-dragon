@@ -69,6 +69,7 @@ export const TerminologyMenu = ({
   const handleVarDelete = varName => {
     fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${varName}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

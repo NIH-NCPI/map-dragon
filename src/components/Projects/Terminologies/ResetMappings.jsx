@@ -17,6 +17,7 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
       {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

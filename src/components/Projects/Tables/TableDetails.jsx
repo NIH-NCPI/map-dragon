@@ -82,6 +82,7 @@ export const TableDetails = () => {
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${mappingCode}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

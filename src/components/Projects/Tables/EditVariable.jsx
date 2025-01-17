@@ -87,6 +87,7 @@ export const EditVariable = ({
         .then(() => {
           fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
             method: 'PUT',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },
@@ -126,6 +127,7 @@ export const EditVariable = ({
       setLoading(true);
       fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

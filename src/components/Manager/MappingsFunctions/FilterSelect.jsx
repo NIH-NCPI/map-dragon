@@ -138,6 +138,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
         : `Terminology/${terminology.id}/filter`)}`,
       {
         method: method,
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -158,6 +159,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
             : `Terminology/${terminology.id}/filter`)}`,
           {
             method: 'GET',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },

@@ -83,6 +83,7 @@ export const Terminology = () => {
 
     fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping/${mappingCode}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -217,6 +218,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           if (data) {
             fetch(`${vocabUrl}/Terminology/${data?.id}/filter`, {
               method: 'GET',
+              credentials: 'include',
               headers: {
                 'Content-Type': 'application/json',
               },

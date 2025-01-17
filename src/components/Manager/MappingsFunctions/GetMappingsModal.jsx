@@ -165,17 +165,15 @@ export const GetMappingsModal = ({
 
     const mappingsDTO = {
       mappings: selectedMappings,
-      // editor: user?.email,
+      editor: user
     };
 
     setLoading(true);
-    console.log(user);
     fetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}`,
       {
         method: 'PUT',
         credentials: 'include',
-
         headers: {
           'Content-Type': 'application/json',
         },
@@ -183,7 +181,6 @@ export const GetMappingsModal = ({
       }
     )
       .then(res => {
-        alert();
         if (res.ok) {
           return res.json();
         } else {
@@ -200,9 +197,7 @@ export const GetMappingsModal = ({
         setDisplaySelectedMappings([]);
         setSelectedBoxes([]);
       })
-      .catch(error => {
-        console.log(error,'this is the catch');
-        
+      .catch(error => {     
         if (error) {
           notification.error({
             message: 'Error',

@@ -15,6 +15,7 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
   const handleDelete = evt => {
     return fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

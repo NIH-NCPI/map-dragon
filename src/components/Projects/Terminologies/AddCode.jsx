@@ -20,6 +20,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
     setLoading(true);
     fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${values.code}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

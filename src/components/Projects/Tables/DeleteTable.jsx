@@ -15,6 +15,7 @@ export const DeleteTable = ({ DDId, studyId }) => {
   const deleteTable = evt => {
     return fetch(`${vocabUrl}/Table/${table.id}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

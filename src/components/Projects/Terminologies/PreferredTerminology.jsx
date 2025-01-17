@@ -73,6 +73,7 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
 
     fetch(`${vocabUrl}/Terminology/${terminology.id}/preferred_terminology`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
