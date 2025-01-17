@@ -24,10 +24,10 @@ export const FilterReset = ({ table, terminology }) => {
       }`,
       {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ editor: user.email }),
       }
     )
       .then(res => {
@@ -52,6 +52,7 @@ export const FilterReset = ({ table, terminology }) => {
           }`,
           {
             method: 'GET',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },

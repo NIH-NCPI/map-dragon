@@ -15,10 +15,11 @@ export const DeleteTable = ({ DDId, studyId }) => {
   const deleteTable = evt => {
     return fetch(`${vocabUrl}/Table/${table.id}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ editor: user.email }),
+      // body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

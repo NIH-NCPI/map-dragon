@@ -29,6 +29,7 @@ import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
 
 export const AppRouter = () => {
+  const { user, vocabUrl } = useContext(myContext);
   const isLoggedIn = () => {
     const storedUser = localStorage.getItem('user');
 
@@ -60,24 +61,24 @@ export const AppRouter = () => {
         >
           <Route index element={<OntologySearch />} />
           <Route element={<PageLayout />}>
-            <Route element={<SearchContextRoot />}>
-              <Route path="/search/:query" element={<SearchResults />} />
-              <Route path="/404" element={<Error404 />} />
+            <Route path="/search/:query" element={<SearchResults />} />
+            <Route path="/404" element={<Error404 />} />
 
-              <Route path="/ontologies" element={<OntologyInfo />} />
-              <Route path="/about" element={<About />} />
-              <Route
-                path="/terminologies"
-                element={
-                  isLoggedIn() ? <TerminologyList /> : <Navigate to="/login" />
-                }
-              />
-              <Route path="/login" element={<LoginPage />} />
-              <Route
-                path="/terminology"
-                element={<Navigate to="/terminologies" />}
-              />
-              <Route element={<MappingContextRoot />}>
+            <Route path="/ontologies" element={<OntologyInfo />} />
+            <Route path="/about" element={<About />} />
+            <Route
+              path="/terminologies"
+              element={
+                isLoggedIn() ? <TerminologyList /> : <Navigate to="/login" />
+              }
+            />
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/terminology"
+              element={<Navigate to="/terminologies" />}
+            />
+            <Route element={<MappingContextRoot />}>
+              <Route element={<SearchContextRoot />}>
                 <Route
                   path="/studies"
                   element={

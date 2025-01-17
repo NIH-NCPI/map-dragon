@@ -66,6 +66,7 @@ export const EditMappingsTableModal = ({
         `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`,
         {
           method: 'GET',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -146,6 +147,7 @@ export const EditMappingsTableModal = ({
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -205,6 +207,7 @@ export const EditMappingsTableModal = ({
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

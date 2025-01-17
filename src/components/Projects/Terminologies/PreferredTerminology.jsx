@@ -66,13 +66,14 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
 
     const preferredTermDTO = () => {
       return {
-        'editor': user.email,
+        // 'editor': user.email,
         'preferred_terminologies': preferredTerminologies,
       };
     };
 
     fetch(`${vocabUrl}/Terminology/${terminology.id}/preferred_terminology`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

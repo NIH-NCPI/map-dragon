@@ -67,6 +67,7 @@ export const EditMappingsModal = ({
         `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
         {
           method: 'GET',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -147,6 +148,7 @@ export const EditMappingsModal = ({
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -208,6 +210,7 @@ export const EditMappingsModal = ({
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

@@ -18,10 +18,11 @@ export const ClearMappings = ({ propId, component }) => {
   const handleDelete = evt => {
     return fetch(`${vocabUrl}/${component}/${propId}/mapping`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ editor: user.email }),
+      credentials: 'include',
+      // headers: {
+      //   'Content-Type': 'application/json',
+      // },
+      // body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

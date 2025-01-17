@@ -20,6 +20,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
   const handleRemove = () => {
     return fetch(`${vocabUrl}/DataDictionary/${DDId}/Table/${table.id}`, {
       method: 'DELETE',
+      credentials: 'include',
     })
       .then(res => {
         if (res.ok) {

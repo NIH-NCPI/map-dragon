@@ -56,10 +56,11 @@ export const TableMenu = ({
   const handleVarDelete = varName => {
     fetch(`${vocabUrl}/Table/${table.id}/variable/${varName}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ editor: user.email }),
+      // body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

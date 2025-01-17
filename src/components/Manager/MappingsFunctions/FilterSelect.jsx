@@ -124,7 +124,6 @@ export const FilterSelect = ({ component, table, terminology }) => {
 
     const apiPreferenceDTO = {
       api_preference: apiPreference?.api_preference,
-      editor: user.email,
     };
 
     const method =
@@ -139,6 +138,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
         : `Terminology/${terminology.id}/filter`)}`,
       {
         method: method,
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -159,6 +159,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
             : `Terminology/${terminology.id}/filter`)}`,
           {
             method: 'GET',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },

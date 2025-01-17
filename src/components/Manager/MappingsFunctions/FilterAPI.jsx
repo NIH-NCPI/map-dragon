@@ -60,6 +60,7 @@ export const FilterAPI = ({
       setTableLoading(true),
       fetch(`${vocabUrl}/OntologyAPI/${active}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

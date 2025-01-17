@@ -14,10 +14,10 @@ export const DeleteTerminology = ({ setTerms, deleteId, setDeleteId }) => {
   const deleteTerm = evt => {
     fetch(`${vocabUrl}/Terminology/${deleteId}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {
