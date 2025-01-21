@@ -39,19 +39,22 @@ export const GetMappingsModal = ({
   const {
     preferenceType,
     defaultOntologies,
-    // setFacetCounts,
     setApiPreferencesCode,
     apiPreferencesCode,
+    unformattedPref,
     setUnformattedPref,
     prefTypeKey,
     ontologyApis,
     setPrefTerminologies,
-    checkedOntologies,
     entriesPerPage,
     moreAvailable,
     setMoreAvailable,
     setResultsCount,
     resultsCount,
+    radioApi,
+    setRadioApi,
+    selectedApi,
+    setSelectedApi,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -76,6 +79,16 @@ export const GetMappingsModal = ({
   // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
   // The function is run when the code changes.
 
+  const codeToSearch = Object.keys(unformattedPref)?.[0];
+  const apiPreferences = unformattedPref?.[codeToSearch]?.api_preference;
+  const apiPreferenceKeys = Object?.keys(apiPreferences ?? {});
+
+  useEffect(() => {
+    setRadioApi(apiPreferenceKeys[0]);
+  }, []);
+
+  console.log('radioApi', radioApi);
+
   useEffect(() => {
     setInputValue(searchProp);
     setCurrentSearchProp(searchProp);
@@ -99,6 +112,8 @@ export const GetMappingsModal = ({
       fetchResults(0, searchProp);
     }
   }, [searchProp]);
+
+  console.log('selectedApi', selectedApi);
 
   useEffect(() => {
     if (apiPreferencesCode !== undefined) {
@@ -150,6 +165,7 @@ export const GetMappingsModal = ({
     setApiPreferencesCode(undefined);
     setSelectedKey(null);
     setPrefTerminologies([]);
+    setRadioApi(undefined);
   };
 
   // Sets currentSearchProp to the value of the search bar and sets page to 0.
@@ -157,6 +173,8 @@ export const GetMappingsModal = ({
     setCurrentSearchProp(query);
     setPage(0);
   };
+
+  const apiForSearch = radioApi ?? apiPreferenceKeys[0];
 
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
@@ -223,8 +241,8 @@ export const GetMappingsModal = ({
       terminology
     );
   };
-
   const fetchResults = (page, query) => {
+    console.log('SEEEEEEEEEEEEEEEEEEEEEEEEEEEEAAAAAAAAAAAAAAAAAARCH');
     if (!!!query) {
       return undefined;
     }
@@ -234,17 +252,21 @@ export const GetMappingsModal = ({
     const pageStart = page * entriesPerPage;
 
     if (
-      //If there are api preferences and one of them is OLS, it gets the preferred ontologies
-      preferenceType[prefTypeKey]?.api_preference &&
-      'ols' in preferenceType[prefTypeKey]?.api_preference
+      // If there are api preferences and one of them is in apiPreferencesCode
+      preferenceType[prefTypeKey]?.api_preference
     ) {
       const apiPreferenceOntologies = () => {
-        if (preferenceType[prefTypeKey]?.api_preference?.ols) {
-          return preferenceType[prefTypeKey].api_preference.ols
+        // Check if apiPreferencesCode contains the key dynamically (based on radioApi)
+        if (
+          apiForSearch in apiPreferencesCode &&
+          apiPreferencesCode[apiForSearch]?.length > 0
+        ) {
+          // Return the preferred ontologies for the matched key (apiPreferenceKeys[0])
+          return apiPreferencesCode[apiPreferenceKeys[0]]
             .join(',')
             .toUpperCase();
         } else {
-          // else if there are no preferred ontologies, it uses the default ontologies
+          // If no preferred ontologies, use the default ontologies
           return defaultOntologies;
         }
       };
@@ -253,21 +275,20 @@ export const GetMappingsModal = ({
       return olsFilterOntologiesSearch(
         vocabUrl,
         query,
-        apiPreferencesCode?.length > 0
-          ? apiPreferencesCode
+        apiPreferencesCode[radioApi]?.length > 0
+          ? apiPreferencesCode[radioApi]
           : apiPreferenceOntologies(),
         page,
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        // setTotalCount,
         setResults,
-        // setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
-        setMoreAvailable
-        // setFacetCounts
+        setMoreAvailable,
+        radioApi !== undefined ? radioApi : apiPreferenceKeys[0],
+        notification
       );
     } else
       return olsFilterOntologiesSearch(
@@ -278,14 +299,13 @@ export const GetMappingsModal = ({
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        // setTotalCount,
         setResults,
-        // setFilteredResultsCount,
         setResultsCount,
         setLoading,
         results,
-        setMoreAvailable
-        // setFacetCounts
+        setMoreAvailable,
+        radioApi !== undefined ? radioApi : apiPreferenceKeys[0],
+        notification
       );
   };
 
@@ -397,7 +417,7 @@ export const GetMappingsModal = ({
     const codesToExclude = new Set([
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude?.has(r.code));
+    return results?.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();

@@ -22,6 +22,8 @@ export function SearchContextRoot() {
   const [checkedOntologies, setCheckedOntologies] = useState([]);
   const [moreAvailable, setMoreAvailable] = useState(false);
   const [resultsCount, setResultsCount] = useState();
+  const [radioApi, setRadioApi] = useState('');
+  const [selectedApi, setSelectedApi] = useState('');
 
   const entriesPerPage = 100;
 
@@ -78,6 +80,10 @@ export function SearchContextRoot() {
     setMoreAvailable,
     resultsCount,
     setResultsCount,
+    radioApi,
+    setRadioApi,
+    selectedApi,
+    setSelectedApi,
   };
 
   return (

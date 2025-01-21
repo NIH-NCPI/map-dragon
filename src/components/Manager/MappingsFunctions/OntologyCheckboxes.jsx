@@ -16,6 +16,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     checkedOntologies,
     setCheckedOntologies,
     unformattedPref,
+    selectedApi,
+    setSelectedApi,
   } = useContext(SearchContext);
   const { Search } = Input;
 
@@ -34,23 +36,38 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   const defaultOntologies = ['MONDO', 'HP', 'MAXO', 'NCIT'];
 
+  const options = allApiPreferences
+    ? Object.keys(allApiPreferences).map((aap, index) => ({
+        value: aap,
+        label: aap.toUpperCase(),
+      }))
+    : [{ value: 'ols', label: 'OLS' }];
+
+  useEffect(() => {
+    setSelectedApi(options ? options[0]?.value : 'ols');
+  }, []);
+
   let processedApiPreferencesCode;
 
   // Ensures the data sent to the API is in the correct format.
   // If apiPreferencesCode is an array, sets processedApiPreferencesCode equal to it.
   // If it is a comma-separated string, it splits it by the commas and adds them to an array
-  if (Array.isArray(apiPreferencesCode)) {
-    processedApiPreferencesCode = apiPreferencesCode;
-  } else if (typeof apiPreferencesCode === 'string') {
-    processedApiPreferencesCode = apiPreferencesCode.split(',');
+  if (Array.isArray(apiPreferencesCode?.[selectedApi])) {
+    processedApiPreferencesCode = apiPreferencesCode[selectedApi];
+  } else if (typeof apiPreferencesCode?.[selectedApi] === 'string') {
+    processedApiPreferencesCode = apiPreferencesCode[selectedApi].split(',');
   }
 
   let existingOntologies;
 
   // Checks if apiPreferencesCode exists and is non-empty, if so, assigns processedApiPreferencesCode to existingOntologies
-  if (Array.isArray(apiPreferencesCode) && apiPreferencesCode.length > 0) {
+  if (
+    Array.isArray(apiPreferencesCode?.[selectedApi]) &&
+    apiPreferencesCode[selectedApi].length > 0
+  ) {
     existingOntologies = processedApiPreferencesCode;
   }
+
   // Checks if preferenceType[prefTypeKey].api_preference exists and is non-empty, if so, assigns the values to existingOntologies
   else if (
     preferenceType &&
@@ -66,10 +83,9 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   else {
     existingOntologies = defaultOntologies;
   }
-
   useEffect(() => {
-    setCheckedOntologies(existingOntologies);
-  }, [preferenceType]);
+    setCheckedOntologies(existingOntologies.map(eo => eo.toUpperCase()));
+  }, [preferenceType, selectedApi]);
 
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
@@ -81,20 +97,22 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
           : existingOntologies.filter(key => key !== value.toUpperCase())
         : [];
 
-      setApiPreferencesCode(newCheckedOntologies);
+      setApiPreferencesCode(prevApiPreferences => {
+        // Check if selectedApi is a key in the existing apiPreferencesCode
+        if (Object.keys(prevApiPreferences).includes(selectedApi)) {
+          // Replace the array of the matched key with the newCheckedOntologies
+          return {
+            ...prevApiPreferences,
+            [selectedApi]: newCheckedOntologies,
+          };
+        }
 
+        // If selectedApi doesn't match any key, return the original object
+        return prevApiPreferences;
+      });
       return newCheckedOntologies;
     });
   };
-
-  const options = allApiPreferences
-    ? Object.keys(allApiPreferences).map((aap, index) => ({
-        value: aap,
-        label: aap.toUpperCase(),
-      }))
-    : [{ value: 'ols', label: 'OLS' }];
-
-  const [radioApi, setRadioApi] = useState(options ? options[0]?.value : 'ols');
 
   const formattedFacetCounts = ontologyCounts(facetCounts);
 
@@ -120,7 +138,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   // Builds data structure adding the ontology's api to the ontology object, based on the api
   // that is selected in the radio button
   const countsResult = sortedData
-    ?.filter(sd => sd?.api_id === radioApi)
+    ?.filter(sd => sd?.api_id === selectedApi)
     .map(sd =>
       Object.keys(sd?.ontologies).map(key => {
         return { [key]: countsMap[key] || 0, api: sd?.api_id };
@@ -128,7 +146,6 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     )
     .flat();
 
-  console.log('countsREsult', countsResult);
   const checkedOntologiesArray = Array.isArray(checkedOntologies)
     ? checkedOntologies
     : [];
@@ -140,8 +157,6 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     });
     return filtered;
   };
-
-  console.log('getFilteredItems', getFilteredItems());
 
   return (
     <div
@@ -157,7 +172,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
         buttonStyle="solid"
         options={options}
         defaultValue={options[0].value}
-        onChange={e => setRadioApi(e.target.value)}
+        onChange={e => setSelectedApi(e.target.value)}
       />
       <Search
         placeholder="Ontologies"

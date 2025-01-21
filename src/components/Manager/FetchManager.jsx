@@ -1,5 +1,3 @@
-import { ontologyReducer } from './Utility';
-
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {
   return fetch(`${vocabUrl}/${name}`, {
@@ -180,12 +178,14 @@ export const olsFilterOntologiesSearch = (
   setResultsCount,
   setLoading,
   results,
-  setMoreAvailable
+  setMoreAvailable,
+  apiToSearch,
+  notification
 ) => {
   setLoading(true);
 
   return fetch(
-    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
+    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=${apiToSearch}&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
     {
       method: 'GET',
       headers: {
@@ -193,12 +193,21 @@ export const olsFilterOntologiesSearch = (
       },
     }
   )
-    .then(res => res.json())
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        notification.error({
+          message: 'Error',
+          description: `An error occurred searching for ${query}.`,
+        });
+      }
+    })
     .then(data => {
       // if the page > 0 (i.e. if this is not the first batch of results), the new results
       // are concatenated to the old
       if (selectedBoxes) {
-        data.results = data.results.filter(
+        data.results = data?.results?.filter(
           d => !selectedBoxes.some(box => box.code === d.code)
         );
       }
@@ -251,20 +260,19 @@ export const getFiltersByCode = (
     })
     .then(data => {
       setUnformattedPref(data);
+      let allApiPreferences = {};
+
       const codeToSearch = Object.keys(data)?.[0];
+      const apiPreferences = data[codeToSearch]?.api_preference;
 
-      const ols = data?.[codeToSearch]?.api_preference?.ols;
+      const apiPreferenceKeys = Object.keys(apiPreferences);
 
-      if (Array.isArray(ols)) {
-        // If ols in api_preference is an array, use it as is
-        setApiPreferencesCode(ols.map(item => item.toUpperCase())); // Set state to the array
-      } else if (typeof ols === 'string') {
-        // If ols in api_preference is a string, split it into an array
-        const splitOntologies = ols.toUpperCase().split(',');
-        setApiPreferencesCode(splitOntologies); // Set state to the array
-      } else {
-        setApiPreferencesCode([]); // Fallback if no ols found
-      }
+      apiPreferenceKeys?.forEach(key => {
+        // Dynamically assigns the api values to allApiPreferences variable
+        allApiPreferences[key] = apiPreferences[key];
+      });
+
+      setApiPreferencesCode(apiPreferences); // Set state to the array
     });
 };
 
