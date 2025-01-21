@@ -1,4 +1,4 @@
-import { Checkbox, Form, Input } from 'antd';
+import { Checkbox, Form, Input, Radio } from 'antd';
 import { ontologyCounts } from '../Utility';
 import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -15,8 +15,20 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     prefTerminologies,
     checkedOntologies,
     setCheckedOntologies,
+    unformattedPref,
   } = useContext(SearchContext);
   const { Search } = Input;
+
+  let allApiPreferences = {};
+
+  const codeToSearch = Object.keys(unformattedPref)?.[0];
+  const apiPreferences = unformattedPref[codeToSearch]?.api_preference;
+  const apiPreferenceKeys = Object.keys(apiPreferences);
+
+  apiPreferenceKeys?.forEach(key => {
+    // Dynamically assigns the api values to allApiPreferences variable
+    allApiPreferences[key] = apiPreferences[key];
+  });
 
   const [searchText, setSearchText] = useState('');
 
@@ -75,6 +87,15 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     });
   };
 
+  const options = allApiPreferences
+    ? Object.keys(allApiPreferences).map((aap, index) => ({
+        value: aap,
+        label: aap.toUpperCase(),
+      }))
+    : [{ value: 'ols', label: 'OLS' }];
+
+  const [radioApi, setRadioApi] = useState(options ? options[0]?.value : 'ols');
+
   const formattedFacetCounts = ontologyCounts(facetCounts);
 
   const sortedData = ontologyApis.map(api => {
@@ -96,11 +117,18 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     return acc;
   }, {});
 
-  // Build the new data structure
-  const countsResult = Object.keys(sortedData[0]?.ontologies).map(key => {
-    return { [key]: countsMap[key] || 0, api: sortedData[0]?.api_id };
-  });
+  // Builds data structure adding the ontology's api to the ontology object, based on the api
+  // that is selected in the radio button
+  const countsResult = sortedData
+    ?.filter(sd => sd?.api_id === radioApi)
+    .map(sd =>
+      Object.keys(sd?.ontologies).map(key => {
+        return { [key]: countsMap[key] || 0, api: sd?.api_id };
+      })
+    )
+    .flat();
 
+  console.log('countsREsult', countsResult);
   const checkedOntologiesArray = Array.isArray(checkedOntologies)
     ? checkedOntologies
     : [];
@@ -108,10 +136,12 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   const getFilteredItems = searchText => {
     const filtered = countsResult?.filter(item => {
       const key = Object.keys(item)[0];
-      return key.startsWith(searchText);
+      return key?.toUpperCase().startsWith(searchText?.toUpperCase());
     });
     return filtered;
   };
+
+  console.log('getFilteredItems', getFilteredItems());
 
   return (
     <div
@@ -121,6 +151,14 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
           : 'ontology_form_pref'
       }
     >
+      <Radio.Group
+        className="api_radio"
+        optionType="button"
+        buttonStyle="solid"
+        options={options}
+        defaultValue={options[0].value}
+        onChange={e => setRadioApi(e.target.value)}
+      />
       <Search
         placeholder="Ontologies"
         className="onto_search_bar"
