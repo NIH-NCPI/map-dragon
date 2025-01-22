@@ -51,8 +51,7 @@ export const GetMappingsModal = ({
     setMoreAvailable,
     setResultsCount,
     resultsCount,
-    radioApi,
-    setRadioApi,
+
     selectedApi,
     setSelectedApi,
   } = useContext(SearchContext);
@@ -84,10 +83,10 @@ export const GetMappingsModal = ({
   const apiPreferenceKeys = Object?.keys(apiPreferences ?? {});
 
   useEffect(() => {
-    setRadioApi(apiPreferenceKeys[0]);
-  }, []);
+    setSelectedApi(apiPreferenceKeys[0]);
+  }, [searchProp]);
 
-  console.log('radioApi', radioApi);
+  console.log('selectedApi', selectedApi);
 
   useEffect(() => {
     setInputValue(searchProp);
@@ -160,12 +159,17 @@ export const GetMappingsModal = ({
     []
   );
 
+  useEffect(() => {
+    if (selectedApi && apiPreferencesCode !== undefined) {
+      fetchResults(page, currentSearchProp);
+    }
+  }, []);
   const onClose = () => {
     setPage(0);
     setApiPreferencesCode(undefined);
     setSelectedKey(null);
     setPrefTerminologies([]);
-    setRadioApi(undefined);
+    setSelectedApi(undefined);
   };
 
   // Sets currentSearchProp to the value of the search bar and sets page to 0.
@@ -174,7 +178,7 @@ export const GetMappingsModal = ({
     setPage(0);
   };
 
-  const apiForSearch = radioApi ?? apiPreferenceKeys[0];
+  const apiForSearch = selectedApi ?? apiPreferenceKeys[0];
 
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
@@ -256,7 +260,7 @@ export const GetMappingsModal = ({
       preferenceType[prefTypeKey]?.api_preference
     ) {
       const apiPreferenceOntologies = () => {
-        // Check if apiPreferencesCode contains the key dynamically (based on radioApi)
+        // Check if apiPreferencesCode contains the key dynamically (based on selectedApi)
         if (
           apiForSearch in apiPreferencesCode &&
           apiPreferencesCode[apiForSearch]?.length > 0
@@ -275,8 +279,8 @@ export const GetMappingsModal = ({
       return olsFilterOntologiesSearch(
         vocabUrl,
         query,
-        apiPreferencesCode[radioApi]?.length > 0
-          ? apiPreferencesCode[radioApi]
+        apiPreferencesCode[selectedApi]?.length > 0
+          ? apiPreferencesCode[selectedApi]
           : apiPreferenceOntologies(),
         page,
         entriesPerPage,
@@ -287,7 +291,7 @@ export const GetMappingsModal = ({
         setLoading,
         results,
         setMoreAvailable,
-        radioApi !== undefined ? radioApi : apiPreferenceKeys[0],
+        selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
         notification
       );
     } else
@@ -304,7 +308,7 @@ export const GetMappingsModal = ({
         setLoading,
         results,
         setMoreAvailable,
-        radioApi !== undefined ? radioApi : apiPreferenceKeys[0],
+        selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
         notification
       );
   };
