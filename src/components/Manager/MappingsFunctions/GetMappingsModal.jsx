@@ -57,6 +57,7 @@ export const GetMappingsModal = ({
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);
   // const [totalCount, setTotalCount] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
@@ -118,7 +119,7 @@ export const GetMappingsModal = ({
     if (apiPreferencesCode !== undefined) {
       fetchResults(page, currentSearchProp);
     }
-  }, [page]);
+  }, [page, selectedApi]);
 
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
@@ -197,7 +198,7 @@ export const GetMappingsModal = ({
       editor: user.email,
     };
 
-    setLoading(true);
+    setLoadingResults(true);
     fetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
       {
@@ -234,7 +235,7 @@ export const GetMappingsModal = ({
         }
         return error;
       })
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingResults(false));
     ontologyFilterCodeSubmit(
       apiPreferencesCode,
       preferenceType,
@@ -280,7 +281,7 @@ export const GetMappingsModal = ({
         vocabUrl,
         query,
         apiPreferencesCode[selectedApi]?.length > 0
-          ? apiPreferencesCode[selectedApi]
+          ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
           : apiPreferenceOntologies(),
         page,
         entriesPerPage,
@@ -288,7 +289,7 @@ export const GetMappingsModal = ({
         selectedBoxes,
         setResults,
         setResultsCount,
-        setLoading,
+        loading ? setLoading : setLoadingResults,
         results,
         setMoreAvailable,
         selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
@@ -298,14 +299,16 @@ export const GetMappingsModal = ({
       return olsFilterOntologiesSearch(
         vocabUrl,
         query,
-        apiPreferencesCode?.length > 0 ? apiPreferencesCode : defaultOntologies,
+        apiPreferencesCode[selectedApi]?.length > 0
+          ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
+          : defaultOntologies,
         page,
         entriesPerPage,
         pageStart,
         selectedBoxes,
         setResults,
         setResultsCount,
-        setLoading,
+        loading ? setLoading : setLoadingResults,
         results,
         setMoreAvailable,
         selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
@@ -493,20 +496,24 @@ export const GetMappingsModal = ({
                             valuePropName="value"
                             rules={[{ required: false }]}
                           >
-                            <div className="modal_display_results">
-                              {displaySelectedMappings?.map((sm, i) => (
-                                <Checkbox
-                                  key={i}
-                                  checked={selectedBoxes.some(
-                                    box => box.code === sm.code
-                                  )}
-                                  value={sm}
-                                  onChange={e => onCheckboxChange(e, sm, i)}
-                                >
-                                  {selectedTermsDisplay(sm, i)}
-                                </Checkbox>
-                              ))}
-                            </div>
+                            {loadingResults ? (
+                              <div>Loading</div>
+                            ) : (
+                              <div className="modal_display_results">
+                                {displaySelectedMappings?.map((sm, i) => (
+                                  <Checkbox
+                                    key={i}
+                                    checked={selectedBoxes.some(
+                                      box => box.code === sm.code
+                                    )}
+                                    value={sm}
+                                    onChange={e => onCheckboxChange(e, sm, i)}
+                                  >
+                                    {selectedTermsDisplay(sm, i)}
+                                  </Checkbox>
+                                ))}
+                              </div>
+                            )}
                           </Form.Item>
                         )}
                         {results?.length > 0 ? (
