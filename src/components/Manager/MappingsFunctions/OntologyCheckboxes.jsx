@@ -24,7 +24,9 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   let allApiPreferences = {};
 
   const codeToSearch = Object.keys(unformattedPref)?.[0];
-  const apiPreferences = unformattedPref[codeToSearch]?.api_preference;
+  const apiPreferences =
+    unformattedPref[codeToSearch]?.api_preference ??
+    unformattedPref[codeToSearch];
   const apiPreferenceKeys = Object.keys(apiPreferences);
 
   apiPreferenceKeys?.forEach(key => {
@@ -43,12 +45,10 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
       label: aap.api_id.toUpperCase(),
     }));
 
-  const defaultApi = allApiPreferences
-    ? Object.keys(allApiPreferences)[0]
-    : options[0];
-
-  console.log('all', defaultApi);
-
+  const defaultApi =
+    Object.keys(allApiPreferences).length > 0
+      ? Object.keys(allApiPreferences)[0]
+      : options[0]?.value;
   useEffect(() => {
     setSelectedApi(defaultApi);
   }, []);

@@ -83,15 +83,10 @@ export const GetMappingsModal = ({
   const apiPreferenceKeys = Object?.keys(apiPreferences ?? {});
 
   useEffect(() => {
-    setSelectedApi(apiPreferenceKeys[0]);
+    apiPreferenceKeys?.length > 0
+      ? setSelectedApi(apiPreferenceKeys[0])
+      : setSelectedApi(ontologyApis?.[0]?.api_id || null);
   }, [searchProp]);
-  // useEffect(() => {
-  //   apiPreferenceKeys
-  //     ? setSelectedApi(apiPreferenceKeys[0])
-  //     : setSelectedApi(ontologyApis && ontologyApis[0].api_id);
-  // }, [searchProp]);
-
-  console.log('selected', selectedApi);
 
   useEffect(() => {
     setInputValue(searchProp);
@@ -277,7 +272,7 @@ export const GetMappingsModal = ({
         }
       };
 
-      //fetch call to search OLS with either preferred or default ontologies
+      //fetch call to search API with either preferred or default ontologies
       return olsFilterOntologiesSearch(
         vocabUrl,
         query,
