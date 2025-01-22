@@ -10,7 +10,7 @@ import {
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, systemsMatch } from '../Utility';
-import { ModalSpinner } from '../Spinner';
+import { ModalSpinner, SmallSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import {
@@ -87,8 +87,6 @@ export const GetMappingsModal = ({
     setSelectedApi(apiPreferenceKeys[0]);
   }, [searchProp]);
 
-  console.log('selectedApi', selectedApi);
-
   useEffect(() => {
     setInputValue(searchProp);
     setCurrentSearchProp(searchProp);
@@ -112,8 +110,6 @@ export const GetMappingsModal = ({
       fetchResults(0, searchProp);
     }
   }, [searchProp]);
-
-  console.log('selectedApi', selectedApi);
 
   useEffect(() => {
     if (apiPreferencesCode !== undefined) {
@@ -247,7 +243,6 @@ export const GetMappingsModal = ({
     );
   };
   const fetchResults = (page, query) => {
-    console.log('SEEEEEEEEEEEEEEEEEEEEEEEEEEEEAAAAAAAAAAAAAAAAAARCH');
     if (!!!query) {
       return undefined;
     }
@@ -364,7 +359,10 @@ export const GetMappingsModal = ({
               </div>
               <div>
                 <a href={d?.code_iri} target="_blank">
-                  {d?.code}
+                  {d?.code}{' '}
+                  <span className="display_selected_api">
+                    ({d?.api.toUpperCase()})
+                  </span>
                 </a>
               </div>
               <div>
@@ -497,7 +495,7 @@ export const GetMappingsModal = ({
                             rules={[{ required: false }]}
                           >
                             {loadingResults ? (
-                              <div>Loading</div>
+                              <SmallSpinner />
                             ) : (
                               <div className="modal_display_results">
                                 {displaySelectedMappings?.map((sm, i) => (

@@ -215,8 +215,11 @@ export const olsFilterOntologiesSearch = (
       if (page > 0 && results?.length > 0) {
         data.results = results?.concat(data.results);
       }
-
-      setResults(data.results);
+      const addedApi = data?.results.map(result => ({
+        ...result,
+        api: apiToSearch,
+      }));
+      setResults(addedApi);
       setMoreAvailable(data.more_results_available);
 
       setResultsCount(data?.results?.length);
@@ -285,7 +288,7 @@ export const ontologyFilterCodeSubmit = (
   table,
   terminology
 ) => {
-  const apiPreference = { api_preference: { 'ols': [] } };
+  const apiPreference = { api_preference: {} };
   if (
     apiPreferencesCode &&
     (!preferenceType[prefTypeKey]?.api_preference?.[0] ||
@@ -293,7 +296,7 @@ export const ontologyFilterCodeSubmit = (
         Object.values(preferenceType[prefTypeKey]?.api_preference)[0]?.sort()
       ) !== JSON.stringify(apiPreferencesCode?.sort()))
   ) {
-    apiPreference.api_preference.ols = apiPreferencesCode;
+    apiPreference.api_preference = apiPreferencesCode;
     const fetchUrl = `${vocabUrl}/${
       !table ? `Terminology/${terminology?.id}` : `Table/${table?.id}`
     }/filter/${mappingProp}`;
