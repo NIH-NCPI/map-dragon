@@ -268,12 +268,12 @@ export const getFiltersByCode = (
       const codeToSearch = Object.keys(data)?.[0];
       const apiPreferences = data[codeToSearch]?.api_preference;
 
-      const apiPreferenceKeys = Object.keys(apiPreferences);
+      // const apiPreferenceKeys = Object.keys(apiPreferences);
 
-      apiPreferenceKeys?.forEach(key => {
-        // Dynamically assigns the api values to allApiPreferences variable
-        allApiPreferences[key] = apiPreferences[key];
-      });
+      // apiPreferenceKeys?.forEach(key => {
+      //   // Dynamically assigns the api values to allApiPreferences variable
+      //   allApiPreferences[key] = apiPreferences[key];
+      // });
 
       setApiPreferencesCode(apiPreferences); // Set state to the array
     });

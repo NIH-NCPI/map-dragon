@@ -51,7 +51,6 @@ export const GetMappingsModal = ({
     setMoreAvailable,
     setResultsCount,
     resultsCount,
-
     selectedApi,
     setSelectedApi,
   } = useContext(SearchContext);
@@ -86,6 +85,13 @@ export const GetMappingsModal = ({
   useEffect(() => {
     setSelectedApi(apiPreferenceKeys[0]);
   }, [searchProp]);
+  // useEffect(() => {
+  //   apiPreferenceKeys
+  //     ? setSelectedApi(apiPreferenceKeys[0])
+  //     : setSelectedApi(ontologyApis && ontologyApis[0].api_id);
+  // }, [searchProp]);
+
+  console.log('selected', selectedApi);
 
   useEffect(() => {
     setInputValue(searchProp);

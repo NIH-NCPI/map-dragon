@@ -36,15 +36,21 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   const defaultOntologies = ['MONDO', 'HP', 'MAXO', 'NCIT'];
 
-  const options = allApiPreferences
-    ? Object.keys(allApiPreferences).map((aap, index) => ({
-        value: aap,
-        label: aap.toUpperCase(),
-      }))
-    : [{ value: 'ols', label: 'OLS' }];
+  const options =
+    ontologyApis &&
+    ontologyApis.map((aap, index) => ({
+      value: aap.api_id,
+      label: aap.api_id.toUpperCase(),
+    }));
+
+  const defaultApi = allApiPreferences
+    ? Object.keys(allApiPreferences)[0]
+    : options[0];
+
+  console.log('all', defaultApi);
 
   useEffect(() => {
-    setSelectedApi(options ? options[0]?.value : 'ols');
+    setSelectedApi(defaultApi);
   }, []);
 
   let processedApiPreferencesCode;
