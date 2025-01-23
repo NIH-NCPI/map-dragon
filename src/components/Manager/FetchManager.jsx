@@ -267,8 +267,15 @@ export const getFiltersByCode = (
       const codeToSearch = Object.keys(data)?.[0];
       const apiPreferences =
         data[codeToSearch]?.api_preference ?? data[codeToSearch];
+      const updatedPreferences = Object.entries(apiPreferences).reduce(
+        (acc, [key, values]) => {
+          acc[key] = values.map(value => value.toUpperCase());
+          return acc;
+        },
+        {}
+      );
 
-      setApiPreferencesCode(apiPreferences);
+      setApiPreferencesCode(updatedPreferences);
     });
 };
 
