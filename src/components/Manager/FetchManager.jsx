@@ -263,13 +263,12 @@ export const getFiltersByCode = (
     })
     .then(data => {
       setUnformattedPref(data);
-      let allApiPreferences = {};
 
       const codeToSearch = Object.keys(data)?.[0];
       const apiPreferences =
         data[codeToSearch]?.api_preference ?? data[codeToSearch];
 
-      setApiPreferencesCode(apiPreferences); // Set state to the array
+      setApiPreferencesCode(apiPreferences);
     });
 };
 

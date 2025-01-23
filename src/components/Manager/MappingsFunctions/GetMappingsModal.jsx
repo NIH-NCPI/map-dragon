@@ -58,9 +58,7 @@ export const GetMappingsModal = ({
   const [loading, setLoading] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);
-  // const [totalCount, setTotalCount] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-  // const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
 
@@ -162,6 +160,7 @@ export const GetMappingsModal = ({
       fetchResults(page, currentSearchProp);
     }
   }, []);
+
   const onClose = () => {
     setPage(0);
     setApiPreferencesCode(undefined);
@@ -336,7 +335,15 @@ export const GetMappingsModal = ({
               <div>
                 <b>{d.display}</b>
               </div>
-              <div>
+              <div className="api_ontology_prefix">
+                {/* <Tooltip
+                  mouseEnterDelay={0.75}
+                  title={`${d.code} was imported by ${d.ontology_prefix}`}
+                > */}
+                {d.ontology_prefix}
+                {/* </Tooltip> */}
+              </div>
+              <div className="api_ontology_code">
                 <a href={d.code_iri} target="_blank">
                   {d.code}
                 </a>
@@ -359,12 +366,16 @@ export const GetMappingsModal = ({
                 <b>{d?.display}</b>
               </div>
               <div>
-                <a href={d?.code_iri} target="_blank">
-                  {d?.code}{' '}
-                  <span className="display_selected_api">
-                    ({d?.api.toUpperCase()})
-                  </span>
+                <a
+                  href={d?.code_iri}
+                  target="_blank"
+                  className="api_ontology_code"
+                >
+                  {d?.code}
                 </a>
+                <span className="display_selected_api">
+                  ({d?.api?.toUpperCase()})
+                </span>
               </div>
               <div>
                 <MappingRelationship mapping={d} />
@@ -489,7 +500,7 @@ export const GetMappingsModal = ({
                     <div className="all_checkboxes_container">
                       <OntologyCheckboxes preferenceType={preferenceType} />
 
-                      <div className="result_form results_spinner_div">
+                      <div className="result_form">
                         {loadingResults ? (
                           <ResultsSpinner />
                         ) : (
@@ -537,10 +548,7 @@ export const GetMappingsModal = ({
                                               code: d.code,
                                               display: d.display,
                                               description: d.description[0],
-                                              system: systemsMatch(
-                                                d?.code?.split(':')[0],
-                                                ontologyApis
-                                              ),
+                                              system: d?.system,
                                             }),
                                             label: checkBoxDisplay(d, index),
                                           };

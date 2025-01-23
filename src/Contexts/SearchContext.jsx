@@ -26,7 +26,8 @@ export function SearchContextRoot() {
 
   const entriesPerPage = 100;
 
-  const defaultOntologies = 'MONDO,HP,MAXO,NCIT';
+  const defaultOntologies =
+    selectedApi === 'ols' ? 'MONDO,HP,MAXO,NCIT' : 'SNOMEDCT_US';
   const preferenceTypeSet = data =>
     apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
 
@@ -79,6 +80,7 @@ export function SearchContextRoot() {
     setMoreAvailable,
     resultsCount,
     setResultsCount,
+
     selectedApi,
     setSelectedApi,
   };

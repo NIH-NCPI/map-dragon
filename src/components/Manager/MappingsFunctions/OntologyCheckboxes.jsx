@@ -36,7 +36,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   const [searchText, setSearchText] = useState('');
 
-  const defaultOntologies = ['MONDO', 'HP', 'MAXO', 'NCIT'];
+  const defaultOntologies =
+    selectedApi === 'ols' ? ['MONDO', 'HP', 'MAXO', 'NCIT'] : ['SNOMEDCT_US'];
 
   const options =
     ontologyApis &&
@@ -104,17 +105,25 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
         : [];
 
       setApiPreferencesCode(prevApiPreferences => {
-        // Check if selectedApi is a key in the existing apiPreferencesCode
-        if (Object.keys(prevApiPreferences).includes(selectedApi)) {
-          // Replace the array of the matched key with the newCheckedOntologies
+        // Check if selectedApi exists in apiPreferencesCode
+        if (selectedApi in prevApiPreferences) {
+          // If selectedApi already exists, update array by adding newCheckedOntologies
           return {
             ...prevApiPreferences,
-            [selectedApi]: newCheckedOntologies,
+            [selectedApi]: [
+              ...new Set([
+                ...prevApiPreferences[selectedApi],
+                ...newCheckedOntologies,
+              ]),
+            ],
           };
         }
 
-        // If selectedApi doesn't match any key, return the original object
-        return prevApiPreferences;
+        // If selectedApi does not exist, add it with newCheckedOntologies
+        return {
+          ...prevApiPreferences,
+          [selectedApi]: [...new Set(newCheckedOntologies)],
+        };
       });
       return newCheckedOntologies;
     });

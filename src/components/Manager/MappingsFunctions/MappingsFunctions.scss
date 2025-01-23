@@ -50,7 +50,7 @@
 .ontology_form_pref {
   width: 13vw;
   padding-right: 20px;
-  height: 44%;
+  height: 42%;
   overflow: auto;
   position: fixed;
 }
@@ -205,4 +205,19 @@
   font: {
     size: 0.8rem;
   }
+  margin: 0 0 0 5px;
+}
+
+.api_ontology_prefix {
+  /* Commented out to potentially come back to for styling ontology prefix*/
+  color: black;
+  // background-color: $lightBlue;
+  // padding: 0px 8px;
+  // border-radius: 5px;
+  // font-weight: 400;
+  // border: 1px solid #6aa6e3;
+}
+
+.api_ontology_code {
+  font-weight: 600;
 }
