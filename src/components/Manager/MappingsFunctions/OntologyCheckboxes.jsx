@@ -65,6 +65,9 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     processedApiPreferencesCode = apiPreferencesCode[selectedApi].split(',');
   }
 
+  console.log(processedApiPreferencesCode);
+  console.log(apiPreferencesCode);
+
   let existingOntologies;
 
   // Checks if apiPreferencesCode exists and is non-empty, if so, assigns processedApiPreferencesCode to existingOntologies
@@ -72,7 +75,9 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     Array.isArray(apiPreferencesCode?.[selectedApi]) &&
     apiPreferencesCode[selectedApi].length > 0
   ) {
-    existingOntologies = processedApiPreferencesCode;
+    existingOntologies = processedApiPreferencesCode?.map(pap =>
+      pap.toUpperCase()
+    );
   }
 
   // Checks if preferenceType[prefTypeKey].api_preference exists and is non-empty, if so, assigns the values to existingOntologies
@@ -90,6 +95,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   else {
     existingOntologies = defaultOntologies;
   }
+
+  console.log(existingOntologies);
   useEffect(() => {
     setCheckedOntologies(existingOntologies.map(eo => eo.toUpperCase()));
   }, [preferenceType, selectedApi]);
