@@ -1,5 +1,7 @@
 # Map Dragon
-This application will support several user groups in submitting and validating their data, managing and tracking data definitions, and aligning data to standardized terms. 
+Map Dragon is a tool for data mappers that enables users to import and store data dictionaries, search and map across multiple ontologies simultaneously, and export mapped data. This will standardize terminology for improved use in the AnVIL Data Explorer, and improve cross-platform querying.
+
+MapDragon operates on GCP and has been tested for use in Chrome and Microsoft Edge. We do not recommend using MapDragon on other browsers.
 
 ## Getting Started
 ### Vite React App
