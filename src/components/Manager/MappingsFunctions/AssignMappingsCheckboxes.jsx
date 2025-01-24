@@ -359,10 +359,10 @@ export const AssignMappingsCheckboxes = ({
                 title={d?.description}
                 placement="topRight"
               >
-                {ellipsisString(d?.description[0], '100')}
+                {ellipsisString(d?.description?.map(d => d).join(','), '100')}
               </Tooltip>
             ) : (
-              ellipsisString(d?.description[0], '100')
+              ellipsisString(d?.description?.map(d => d).join(','), '100')
             )}{' '}
           </div>
         </div>
@@ -408,7 +408,7 @@ export const AssignMappingsCheckboxes = ({
                 >
                   {ellipsisString(
                     Array.isArray(d.description)
-                      ? d.description[0]
+                      ? d.description?.map(d => d).join(',')
                       : d.description,
                     '85'
                   )}
@@ -416,7 +416,7 @@ export const AssignMappingsCheckboxes = ({
               ) : (
                 ellipsisString(
                   Array.isArray(d.description)
-                    ? d.description[0]
+                    ? d.description?.map(d => d).join(',')
                     : d.description,
                   '85'
                 )
@@ -607,7 +607,9 @@ export const AssignMappingsCheckboxes = ({
                                                 value: JSON.stringify({
                                                   code: d.code,
                                                   display: d.display,
-                                                  description: d.description[0],
+                                                  description: d.description
+                                                    ?.map(d => d)
+                                                    .join(','),
                                                   system: d.system,
                                                   api: d.api,
                                                 }),

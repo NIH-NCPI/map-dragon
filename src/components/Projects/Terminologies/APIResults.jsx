@@ -74,16 +74,16 @@ export const APIResults = ({
               </div>
             </div>
             <div>
-              {d?.description[0]?.length > 85 ? (
+              {d?.description?.map(d => d).join(',')?.length > 85 ? (
                 <Tooltip
                   placement="topRight"
                   mouseEnterDelay={0.5}
                   title={d?.description}
                 >
-                  {ellipsisString(d?.description[0], '85')}
+                  {ellipsisString(d?.description?.map(d => d).join(','), '85')}
                 </Tooltip>
               ) : (
-                ellipsisString(d?.description[0], '85')
+                ellipsisString(d?.description?.map(d => d).join(','), '85')
               )}
             </div>
           </div>
@@ -114,7 +114,7 @@ export const APIResults = ({
                     value: JSON.stringify({
                       code: d.obo_id,
                       display: d.label,
-                      description: d.description[0],
+                      description: d.description?.map(d => d).join(','),
                       system: systemsMatch(
                         d?.obo_id.split(':')[0],
                         ontologyApis

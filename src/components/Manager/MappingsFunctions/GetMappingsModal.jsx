@@ -184,7 +184,7 @@ export const GetMappingsModal = ({
     const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
-      description: item.description[0],
+      description: item.description?.map(d => d).join(','),
       system: systemsMatch(item.code.split(':')[0], ontologyApis),
       mapping_relationship: idsForSelect[item.code],
     }));
@@ -349,7 +349,9 @@ export const GetMappingsModal = ({
                 </a>
               </div>
             </div>
-            <div>{ellipsisString(d?.description[0], '120')}</div>
+            <div>
+              {ellipsisString(d?.description?.map(d => d).join(','), '120')}
+            </div>
           </div>
         </div>
       </>
@@ -381,7 +383,9 @@ export const GetMappingsModal = ({
                 <MappingRelationship mapping={d} />
               </div>
             </div>
-            <div>{ellipsisString(d?.description?.[0], '100')}</div>
+            <div>
+              {ellipsisString(d?.description?.map(d => d).join(','), '100')}
+            </div>
           </div>
         </div>
       </>
@@ -547,7 +551,9 @@ export const GetMappingsModal = ({
                                             value: JSON.stringify({
                                               code: d.code,
                                               display: d.display,
-                                              description: d.description[0],
+                                              description: d.description
+                                                ?.map(d => d)
+                                                .join(','),
                                               system: d?.system,
                                             }),
                                             label: checkBoxDisplay(d, index),
