@@ -40,11 +40,19 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     selectedApi === 'ols' ? ['MONDO', 'HP', 'MAXO', 'NCIT'] : ['SNOMEDCT_US'];
 
   //If there are no preferences set for an API, it sets them to default ontologies
-  if (!apiPreferencesCode.hasOwnProperty('umls') && selectedApi === 'umls') {
+  if (
+    apiPreferencesCode &&
+    !apiPreferencesCode.hasOwnProperty('umls') &&
+    selectedApi === 'umls'
+  ) {
     apiPreferencesCode.umls = defaultOntologies;
   }
-  if (!apiPreferencesCode.hasOwnProperty('ols') && selectedApi === 'ols') {
-    apiPreferencesCode.umls = defaultOntologies;
+  if (
+    apiPreferencesCode &&
+    !apiPreferencesCode.hasOwnProperty('ols') &&
+    selectedApi === 'ols'
+  ) {
+    apiPreferencesCode.ols = defaultOntologies;
   }
 
   const options =
@@ -108,29 +116,27 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
 
-    // Update checkedOntologies state (independent of apiPreferencesCode)
     setCheckedOntologies(prevCheckedOntologies => {
-      // If checked, add the value to checkedOntologies
+      // If checked, adds the value to checkedOntologies, otherwise filters out the ones not checked
       const updatedCheckedOntologies = checked
         ? [...prevCheckedOntologies, value.toUpperCase()]
         : prevCheckedOntologies.filter(
             ontology => ontology !== value.toUpperCase()
           );
 
-      // Return the updated checkedOntologies array (for state change)
       return updatedCheckedOntologies;
     });
 
-    // Now, update apiPreferencesCode based on the checkbox state
+    // Sets apiPreferencesCode to checkedOntologies
     setApiPreferencesCode(prevApiPreferences => {
       const updatedApiPreferences = { ...prevApiPreferences };
 
-      // Initialize the array for selectedApi if it doesn't exist
+      // Adds in the api if it doesn't already exist in apiPreferencesCode
       if (!updatedApiPreferences[selectedApi]) {
         updatedApiPreferences[selectedApi] = [];
       }
 
-      // If checkbox is checked, add the value to the apiPreferencesCode
+      // If checkbox is checked, adds the value to apiPreferencesCode for the respective api
       if (checked) {
         updatedApiPreferences[selectedApi] = [
           ...new Set([
@@ -139,13 +145,12 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
           ]),
         ];
       } else {
-        // If unchecked, remove the value from the apiPreferencesCode array
+        // If unchecked, removes the value from apiPreferencesCode for the respective api
         updatedApiPreferences[selectedApi] = updatedApiPreferences[
           selectedApi
         ].filter(ontology => ontology !== value.toUpperCase());
       }
 
-      // Return the updated apiPreferencesCode
       return updatedApiPreferences;
     });
   };
