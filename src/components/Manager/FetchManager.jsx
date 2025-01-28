@@ -240,7 +240,8 @@ export const getFiltersByCode = (
   setUnformattedPref,
   table,
   terminology,
-  setLoading
+  setLoading,
+  optionalTableParam
 ) => {
   setLoading(true);
   return fetch(

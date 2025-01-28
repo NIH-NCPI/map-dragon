@@ -13,6 +13,7 @@ import {
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 
 import { MappingRelationship } from './MappingRelationship';
+import { useParams } from 'react-router-dom';
 
 export const GetMappingsModal = ({
   componentString,
@@ -53,6 +54,7 @@ export const GetMappingsModal = ({
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
+  const { tableId } = useParams();
 
   const {
     setSelectedMappings,
@@ -78,6 +80,9 @@ export const GetMappingsModal = ({
       : setSelectedApi(ontologyApis?.[0]?.api_id || null);
   }, [searchProp]);
 
+  const optionalTableParam =
+    tableId !== undefined ? `?table_id=${tableId}` : '';
+
   useEffect(() => {
     setInputValue(searchProp);
     setCurrentSearchProp(searchProp);
@@ -91,7 +96,8 @@ export const GetMappingsModal = ({
         setUnformattedPref,
         table,
         terminology,
-        setLoading
+        setLoading,
+        optionalTableParam
       );
     }
   }, [searchProp]);
@@ -168,6 +174,9 @@ export const GetMappingsModal = ({
   };
 
   const apiForSearch = selectedApi ?? apiPreferenceKeys[0];
+
+  const optionalUserInput =
+    component === terminology ? `?user_input=true&user=${user?.email}` : '';
 
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.

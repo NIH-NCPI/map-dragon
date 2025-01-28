@@ -336,6 +336,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     termApiCalls();
   }, []);
 
+  // If the tableId param exists (i.e. terminology is accessed via a table), fetches the table's ontology filters to inherit in the terminology
+  // If the tableId param is undefined (i.e. terminology accessed from terminology index page), does not inherit a table's ontology filters
+  const optionalTableParam =
+    tableId !== undefined ? `?table_id=${tableId}` : '';
+
   const termApiCalls = async () => {
     setLoading(true);
     try {
@@ -349,7 +354,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
       if (terminologyData) {
         const filterResponse = await fetch(
-          `${vocabUrl}/Terminology/${terminologyData?.id}/filter`,
+          `${vocabUrl}/Terminology/${terminologyData?.id}/filter${optionalTableParam}`,
           {
             method: 'GET',
             headers: {
