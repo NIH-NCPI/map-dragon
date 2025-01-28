@@ -235,14 +235,15 @@ export const getFiltersByCode = (
   setUnformattedPref,
   table,
   terminology,
-  setLoading
+  setLoading,
+  optionalTableParam
 ) => {
   setLoading(true);
   return fetch(
     `${vocabUrl}/${
       table
         ? `Table/${table.id}/filter/${mappingProp}`
-        : `Terminology/${terminology.id}/filter/${mappingProp}`
+        : `Terminology/${terminology.id}/filter/${mappingProp}${optionalTableParam}`
     }`,
     {
       method: 'GET',

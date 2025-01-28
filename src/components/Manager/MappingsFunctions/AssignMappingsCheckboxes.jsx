@@ -362,7 +362,12 @@ export const AssignMappingsCheckboxes = ({
                 {ellipsisString(d?.description?.map(d => d).join(','), '100')}
               </Tooltip>
             ) : (
-              ellipsisString(d?.description?.map(d => d).join(','), '100')
+              ellipsisString(
+                Array.isArray(d?.description)
+                  ? d?.description?.map(d => d).join(',')
+                  : d?.description,
+                '100'
+              )
             )}{' '}
           </div>
         </div>

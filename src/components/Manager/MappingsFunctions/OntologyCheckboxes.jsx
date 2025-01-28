@@ -88,8 +88,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     Array.isArray(apiPreferencesCode?.[selectedApi]) &&
     apiPreferencesCode[selectedApi].length > 0
   ) {
-    existingOntologies = processedApiPreferencesCode?.map(pap =>
-      pap.toUpperCase()
+    existingOntologies = processedApiPreferencesCode?.map(processed =>
+      processed.toUpperCase()
     );
   }
 

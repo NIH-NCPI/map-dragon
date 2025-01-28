@@ -21,6 +21,7 @@ import {
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 
 import { MappingRelationship } from './MappingRelationship';
+import { useParams } from 'react-router-dom';
 
 export const GetMappingsModal = ({
   componentString,
@@ -61,6 +62,7 @@ export const GetMappingsModal = ({
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
+  const { tableId } = useParams();
 
   const {
     setSelectedMappings,
@@ -86,6 +88,9 @@ export const GetMappingsModal = ({
       : setSelectedApi(ontologyApis?.[0]?.api_id || null);
   }, [searchProp]);
 
+  const optionalTableParam =
+    tableId !== undefined ? `?table_id=${tableId}` : '';
+
   useEffect(() => {
     setInputValue(searchProp);
     setCurrentSearchProp(searchProp);
@@ -99,7 +104,8 @@ export const GetMappingsModal = ({
         setUnformattedPref,
         table,
         terminology,
-        setLoading
+        setLoading,
+        optionalTableParam
       );
     }
   }, [searchProp]);
@@ -177,6 +183,9 @@ export const GetMappingsModal = ({
 
   const apiForSearch = selectedApi ?? apiPreferenceKeys[0];
 
+  const optionalUserInput =
+    component === terminology ? `?user_input=true&user=${user?.email}` : '';
+
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
@@ -184,8 +193,10 @@ export const GetMappingsModal = ({
     const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
-      description: item.description?.map(d => d).join(','),
-      system: systemsMatch(item.code.split(':')[0], ontologyApis),
+      description: Array.isArray(item?.description)
+        ? item?.description?.map(item => item).join(',')
+        : item?.description,
+      system: item?.system,
       mapping_relationship: idsForSelect[item.code],
     }));
 
@@ -196,7 +207,7 @@ export const GetMappingsModal = ({
 
     setLoadingResults(true);
     fetch(
-      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}${optionalUserInput}`,
       {
         method: 'PUT',
         headers: {
@@ -350,7 +361,12 @@ export const GetMappingsModal = ({
               </div>
             </div>
             <div>
-              {ellipsisString(d?.description?.map(d => d).join(','), '120')}
+              {ellipsisString(
+                Array.isArray(d?.description)
+                  ? d?.description?.map(d => d).join(',')
+                  : d?.description,
+                '120'
+              )}{' '}
             </div>
           </div>
         </div>
@@ -384,7 +400,12 @@ export const GetMappingsModal = ({
               </div>
             </div>
             <div>
-              {ellipsisString(d?.description?.map(d => d).join(','), '100')}
+              {ellipsisString(
+                Array.isArray(d?.description)
+                  ? d?.description?.map(d => d).join(',')
+                  : d?.description,
+                '100'
+              )}
             </div>
           </div>
         </div>
