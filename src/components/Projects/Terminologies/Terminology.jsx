@@ -35,7 +35,7 @@ import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
-import { ellipsisString, mappingTooltip } from '../../Manager/Utilitiy';
+import { ellipsisString, mappingTooltip } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 
@@ -87,10 +87,9 @@ export const Terminology = () => {
   const navigate = useNavigate();
 
   const updateMappings = (mapArr, mappingCode) => {
-    // setLoading(true);
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user.email,
+      editor: user?.email,
     };
 
     fetch(
@@ -128,8 +127,7 @@ export const Terminology = () => {
           });
         }
         return error;
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   /* The terminology may have numerous codes. The API call to fetch the mappings returns all mappings for the terminology.
@@ -180,11 +178,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     );
 
     if (variableMappings && variableMappings.mappings?.length) {
-      return variableMappings.mappings.map(code => (
-        <div className="mapping" key={code.code}>
+      return variableMappings.mappings.map((code, i) => (
+        <div className="mapping" key={i}>
           <span>
             <Tooltip
-              title={code?.user_input?.comments_count}
+              title={code.user_input?.comments_count}
               mouseEnterDelay={0.75}
             >
               <MessageOutlined
@@ -341,88 +339,68 @@ It then shows the mappings as table data and alows the user to delete a mapping 
   // Fetches the mappings for the terminology and sets the response to 'mapping'
   // Sets loading to false
   useEffect(() => {
-    setLoading(true);
-    getById(vocabUrl, 'Terminology', terminologyId, navigate)
-      .then(data => {
-        if (data === null) {
-          navigate('/404');
-        } else {
-          setTerminology(data);
-          if (data) {
-            fetch(`${vocabUrl}/Terminology/${data?.id}/filter`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            })
-              .then(res => {
-                if (res.ok) {
-                  return res.json();
-                } else {
-                  throw new Error('An unknown error occurred.');
-                }
-              })
-              .then(data => {
-                setApiPreferencesTerm(data);
-              });
-            getById(
-              vocabUrl,
-              'Terminology',
-              `${terminologyId}/mapping?user_input=True&user=${user?.email}`
-            )
-              .then(data => setMapping(data.codes))
-              .catch(error => {
-                if (error) {
-                  notification.error({
-                    message: 'Error',
-                    description: 'An error occurred loading mappings.',
-                  });
-                }
-                return error;
-              })
-              .then(() =>
-                getById(
-                  vocabUrl,
-                  'Terminology',
-                  'ftd-concept-map-relationship'
-                ).then(data => setRelationshipOptions(data.codes))
-              )
-              .then(() =>
-                getById(
-                  vocabUrl,
-                  'Terminology',
-                  `${terminologyId}/preferred_terminology`
-                )
-                  .then(data => setPrefTerminologies(data?.references))
-                  .catch(error => {
-                    if (error) {
-                      notification.error({
-                        message: 'Error',
-                        description:
-                          'An error occurred loading preferred terminologies.',
-                      });
-                    }
-                    return error;
-                  })
-              );
-          } else {
-            setLoading(false);
-          }
-        }
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description:
-              'An error occurred loading the the ontology preferences.',
-          });
-        }
-        return error;
-      })
-
-      .finally(() => setLoading(false));
+    termApiCalls();
   }, []);
+
+  const termApiCalls = async () => {
+    setLoading(true);
+    try {
+      const terminologyData = await getById(
+        vocabUrl,
+        'Terminology',
+        terminologyId,
+        navigate
+      );
+      setTerminology(terminologyData);
+
+      if (terminologyData) {
+        const filterResponse = await fetch(
+          `${vocabUrl}/Terminology/${terminologyData?.id}/filter`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        if (!filterResponse.ok) {
+          throw new Error('An unknown error occurred.');
+        }
+
+        const filterData = await filterResponse.json();
+        setApiPreferencesTerm(filterData);
+
+        const mappingsData = await getById(
+          vocabUrl,
+          'Terminology',
+          `${terminologyId}/mapping?user_input=True&user=${user?.email}`
+        );
+        setMapping(mappingsData.codes);
+
+        const relationshipData = await getById(
+          vocabUrl,
+          'Terminology',
+          'ftd-concept-map-relationship'
+        );
+        setRelationshipOptions(relationshipData.codes);
+
+        const prefTerminologyData = await getById(
+          vocabUrl,
+          'Terminology',
+          `${terminologyId}/preferred_terminology`
+        );
+        setPrefTerminologies(prefTerminologyData?.references);
+      }
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: error.message || 'An error occurred loading data.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // columns for the ant.design table
   const columns = [

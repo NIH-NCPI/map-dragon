@@ -89,6 +89,8 @@ export const AddVariable = ({ table, setTable }) => {
         }}
         maskClosable={false}
         closeIcon={false}
+        cancelButtonProps={{ disabled: loading }}
+        okButtonProps={{ disabled: loading }}
       >
         {loading ? (
           <ModalSpinner />

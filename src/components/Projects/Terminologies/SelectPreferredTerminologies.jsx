@@ -1,6 +1,6 @@
 import { Checkbox, Form, Input, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
-import { ellipsisString } from '../../Manager/Utilitiy';
+import { ellipsisString } from '../../Manager/Utility';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -158,8 +158,8 @@ export const SelectPreferredTerminologies = ({
           <div className="result_container">
             {preferredData?.length > 0 && (
               <>
-                <h4>Preferred</h4>
                 <Form.Item
+                  className="pref_group"
                   initialValue={initialChecked}
                   name={['existing_terminologies']}
                   valuePropName="value"
@@ -190,9 +190,8 @@ export const SelectPreferredTerminologies = ({
             )}
             {displaySelectedTerminologies?.length > 0 && (
               <>
-                <h4>Selected</h4>
-
                 <Form.Item
+                  className="pref_group"
                   name="selected_terminologies"
                   valuePropName="value"
                   rules={[{ required: false }]}

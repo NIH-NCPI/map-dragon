@@ -19,8 +19,15 @@ export function SearchContextRoot() {
   const [ontologyApis, setOntologyApis] = useState([]);
   const [apiPreferencesTerm, setApiPreferencesTerm] = useState(undefined);
   const [searchText, setSearchText] = useState('');
+  const [checkedOntologies, setCheckedOntologies] = useState([]);
+  const [moreAvailable, setMoreAvailable] = useState(false);
+  const [resultsCount, setResultsCount] = useState();
+  const [selectedApi, setSelectedApi] = useState('');
 
-  const defaultOntologies = 'mondo,hp,maxo,ncit';
+  const entriesPerPage = 100;
+
+  const defaultOntologies =
+    selectedApi === 'ols' ? 'MONDO,HP,MAXO,NCIT' : 'SNOMEDCT_US';
   const preferenceTypeSet = data =>
     apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
 
@@ -66,6 +73,16 @@ export function SearchContextRoot() {
     prefTypeKey,
     searchText,
     setSearchText,
+    checkedOntologies,
+    setCheckedOntologies,
+    entriesPerPage,
+    moreAvailable,
+    setMoreAvailable,
+    resultsCount,
+    setResultsCount,
+
+    selectedApi,
+    setSelectedApi,
   };
 
   return (

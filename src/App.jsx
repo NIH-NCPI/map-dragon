@@ -6,8 +6,6 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 export const myContext = createContext();
 
 function App() {
-  const searchUrl = import.meta.env.VITE_SEARCH_ENDPOINT;
-  const monarchUrl = import.meta.env.VITE_MONARCH_SEARCH;
   const vocabUrl = import.meta.env.VITE_VOCAB_ENDPOINT;
   const clientId = import.meta.env.VITE_CLIENT_ID;
   const mapDragonVersion = import.meta.env.VITE_MAPDRAGON_VERSION;
@@ -37,18 +35,18 @@ function App() {
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
+  const [ucumCodes, setUcumCodes] = useState([]);
 
   message.config({
     top: '25vh',
   });
+
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <myContext.Provider
         value={{
           results,
           setResults,
-          searchUrl,
-          monarchUrl,
           vocabUrl,
           mapDragonVersion,
           tablesDD,
@@ -79,6 +77,8 @@ function App() {
           setImportState,
           ontologyForPagination,
           setOntologyForPagination,
+          ucumCodes,
+          setUcumCodes,
         }}
       >
         <AppRouter />

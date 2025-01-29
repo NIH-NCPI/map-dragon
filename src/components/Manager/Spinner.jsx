@@ -51,3 +51,13 @@ export const OntologySpinner = () => {
     </div>
   );
 };
+
+export const ResultsSpinner = () => {
+  return (
+    <div className="results_spinner_container">
+      <div className="results_spinner">
+        <Spin />
+      </div>
+    </div>
+  );
+};

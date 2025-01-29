@@ -11,8 +11,6 @@ export const ellipsisString = (str, num) => {
 /* The results from the API sometimes show duplicate entries for codes that were imported from other ontologies.
   We only want to display the codes from their source ontologies, not the imported duplicates. This function ensures the
   curie in the code id matches the ontology prefix of the object. */
-export const ontologyFilter = d =>
-  d.filter(d => d?.obo_id.split(':')[0] === d?.ontology_prefix);
 
 export const ontologyReducer = d =>
   d.reduce(
@@ -47,7 +45,7 @@ export const ontologyCounts = arr => {
 
   while (i < arr.length) {
     if (isNaN(arr[i])) {
-      // If element in array, it not a number (i.e. it's a string), it sets it as the key
+      // If element in array, is not a number (i.e. it's a string), it sets it as the key
       const key = arr[i];
       const value = arr[i + 1]; // Gets the first number after the string
       result.push({ [key]: value }); // Pushes the key (string) and value (number) pair to the result array

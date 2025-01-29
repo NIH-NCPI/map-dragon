@@ -1,7 +1,6 @@
 @import '../Styling/Variables';
 
 .loading_screen {
-  margin-top: $navHeight;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -45,4 +44,21 @@
 .ontology_spinner_container {
   display: flex;
   flex-direction: row;
+}
+
+.results_spinner_container {
+  display: flex;
+  width: 40rem;
+  height: 15rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.results_spinner {
+  vertical-align: center;
+  text-align: center;
+  padding: 1vw;
+  width: 100px;
+  background-color: rgb(79, 79, 79, 0.1);
+  border: 1px solid rgb(79, 79, 79, 0.4);
 }
