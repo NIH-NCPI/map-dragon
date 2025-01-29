@@ -9,7 +9,6 @@ import { SearchContext } from '../../Contexts/SearchContext';
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const {
-    defaultOntologies,
     entriesPerPage,
     moreAvailable,
     setMoreAvailable,
@@ -21,6 +20,8 @@ export const SearchResults = () => {
   const [page, setPage] = useState(0); //page number for search results pagination
   const [loading, setLoading] = useState(true);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
+
+  const defaultOntologies = 'MONDO,HP,MAXO,NCIT';
 
   /* useParams() gets the search term param from the address bar, 
   which was placed there from the input field in OntologySearch.jsx */
