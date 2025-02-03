@@ -4,7 +4,7 @@ import { ellipsisString } from '../Utility';
 import { MappingRelationship } from './MappingRelationship';
 import { Tooltip } from 'antd';
 
-export const EditMappingsLabel = ({ item, index }) => {
+export const EditMappingsLabel = ({ item, index, variable }) => {
   const { showOptions, setShowOptions, relationshipOptions, idsForSelect } =
     useContext(MappingContext);
   // Find the object in relationshipOptions where the code matches the mappings's mapping_relationship
@@ -16,6 +16,7 @@ export const EditMappingsLabel = ({ item, index }) => {
 
     return findDisplay ? findDisplay.display : null;
   };
+  item['variable'] = variable;
 
   return (
     <>
