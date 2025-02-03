@@ -30,12 +30,12 @@ export const ShowHistory = ({
     }
   }, [showHistory]);
 
-  // If there are multiple mappings, splits the list by the commas and displays in a column
+  // Ensures text is a string. If there are multiple changes, splits the list by the commas and displays in a column
   const valuesRender = text => {
-    if (!text) return null;
+    if (!text || typeof text !== 'string') return null;
     return text
-      .split(',')
-      .map((item, index) => <div key={index}>{item.trim()}</div>);
+      ?.split(',')
+      .map((item, index) => <div key={index}>{item?.trim()}</div>);
   };
 
   const columns = [
@@ -75,17 +75,32 @@ export const ShowHistory = ({
 
   const dataSource =
     provData?.changes
-      ?.map((prov, index) => ({
-        key: index,
-        timestamp: prov.timestamp,
-        action: prov.action,
-        old_value: prov.old_value,
-        new_value: prov.new_value,
-        editor: prov.editor,
-      }))
+      ?.map((prov, index) => {
+        let [date, time] = prov.timestamp.split(' ');
+        let [hour, minute] = time.split(':');
+        const meridiem = prov.timestamp.slice(-2);
+        if (meridiem === 'PM' && hour !== '12') {
+          hour = parseInt(hour) + 12;
+        }
+        if (meridiem === 'AM' && hour === '12') {
+          hour = '00';
+        }
+        const formattedDate = `${date}T${hour}:${minute.slice(0, 2)}:00.000Z`;
+
+        return {
+          key: index,
+          timestamp: prov.timestamp,
+          formattedDate,
+          action: prov.action,
+          old_value: prov.old_value,
+          new_value: prov.new_value,
+          editor: prov.editor,
+        };
+      })
       .sort((a, b) => {
-        const dateA = new Date(a.timestamp);
-        const dateB = new Date(b.timestamp);
+        const dateA = new Date(a.formattedDate);
+        const dateB = new Date(b.formattedDate);
+
         return dateB - dateA;
       }) ?? [];
 
