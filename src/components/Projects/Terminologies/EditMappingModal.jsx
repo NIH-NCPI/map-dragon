@@ -41,6 +41,7 @@ export const EditMappingsModal = ({
     ontologyApis,
   } = useContext(SearchContext);
   const [loading, setLoading] = useState(false);
+  const [loadingResults, setLoadingResults] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
@@ -357,6 +358,10 @@ export const EditMappingsModal = ({
           mappingProp={editMappings?.code}
           mappingDesc={editMappings?.description ?? 'No description'}
           terminology={terminology}
+          preferenceType={preferenceType}
+          prefTypeKey={prefTypeKey}
+          loadingResults={loadingResults}
+          setLoadingResults={setLoadingResults}
         />
       )}
     </Modal>

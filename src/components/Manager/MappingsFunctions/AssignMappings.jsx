@@ -70,7 +70,7 @@ export const AssignMappings = ({
       code: item.code,
       display: item.display,
       description: Array.isArray(item.description)
-        ? item.description[0]
+        ? item.description?.map(d => d).join(',')
         : item.description,
       system: item.system,
       mapping_relationship: idsForSelect[item.code],
