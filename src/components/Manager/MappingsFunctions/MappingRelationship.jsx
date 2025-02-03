@@ -13,12 +13,23 @@ export const MappingRelationship = ({ mapping }) => {
     }));
   };
 
+
+
+
+const  addInfo = (display) => {
+
+    const result = (display.includes("Target") && display.includes("Source")) ? display.replace("Source", mapping.variable).replace("Target", mapping.display) : mapping.variable  + ' is '  + display  + ' to ' + mapping.display;
+    return result;
+
+  }
+
   const options = relationshipOptions.map(ro => {
     return {
       value: ro.code,
-      label: ro.display,
+      label: addInfo(ro.display)
     };
   });
+
 
   return (
     <Select
