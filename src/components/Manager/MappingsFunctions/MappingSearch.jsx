@@ -391,7 +391,7 @@ export const MappingSearch = ({
                 )}
               </div>
               <div>
-                <MappingRelationship mapping={d} />
+                <MappingRelationship mapping={d} variable={searchProp} />
               </div>
             </div>
             <div>
@@ -439,7 +439,7 @@ export const MappingSearch = ({
               </div>
               <div>{d.code}</div>
               <div>
-                <MappingRelationship mapping={d} />
+                <MappingRelationship mapping={d} variable={searchProp} />
               </div>
             </div>
             <div>

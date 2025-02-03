@@ -14,9 +14,17 @@ export const EditMappingsLabel = ({ item, index, variable }) => {
       ro => ro.code === item.mapping_relationship
     );
 
-    return findDisplay ? findDisplay.display : null;
+    return findDisplay ? addInfo(findDisplay.display) : null;
   };
-  item['variable'] = variable;
+
+
+  const  addInfo = (display) => {
+
+    const result = (display.includes("Target") && display.includes("Source")) ? display.replace("Source", variable).replace("Target", item.display) : variable  + ' is '  + display  + ' to ' + item.display;
+    return result;
+
+  }
+
 
   return (
     <>
@@ -41,10 +49,10 @@ export const EditMappingsLabel = ({ item, index, variable }) => {
               {item?.mapping_relationship && !showOptions ? (
                 displayRelationship(item)
               ) : item.mapping_relationship && !!showOptions ? (
-                <MappingRelationship mapping={item} />
+                <MappingRelationship mapping={item} variable={variable} />
               ) : (
                 !item.mapping_relationship && (
-                  <MappingRelationship mapping={item} />
+                  <MappingRelationship mapping={item} variable={variable} />
                 )
               )}
             </div>
