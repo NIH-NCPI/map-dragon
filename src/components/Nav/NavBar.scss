@@ -35,6 +35,9 @@ nav.navbar {
   .logo_container {
     left: 0;
     padding-left: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .nav_logo {

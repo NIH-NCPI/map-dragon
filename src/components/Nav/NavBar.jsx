@@ -4,6 +4,7 @@ import { Login } from '../Auth/Login';
 import { useContext, useState } from 'react';
 import { myContext } from '../../App';
 import { RequiredLogin } from '../Auth/RequiredLogin';
+import Logo from '../../assets/logo.png';
 
 export const NavBar = () => {
   const [routeTo, setRouteTo] = useState(null);
@@ -25,7 +26,11 @@ export const NavBar = () => {
           <div className="logo_container">
             <li className="nav_logo">
               <NavLink className="nav_logo" to="/">
-                FREE THE DATA
+                <img
+                  className="logo"
+                  alt="Map Dragon logo. Yellow circle with MD in the center."
+                  src={Logo}
+                />
               </NavLink>
             </li>
           </div>
