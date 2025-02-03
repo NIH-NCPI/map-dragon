@@ -2,7 +2,7 @@ import { Select } from 'antd';
 import { useContext } from 'react';
 import { MappingContext } from '../../../Contexts/MappingContext';
 
-export const MappingRelationship = ({ mapping }) => {
+export const MappingRelationship = ({ mapping, variable }) => {
   const { relationshipOptions, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
 
@@ -15,10 +15,11 @@ export const MappingRelationship = ({ mapping }) => {
 
 
 
+  console.log(mapping, 'mapping');
 
-const  addInfo = (display) => {
-
-    const result = (display.includes("Target") && display.includes("Source")) ? display.replace("Source", mapping.variable).replace("Target", mapping.display) : mapping.variable  + ' is '  + display  + ' to ' + mapping.display;
+  const addInfo = (str) => {
+    const label = mapping.display ? mapping.display : mapping.code;
+    const result = (str.includes("Target") && str.includes("Source")) ? str.replace("Source", variable).replace("Target", label) : variable + ' is ' + str + ' to ' + label;
     return result;
 
   }

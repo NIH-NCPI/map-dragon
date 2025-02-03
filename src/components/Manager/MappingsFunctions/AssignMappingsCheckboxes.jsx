@@ -408,7 +408,7 @@ export const AssignMappingsCheckboxes = ({
                 )}
               </div>
               <div>
-                <MappingRelationship mapping={d} />
+                <MappingRelationship mapping={d} variable={mappingProp} />
               </div>
             </div>
             <div>
