@@ -17,10 +17,9 @@ export const EditMappingsLabel = ({ item, index, variable }) => {
     return findDisplay ? addInfo(findDisplay.display) : null;
   };
 
-
-  const  addInfo = (display) => {
-
-    const result = (display.includes("Target") && display.includes("Source")) ? display.replace("Source", variable).replace("Target", item.display) : variable  + ' is '  + display  + ' to ' + item.display;
+  const  addInfo = (str) => {
+    const label = item.display ? item.display : item.code;
+    const result = (str.includes("Target") && str.includes("Source")) ? str.replace("Source", variable).replace("Target", label) : variable + ' is ' + str + ' to ' + label;
     return result;
 
   }

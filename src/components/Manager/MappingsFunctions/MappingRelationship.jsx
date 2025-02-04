@@ -14,9 +14,6 @@ export const MappingRelationship = ({ mapping, variable }) => {
   };
 
 
-
-  console.log(mapping, 'mapping');
-
   const addInfo = (str) => {
     const label = mapping.display ? mapping.display : mapping.code;
     const result = (str.includes("Target") && str.includes("Source")) ? str.replace("Source", variable).replace("Target", label) : variable + ' is ' + str + ' to ' + label;
