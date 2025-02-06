@@ -77,15 +77,28 @@ export const ShowHistory = ({
     provData?.changes
       ?.map((prov, index) => {
         let [date, time] = prov.timestamp.split(' ');
-        let [hour, minute] = time.split(':');
-        const meridiem = prov.timestamp.slice(-2);
+        let [hour, minute, second] = time.split(':');
+
+        const meridiem =
+          second === undefined ? prov.timestamp.slice(-2) : second.slice(-2);
         if (meridiem === 'PM' && hour !== '12') {
           hour = parseInt(hour) + 12;
         }
         if (meridiem === 'AM' && hour === '12') {
           hour = '00';
         }
-        const formattedDate = `${date}T${hour}:${minute.slice(0, 2)}:00.000Z`;
+
+        if (second === undefined) {
+          minute = minute.slice(0, 2);
+        }
+        if (second === undefined) {
+          second = '00';
+        }
+
+        const formattedDate = `${date}T${hour}:${minute}:${second.slice(
+          0,
+          2
+        )}.000Z`;
 
         return {
           key: index,

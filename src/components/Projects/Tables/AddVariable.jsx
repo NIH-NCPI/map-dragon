@@ -1,6 +1,15 @@
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Select,
+  Space,
+} from 'antd';
 import DataTypeSubForm from './DataTypeSubForm';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
@@ -43,6 +52,15 @@ export const AddVariable = ({ table, setTable }) => {
       })
       // Displays a self-closing message that the udpates have been successfully saved.
       .then(() => message.success('Variable added successfully.'))
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred adding the variable.',
+          });
+        }
+        return error;
+      })
       .finally(() => setLoading(false));
   };
 

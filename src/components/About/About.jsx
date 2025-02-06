@@ -21,7 +21,7 @@ export const About = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred.',
           });
         }
         return error;
