@@ -1,6 +1,7 @@
-import { createContext, useState } from 'react';
+import { createContext,useContext,useEffect, useState } from 'react';
+import { myContext } from '../App';
 import { Outlet } from 'react-router-dom';
-
+import { getDefaultOntologies } from '../components/Manager/FetchManager';
 export const SearchContext = createContext();
 
 export function SearchContextRoot() {
@@ -23,11 +24,22 @@ export function SearchContextRoot() {
   const [moreAvailable, setMoreAvailable] = useState(false);
   const [resultsCount, setResultsCount] = useState();
   const [selectedApi, setSelectedApi] = useState('');
-
+  const {vocabUrl} = useContext(myContext);
+  const [defaultOntologies, setDefaultOntologies] = useState([]);
   const entriesPerPage = 100;
+  useEffect(() => {
+    const fetchDefaultOntologiesData = async () => {
+      try {
+        const result = await getDefaultOntologies(vocabUrl);
+        setDefaultOntologies(result["Application Default"].api_preference.ols); // Update state with fetched data
+      } catch (error) {
+        console.error('Error fetching default ontologies:', error);
+      }
+    };
 
-  const defaultOntologies =
-    selectedApi === 'ols' ? 'MONDO,HP,MAXO,NCIT' : 'SNOMEDCT_US';
+    fetchDefaultOntologiesData();
+  }, [vocabUrl]);
+  
   const preferenceTypeSet = data =>
     apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
 
@@ -80,7 +92,7 @@ export function SearchContextRoot() {
     setMoreAvailable,
     resultsCount,
     setResultsCount,
-
+    defaultOntologies,
     selectedApi,
     setSelectedApi,
   };

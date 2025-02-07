@@ -18,6 +18,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     unformattedPref,
     selectedApi,
     setSelectedApi,
+    defaultOntologies
   } = useContext(SearchContext);
   const { Search } = Input;
 
@@ -36,8 +37,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   const [searchText, setSearchText] = useState('');
 
-  const defaultOntologies =
-    selectedApi === 'ols' ? ['MONDO', 'HP', 'MAXO', 'NCIT'] : ['SNOMEDCT_US'];
+   const selectedOntologies = selectedApi === 'ols' ? defaultOntologies : ['SNOMEDCT_US'];
 
   //If there are no preferences set for an API, it sets them to default ontologies
   if (
@@ -45,14 +45,14 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     !apiPreferencesCode.hasOwnProperty('umls') &&
     selectedApi === 'umls'
   ) {
-    apiPreferencesCode.umls = defaultOntologies;
+    apiPreferencesCode.umls = selectedOntologies;
   }
   if (
     apiPreferencesCode &&
     !apiPreferencesCode.hasOwnProperty('ols') &&
     selectedApi === 'ols'
   ) {
-    apiPreferencesCode.ols = defaultOntologies;
+    apiPreferencesCode.ols = selectedOntologies;
   }
 
   const options =
@@ -104,9 +104,9 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
       preferenceType[prefTypeKey].api_preference
     ).flat();
   }
-  // If the above are false, defaultOntologies are used for the search
+  // If the above are false, selectedOntologies are used for the search
   else {
-    existingOntologies = defaultOntologies;
+    existingOntologies = selectedOntologies;
   }
 
   useEffect(() => {
