@@ -6,6 +6,9 @@ import './SearchResults.scss';
 import { SearchSpinner } from '../Manager/Spinner';
 import { SearchContext } from '../../Contexts/SearchContext';
 
+
+
+
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const {
@@ -14,14 +17,15 @@ export const SearchResults = () => {
     setMoreAvailable,
     resultsCount,
     setResultsCount,
+    defaultOntologies
+
   } = useContext(SearchContext);
   const { results, setResults, vocabUrl } = useContext(myContext);
 
   const [page, setPage] = useState(0); //page number for search results pagination
   const [loading, setLoading] = useState(true);
+  // const [defaultOntologies, setDefaultOntologies] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-
-  const defaultOntologies = 'MONDO,HP,MAXO,NCIT';
 
   /* useParams() gets the search term param from the address bar, 
   which was placed there from the input field in OntologySearch.jsx */
@@ -121,9 +125,8 @@ The user is then redirected to the search page, which completes the search for t
 
             <div>
               <button
-                className={`search_button_results ${
-                  buttonDisabled ? 'disabled_results' : ''
-                }`}
+                className={`search_button_results ${buttonDisabled ? 'disabled_results' : ''
+                  }`}
                 onClick={e => {
                   /* if the input field has a value (i.e. term being searched):
                  the page of search results is set to 1 to fetch the results of the first page
