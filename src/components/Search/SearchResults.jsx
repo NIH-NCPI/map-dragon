@@ -24,7 +24,6 @@ export const SearchResults = () => {
 
   const [page, setPage] = useState(0); //page number for search results pagination
   const [loading, setLoading] = useState(true);
-  // const [defaultOntologies, setDefaultOntologies] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
 
   /* useParams() gets the search term param from the address bar, 
@@ -55,6 +54,7 @@ export const SearchResults = () => {
   // API request to OLS ontology search with the rows and index of the first search per page as props.
   // The response is set to the 'results'. Loading is set to false.
   const requestSearch = () => {
+    alert();
     setLoading(true);
     fetch(
       `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
