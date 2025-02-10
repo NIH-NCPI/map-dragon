@@ -6,6 +6,9 @@ import './SearchResults.scss';
 import { SearchSpinner } from '../Manager/Spinner';
 import { SearchContext } from '../../Contexts/SearchContext';
 
+
+
+
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const {
@@ -14,14 +17,14 @@ export const SearchResults = () => {
     setMoreAvailable,
     resultsCount,
     setResultsCount,
+    defaultOntologies
+
   } = useContext(SearchContext);
   const { results, setResults, vocabUrl } = useContext(myContext);
 
   const [page, setPage] = useState(0); //page number for search results pagination
   const [loading, setLoading] = useState(true);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-
-  const defaultOntologies = 'MONDO,HP,MAXO,NCIT';
 
   /* useParams() gets the search term param from the address bar, 
   which was placed there from the input field in OntologySearch.jsx */
@@ -53,7 +56,7 @@ export const SearchResults = () => {
   const requestSearch = () => {
     setLoading(true);
     fetch(
-      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
+      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
       {
         method: 'GET',
         headers: {
@@ -121,9 +124,8 @@ The user is then redirected to the search page, which completes the search for t
 
             <div>
               <button
-                className={`search_button_results ${
-                  buttonDisabled ? 'disabled_results' : ''
-                }`}
+                className={`search_button_results ${buttonDisabled ? 'disabled_results' : ''
+                  }`}
                 onClick={e => {
                   /* if the input field has a value (i.e. term being searched):
                  the page of search results is set to 1 to fetch the results of the first page
@@ -131,7 +133,7 @@ The user is then redirected to the search page, which completes the search for t
                  the value is transposed into the address bar
                   */
                   if (ref.current.value) {
-                    setPage(1), navigate(`/search/${ref.current.value}`);
+                    setPage(0), navigate(`/search/${ref.current.value}`);
                   }
                 }}
               >
