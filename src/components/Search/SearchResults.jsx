@@ -134,7 +134,7 @@ The user is then redirected to the search page, which completes the search for t
                  the value is transposed into the address bar
                   */
                   if (ref.current.value) {
-                    setPage(1), navigate(`/search/${ref.current.value}`);
+                    setPage(0), navigate(`/search/${ref.current.value}`);
                   }
                 }}
               >
