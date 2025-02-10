@@ -56,7 +56,7 @@ export const SearchResults = () => {
   const requestSearch = () => {
     setLoading(true);
     fetch(
-      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
+      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies.join().toUpperCase()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
       {
         method: 'GET',
         headers: {
