@@ -35,7 +35,7 @@ import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
-import { ellipsisString, mappingTooltip } from '../../Manager/Utility';
+import { relationshipDisplay } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 
@@ -277,16 +277,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             )}
           </span>
           <span className="mapping-display">
-            <Tooltip
-              title={
-                (code.display ? code.display : code.code).length > 25
-                  ? mappingTooltip(code)
-                  : code.code
-              }
-              mouseEnterDelay={0.75}
-            >
-              {ellipsisString(code.display ? code.display : code.code, '25')}
-            </Tooltip>
+            {code?.code} {code?.display && `- ${code?.display}`}{' '}
+            {relationshipDisplay(code)}
           </span>
           <span
             className="mapping_actions"
@@ -412,19 +404,19 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     {
       title: 'Code',
       dataIndex: 'code',
-      width: 180,
+      width: 100,
     },
     {
       title: 'Display',
       dataIndex: 'display',
-      width: 180,
+      width: 100,
     },
     {
       title: 'Description',
       dataIndex: 'description',
-      width: 300,
+      width: 200,
     },
-    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 120 },
+    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 350 },
     {
       title: '',
       dataIndex: 'delete_column',
