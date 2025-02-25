@@ -54,7 +54,6 @@ export const TableDetails = () => {
     setEditMappings,
     editMappings,
     setRelationshipOptions,
-    relationshipOptions,
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);

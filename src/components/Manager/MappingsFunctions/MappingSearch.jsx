@@ -360,7 +360,11 @@ export const MappingSearch = ({
                   : d?.description,
                 '100'
               )
+<<<<<<< HEAD
             )}
+=======
+            )}{' '}
+>>>>>>> 3f1e43e (Check to see if mapping description is an array)
           </div>
         </div>
       </>
