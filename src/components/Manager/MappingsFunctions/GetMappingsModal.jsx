@@ -184,7 +184,9 @@ export const GetMappingsModal = ({
     const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
-      description: item.description?.map(d => d).join(','),
+      description: Array.isArray(item?.description)
+        ? item?.description?.map(item => item).join(',')
+        : item?.description,
       system: systemsMatch(item.code.split(':')[0], ontologyApis),
       mapping_relationship: idsForSelect[item.code],
     }));
@@ -350,7 +352,12 @@ export const GetMappingsModal = ({
               </div>
             </div>
             <div>
-              {ellipsisString(d?.description?.map(d => d).join(','), '120')}
+              {ellipsisString(
+                Array.isArray(d?.description)
+                  ? d?.description?.map(d => d).join(',')
+                  : d?.description,
+                '120'
+              )}
             </div>
           </div>
         </div>
@@ -384,7 +391,12 @@ export const GetMappingsModal = ({
               </div>
             </div>
             <div>
-              {ellipsisString(d?.description?.map(d => d).join(','), '100')}
+              {ellipsisString(
+                Array.isArray(d?.description)
+                  ? d?.description?.map(d => d).join(',')
+                  : d?.description,
+                '100'
+              )}
             </div>
           </div>
         </div>
