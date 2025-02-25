@@ -360,7 +360,7 @@ export const MappingSearch = ({
                   : d?.description,
                 '100'
               )
-            )}{' '}
+            )}
           </div>
         </div>
       </>
