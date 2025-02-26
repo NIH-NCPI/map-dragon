@@ -13,7 +13,6 @@ import {
   notification,
   Row,
   Table,
-  Tooltip,
 } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { EditTableDetails } from './EditTableDetails';
@@ -31,7 +30,7 @@ import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTa
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { ellipsisString, mappingTooltip } from '../../Manager/Utility';
+import { relationshipDisplay } from '../../Manager/Utility';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -214,17 +213,20 @@ export const TableDetails = () => {
     {
       title: 'Name',
       dataIndex: 'name',
+      width: 120,
     },
     {
       title: 'Description',
       dataIndex: 'description',
+      width: 200,
     },
-    { title: 'Data Type', dataIndex: 'data_type' },
-    { title: 'Enumerations', dataIndex: 'enumeration' },
-    { title: 'Mapped Terms', dataIndex: 'mapped_terms' },
+    { title: 'Data Type', dataIndex: 'data_type', width: 100 },
+    { title: 'Enumerations', dataIndex: 'enumeration', width: 100 },
+    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 300 },
     {
       title: '',
       dataIndex: 'delete_column',
+      width: 10,
       render: (_, tableData) => {
         return (
           <>
@@ -284,15 +286,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       return variableMappings.mappings.map((code, i) => (
         <div className="mapping" key={i}>
           <span className="mapping-display">
-            <Tooltip
-              title={
-                (code.display ? code.display : code.code).length > 25
-                  ? mappingTooltip(code)
-                  : code.code
-              }
-            >
-              {ellipsisString(code.display ? code.display : code.code, '25')}
-            </Tooltip>
+            {code?.code} - {code?.display} {relationshipDisplay(code)}
           </span>
           <span
             className="mapping_actions"
