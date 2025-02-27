@@ -10,9 +10,11 @@ export const MappingComments = ({
   mappingCode,
   mappingDisplay,
   variableMappings,
+  variableDisplay,
   setComment,
   idProp,
   setMapping,
+  component,
 }) => {
   const [form] = Form.useForm();
   const { vocabUrl, user } = useContext(myContext);
@@ -34,7 +36,7 @@ export const MappingComments = ({
   const getComments = () => {
     setLoading(true);
     return fetch(
-      `${vocabUrl}/Terminology/${idProp}/user_input/${uriEncoded(
+      `${vocabUrl}/${component}/${idProp}/user_input/${uriEncoded(
         variableMappings
       )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
@@ -71,7 +73,7 @@ export const MappingComments = ({
     };
 
     return fetch(
-      `${vocabUrl}/Terminology/${idProp}/user_input/${uriEncoded(
+      `${vocabUrl}/${component}/${idProp}/user_input/${uriEncoded(
         variableMappings
       )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
@@ -102,7 +104,7 @@ export const MappingComments = ({
       .then(() =>
         getById(
           vocabUrl,
-          'Terminology',
+          component,
           `${idProp}/mapping?user_input=True&user=${user?.email}`
         )
           .then(data => setMapping(data.codes))
@@ -160,7 +162,7 @@ export const MappingComments = ({
         closeIcon={false}
         destroyOnClose={true}
       >
-        <span className="comment_code_display">{variableMappings}: </span>
+        <span className="comment_code_display">{variableDisplay}: </span>
         {mappingDisplay ? mappingDisplay : mappingCode}
         <Form
           form={form}

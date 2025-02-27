@@ -87,6 +87,19 @@ export const uriEncoded = text => {
     return text.replace('.', '<FTD-DOT>');
   } else if (text === '..') {
     return text.replace('..', '<FTD-DOT-DOT>');
+  } else if (text.includes('#')) {
+    return text.replaceAll('#', '<FTD-HASH>');
   }
   return text;
+};
+
+export const votesCount = code => {
+  const calculatedCount =
+    code.user_input?.votes_count.up - code.user_input?.votes_count.down;
+  return calculatedCount;
+};
+
+export const userVote = code => {
+  const foundVote = code.user_input?.users_vote;
+  return foundVote;
 };
