@@ -13,8 +13,16 @@ import {
   notification,
   Row,
   Table,
+  Tooltip,
 } from 'antd';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  CloseCircleOutlined,
+  DownOutlined,
+  MessageOutlined,
+  UpOutlined,
+} from '@ant-design/icons';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
@@ -30,7 +38,13 @@ import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTa
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { relationshipDisplay } from '../../Manager/Utility';
+import {
+  userVote,
+  votesCount,
+  relationshipDisplay,
+} from '../../Manager/Utility';
+import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
+import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -45,7 +59,7 @@ export const TableDetails = () => {
     ucumCodes,
     setUcumCodes,
   } = useContext(myContext);
-  const { apiPreferences, setApiPreferences } = useContext(SearchContext);
+  const { setApiPreferences } = useContext(SearchContext);
   const {
     getMappings,
     setGetMappings,
@@ -54,6 +68,8 @@ export const TableDetails = () => {
     setEditMappings,
     editMappings,
     setRelationshipOptions,
+    comment,
+    setComment,
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -131,7 +147,11 @@ export const TableDetails = () => {
       .then(data => {
         setTable(data);
         if (data) {
-          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+          getById(
+            vocabUrl,
+            'Table',
+            `${tableId}/mapping?user_input=True&user=${user?.email}`
+          )
             .then(data => setMapping(data.codes))
             .catch(error => {
               if (error) {
@@ -282,9 +302,113 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     const variableMappings = mapping.find(
       item => item?.code === variable?.code
     );
+
+    const foundDisplay = table.variables.find(
+      item => item?.code === variable?.code
+    );
+
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map((code, i) => (
         <div className="mapping" key={i}>
+          <span>
+            <Tooltip
+              title={code.user_input?.comments_count}
+              mouseEnterDelay={0.75}
+            >
+              <MessageOutlined
+                className="mapping_actions"
+                onClick={() =>
+                  setComment({
+                    code: code.code,
+                    display: code.display,
+                    variableMappings: variableMappings.code,
+                    variableDisplay: foundDisplay.name,
+                  })
+                }
+              />
+            </Tooltip>
+          </span>
+          <span className="mapping_votes">
+            {userVote(code) === 'up' ? (
+              <CaretUpOutlined
+                className="mapping_actions user_vote_icon"
+                style={{
+                  color: 'blue',
+                  cursor: 'not-allowed',
+                  fontSize: '1rem',
+                }}
+              />
+            ) : (
+              <UpOutlined
+                className="mapping_actions"
+                style={{
+                  color: 'blue',
+                }}
+                onClick={() =>
+                  userVote(code) !== 'up' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'up',
+                    vocabUrl,
+                    tableId,
+                    notification,
+                    setMapping,
+                    'Table'
+                  )
+                }
+              />
+            )}
+            <Tooltip
+              title={`up: ${code.user_input?.votes_count.up},
+                  down: ${code.user_input?.votes_count.down}`}
+              mouseEnterDelay={0.75}
+            >
+              <span
+                className={
+                  (code.user_input?.votes_count.down !== 0 ||
+                    code.user_input?.votes_count.up !== 0) &&
+                  votesCount(code) === 0
+                    ? 'red_votes_count'
+                    : 'votes_count'
+                }
+              >
+                {votesCount(code)}
+              </span>
+            </Tooltip>
+            {userVote(code) === 'down' ? (
+              <CaretDownOutlined
+                className="mapping_actions user_vote_icon"
+                style={{
+                  color: 'green',
+                  cursor: 'not-allowed',
+                  fontSize: '1rem',
+                }}
+              />
+            ) : (
+              <DownOutlined
+                className="mapping_actions"
+                style={{
+                  color: 'green',
+                }}
+                onClick={() =>
+                  userVote(code) !== 'down' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'down',
+                    vocabUrl,
+                    tableId,
+                    notification,
+                    setMapping,
+                    'Table'
+                  )
+                }
+              />
+            )}
+          </span>
           <span className="mapping-display">
             {code?.code} - {code?.display} {relationshipDisplay(code)}
           </span>
@@ -292,7 +416,10 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             className="mapping_actions"
             onClick={() => handleRemoveMapping(variableMappings, code)}
           >
-            <CloseCircleOutlined style={{ color: 'red' }} />
+            <CloseCircleOutlined
+              className="mapping_actions"
+              style={{ color: 'red' }}
+            />
           </span>
         </div>
       ));
@@ -496,6 +623,17 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         table={table}
       />
       <ClearMappings propId={tableId} component={'Table'} />
+
+      <MappingComments
+        mappingCode={comment?.code}
+        mappingDisplay={comment?.display}
+        variableMappings={comment?.variableMappings}
+        variableDisplay={comment?.variableDisplay}
+        setComment={setComment}
+        idProp={tableId}
+        setMapping={setMapping}
+        component="Table"
+      />
     </>
   );
 };

@@ -108,7 +108,11 @@ export const EditVariable = ({
             });
         })
         .then(() =>
-          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+          getById(
+            vocabUrl,
+            'Table',
+            `${tableId}/mapping?user_input=True&user=${user?.email}`
+          )
             .then(data => setMapping(data.codes))
             .catch(error => {
               if (error) {
@@ -146,7 +150,11 @@ export const EditVariable = ({
         })
 
         .then(() =>
-          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+          getById(
+            vocabUrl,
+            'Table',
+            `${tableId}/mapping?user_input=True&user=${user?.email}`
+          )
             .then(data => setMapping(data.codes))
             .catch(error => {
               if (error) {

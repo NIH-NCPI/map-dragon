@@ -109,7 +109,13 @@ export const EditMappingsTableModal = ({
             // as the value for the value field for the ant.design checkbox. The label for the checkbox is returned in edditMappingsLabel function.
             options.push({
               value: val,
-              label: <EditMappingsLabel item={m} index={index} variable={editMappings?.name} />,
+              label: (
+                <EditMappingsLabel
+                  item={m}
+                  index={index}
+                  variable={editMappings?.name}
+                />
+              ),
             });
           });
           // termMappings are set to the mappings array. Options are set to the options array.
@@ -148,13 +154,16 @@ export const EditMappingsTableModal = ({
       editor: user.email,
     };
 
-    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(mappingsDTO),
-    })
+    fetch(
+      `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -207,13 +216,16 @@ export const EditMappingsTableModal = ({
       editor: user.email,
     };
 
-    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(mappingsDTO),
-    })
+    fetch(
+      `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}?user_input=True&user=${user?.email}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
