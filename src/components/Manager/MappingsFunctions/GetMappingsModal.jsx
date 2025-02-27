@@ -366,7 +366,7 @@ export const GetMappingsModal = ({
                   ? d?.description?.map(d => d).join(',')
                   : d?.description,
                 '120'
-              )}{' '}
+              )}
             </div>
           </div>
         </div>

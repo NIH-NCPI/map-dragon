@@ -1,7 +1,7 @@
 @import '../../Styling/Variables';
 .terminology_container {
-  margin: 5vh 10vw 10vh 10vw;
-  width: 66vw;
+  margin: 5vh 5% 13vh 5%;
+  width: 90%;
 }
 
 .description_wrapper {
@@ -233,7 +233,8 @@ a.terminology_link:hover {
 
 .mapping {
   &-display {
-    white-space: nowrap;
+    white-space: normal;
+    border-bottom: 1px solid rgb(238, 238, 255);
   }
   display: flex;
   align-items: center;
