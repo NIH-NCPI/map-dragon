@@ -71,6 +71,16 @@ export const mappingTooltip = code => {
   );
 };
 
+// Shortened display for mapping relationships in tables
+export const relationshipDisplay = variable =>
+  variable?.mapping_relationship === 'equivalent'
+    ? '(equivalent)'
+    : variable.mapping_relationship === 'source-is-narrower-than-target'
+    ? '(narrower)'
+    : variable?.mapping_relationship === 'source-is-broader-than-target'
+    ? '(broader)'
+    : '';
+
 export const votesCount = code => {
   const calculatedCount =
     code.user_input?.votes_count.up - code.user_input?.votes_count.down;

@@ -39,10 +39,9 @@ import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import {
-  ellipsisString,
-  mappingTooltip,
   userVote,
   votesCount,
+  relationshipDisplay,
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
@@ -148,7 +147,11 @@ export const TableDetails = () => {
       .then(data => {
         setTable(data);
         if (data) {
-          getById(vocabUrl, 'Table', `${tableId}/mapping`)
+          getById(
+            vocabUrl,
+            'Table',
+            `${tableId}/mapping?user_input=True&user=${user?.email}`
+          )
             .then(data => setMapping(data.codes))
             .catch(error => {
               if (error) {
@@ -230,17 +233,20 @@ export const TableDetails = () => {
     {
       title: 'Name',
       dataIndex: 'name',
+      width: 120,
     },
     {
       title: 'Description',
       dataIndex: 'description',
+      width: 200,
     },
-    { title: 'Data Type', dataIndex: 'data_type' },
-    { title: 'Enumerations', dataIndex: 'enumeration' },
-    { title: 'Mapped Terms', dataIndex: 'mapped_terms' },
+    { title: 'Data Type', dataIndex: 'data_type', width: 100 },
+    { title: 'Enumerations', dataIndex: 'enumeration', width: 100 },
+    { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 300 },
     {
       title: '',
       dataIndex: 'delete_column',
+      width: 10,
       render: (_, tableData) => {
         return (
           <>
@@ -404,16 +410,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             )}
           </span>
           <span className="mapping-display">
-            <Tooltip
-              title={
-                (code.display ? code.display : code.code).length > 25
-                  ? mappingTooltip(code)
-                  : code.code
-              }
-              mouseEnterDelay={0.75}
-            >
-              {ellipsisString(code.display ? code.display : code.code, '25')}
-            </Tooltip>
+            {code?.code} - {code?.display} {relationshipDisplay(code)}
           </span>
           <span
             className="mapping_actions"

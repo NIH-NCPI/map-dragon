@@ -183,9 +183,6 @@ export const GetMappingsModal = ({
 
   const apiForSearch = selectedApi ?? apiPreferenceKeys[0];
 
-  const optionalUserInput =
-    component === terminology ? `?user_input=true&user=${user?.email}` : '';
-
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
@@ -207,7 +204,7 @@ export const GetMappingsModal = ({
 
     setLoadingResults(true);
     fetch(
-      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}${optionalUserInput}`,
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {
@@ -366,7 +363,7 @@ export const GetMappingsModal = ({
                   ? d?.description?.map(d => d).join(',')
                   : d?.description,
                 '120'
-              )}{' '}
+              )}
             </div>
           </div>
         </div>
