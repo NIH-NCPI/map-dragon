@@ -16,10 +16,11 @@ export const LoadVariables = ({ load, setLoad }) => {
     setLoading(true);
     fetch(`${vocabUrl}/LoadTable/${table.id}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...values, editor: user.email }),
+      body: JSON.stringify(values),
     })
       .then(res => {
         if (res.status === 400) {

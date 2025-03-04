@@ -29,10 +29,12 @@ export const AddCode = ({ terminology, setTerminology }) => {
     setLoading(true);
     fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${values.code}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...values, editor: user.email }),
+      body: JSON.stringify(values),
+      // EDITOR NOT SHOWING UP IN PROVENANCE body: JSON.stringify({ ...values, editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

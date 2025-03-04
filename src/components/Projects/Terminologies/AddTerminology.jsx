@@ -38,6 +38,7 @@ export const AddTerminology = () => {
     setLoading(true);
     fetch(`${vocabUrl}/Terminology`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

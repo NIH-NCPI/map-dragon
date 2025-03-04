@@ -100,11 +100,12 @@ export const TableDetails = () => {
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user.email,
+      // editor: user.email,
     };
 
     fetch(`${vocabUrl}/Table/${tableId}/mapping/${mappingCode}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

@@ -33,10 +33,12 @@ export const AddVariable = ({ table, setTable }) => {
 
     fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...values, editor: user.email }),
+      body: JSON.stringify(values),
+      // body: JSON.stringify({ ...values, editor: user.email }),
     })
       .then(res => {
         if (res.ok) {
@@ -49,6 +51,7 @@ export const AddVariable = ({ table, setTable }) => {
         setTable(data);
         form.resetFields();
         setAddRow(false);
+        message.success('Variable added successfully.');
       })
       // Displays a self-closing message that the udpates have been successfully saved.
       .then(() => message.success('Variable added successfully.'))

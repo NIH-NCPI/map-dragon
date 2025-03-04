@@ -59,6 +59,7 @@ export const SearchResults = () => {
       `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
       {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

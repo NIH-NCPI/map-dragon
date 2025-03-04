@@ -56,6 +56,7 @@ export const TableMenu = ({
   const handleVarDelete = varName => {
     fetch(`${vocabUrl}/Table/${table.id}/variable/${varName}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

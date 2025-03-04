@@ -70,6 +70,7 @@ export const EditMappingsTableModal = ({
         `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`,
         {
           method: 'GET',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -154,16 +155,14 @@ export const EditMappingsTableModal = ({
       editor: user.email,
     };
 
-    fetch(
-      `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(mappingsDTO),
-      }
-    )
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mappingsDTO),
+    })
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -216,16 +215,14 @@ export const EditMappingsTableModal = ({
       editor: user.email,
     };
 
-    fetch(
-      `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}?user_input=True&user=${user?.email}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(mappingsDTO),
-      }
-    )
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mappingsDTO),
+    })
       .then(res => {
         if (res.ok) {
           return res.json();

@@ -2,6 +2,7 @@
 export const getAll = (vocabUrl, name, navigate) => {
   return fetch(`${vocabUrl}/${name}`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -22,6 +23,7 @@ export const getAll = (vocabUrl, name, navigate) => {
 export const getById = async (vocabUrl, name, id, navigate) => {
   return fetch(`${vocabUrl}/${name}/${id}`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -44,13 +46,13 @@ export const getById = async (vocabUrl, name, id, navigate) => {
 
 // Deletes one element by its id
 export const handleDelete = (evt, vocabUrl, name, component, user) => {
-  const options = { method: 'DELETE' };
+  const options = { method: 'DELETE', credentials: 'include' };
 
   if (name === 'Table' || name === 'Terminology') {
     options.headers = {
       'Content-Type': 'application/json',
     };
-    options.body = JSON.stringify({ editor: user.email });
+    // options.body = JSON.stringify({ editor: user.email });
   }
   return fetch(`${vocabUrl}/${name}/${component.id}`, options)
     .then(response => {
@@ -80,6 +82,7 @@ export const handleDelete = (evt, vocabUrl, name, component, user) => {
 export const handleUpdate = (vocabUrl, name, component, values) => {
   return fetch(`${vocabUrl}/${name}/${component.id}`, {
     method: 'PUT',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -99,6 +102,7 @@ export const handleUpdate = (vocabUrl, name, component, values) => {
 export const handlePost = (vocabUrl, name, body) => {
   return fetch(`${vocabUrl}/${name}`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -117,6 +121,7 @@ export const handlePost = (vocabUrl, name, body) => {
 export const handlePatch = (vocabUrl, name, component, body) => {
   return fetch(`${vocabUrl}/${name}/${component.id}/rename`, {
     method: 'PATCH',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -135,6 +140,7 @@ export const handlePatch = (vocabUrl, name, component, body) => {
 export const getProvenanceByCode = async (vocabUrl, name, id, code) => {
   return fetch(`${vocabUrl}/Provenance/${name}/${id}/code/${code}`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -152,6 +158,7 @@ export const getProvenanceByCode = async (vocabUrl, name, id, code) => {
 export const getOntologies = vocabUrl => {
   return fetch(`${vocabUrl}/OntologyAPI`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -188,6 +195,7 @@ export const olsFilterOntologiesSearch = (
     `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=${apiToSearch}&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
     {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -247,6 +255,7 @@ export const getFiltersByCode = (
     }`,
     {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },

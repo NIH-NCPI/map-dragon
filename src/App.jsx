@@ -2,6 +2,7 @@ import { message } from 'antd';
 import { useState, createContext, useRef, useEffect } from 'react';
 import { AppRouter } from './AppRouter';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { getSessionStatus } from './components/Manager/SessionsManager';
 
 export const myContext = createContext();
 
@@ -34,6 +35,7 @@ function App() {
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
+  const [userPic, setUserPic] = useState(null);
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
   const [ucumCodes, setUcumCodes] = useState([]);
 
@@ -73,6 +75,8 @@ function App() {
           setExportState,
           user,
           setUser,
+          userPic,
+          setUserPic,
           importState,
           setImportState,
           ontologyForPagination,

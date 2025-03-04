@@ -75,3 +75,30 @@ input::file-selector-button:hover {
   gap: 10px;
   margin-left: 50px;
 }
+
+.mapping {
+  &-display {
+    white-space: nowrap;
+  }
+  display: flex;
+  .remove-mapping {
+    padding-left: 0.25rem;
+    cursor: pointer;
+    opacity: 0;
+
+    &:hover {
+      transition: all 0.4s linear;
+      opacity: 1;
+    }
+  }
+}
+
+.mapping_relationship {
+  padding: 2px 6px;
+  border: 1px solid $greyColor;
+  border-radius: 4px;
+  &:hover {
+    background-color: rgb(245, 245, 245);
+    transition: all 0.3s linear;
+  }
+}

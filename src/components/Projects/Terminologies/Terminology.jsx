@@ -116,8 +116,8 @@ export const Terminology = () => {
       .then(data => {
         setMapping(data.codes);
         setEditMappings(null);
-        form.resetFields();
         message.success('Mapping removed.');
+        form.resetFields();
       })
       .catch(error => {
         console.log(error, 'error');
