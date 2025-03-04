@@ -10,10 +10,8 @@
     "build-uat": "vite build --mode uat",
     "build-alpha": "vite build --mode alpha",
     "build-prod": "vite build --mode prod",
-<<<<<<< HEAD
     "build-kf": "vite build --mode kf",
-=======
->>>>>>> 6972ee9 (Console log for getStatusSession, commented out editor property in bodies)
+    "build-loc": "vite build --mode loc",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

@@ -48,7 +48,7 @@ export const getById = async (vocabUrl, name, id, navigate) => {
 
 // Deletes one element by its id
 export const handleDelete = (evt, vocabUrl, name, component, user) => {
-  const options = { method: 'DELETE', credentials: 'include', };
+  const options = { method: 'DELETE', credentials: 'include' };
 
   if (name === 'Table' || name === 'Terminology') {
     options.headers = {
