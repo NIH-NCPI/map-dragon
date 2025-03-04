@@ -13,7 +13,7 @@ RUN npm install
 
 # Copy the rest of the application code
 COPY . .
-
+RUN npm install @rollup/rollup-linux-arm64-musl --save-optional
 # Build the React app based on env
 ARG ENV=dev
 RUN npm run build-${ENV}
