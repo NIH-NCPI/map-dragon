@@ -43,8 +43,6 @@ function App() {
     top: '25vh',
   });
 
-  const defaultOntologies = 'MONDO,HP,MAXO,NCIT';
-
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <myContext.Provider
@@ -85,7 +83,6 @@ function App() {
           setOntologyForPagination,
           ucumCodes,
           setUcumCodes,
-          defaultOntologies,
         }}
       >
         <AppRouter />

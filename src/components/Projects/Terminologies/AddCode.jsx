@@ -1,6 +1,15 @@
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { Button, Form, Input, message, Modal, Select, Space } from 'antd';
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Select,
+  Space,
+} from 'antd';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 
@@ -41,6 +50,15 @@ export const AddCode = ({ terminology, setTerminology }) => {
       })
       // Displays a self-closing message that the udpates have been successfully saved.
       .then(() => message.success('Code added successfully.'))
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred adding the code.',
+          });
+        }
+        return error;
+      })
       .finally(() => setLoading(false));
   };
 

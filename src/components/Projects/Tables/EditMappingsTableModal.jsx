@@ -25,6 +25,8 @@ export const EditMappingsTableModal = ({
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
+  const [loadingResults, setLoadingResults] = useState(false);
+
   const {
     setSelectedMappings,
     setDisplaySelectedMappings,
@@ -39,6 +41,7 @@ export const EditMappingsTableModal = ({
     preferenceType,
     prefTypeKey,
     ontologyApis,
+    setSelectedApi,
   } = useContext(SearchContext);
 
   useEffect(() => {
@@ -54,6 +57,7 @@ export const EditMappingsTableModal = ({
     setSelectedKey(null);
     setApiPreferencesCode(undefined);
     setShowOptions(false);
+    setSelectedApi(undefined);
   };
 
   const fetchMappings = () => {
@@ -106,7 +110,13 @@ export const EditMappingsTableModal = ({
             // as the value for the value field for the ant.design checkbox. The label for the checkbox is returned in edditMappingsLabel function.
             options.push({
               value: val,
-              label: <EditMappingsLabel item={m} index={index} />,
+              label: (
+                <EditMappingsLabel
+                  item={m}
+                  index={index}
+                  variable={editMappings?.name}
+                />
+              ),
             });
           });
           // termMappings are set to the mappings array. Options are set to the options array.
@@ -350,6 +360,10 @@ export const EditMappingsTableModal = ({
           component={table}
           mappingProp={editMappings?.code}
           table={table}
+          preferenceType={preferenceType}
+          prefTypeKey={prefTypeKey}
+          loadingResults={loadingResults}
+          setLoadingResults={setLoadingResults}
         />
       )}
     </Modal>

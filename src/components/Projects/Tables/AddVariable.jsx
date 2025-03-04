@@ -53,16 +53,17 @@ export const AddVariable = ({ table, setTable }) => {
         setAddRow(false);
         message.success('Variable added successfully.');
       })
+      // Displays a self-closing message that the udpates have been successfully saved.
+      .then(() => message.success('Variable added successfully.'))
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the variable.',
+            description: 'An error occurred adding the variable.',
           });
         }
         return error;
       })
-
       .finally(() => setLoading(false));
   };
 

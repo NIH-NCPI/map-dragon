@@ -10,7 +10,7 @@ import {
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { ellipsisString, systemsMatch } from '../Utility';
-import { ModalSpinner } from '../Spinner';
+import { ModalSpinner, ResultsSpinner, SmallSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import {
@@ -20,6 +20,7 @@ import {
 } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { MappingRelationship } from './MappingRelationship';
+import { useParams } from 'react-router-dom';
 
 export const GetMappingsModal = ({
   componentString,
@@ -38,28 +39,29 @@ export const GetMappingsModal = ({
   const {
     preferenceType,
     defaultOntologies,
-    // setFacetCounts,
     setApiPreferencesCode,
     apiPreferencesCode,
+    unformattedPref,
     setUnformattedPref,
     prefTypeKey,
     ontologyApis,
     setPrefTerminologies,
-    checkedOntologies,
     entriesPerPage,
     moreAvailable,
     setMoreAvailable,
     setResultsCount,
     resultsCount,
+    selectedApi,
+    setSelectedApi,
   } = useContext(SearchContext);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);
-  // const [totalCount, setTotalCount] = useState();
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-  // const [filteredResultsCount, setFilteredResultsCount] = useState(0);
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
+  const { tableId } = useParams();
 
   const {
     setSelectedMappings,
@@ -75,6 +77,19 @@ export const GetMappingsModal = ({
   // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
   // The function is run when the code changes.
 
+  const codeToSearch = Object.keys(unformattedPref)?.[0];
+  const apiPreferences = unformattedPref?.[codeToSearch]?.api_preference;
+  const apiPreferenceKeys = Object?.keys(apiPreferences ?? {});
+
+  useEffect(() => {
+    apiPreferenceKeys?.length > 0
+      ? setSelectedApi(apiPreferenceKeys[0])
+      : setSelectedApi(ontologyApis?.[0]?.api_id || null);
+  }, [searchProp]);
+
+  const optionalTableParam =
+    tableId !== undefined ? `?table_id=${tableId}` : '';
+
   useEffect(() => {
     setInputValue(searchProp);
     setCurrentSearchProp(searchProp);
@@ -88,7 +103,8 @@ export const GetMappingsModal = ({
         setUnformattedPref,
         table,
         terminology,
-        setLoading
+        setLoading,
+        optionalTableParam
       );
     }
   }, [searchProp]);
@@ -103,7 +119,7 @@ export const GetMappingsModal = ({
     if (apiPreferencesCode !== undefined) {
       fetchResults(page, currentSearchProp);
     }
-  }, [page]);
+  }, [page, selectedApi]);
 
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
@@ -144,11 +160,18 @@ export const GetMappingsModal = ({
     []
   );
 
+  useEffect(() => {
+    if (selectedApi && apiPreferencesCode !== undefined) {
+      fetchResults(page, currentSearchProp);
+    }
+  }, []);
+
   const onClose = () => {
     setPage(0);
     setApiPreferencesCode(undefined);
     setSelectedKey(null);
     setPrefTerminologies([]);
+    setSelectedApi(undefined);
   };
 
   // Sets currentSearchProp to the value of the search bar and sets page to 0.
@@ -157,6 +180,8 @@ export const GetMappingsModal = ({
     setPage(0);
   };
 
+  const apiForSearch = selectedApi ?? apiPreferenceKeys[0];
+
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
@@ -164,8 +189,10 @@ export const GetMappingsModal = ({
     const selectedMappings = selectedBoxes?.map(item => ({
       code: item.code,
       display: item.display,
-      description: item.description[0],
-      system: systemsMatch(item.code.split(':')[0], ontologyApis),
+      description: Array.isArray(item?.description)
+        ? item?.description?.map(item => item).join(',')
+        : item?.description,
+      system: item?.system,
       mapping_relationship: idsForSelect[item.code],
     }));
 
@@ -174,7 +201,7 @@ export const GetMappingsModal = ({
       editor: user
     };
 
-    setLoading(true);
+    setLoadingResults(true);
     fetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
       {
@@ -212,7 +239,7 @@ export const GetMappingsModal = ({
         }
         return error;
       })
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingResults(false));
     ontologyFilterCodeSubmit(
       apiPreferencesCode,
       preferenceType,
@@ -223,7 +250,6 @@ export const GetMappingsModal = ({
       terminology
     );
   };
-
   const fetchResults = (page, query) => {
     if (!!!query) {
       return undefined;
@@ -234,58 +260,62 @@ export const GetMappingsModal = ({
     const pageStart = page * entriesPerPage;
 
     if (
-      //If there are api preferences and one of them is OLS, it gets the preferred ontologies
-      preferenceType[prefTypeKey]?.api_preference &&
-      'ols' in preferenceType[prefTypeKey]?.api_preference
+      // If there are api preferences and one of them is in apiPreferencesCode
+      preferenceType[prefTypeKey]?.api_preference
     ) {
       const apiPreferenceOntologies = () => {
-        if (preferenceType[prefTypeKey]?.api_preference?.ols) {
-          return preferenceType[prefTypeKey].api_preference.ols
+        // Check if apiPreferencesCode contains the key dynamically (based on selectedApi)
+        if (
+          apiForSearch in apiPreferencesCode &&
+          apiPreferencesCode[apiForSearch]?.length > 0
+        ) {
+          // Return the preferred ontologies for the matched key (apiPreferenceKeys[0])
+          return apiPreferencesCode[apiPreferenceKeys[0]]
             .join(',')
             .toUpperCase();
         } else {
-          // else if there are no preferred ontologies, it uses the default ontologies
+          // If no preferred ontologies, use the default ontologies
           return defaultOntologies;
         }
       };
 
-      //fetch call to search OLS with either preferred or default ontologies
+      //fetch call to search API with either preferred or default ontologies
       return olsFilterOntologiesSearch(
         vocabUrl,
         query,
-        apiPreferencesCode?.length > 0
-          ? apiPreferencesCode
+        apiPreferencesCode[selectedApi]?.length > 0
+          ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
           : apiPreferenceOntologies(),
         page,
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        // setTotalCount,
         setResults,
-        // setFilteredResultsCount,
         setResultsCount,
-        setLoading,
+        loading ? setLoading : setLoadingResults,
         results,
-        setMoreAvailable
-        // setFacetCounts
+        setMoreAvailable,
+        selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
+        notification
       );
     } else
       return olsFilterOntologiesSearch(
         vocabUrl,
         query,
-        apiPreferencesCode?.length > 0 ? apiPreferencesCode : defaultOntologies,
+        apiPreferencesCode[selectedApi]?.length > 0
+          ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
+          : defaultOntologies,
         page,
         entriesPerPage,
         pageStart,
         selectedBoxes,
-        // setTotalCount,
         setResults,
-        // setFilteredResultsCount,
         setResultsCount,
-        setLoading,
+        loading ? setLoading : setLoadingResults,
         results,
-        setMoreAvailable
-        // setFacetCounts
+        setMoreAvailable,
+        selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
+        notification
       );
   };
 
@@ -313,13 +343,28 @@ export const GetMappingsModal = ({
               <div>
                 <b>{d.display}</b>
               </div>
-              <div>
+              <div className="api_ontology_prefix">
+                {/* <Tooltip
+                  mouseEnterDelay={0.75}
+                  title={`${d.code} was imported by ${d.ontology_prefix}`}
+                > */}
+                {d.ontology_prefix}
+                {/* </Tooltip> */}
+              </div>
+              <div className="api_ontology_code">
                 <a href={d.code_iri} target="_blank">
                   {d.code}
                 </a>
               </div>
             </div>
-            <div>{ellipsisString(d?.description[0], '120')}</div>
+            <div>
+              {ellipsisString(
+                Array.isArray(d?.description)
+                  ? d?.description?.map(d => d).join(',')
+                  : d?.description,
+                '120'
+              )}
+            </div>
           </div>
         </div>
       </>
@@ -336,15 +381,29 @@ export const GetMappingsModal = ({
                 <b>{d?.display}</b>
               </div>
               <div>
-                <a href={d?.code_iri} target="_blank">
+                <a
+                  href={d?.code_iri}
+                  target="_blank"
+                  className="api_ontology_code"
+                >
                   {d?.code}
                 </a>
+                <span className="display_selected_api">
+                  ({d?.api?.toUpperCase()})
+                </span>
               </div>
               <div>
-                <MappingRelationship mapping={d} />
+                <MappingRelationship mapping={d} variable={searchProp} />
               </div>
             </div>
-            <div>{ellipsisString(d?.description?.[0], '100')}</div>
+            <div>
+              {ellipsisString(
+                Array.isArray(d?.description)
+                  ? d?.description?.map(d => d).join(',')
+                  : d?.description,
+                '100'
+              )}
+            </div>
           </div>
         </div>
       </>
@@ -397,7 +456,7 @@ export const GetMappingsModal = ({
     const codesToExclude = new Set([
       ...displaySelectedMappings?.map(m => m?.code),
     ]);
-    return results.filter(r => !codesToExclude?.has(r.code));
+    return results?.filter(r => !codesToExclude?.has(r.code));
   };
 
   const filteredResultsArray = getFilteredResults();
@@ -462,68 +521,74 @@ export const GetMappingsModal = ({
                   <Form form={form} layout="vertical" preserve={false}>
                     <div className="all_checkboxes_container">
                       <OntologyCheckboxes preferenceType={preferenceType} />
+
                       <div className="result_form">
-                        {displaySelectedMappings?.length > 0 && (
-                          <Form.Item
-                            name="selected_mappings"
-                            valuePropName="value"
-                            rules={[{ required: false }]}
-                          >
-                            <div className="modal_display_results">
-                              {displaySelectedMappings?.map((sm, i) => (
-                                <Checkbox
-                                  key={i}
-                                  checked={selectedBoxes.some(
-                                    box => box.code === sm.code
-                                  )}
-                                  value={sm}
-                                  onChange={e => onCheckboxChange(e, sm, i)}
-                                >
-                                  {selectedTermsDisplay(sm, i)}
-                                </Checkbox>
-                              ))}
-                            </div>
-                          </Form.Item>
-                        )}
-                        {results?.length > 0 ? (
-                          <>
-                            <Form.Item
-                              name={['filtered_mappings']}
-                              valuePropName="value"
-                              rules={[
-                                {
-                                  required: false,
-                                },
-                              ]}
-                            >
-                              {filteredResultsArray?.length > 0 ? (
-                                <Checkbox.Group
-                                  className="mappings_checkbox"
-                                  options={filteredResultsArray?.map(
-                                    (d, index) => {
-                                      return {
-                                        value: JSON.stringify({
-                                          code: d.code,
-                                          display: d.display,
-                                          description: d.description[0],
-                                          system: systemsMatch(
-                                            d?.code?.split(':')[0],
-                                            ontologyApis
-                                          ),
-                                        }),
-                                        label: checkBoxDisplay(d, index),
-                                      };
-                                    }
-                                  )}
-                                  onChange={onSelectedChange}
-                                />
-                              ) : (
-                                ''
-                              )}
-                            </Form.Item>{' '}
-                          </>
+                        {loadingResults ? (
+                          <ResultsSpinner />
                         ) : (
-                          <h3>No results found</h3>
+                          <>
+                            {displaySelectedMappings?.length > 0 && (
+                              <Form.Item
+                                name="selected_mappings"
+                                valuePropName="value"
+                                rules={[{ required: false }]}
+                              >
+                                <div className="modal_display_results">
+                                  {displaySelectedMappings?.map((sm, i) => (
+                                    <Checkbox
+                                      key={i}
+                                      checked={selectedBoxes.some(
+                                        box => box.code === sm.code
+                                      )}
+                                      value={sm}
+                                      onChange={e => onCheckboxChange(e, sm, i)}
+                                    >
+                                      {selectedTermsDisplay(sm, i)}
+                                    </Checkbox>
+                                  ))}
+                                </div>
+                              </Form.Item>
+                            )}
+                            {results?.length > 0 ? (
+                              <>
+                                <Form.Item
+                                  name={['filtered_mappings']}
+                                  valuePropName="value"
+                                  rules={[
+                                    {
+                                      required: false,
+                                    },
+                                  ]}
+                                >
+                                  {filteredResultsArray?.length > 0 ? (
+                                    <Checkbox.Group
+                                      className="mappings_checkbox"
+                                      options={filteredResultsArray?.map(
+                                        (d, index) => {
+                                          return {
+                                            value: JSON.stringify({
+                                              code: d.code,
+                                              display: d.display,
+                                              description: d.description
+                                                ?.map(d => d)
+                                                .join(','),
+                                              system: d?.system,
+                                            }),
+                                            label: checkBoxDisplay(d, index),
+                                          };
+                                        }
+                                      )}
+                                      onChange={onSelectedChange}
+                                    />
+                                  ) : (
+                                    ''
+                                  )}
+                                </Form.Item>{' '}
+                              </>
+                            ) : (
+                              <h3>No results found</h3>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
@@ -531,7 +596,7 @@ export const GetMappingsModal = ({
                   <div className="view_more_wrapper">
                     {/* 'View More' pagination */}
 
-                    {moreAvailable && (
+                    {moreAvailable && !loadingResults && (
                       <span
                         className="view_more_link"
                         onClick={e => {

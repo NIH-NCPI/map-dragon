@@ -1,5 +1,3 @@
-import { ontologyReducer } from './Utility';
-
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {
   return fetch(`${vocabUrl}/${name}`, {
@@ -187,12 +185,14 @@ export const olsFilterOntologiesSearch = (
   setResultsCount,
   setLoading,
   results,
-  setMoreAvailable
+  setMoreAvailable,
+  apiToSearch,
+  notification
 ) => {
   setLoading(true);
 
   return fetch(
-    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
+    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=${apiToSearch}&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
     {
       method: 'GET',
       credentials: 'include',
@@ -201,12 +201,21 @@ export const olsFilterOntologiesSearch = (
       },
     }
   )
-    .then(res => res.json())
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        notification.error({
+          message: 'Error',
+          description: `An error occurred searching for ${query}.`,
+        });
+      }
+    })
     .then(data => {
       // if the page > 0 (i.e. if this is not the first batch of results), the new results
       // are concatenated to the old
       if (selectedBoxes) {
-        data.results = data.results.filter(
+        data.results = data?.results?.filter(
           d => !selectedBoxes.some(box => box.code === d.code)
         );
       }
@@ -214,8 +223,11 @@ export const olsFilterOntologiesSearch = (
       if (page > 0 && results?.length > 0) {
         data.results = results?.concat(data.results);
       }
-
-      setResults(data.results);
+      const addedApi = data?.results.map(result => ({
+        ...result,
+        api: apiToSearch,
+      }));
+      setResults(addedApi);
       setMoreAvailable(data.more_results_available);
 
       setResultsCount(data?.results?.length);
@@ -231,14 +243,15 @@ export const getFiltersByCode = (
   setUnformattedPref,
   table,
   terminology,
-  setLoading
+  setLoading,
+  optionalTableParam
 ) => {
   setLoading(true);
   return fetch(
     `${vocabUrl}/${
       table
         ? `Table/${table.id}/filter/${mappingProp}`
-        : `Terminology/${terminology.id}/filter/${mappingProp}`
+        : `Terminology/${terminology.id}/filter/${mappingProp}${optionalTableParam}`
     }`,
     {
       method: 'GET',
@@ -260,20 +273,19 @@ export const getFiltersByCode = (
     })
     .then(data => {
       setUnformattedPref(data);
+
       const codeToSearch = Object.keys(data)?.[0];
+      const apiPreferences =
+        data[codeToSearch]?.api_preference ?? data[codeToSearch];
+      const updatedPreferences = Object.entries(apiPreferences).reduce(
+        (acc, [key, values]) => {
+          acc[key] = values.map(value => value.toUpperCase());
+          return acc;
+        },
+        {}
+      );
 
-      const ols = data?.[codeToSearch]?.api_preference?.ols;
-
-      if (Array.isArray(ols)) {
-        // If ols in api_preference is an array, use it as is
-        setApiPreferencesCode(ols.map(item => item.toUpperCase())); // Set state to the array
-      } else if (typeof ols === 'string') {
-        // If ols in api_preference is a string, split it into an array
-        const splitOntologies = ols.toUpperCase().split(',');
-        setApiPreferencesCode(splitOntologies); // Set state to the array
-      } else {
-        setApiPreferencesCode([]); // Fallback if no ols found
-      }
+      setApiPreferencesCode(updatedPreferences);
     });
 };
 
@@ -286,7 +298,7 @@ export const ontologyFilterCodeSubmit = (
   table,
   terminology
 ) => {
-  const apiPreference = { api_preference: { 'ols': [] } };
+  const apiPreference = { api_preference: {} };
   if (
     apiPreferencesCode &&
     (!preferenceType[prefTypeKey]?.api_preference?.[0] ||
@@ -294,7 +306,7 @@ export const ontologyFilterCodeSubmit = (
         Object.values(preferenceType[prefTypeKey]?.api_preference)[0]?.sort()
       ) !== JSON.stringify(apiPreferencesCode?.sort()))
   ) {
-    apiPreference.api_preference.ols = apiPreferencesCode;
+    apiPreference.api_preference = apiPreferencesCode;
     const fetchUrl = `${vocabUrl}/${
       !table ? `Terminology/${terminology?.id}` : `Table/${table?.id}`
     }/filter/${mappingProp}`;
@@ -319,4 +331,20 @@ export const ontologyFilterCodeSubmit = (
         }
       });
   }
+};
+export const getDefaultOntologies = async (vocabUrl) => {
+  return fetch(`${vocabUrl}/user/preferences/ontologies`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then(res => {
+    if (res.ok) {      
+      return res.json();
+    } else {
+      return res.json().then(error => {
+        throw new Error(error);
+      });
+    }
+  });
 };
