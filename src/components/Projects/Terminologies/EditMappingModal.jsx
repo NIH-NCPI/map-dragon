@@ -109,7 +109,13 @@ export const EditMappingsModal = ({
             // as the value for the value field for the ant.design checkbox. The label for the checkbox is returned in edditMappingsLabel function.
             options.push({
               value: val,
-              label: <EditMappingsLabel item={m} index={index} variable={editMappings.code} />,
+              label: (
+                <EditMappingsLabel
+                  item={m}
+                  index={index}
+                  variable={editMappings.code}
+                />
+              ),
             });
           });
           // termMappings are set to the mappings array. Options are set to the options array.

@@ -328,14 +328,14 @@ export const ontologyFilterCodeSubmit = (
       });
   }
 };
-export const getDefaultOntologies = async (vocabUrl) => {
+export const getDefaultOntologies = async vocabUrl => {
   return fetch(`${vocabUrl}/user/preferences/ontologies`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
   }).then(res => {
-    if (res.ok) {      
+    if (res.ok) {
       return res.json();
     } else {
       return res.json().then(error => {
