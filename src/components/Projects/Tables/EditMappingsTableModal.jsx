@@ -5,7 +5,7 @@ import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetTableMappings } from './ResetTableMappings';
-import { systemsMatch } from '../../Manager/Utility';
+import { uriEncoded } from '../../Manager/Utility';
 import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
@@ -67,7 +67,7 @@ export const EditMappingsTableModal = ({
     if (editMappings) {
       setLoading(true);
       return fetch(
-        `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`,
+        `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(editMappings.code)}`,
         {
           method: 'GET',
           headers: {
@@ -155,7 +155,9 @@ export const EditMappingsTableModal = ({
     };
 
     fetch(
-      `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
+        editMappings.code
+      )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {
@@ -199,7 +201,7 @@ export const EditMappingsTableModal = ({
       code: item.code,
       display: item.display,
       description: item.description,
-      system: systemsMatch(item.code.split(':')[0], ontologyApis),
+      system: item?.system,
       mapping_relationship: idsForSelect[item.code],
     }));
 
@@ -207,7 +209,7 @@ export const EditMappingsTableModal = ({
       code: item.code,
       display: item.display,
       description: item.description,
-      system: systemsMatch(item?.code?.split(':')[0], ontologyApis),
+      system: item?.system,
       mapping_relationship: idsForSelect[item.code],
     }));
 
@@ -217,7 +219,9 @@ export const EditMappingsTableModal = ({
     };
 
     fetch(
-      `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}?user_input=True&user=${user?.email}`,
+      `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
+        editMappings.code
+      )}?user_input=True&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {

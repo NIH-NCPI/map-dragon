@@ -1,4 +1,5 @@
 import { getById } from '../FetchManager';
+import { uriEncoded } from '../Utility';
 
 export const mappingVotes = (
   variableMappings,
@@ -17,7 +18,9 @@ export const mappingVotes = (
   };
 
   return fetch(
-    `${vocabUrl}/${component}/${componentId}/user_input/${variableMappings?.code}/mapping/${code?.code}/mapping_votes`,
+    `${vocabUrl}/Terminology/${terminologyId}/user_input/${uriEncoded(
+      variableMappings?.code
+    )}/mapping/${uriEncoded(code?.code)}/mapping_votes`,
     {
       method: 'PUT',
       headers: {

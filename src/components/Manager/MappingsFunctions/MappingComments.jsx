@@ -4,6 +4,7 @@ import { myContext } from '../../../App';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { ModalSpinner } from '../Spinner';
 import { getById } from '../FetchManager';
+import { uriEncoded } from '../Utility';
 
 export const MappingComments = ({
   mappingCode,
@@ -35,7 +36,9 @@ export const MappingComments = ({
   const getComments = () => {
     setLoading(true);
     return fetch(
-      `${vocabUrl}/${component}/${idProp}/user_input/${variableMappings}/mapping/${mappingCode}/mapping_conversations`,
+      `${vocabUrl}/Terminology/${idProp}/user_input/${uriEncoded(
+        variableMappings
+      )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
         method: 'GET',
         headers: {
@@ -70,7 +73,9 @@ export const MappingComments = ({
     };
 
     return fetch(
-      `${vocabUrl}/${component}/${idProp}/user_input/${variableMappings}/mapping/${mappingCode}/mapping_conversations`,
+      `${vocabUrl}/Terminology/${idProp}/user_input/${uriEncoded(
+        variableMappings
+      )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
         method: 'PUT',
         headers: {

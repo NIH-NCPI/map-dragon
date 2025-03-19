@@ -91,3 +91,9 @@ export const userVote = code => {
   const foundVote = code.user_input?.users_vote;
   return foundVote;
 };
+
+//URI encoding for "/"
+export const uriEncoded = text => {
+  const encoded = text.replaceAll('/', '%2F');
+  return encoded;
+};

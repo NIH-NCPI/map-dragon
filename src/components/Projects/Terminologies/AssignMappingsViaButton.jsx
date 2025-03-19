@@ -6,6 +6,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
@@ -75,7 +76,9 @@ export const AssignMappingsViaButton = ({
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminology.id}/mapping/${assignMappingsViaButton.code}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/Terminology/${terminology.id}/mapping/${uriEncoded(
+        assignMappingsViaButton.code
+      )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {
