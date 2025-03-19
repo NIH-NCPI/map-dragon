@@ -30,7 +30,7 @@ import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTa
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { relationshipDisplay } from '../../Manager/Utility';
+import { relationshipDisplay, uriEncoded } from '../../Manager/Utility';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -87,7 +87,7 @@ export const TableDetails = () => {
       editor: user.email,
     };
 
-    fetch(`${vocabUrl}/Table/${tableId}/mapping/${mappingCode}`, {
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(mappingCode)}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
