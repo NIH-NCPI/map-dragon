@@ -81,6 +81,12 @@ export const relationshipDisplay = variable =>
     ? '(broader)'
     : '';
 
+//URI encoding for "/"
+export const uriEncoded = text => {
+  const encoded = text.replaceAll('/', '%2F');
+  return encoded;
+};
+
 export const votesCount = code => {
   const calculatedCount =
     code.user_input?.votes_count.up - code.user_input?.votes_count.down;

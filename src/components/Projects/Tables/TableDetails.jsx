@@ -42,6 +42,7 @@ import {
   userVote,
   votesCount,
   relationshipDisplay,
+  uriEncoded,
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
@@ -103,7 +104,7 @@ export const TableDetails = () => {
       editor: user.email,
     };
 
-    fetch(`${vocabUrl}/Table/${tableId}/mapping/${mappingCode}`, {
+    fetch(`${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(mappingCode)}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
