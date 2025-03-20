@@ -92,8 +92,12 @@ export const userVote = code => {
   return foundVote;
 };
 
-//URI encoding for "/"
+//URI encoding for "." and ".."
 export const uriEncoded = text => {
-  const encoded = text.replaceAll('/', '%2F');
-  return encoded;
+  if (text === '.') {
+    return text.replace('.', '<FTD-DOT>');
+  } else if (text === '..') {
+    return text.replace('..', '<FTD-DOT-DOT>');
+  }
+  return text;
 };
