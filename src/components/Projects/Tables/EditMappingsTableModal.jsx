@@ -5,7 +5,7 @@ import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetTableMappings } from './ResetTableMappings';
-import { systemsMatch } from '../../Manager/Utility';
+import { systemsMatch, uriEncoded } from '../../Manager/Utility';
 import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
@@ -67,7 +67,7 @@ export const EditMappingsTableModal = ({
     if (editMappings) {
       setLoading(true);
       return fetch(
-        `${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`,
+        `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(editMappings.code)}`,
         {
           method: 'GET',
           headers: {
@@ -148,13 +148,16 @@ export const EditMappingsTableModal = ({
       editor: user.email,
     };
 
-    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(mappingsDTO),
-    })
+    fetch(
+      `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(editMappings.code)}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -207,13 +210,16 @@ export const EditMappingsTableModal = ({
       editor: user.email,
     };
 
-    fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(mappingsDTO),
-    })
+    fetch(
+      `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(editMappings.code)}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();

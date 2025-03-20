@@ -13,6 +13,7 @@ import {
 import DataTypeSubForm from './DataTypeSubForm';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const AddVariable = ({ table, setTable }) => {
   const { vocabUrl, user } = useContext(myContext);
@@ -31,7 +32,7 @@ export const AddVariable = ({ table, setTable }) => {
   const handleSubmit = values => {
     setLoading(true);
 
-    fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
+    fetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

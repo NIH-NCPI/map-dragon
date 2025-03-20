@@ -4,10 +4,10 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { EditCode } from './EditCode';
 import { ShowHistory } from '../../Manager/ShowHistory';
-import { getById } from '../../Manager/FetchManager';
 import { AssignMappings } from '../../Manager/MappingsFunctions/AssignMappings';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const TerminologyMenu = ({
   tableData,
@@ -67,13 +67,16 @@ export const TerminologyMenu = ({
 
   // Deletes individual code
   const handleVarDelete = varName => {
-    fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${varName}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ editor: user.email }),
-    })
+    fetch(
+      `${vocabUrl}/Terminology/${terminology.id}/code/${uriEncoded(varName)}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ editor: user.email }),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json().then(data => {

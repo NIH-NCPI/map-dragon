@@ -4,6 +4,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { useContext } from 'react';
 import { myContext } from '../../../App';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
   const { confirm } = Modal;
@@ -13,13 +14,16 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
   // setReset is set to true to open the modal that performs the search for the code again.
   const handleDelete = evt => {
-    return fetch(`${vocabUrl}/Table/${tableId}/mapping/${editMappings.code}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ editor: user.email }),
-    })
+    return fetch(
+      `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(editMappings.code)}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ editor: user.email }),
+      }
+    )
       .then(response => {
         if (response.ok) {
           return response.json();

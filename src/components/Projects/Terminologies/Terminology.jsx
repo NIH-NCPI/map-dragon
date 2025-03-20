@@ -35,7 +35,7 @@ import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
-import { relationshipDisplay } from '../../Manager/Utility';
+import { relationshipDisplay, uriEncoded } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 
@@ -93,7 +93,9 @@ export const Terminology = () => {
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${mappingCode}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
+        mappingCode
+      )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {

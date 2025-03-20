@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const AddCode = ({ terminology, setTerminology }) => {
   const { vocabUrl, user } = useContext(myContext);
@@ -27,13 +28,18 @@ export const AddCode = ({ terminology, setTerminology }) => {
 
   const handleSubmit = values => {
     setLoading(true);
-    fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${values.code}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ ...values, editor: user.email }),
-    })
+    fetch(
+      `${vocabUrl}/Terminology/${terminology.id}/code/${uriEncoded(
+        values.code
+      )}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...values, editor: user.email }),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();

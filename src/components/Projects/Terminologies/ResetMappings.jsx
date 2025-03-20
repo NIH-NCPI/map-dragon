@@ -4,6 +4,7 @@ import './Terminology.scss';
 
 import { useContext } from 'react';
 import { myContext } from '../../../App';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
   const { confirm } = Modal;
@@ -14,7 +15,9 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
   // setReset is set to true to open the modal that performs the search for the code again.
   const handleDelete = evt => {
     return fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${editMappings.code}`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
+        editMappings.code
+      )}`,
       {
         method: 'DELETE',
         headers: {
