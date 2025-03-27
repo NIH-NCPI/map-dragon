@@ -12,7 +12,7 @@ import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
 import { ResetMappings } from './ResetMappings';
-import { systemsMatch, uriEncoded } from '../../Manager/Utility';
+import { uriEncoded } from '../../Manager/Utility';
 import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
@@ -192,7 +192,7 @@ export const EditMappingsModal = ({
       code: item.code,
       display: item.display,
       description: item.description,
-      system: systemsMatch(item.code.split(':')[0], ontologyApis),
+      system: item?.system,
       mapping_relationship: idsForSelect[item.code],
     }));
 
@@ -200,7 +200,7 @@ export const EditMappingsModal = ({
       code: item.code,
       display: item.display,
       description: item.description,
-      system: systemsMatch(item?.code?.split(':')[0], ontologyApis),
+      system: item?.system,
       mapping_relationship: idsForSelect[item.code],
     }));
 
