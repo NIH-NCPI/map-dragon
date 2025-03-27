@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { Checkbox, Form, Tooltip } from 'antd';
-import { ellipsisString, systemsMatch } from '../../Manager/Utilitiy';
+import { ellipsisString } from '../../Manager/Utilitiy';
 import { SearchContext } from '../../../Contexts/SearchContext';
 
 export const APIResults = ({
@@ -115,10 +115,7 @@ export const APIResults = ({
                       code: d.obo_id,
                       display: d.label,
                       description: d.description?.map(d => d).join(','),
-                      system: systemsMatch(
-                        d?.obo_id.split(':')[0],
-                        ontologyApis
-                      ),
+                      system: item?.system,
                     }),
                     label: checkBoxDisplay(d, index),
                   };

@@ -1,7 +1,7 @@
 import { Checkbox, Form, Input, message, Modal, notification } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, systemsMatch, uriEncoded } from '../Utility';
+import { ellipsisString, uriEncoded } from '../Utility';
 import { ModalSpinner, ResultsSpinner, SmallSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -179,7 +179,7 @@ export const GetMappingsModal = ({
       description: Array.isArray(item?.description)
         ? item?.description?.map(item => item).join(',')
         : item?.description,
-      system: systemsMatch(item.code.split(':')[0], ontologyApis),
+      system: item?.system,
       mapping_relationship: idsForSelect[item.code],
     }));
 
