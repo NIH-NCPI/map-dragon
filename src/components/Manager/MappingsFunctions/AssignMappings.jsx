@@ -6,6 +6,7 @@ import { ModalSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { ontologyFilterCodeSubmit } from '../FetchManager';
+import { uriEncoded } from '../Utility';
 
 export const AssignMappings = ({
   setSelectedKey,
@@ -81,7 +82,9 @@ export const AssignMappings = ({
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminology.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/Terminology/${terminology.id}/mapping/${uriEncoded(
+        mappingProp
+      )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {

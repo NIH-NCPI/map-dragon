@@ -80,3 +80,13 @@ export const relationshipDisplay = variable =>
     : variable?.mapping_relationship === 'source-is-broader-than-target'
     ? '(broader)'
     : '';
+
+//URI encoding for "." and ".."
+export const uriEncoded = text => {
+  if (text === '.') {
+    return text.replace('.', '<FTD-DOT>');
+  } else if (text === '..') {
+    return text.replace('..', '<FTD-DOT-DOT>');
+  }
+  return text;
+};

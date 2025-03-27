@@ -1,15 +1,7 @@
-import {
-  Checkbox,
-  Form,
-  Input,
-  message,
-  Modal,
-  notification,
-  Tooltip,
-} from 'antd';
+import { Checkbox, Form, Input, message, Modal, notification } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, systemsMatch } from '../Utility';
+import { ellipsisString, uriEncoded } from '../Utility';
 import { ModalSpinner, ResultsSpinner, SmallSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -187,7 +179,7 @@ export const GetMappingsModal = ({
       description: Array.isArray(item?.description)
         ? item?.description?.map(item => item).join(',')
         : item?.description,
-      system: systemsMatch(item.code.split(':')[0], ontologyApis),
+      system: item?.system,
       mapping_relationship: idsForSelect[item.code],
     }));
 
@@ -198,7 +190,9 @@ export const GetMappingsModal = ({
 
     setLoadingResults(true);
     fetch(
-      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
+        mappingProp
+      )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {
@@ -337,14 +331,7 @@ export const GetMappingsModal = ({
               <div>
                 <b>{d.display}</b>
               </div>
-              <div className="api_ontology_prefix">
-                {/* <Tooltip
-                  mouseEnterDelay={0.75}
-                  title={`${d.code} was imported by ${d.ontology_prefix}`}
-                > */}
-                {d.ontology_prefix}
-                {/* </Tooltip> */}
-              </div>
+              <div className="api_ontology_prefix">{d.ontology_prefix}</div>
               <div className="api_ontology_code">
                 <a href={d.code_iri} target="_blank">
                   {d.code}
