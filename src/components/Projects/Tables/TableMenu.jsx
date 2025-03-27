@@ -5,6 +5,7 @@ import { EditVariable } from './EditVariable';
 import { myContext } from '../../../App';
 import { ShowHistory } from '../../Manager/ShowHistory';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const TableMenu = ({
   tableData,
@@ -54,7 +55,7 @@ export const TableMenu = ({
 
   // Deletes individual variable
   const handleVarDelete = varName => {
-    fetch(`${vocabUrl}/Table/${table.id}/variable/${varName}`, {
+    fetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(varName)}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

@@ -6,6 +6,7 @@ import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import EditDataTypeSubForm from './EditDataTypeSubForm';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const EditVariable = ({
   editRow,
@@ -86,13 +87,16 @@ export const EditVariable = ({
           return error;
         })
         .then(() => {
-          fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ ...values, editor: user.email }),
-          })
+          fetch(
+            `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ ...values, editor: user.email }),
+            }
+          )
             .then(res => {
               if (res.ok) {
                 return res.json();
@@ -128,13 +132,16 @@ export const EditVariable = ({
         );
     } else {
       setLoading(true);
-      fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...values, editor: user.email }),
-      })
+      fetch(
+        `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ...values, editor: user.email }),
+        }
+      )
         .then(res => {
           if (res.ok) {
             return res.json();

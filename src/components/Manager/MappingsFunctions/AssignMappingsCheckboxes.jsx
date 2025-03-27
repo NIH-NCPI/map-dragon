@@ -1,7 +1,7 @@
 import { Checkbox, Form, Input, notification, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, systemsMatch } from '../Utility';
+import { ellipsisString, uriEncoded } from '../Utility';
 import { ModalSpinner, ResultsSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -95,7 +95,9 @@ export const AssignMappingsCheckboxes = ({
   const getCodeFilters = () => {
     setLoading(true);
     return fetch(
-      `${vocabUrl}/Terminology/${terminology.id}/filter/${mappingProp}`,
+      `${vocabUrl}/Terminology/${terminology.id}/filter/${uriEncoded(
+        mappingProp
+      )}`,
       {
         method: 'GET',
         headers: {

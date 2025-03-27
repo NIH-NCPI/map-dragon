@@ -1,3 +1,5 @@
+import { uriEncoded } from './Utility';
+
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate) => {
   return fetch(`${vocabUrl}/${name}`, {
@@ -133,12 +135,15 @@ export const handlePatch = (vocabUrl, name, component, body) => {
 };
 
 export const getProvenanceByCode = async (vocabUrl, name, id, code) => {
-  return fetch(`${vocabUrl}/Provenance/${name}/${id}/code/${code}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }).then(res => {
+  return fetch(
+    `${vocabUrl}/Provenance/${name}/${id}/code/${uriEncoded(code)}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  ).then(res => {
     if (res.ok) {
       return res.json();
     } else {
@@ -242,8 +247,8 @@ export const getFiltersByCode = (
   return fetch(
     `${vocabUrl}/${
       table
-        ? `Table/${table.id}/filter/${mappingProp}`
-        : `Terminology/${terminology.id}/filter/${mappingProp}${optionalTableParam}`
+        ? `Table/${table.id}/filter/${uriEncoded(mappingProp)}`
+        : `Terminology/${terminology.id}/filter/${uriEncoded(mappingProp)}`
     }`,
     {
       method: 'GET',
@@ -300,7 +305,7 @@ export const ontologyFilterCodeSubmit = (
     apiPreference.api_preference = apiPreferencesCode;
     const fetchUrl = `${vocabUrl}/${
       !table ? `Terminology/${terminology?.id}` : `Table/${table?.id}`
-    }/filter/${mappingProp}`;
+    }/filter/${uriEncoded(mappingProp)}`;
     fetch(fetchUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -323,14 +328,14 @@ export const ontologyFilterCodeSubmit = (
       });
   }
 };
-export const getDefaultOntologies = async (vocabUrl) => {
+export const getDefaultOntologies = async vocabUrl => {
   return fetch(`${vocabUrl}/user/preferences/ontologies`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
   }).then(res => {
-    if (res.ok) {      
+    if (res.ok) {
       return res.json();
     } else {
       return res.json().then(error => {

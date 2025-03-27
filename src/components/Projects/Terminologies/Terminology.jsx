@@ -37,6 +37,7 @@ import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
 import {
   relationshipDisplay,
+  uriEncoded,
   userVote,
   votesCount,
 } from '../../Manager/Utility';
@@ -97,7 +98,9 @@ export const Terminology = () => {
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${mappingCode}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
+        mappingCode
+      )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {

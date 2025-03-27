@@ -81,6 +81,16 @@ export const relationshipDisplay = variable =>
     ? '(broader)'
     : '';
 
+//URI encoding for "." and ".."
+export const uriEncoded = text => {
+  if (text === '.') {
+    return text.replace('.', '<FTD-DOT>');
+  } else if (text === '..') {
+    return text.replace('..', '<FTD-DOT-DOT>');
+  }
+  return text;
+};
+
 export const votesCount = code => {
   const calculatedCount =
     code.user_input?.votes_count.up - code.user_input?.votes_count.down;
