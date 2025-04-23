@@ -5,9 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
 import { SearchSpinner } from '../Manager/Spinner';
 import { SearchContext } from '../../Contexts/SearchContext';
-
-
-
+import { uriEncoded } from '../Manager/Utility';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -17,8 +15,7 @@ export const SearchResults = () => {
     setMoreAvailable,
     resultsCount,
     setResultsCount,
-    defaultOntologies
-
+    defaultOntologies,
   } = useContext(SearchContext);
   const { results, setResults, vocabUrl } = useContext(myContext);
 
@@ -56,7 +53,9 @@ export const SearchResults = () => {
   const requestSearch = () => {
     setLoading(true);
     fetch(
-      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
+      `${vocabUrl}/ontology_search?keyword=${uriEncoded(
+        query
+      )}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
       {
         method: 'GET',
         headers: {
@@ -124,8 +123,9 @@ The user is then redirected to the search page, which completes the search for t
 
             <div>
               <button
-                className={`search_button_results ${buttonDisabled ? 'disabled_results' : ''
-                  }`}
+                className={`search_button_results ${
+                  buttonDisabled ? 'disabled_results' : ''
+                }`}
                 onClick={e => {
                   /* if the input field has a value (i.e. term being searched):
                  the page of search results is set to 1 to fetch the results of the first page
