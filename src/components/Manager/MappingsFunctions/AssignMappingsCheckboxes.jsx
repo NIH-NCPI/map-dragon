@@ -38,9 +38,10 @@ export const AssignMappingsCheckboxes = ({
     setSelectedApi,
     preferenceType,
     prefTypeKey,
+    page,
+    setPage,
   } = useContext(SearchContext);
 
-  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);

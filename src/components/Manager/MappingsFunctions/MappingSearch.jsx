@@ -43,9 +43,10 @@ export const MappingSearch = ({
     setResultsCount,
     selectedApi,
     setSelectedApi,
+    page,
+    setPage,
   } = useContext(SearchContext);
   const { tableId } = useParams();
-  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
