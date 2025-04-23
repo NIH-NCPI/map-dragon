@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
 import { SearchSpinner } from '../Manager/Spinner';
 import { SearchContext } from '../../Contexts/SearchContext';
+import { uriEncoded } from '../Manager/Utility';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -53,7 +54,9 @@ export const SearchResults = () => {
   const requestSearch = () => {
     setLoading(true);
     fetch(
-      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
+      `${vocabUrl}/ontology_search?keyword=${uriEncoded(
+        query
+      )}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
       {
         method: 'GET',
         headers: {
