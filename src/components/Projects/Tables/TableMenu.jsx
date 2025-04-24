@@ -157,15 +157,11 @@ export const TableMenu = ({
       case `${tableData.key}-2`:
         return user ? setDeleteRow(true) : loginDelete();
       case `${tableData.key}-3`:
-        return showEditMappings
-          ? // If mappings exist for a variable, sets editMappings to the variable and opens EditMappingsTableModal in turn
-            user
-            ? setEditMappings(variable)
-            : loginEditMappings()
-          : // If mappings do not exist for a variable, sets getMappings to the variable and opens GetMappingsModal in turn
-          user
-          ? setGetMappings(variable)
-          : loginGetMappings();
+        return (
+          showEditMappings && // If mappings exist for a variable, sets editMappings to the variable and opens EditMappingsTableModal
+          user &&
+          setEditMappings(variable)
+        );
       case `${tableData.key}-4`:
         return setShowHistory(tableData.key);
     }

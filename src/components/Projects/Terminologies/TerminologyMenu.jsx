@@ -144,21 +144,19 @@ export const TerminologyMenu = ({
         { key: `${tableData.key}-1`, label: 'Edit' },
         { key: `${tableData.key}-2`, label: 'Delete' },
         {
-          key: `${tableData.key}-3`,
-          label:
-            prefTerminologies?.length > 0 && !showEditMappings
-              ? 'Assign Mappings'
-              : showEditMappings
-              ? 'Mappings'
-              : 'Get Mappings',
-        },
-        {
           key: `${tableData.key}-4`,
           label: 'History',
         },
       ],
     },
   ];
+
+  const mappingsMenuLabel = {
+    key: `${tableData.key}-3`,
+    label: 'Mappings',
+  };
+
+  showEditMappings && items.splice(2, 0, mappingsMenuLabel);
 
   // onClick function for Menu.
   // If a user is not logged in, the login screen is triggered
