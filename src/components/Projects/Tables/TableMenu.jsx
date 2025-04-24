@@ -138,12 +138,13 @@ export const TableMenu = ({
     },
   ];
 
+  // If mappings exist for a variable, it adds the "Mappings" label to the menu
   const mappingsMenuLabel = {
     key: `${tableData.key}-3`,
     label: 'Mappings',
   };
 
-  showEditMappings && items.splice(2, 0, mappingsMenuLabel);
+  showEditMappings && items[0]?.children?.splice(2, 0, mappingsMenuLabel);
 
   // onClick function for Menu.
   // If a user is not logged in, the login screen is triggered
