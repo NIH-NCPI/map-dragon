@@ -107,7 +107,7 @@ export const TableDetails = () => {
     fetch(
       `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
         mappingCode
-      )}?user_input=true&user=${user?.email}`,
+      )}?user_input=True&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {

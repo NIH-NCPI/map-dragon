@@ -87,6 +87,8 @@ export const uriEncoded = text => {
     return text.replace('.', '<FTD-DOT>');
   } else if (text === '..') {
     return text.replace('..', '<FTD-DOT-DOT>');
+  } else if (text.includes('#')) {
+    return text.replaceAll('#', '<FTD-HASH>');
   }
   return text;
 };
