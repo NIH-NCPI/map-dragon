@@ -104,13 +104,18 @@ export const TableDetails = () => {
       editor: user.email,
     };
 
-    fetch(`${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(mappingCode)}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(mappingsDTO),
-    })
+    fetch(
+      `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
+        mappingCode
+      )}?user_input=true&user=${user?.email}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappingsDTO),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
