@@ -16,10 +16,11 @@ export const SearchResults = () => {
     resultsCount,
     setResultsCount,
     defaultOntologies,
+    page,
+    setPage,
   } = useContext(SearchContext);
   const { results, setResults, vocabUrl } = useContext(myContext);
 
-  const [page, setPage] = useState(0); //page number for search results pagination
   const [loading, setLoading] = useState(true);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
 
