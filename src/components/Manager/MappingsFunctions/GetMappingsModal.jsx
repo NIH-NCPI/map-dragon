@@ -46,8 +46,9 @@ export const GetMappingsModal = ({
     resultsCount,
     selectedApi,
     setSelectedApi,
+    page,
+    setPage,
   } = useContext(SearchContext);
-  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);
