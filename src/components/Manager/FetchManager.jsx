@@ -190,7 +190,9 @@ export const olsFilterOntologiesSearch = (
   setLoading(true);
 
   return fetch(
-    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=${apiToSearch}&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
+    `${vocabUrl}/ontology_search?keyword=${uriEncoded(
+      query
+    )}&selected_ontologies=${ontologiesToSearch}&selected_api=${apiToSearch}&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
     {
       method: 'GET',
       headers: {
