@@ -1,32 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
-import { Descriptions, notification, Spin } from 'antd';
-import { getAll } from '../Manager/FetchManager';
+import { Descriptions } from 'antd';
 import { myContext } from '../../App';
-import { useNavigate } from 'react-router-dom';
-import { Spinner } from '../Manager/Spinner';
 import './About.scss';
 
 export const About = () => {
-  const { vocabUrl, mapDragonVersion } = useContext(myContext);
-  const navigate = useNavigate();
+  const { mapDragonVersion, version } = useContext(myContext);
   const [loading, setLoading] = useState(true);
-  const [version, setVersion] = useState({});
 
   useEffect(() => {
     document.title = 'About - Map Dragon';
-    setLoading(true);
-    getAll(vocabUrl, 'version', navigate)
-      .then(data => setVersion(data))
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred.',
-          });
-        }
-        return error;
-      })
-      .finally(() => setLoading(false));
   }, []);
 
   const items = [
@@ -51,16 +33,12 @@ export const About = () => {
 
   return (
     <>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <div className="about_container">
-          <h2>About</h2>
-          <div className="about_description">
-            <Descriptions title="Version" bordered column={1} items={items} />
-          </div>
+      <div className="about_container">
+        <h2>About</h2>
+        <div className="about_description">
+          <Descriptions title="Version" bordered column={1} items={items} />
         </div>
-      )}
+      </div>
     </>
   );
 };
