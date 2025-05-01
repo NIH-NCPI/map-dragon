@@ -24,11 +24,10 @@ export const AssignMappings = ({
     preferenceType,
     prefTypeKey,
     apiPreferencesCode,
-    terminologiesToMap,
-    setTerminologiesToMap,
   } = useContext(SearchContext);
   const { setMapping, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
+  const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mappingProp, setMappingProp] = useState('');
   const [selectedBoxes, setSelectedBoxes] = useState([]);
