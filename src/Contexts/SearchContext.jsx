@@ -27,7 +27,6 @@ export function SearchContextRoot() {
   const { vocabUrl } = useContext(myContext);
   const [defaultOntologies, setDefaultOntologies] = useState([]);
   const [page, setPage] = useState(0);
-  const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const entriesPerPage = 100;
   useEffect(() => {
     const fetchDefaultOntologiesData = async () => {
