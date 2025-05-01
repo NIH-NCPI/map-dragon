@@ -103,8 +103,6 @@ export function SearchContextRoot() {
     setSelectedApi,
     page,
     setPage,
-    terminologiesToMap,
-    setTerminologiesToMap,
   };
 
   return (
