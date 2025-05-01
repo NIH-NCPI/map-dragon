@@ -99,6 +99,7 @@ export const EditMappingsTableModal = ({
             }
             const val = JSON.stringify({
               code: m.code,
+              ftd_code: m.ftd_code,
               display: m.display,
               description: m.description,
               system: m?.system,

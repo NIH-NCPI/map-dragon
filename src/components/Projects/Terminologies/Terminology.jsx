@@ -49,8 +49,12 @@ export const Terminology = () => {
 
   const { terminologyId, tableId } = useParams();
   const { vocabUrl, user } = useContext(myContext);
-  const { setPrefTerminologies, prefTerminologies, setApiPreferencesTerm } =
-    useContext(SearchContext);
+  const {
+    setPrefTerminologies,
+    prefTerminologies,
+    setApiPreferencesTerm,
+    setTerminologiesToMap,
+  } = useContext(SearchContext);
   const {
     editMappings,
     setEditMappings,

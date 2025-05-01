@@ -17,13 +17,14 @@ export const EditMappingsLabel = ({ item, index, variable }) => {
     return findDisplay ? addInfo(findDisplay.display) : null;
   };
 
-  const  addInfo = (str) => {
+  const addInfo = str => {
     const label = item.display ? item.display : item.code;
-    const result = (str.includes("Target") && str.includes("Source")) ? str.replace("Source", variable).replace("Target", label) : variable + ' is ' + str + ' to ' + label;
+    const result =
+      str.includes('Target') && str.includes('Source')
+        ? str.replace('Source', variable).replace('Target', label)
+        : variable + ' is ' + str + ' to ' + label;
     return result;
-
-  }
-
+  };
 
   return (
     <>
@@ -33,7 +34,7 @@ export const EditMappingsLabel = ({ item, index, variable }) => {
             <div>
               <b>{item?.display}</b>
             </div>
-            <div>{item?.code}</div>
+            <div>{item?.ftd_code}</div>
             <div
               className={
                 !showOptions && item.mapping_relationship

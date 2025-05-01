@@ -371,6 +371,7 @@ export const GetMappingsModal = ({
               <div>
                 <b>{d?.display}</b>
               </div>
+              <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
                 <a
                   href={d?.code_iri}
@@ -564,6 +565,8 @@ export const GetMappingsModal = ({
                                                 ?.map(d => d)
                                                 .join(','),
                                               system: d?.system,
+                                              ontology_prefox:
+                                                d.ontology_prefox,
                                             }),
                                             label: checkBoxDisplay(d, index),
                                           };

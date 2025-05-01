@@ -15,7 +15,6 @@ import { ResetMappings } from './ResetMappings';
 import { uriEncoded } from '../../Manager/Utility';
 import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
 
@@ -99,6 +98,7 @@ export const EditMappingsModal = ({
             }
             const val = JSON.stringify({
               code: m.code,
+              ftd_code: m.ftd_code,
               display: m.display,
               description: m.description,
               system: m?.system,
