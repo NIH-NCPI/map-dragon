@@ -562,8 +562,6 @@ export const GetMappingsModal = ({
                                                 ?.map(d => d)
                                                 .join(','),
                                               system: d?.system,
-                                              ontology_prefox:
-                                                d.ontology_prefox,
                                             }),
                                             label: checkBoxDisplay(d, index),
                                           };
