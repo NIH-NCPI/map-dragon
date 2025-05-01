@@ -368,6 +368,7 @@ export const GetMappingsModal = ({
               <div>
                 <b>{d?.display}</b>
               </div>
+              <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
                 <a
                   href={d?.code_iri}
