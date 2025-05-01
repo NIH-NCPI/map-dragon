@@ -335,6 +335,7 @@ export const MappingSearch = ({
               <div>
                 <b>{d?.display}</b>
               </div>
+              <div className="api_ontology_prefix">{d.ontology_prefix}</div>
               <div className="api_ontology_code">
                 <a href={d?.code_iri} target="_blank">
                   {d?.code}
@@ -377,6 +378,7 @@ export const MappingSearch = ({
               <div>
                 <b>{d?.display}</b>
               </div>
+              <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
                 <a
                   href={d?.code_iri}
@@ -438,7 +440,7 @@ export const MappingSearch = ({
               <div>
                 <b>{d.display}</b>
               </div>
-              <div>{d.code}</div>
+              <div>{d.ftd_code}</div>
               <div>
                 <MappingRelationship mapping={d} variable={searchProp} />
               </div>
@@ -703,6 +705,8 @@ export const MappingSearch = ({
                                                     .join(','),
                                                   system: d?.system,
                                                   api: d.api,
+                                                  ontology_prefix:
+                                                    d.ontology_prefix,
                                                 }),
                                                 label: newSearchDisplay(
                                                   d,

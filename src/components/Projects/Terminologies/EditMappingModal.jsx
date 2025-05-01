@@ -15,7 +15,6 @@ import { ResetMappings } from './ResetMappings';
 import { uriEncoded } from '../../Manager/Utility';
 import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { MappingRelationship } from '../../Manager/MappingsFunctions/MappingRelationship';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
 
@@ -99,6 +98,7 @@ export const EditMappingsModal = ({
             }
             const val = JSON.stringify({
               code: m.code,
+              ftd_code: m.ftd_code,
               display: m.display,
               description: m.description,
               system: m?.system,
@@ -109,7 +109,13 @@ export const EditMappingsModal = ({
             // as the value for the value field for the ant.design checkbox. The label for the checkbox is returned in edditMappingsLabel function.
             options.push({
               value: val,
-              label: <EditMappingsLabel item={m} index={index} variable={editMappings.code} />,
+              label: (
+                <EditMappingsLabel
+                  item={m}
+                  index={index}
+                  variable={editMappings.code}
+                />
+              ),
             });
           });
           // termMappings are set to the mappings array. Options are set to the options array.
