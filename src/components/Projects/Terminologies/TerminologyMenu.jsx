@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { EditCode } from './EditCode';
 import { ShowHistory } from '../../Manager/ShowHistory';
-import { AssignMappings } from '../../Manager/MappingsFunctions/AssignMappings';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
@@ -219,13 +218,6 @@ export const TerminologyMenu = ({
         tableData={tableData}
         setSelectedKey={setSelectedKey}
         code={tableData.code}
-      />
-      <AssignMappings
-        tableData={tableData}
-        setSelectedKey={setSelectedKey}
-        terminology={terminology}
-        assignMappings={assignMappings}
-        setAssignMappings={setAssignMappings}
       />
     </>
   );
