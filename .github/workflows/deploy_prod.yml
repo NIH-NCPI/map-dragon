@@ -1,6 +1,6 @@
 # This workflow build and push a Docker container to Google Artifact Registry
 # and deploy it on Cloud Run when a PR to the `release` PR is closed.
-#GCP needs a repo 
+#GCP needs a repo
 name: 'Build and Deploy PROD to  Cloud Run'
 
 on:
@@ -10,16 +10,13 @@ on:
     types: [closed, edited] # PR opened, edited(PR title, etc)
 
 env:
-
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION_LOC_1 }}
   SERVICE: ${{ secrets.SERVICE }}
   IMAGE_NAME: 'map-dragon_img'
-  GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
-
+  GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
 
 jobs:
-  
   deploy:
     runs-on: 'ubuntu-latest'
 
@@ -75,5 +72,5 @@ jobs:
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
-          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
           env_vars: VERSION=${VERSION}
