@@ -8,22 +8,19 @@ on:
   workflow_dispatch: # This enables manual triggers
 
 env:
-
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION_LOC_1 }}
   SERVICE: ${{ secrets.SERVICE }}
   IMAGE_NAME: 'map-dragon_img'
-  GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
-
+  GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
 
 jobs:
-  
   deploy:
     runs-on: 'ubuntu-latest'
-    
+
     # If PR is approved and the PR is for the 'main' branch
     if: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'main'
-    
+
     environment:
       name: dev
 
@@ -54,11 +51,11 @@ jobs:
           echo "VITE_SEARCH_ENDPOINT = ${{ secrets.VITE_SEARCH_ENDPOINT }}" >> .env.dev
           echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.dev
           echo "VITE_MAPDRAGON_VERSION=${VERSION}" >> .env.dev
-      
+
       - name: 'Docker Auth'
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
-          
+
       - name: 'Build Docker Image' # New step to build the image
 
         run: |-
@@ -75,5 +72,5 @@ jobs:
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
-          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
           env_vars: VERSION=${VERSION}
