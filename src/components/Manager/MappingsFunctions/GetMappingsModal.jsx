@@ -46,8 +46,9 @@ export const GetMappingsModal = ({
     resultsCount,
     selectedApi,
     setSelectedApi,
+    page,
+    setPage,
   } = useContext(SearchContext);
-  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);
@@ -175,9 +176,6 @@ export const GetMappingsModal = ({
 
   const apiForSearch = selectedApi ?? apiPreferenceKeys[0];
 
-  const optionalUserInput =
-    component === terminology ? `?user_input=true&user=${user?.email}` : '';
-
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
   // The mappings are turned into objects in the mappings array.
@@ -199,7 +197,9 @@ export const GetMappingsModal = ({
 
     setLoadingResults(true);
     fetch(
-      `${vocabUrl}/${componentString}/${component.id}/mapping/${mappingProp}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
+        mappingProp
+      )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
         headers: {
@@ -346,7 +346,12 @@ export const GetMappingsModal = ({
               </div>
             </div>
             <div>
-              {ellipsisString(d?.description?.map(d => d).join(','), '120')}
+              {ellipsisString(
+                Array.isArray(d?.description)
+                  ? d?.description?.map(d => d).join(',')
+                  : d?.description,
+                '120'
+              )}
             </div>
           </div>
         </div>
@@ -363,6 +368,7 @@ export const GetMappingsModal = ({
               <div>
                 <b>{d?.display}</b>
               </div>
+              <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
                 <a
                   href={d?.code_iri}
@@ -376,7 +382,7 @@ export const GetMappingsModal = ({
                 </span>
               </div>
               <div>
-                <MappingRelationship mapping={d} />
+                <MappingRelationship mapping={d} variable={searchProp} />
               </div>
             </div>
             <div>
