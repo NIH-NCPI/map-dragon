@@ -9,18 +9,14 @@ on:
       - release
     types: [opened, edited, synchronize] # PR opened, edited(PR title, etc), new commits are pushed.
 
-
 env:
-
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION_LOC_1 }}
   SERVICE: ${{ secrets.SERVICE }}
   IMAGE_NAME: 'map-dragon_img'
-  GCP_CREDENTIALS:  ${{ secrets.GCP_CREDENTIALS }}
-
+  GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
 
 jobs:
-  
   deploy:
     runs-on: 'ubuntu-latest'
 
@@ -34,7 +30,6 @@ jobs:
       id-token: 'write'
 
     steps:
-     
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
 
@@ -56,7 +51,6 @@ jobs:
           echo "VITE_VOCAB_ENDPOINT= ${{ secrets.VITE_VOCAB_ENDPOINT }}" >> .env.uat
           echo "VITE_MAPDRAGON_VERSION=${VERSION}" >> .env.uat
 
-
       - name: 'Docker Auth'
         run: |-
           gcloud auth configure-docker '${{ env.REGION }}-docker.pkg.dev'
@@ -76,5 +70,5 @@ jobs:
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
-          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
           env_vars: VERSION=${VERSION}
