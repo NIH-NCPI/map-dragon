@@ -190,7 +190,9 @@ export const olsFilterOntologiesSearch = (
   setLoading(true);
 
   return fetch(
-    `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${ontologiesToSearch}&selected_api=${apiToSearch}&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
+    `${vocabUrl}/ontology_search?keyword=${uriEncoded(
+      query
+    )}&selected_ontologies=${ontologiesToSearch}&selected_api=${apiToSearch}&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
     {
       method: 'GET',
       headers: {
@@ -240,7 +242,8 @@ export const getFiltersByCode = (
   setUnformattedPref,
   table,
   terminology,
-  setLoading
+  setLoading,
+  optionalTableParam
 ) => {
   setLoading(true);
   return fetch(
@@ -326,4 +329,20 @@ export const ontologyFilterCodeSubmit = (
         }
       });
   }
+};
+export const getDefaultOntologies = async vocabUrl => {
+  return fetch(`${vocabUrl}/user/preferences/ontologies`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then(res => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      return res.json().then(error => {
+        throw new Error(error);
+      });
+    }
+  });
 };

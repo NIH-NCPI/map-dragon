@@ -18,6 +18,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     unformattedPref,
     selectedApi,
     setSelectedApi,
+    defaultOntologies,
+    setPage,
   } = useContext(SearchContext);
   const { Search } = Input;
 
@@ -36,8 +38,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   const [searchText, setSearchText] = useState('');
 
-  const defaultOntologies =
-    selectedApi === 'ols' ? ['MONDO', 'HP', 'MAXO', 'NCIT'] : ['SNOMEDCT_US'];
+  const selectedOntologies =
+    selectedApi === 'ols' ? defaultOntologies : ['SNOMEDCT_US'];
 
   //If there are no preferences set for an API, it sets them to default ontologies
   if (
@@ -45,14 +47,14 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     !apiPreferencesCode.hasOwnProperty('umls') &&
     selectedApi === 'umls'
   ) {
-    apiPreferencesCode.umls = defaultOntologies;
+    apiPreferencesCode.umls = selectedOntologies;
   }
   if (
     apiPreferencesCode &&
     !apiPreferencesCode.hasOwnProperty('ols') &&
     selectedApi === 'ols'
   ) {
-    apiPreferencesCode.ols = defaultOntologies;
+    apiPreferencesCode.ols = selectedOntologies;
   }
 
   const options =
@@ -88,8 +90,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     Array.isArray(apiPreferencesCode?.[selectedApi]) &&
     apiPreferencesCode[selectedApi].length > 0
   ) {
-    existingOntologies = processedApiPreferencesCode?.map(pap =>
-      pap.toUpperCase()
+    existingOntologies = processedApiPreferencesCode?.map(processed =>
+      processed.toUpperCase()
     );
   }
 
@@ -104,9 +106,9 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
       preferenceType[prefTypeKey].api_preference
     ).flat();
   }
-  // If the above are false, defaultOntologies are used for the search
+  // If the above are false, selectedOntologies are used for the search
   else {
-    existingOntologies = defaultOntologies;
+    existingOntologies = selectedOntologies;
   }
 
   useEffect(() => {
@@ -115,7 +117,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
-
+    setPage(0);
     setCheckedOntologies(prevCheckedOntologies => {
       // If checked, adds the value to checkedOntologies, otherwise filters out the ones not checked
       const updatedCheckedOntologies = checked
@@ -213,7 +215,10 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
         buttonStyle="solid"
         options={options}
         defaultValue={options[0].value}
-        onChange={e => setSelectedApi(e.target.value)}
+        onChange={e => {
+          setPage(0);
+          setSelectedApi(e.target.value);
+        }}
       />
       <Search
         placeholder="Ontologies"

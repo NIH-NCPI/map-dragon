@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { EditCode } from './EditCode';
 import { ShowHistory } from '../../Manager/ShowHistory';
-import { AssignMappings } from '../../Manager/MappingsFunctions/AssignMappings';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
@@ -144,21 +143,20 @@ export const TerminologyMenu = ({
         { key: `${tableData.key}-1`, label: 'Edit' },
         { key: `${tableData.key}-2`, label: 'Delete' },
         {
-          key: `${tableData.key}-3`,
-          label:
-            prefTerminologies?.length > 0 && !showEditMappings
-              ? 'Assign Mappings'
-              : showEditMappings
-              ? 'Mappings'
-              : 'Get Mappings',
-        },
-        {
           key: `${tableData.key}-4`,
           label: 'History',
         },
       ],
     },
   ];
+
+  // If mappings exist for a code, it adds the "Mappings" label to the menu
+  const mappingsMenuLabel = {
+    key: `${tableData.key}-3`,
+    label: 'Mappings',
+  };
+
+  showEditMappings && items[0]?.children?.splice(2, 0, mappingsMenuLabel);
 
   // onClick function for Menu.
   // If a user is not logged in, the login screen is triggered
@@ -220,13 +218,6 @@ export const TerminologyMenu = ({
         tableData={tableData}
         setSelectedKey={setSelectedKey}
         code={tableData.code}
-      />
-      <AssignMappings
-        tableData={tableData}
-        setSelectedKey={setSelectedKey}
-        terminology={terminology}
-        assignMappings={assignMappings}
-        setAssignMappings={setAssignMappings}
       />
     </>
   );

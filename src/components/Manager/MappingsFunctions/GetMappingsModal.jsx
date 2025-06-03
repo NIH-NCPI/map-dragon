@@ -13,6 +13,7 @@ import {
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 
 import { MappingRelationship } from './MappingRelationship';
+import { useParams } from 'react-router-dom';
 
 export const GetMappingsModal = ({
   componentString,
@@ -45,14 +46,16 @@ export const GetMappingsModal = ({
     resultsCount,
     selectedApi,
     setSelectedApi,
+    page,
+    setPage,
   } = useContext(SearchContext);
-  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
+  const { tableId } = useParams();
 
   const {
     setSelectedMappings,
@@ -78,6 +81,9 @@ export const GetMappingsModal = ({
       : setSelectedApi(ontologyApis?.[0]?.api_id || null);
   }, [searchProp]);
 
+  const optionalTableParam =
+    tableId !== undefined ? `?table_id=${tableId}` : '';
+
   useEffect(() => {
     setInputValue(searchProp);
     setCurrentSearchProp(searchProp);
@@ -91,7 +97,8 @@ export const GetMappingsModal = ({
         setUnformattedPref,
         table,
         terminology,
-        setLoading
+        setLoading,
+        optionalTableParam
       );
     }
   }, [searchProp]);
@@ -168,6 +175,9 @@ export const GetMappingsModal = ({
   };
 
   const apiForSearch = selectedApi ?? apiPreferenceKeys[0];
+
+  const optionalUserInput =
+    component === terminology ? `?user_input=true&user=${user?.email}` : '';
 
   // Function to send a PUT call to update the mappings.
   // Each mapping in the mappings array being edited is JSON.parsed and pushed to the blank mappings array.
@@ -361,6 +371,7 @@ export const GetMappingsModal = ({
               <div>
                 <b>{d?.display}</b>
               </div>
+              <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
                 <a
                   href={d?.code_iri}
@@ -374,7 +385,7 @@ export const GetMappingsModal = ({
                 </span>
               </div>
               <div>
-                <MappingRelationship mapping={d} />
+                <MappingRelationship mapping={d} variable={searchProp} />
               </div>
             </div>
             <div>

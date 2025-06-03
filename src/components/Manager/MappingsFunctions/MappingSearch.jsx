@@ -8,6 +8,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { MappingRelationship } from './MappingRelationship';
+import { useParams } from 'react-router-dom';
 
 export const MappingSearch = ({
   setEditMappings,
@@ -42,9 +43,10 @@ export const MappingSearch = ({
     setResultsCount,
     selectedApi,
     setSelectedApi,
+    page,
+    setPage,
   } = useContext(SearchContext);
-
-  const [page, setPage] = useState(0);
+  const { tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
@@ -86,6 +88,8 @@ export const MappingSearch = ({
       })
       .finally(() => setLoading(false));
   };
+  const optionalTableParam =
+    tableId !== undefined ? `?table_id=${tableId}` : '';
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
   // if there is a searchProp being passed, it evaluates to true and runs the search function.
   // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
@@ -103,7 +107,8 @@ export const MappingSearch = ({
         setUnformattedPref,
         table,
         terminology,
-        setLoading
+        setLoading,
+        optionalTableParam
       );
     }
   }, [searchProp]);
@@ -330,6 +335,7 @@ export const MappingSearch = ({
               <div>
                 <b>{d?.display}</b>
               </div>
+              <div className="api_ontology_prefix">{d.ontology_prefix}</div>
               <div className="api_ontology_code">
                 <a href={d?.code_iri} target="_blank">
                   {d?.code}
@@ -356,7 +362,7 @@ export const MappingSearch = ({
                   : d?.description,
                 '100'
               )
-            )}{' '}
+            )}
           </div>
         </div>
       </>
@@ -372,6 +378,7 @@ export const MappingSearch = ({
               <div>
                 <b>{d?.display}</b>
               </div>
+              <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
                 <a
                   href={d?.code_iri}
@@ -387,7 +394,7 @@ export const MappingSearch = ({
                 )}
               </div>
               <div>
-                <MappingRelationship mapping={d} />
+                <MappingRelationship mapping={d} variable={searchProp} />
               </div>
             </div>
             <div>
@@ -433,9 +440,9 @@ export const MappingSearch = ({
               <div>
                 <b>{d.display}</b>
               </div>
-              <div>{d.code}</div>
+              <div>{d.ftd_code}</div>
               <div>
-                <MappingRelationship mapping={d} />
+                <MappingRelationship mapping={d} variable={searchProp} />
               </div>
             </div>
             <div>
@@ -698,6 +705,8 @@ export const MappingSearch = ({
                                                     .join(','),
                                                   system: d?.system,
                                                   api: d.api,
+                                                  ontology_prefix:
+                                                    d.ontology_prefix,
                                                 }),
                                                 label: newSearchDisplay(
                                                   d,

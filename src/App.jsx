@@ -36,6 +36,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
   const [ucumCodes, setUcumCodes] = useState([]);
+  const [version, setVersion] = useState({});
 
   message.config({
     top: '25vh',
@@ -79,6 +80,8 @@ function App() {
           setOntologyForPagination,
           ucumCodes,
           setUcumCodes,
+          version,
+          setVersion,
         }}
       >
         <AppRouter />

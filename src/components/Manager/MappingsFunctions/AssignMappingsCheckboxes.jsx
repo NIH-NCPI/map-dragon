@@ -38,9 +38,10 @@ export const AssignMappingsCheckboxes = ({
     setSelectedApi,
     preferenceType,
     prefTypeKey,
+    page,
+    setPage,
   } = useContext(SearchContext);
 
-  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);
@@ -144,13 +145,13 @@ export const AssignMappingsCheckboxes = ({
   }, [mappingProp]);
 
   useEffect(() => {
-    if (apiPreferencesCode !== undefined) {
+    if (apiPreferencesCode !== undefined && active === 'search') {
       fetchResults(0, mappingProp);
     }
   }, [mappingProp]);
 
   useEffect(() => {
-    if (apiPreferencesCode !== undefined) {
+    if (apiPreferencesCode !== undefined && active === 'search') {
       fetchResults(page, currentSearchProp);
     }
   }, [page, selectedApi]);
@@ -185,7 +186,8 @@ export const AssignMappingsCheckboxes = ({
     } else if (
       prefTerminologies.length === 0 &&
       !!currentSearchProp &&
-      apiPreferencesCode !== undefined
+      apiPreferencesCode !== undefined &&
+      active === 'search'
     ) {
       fetchResults(page, currentSearchProp);
     }
@@ -349,6 +351,7 @@ export const AssignMappingsCheckboxes = ({
               <div>
                 <b>{d?.display}</b>
               </div>
+              <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
                 <a href={d?.code_iri} target="_blank">
                   {d?.code}
@@ -408,7 +411,7 @@ export const AssignMappingsCheckboxes = ({
                 )}
               </div>
               <div>
-                <MappingRelationship mapping={d} />
+                <MappingRelationship mapping={d} variable={mappingProp} />
               </div>
             </div>
             <div>

@@ -5,20 +5,22 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
 import { SearchSpinner } from '../Manager/Spinner';
 import { SearchContext } from '../../Contexts/SearchContext';
+import { uriEncoded } from '../Manager/Utility';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const {
-    defaultOntologies,
     entriesPerPage,
     moreAvailable,
     setMoreAvailable,
     resultsCount,
     setResultsCount,
+    defaultOntologies,
+    page,
+    setPage,
   } = useContext(SearchContext);
   const { results, setResults, vocabUrl } = useContext(myContext);
 
-  const [page, setPage] = useState(0); //page number for search results pagination
   const [loading, setLoading] = useState(true);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
 
@@ -52,7 +54,9 @@ export const SearchResults = () => {
   const requestSearch = () => {
     setLoading(true);
     fetch(
-      `${vocabUrl}/ontology_search?keyword=${query}&selected_ontologies=${defaultOntologies}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
+      `${vocabUrl}/ontology_search?keyword=${uriEncoded(
+        query
+      )}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
       {
         method: 'GET',
         headers: {
@@ -130,7 +134,7 @@ The user is then redirected to the search page, which completes the search for t
                  the value is transposed into the address bar
                   */
                   if (ref.current.value) {
-                    setPage(1), navigate(`/search/${ref.current.value}`);
+                    setPage(0), navigate(`/search/${ref.current.value}`);
                   }
                 }}
               >

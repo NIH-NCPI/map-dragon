@@ -35,7 +35,12 @@ import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
-import { relationshipDisplay, uriEncoded } from '../../Manager/Utility';
+import {
+  relationshipDisplay,
+  uriEncoded,
+  userVote,
+  votesCount,
+} from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 
@@ -77,6 +82,7 @@ export const Terminology = () => {
   useEffect(
     () => () => {
       setApiPreferencesTerm(undefined);
+      setPrefTerminologies([]);
     },
     []
   );
@@ -159,17 +165,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     </div>
   );
 
-  const votesCount = code => {
-    const calculatedCount =
-      code.user_input?.votes_count.up - code.user_input?.votes_count.down;
-    return calculatedCount;
-  };
-
-  const userVote = code => {
-    const foundVote = code.user_input?.users_vote;
-    return foundVote;
-  };
-
   const matchCode = variable => {
     if (!mapping?.length) {
       return noMapping(variable);
@@ -225,7 +220,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     vocabUrl,
                     terminologyId,
                     notification,
-                    setMapping
+                    setMapping,
+                    'Terminology'
                   )
                 }
               />
@@ -272,14 +268,15 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     vocabUrl,
                     terminologyId,
                     notification,
-                    setMapping
+                    setMapping,
+                    'Terminology'
                   )
                 }
               />
             )}
           </span>
           <span className="mapping-display">
-            {code?.code} {code?.display && `- ${code?.display}`}{' '}
+            {code?.ftd_code} {code?.display && `- ${code?.display}`}{' '}
             {relationshipDisplay(code)}
           </span>
           <span
@@ -336,6 +333,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     termApiCalls();
   }, []);
 
+  // If the tableId param exists (i.e. terminology is accessed via a table), fetches the table's ontology filters to inherit in the terminology
+  // If the tableId param is undefined (i.e. terminology accessed from terminology index page), does not inherit a table's ontology filters
+  const optionalTableParam =
+    tableId !== undefined ? `?table_id=${tableId}` : '';
+
   const termApiCalls = async () => {
     setLoading(true);
     try {
@@ -349,7 +351,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
       if (terminologyData) {
         const filterResponse = await fetch(
-          `${vocabUrl}/Terminology/${terminologyData?.id}/filter`,
+          `${vocabUrl}/Terminology/${terminologyData?.id}/filter${optionalTableParam}`,
           {
             method: 'GET',
             headers: {
@@ -572,9 +574,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             mappingCode={comment?.code}
             mappingDisplay={comment?.display}
             variableMappings={comment?.variableMappings}
+            variableDisplay={comment?.variableMappings}
             setComment={setComment}
             idProp={terminologyId}
             setMapping={setMapping}
+            component="Terminology"
           />
         </div>
       )}

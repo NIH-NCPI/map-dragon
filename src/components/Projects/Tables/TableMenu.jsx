@@ -131,16 +131,20 @@ export const TableMenu = ({
         { key: `${tableData.key}-1`, label: 'Edit' },
         { key: `${tableData.key}-2`, label: 'Delete' },
         {
-          key: `${tableData.key}-3`,
-          label: showEditMappings ? 'Mappings' : 'Get Mappings',
-        },
-        {
           key: `${tableData.key}-4`,
           label: 'History',
         },
       ],
     },
   ];
+
+  // If mappings exist for a variable, it adds the "Mappings" label to the menu
+  const mappingsMenuLabel = {
+    key: `${tableData.key}-3`,
+    label: 'Mappings',
+  };
+
+  showEditMappings && items[0]?.children?.splice(2, 0, mappingsMenuLabel);
 
   // onClick function for Menu.
   // If a user is not logged in, the login screen is triggered
@@ -154,15 +158,11 @@ export const TableMenu = ({
       case `${tableData.key}-2`:
         return user ? setDeleteRow(true) : loginDelete();
       case `${tableData.key}-3`:
-        return showEditMappings
-          ? // If mappings exist for a variable, sets editMappings to the variable and opens EditMappingsTableModal in turn
-            user
-            ? setEditMappings(variable)
-            : loginEditMappings()
-          : // If mappings do not exist for a variable, sets getMappings to the variable and opens GetMappingsModal in turn
-          user
-          ? setGetMappings(variable)
-          : loginGetMappings();
+        return (
+          showEditMappings && // If mappings exist for a variable, sets editMappings to the variable and opens EditMappingsTableModal
+          user &&
+          setEditMappings(variable)
+        );
       case `${tableData.key}-4`:
         return setShowHistory(tableData.key);
     }

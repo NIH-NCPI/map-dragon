@@ -7,9 +7,10 @@ export const mappingVotes = (
   user,
   vote,
   vocabUrl,
-  terminologyId,
+  componentId,
   notification,
-  setMapping
+  setMapping,
+  component
 ) => {
   const mappingVoteDTO = {
     editor: user?.email,
@@ -17,7 +18,7 @@ export const mappingVotes = (
   };
 
   return fetch(
-    `${vocabUrl}/Terminology/${terminologyId}/user_input/${uriEncoded(
+    `${vocabUrl}/${component}/${componentId}/user_input/${uriEncoded(
       variableMappings?.code
     )}/mapping/${uriEncoded(code?.code)}/mapping_votes`,
     {
@@ -47,8 +48,8 @@ export const mappingVotes = (
     .then(() =>
       getById(
         vocabUrl,
-        'Terminology',
-        `${terminologyId}/mapping?user_input=True&user=${user?.email}`
+        component,
+        `${componentId}/mapping?user_input=True&user=${user?.email}`
       )
         .then(data => setMapping(data.codes))
         .catch(error => {
