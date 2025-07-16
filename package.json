@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build-dev": "vite build --mode dev",
+    "build-dev": "vite build",
     "build-uat": "vite build --mode uat",
     "build-alpha": "vite build --mode alpha",
     "build-prod": "vite build --mode prod",
