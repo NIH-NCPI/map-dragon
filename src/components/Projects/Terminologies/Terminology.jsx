@@ -497,6 +497,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <PreferredTerminology
                 terminology={terminology}
                 setTerminology={setTerminology}
+                table={null}
+                setTable={null}
+                componentString="Terminology"
               />
               <AddCode
                 terminology={terminology}
