@@ -571,6 +571,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             assignMappingsViaButton={assignMappingsViaButton}
             setAssignMappingsViaButton={setAssignMappingsViaButton}
             terminology={terminology}
+            table={null}
           />
 
           <MappingComments

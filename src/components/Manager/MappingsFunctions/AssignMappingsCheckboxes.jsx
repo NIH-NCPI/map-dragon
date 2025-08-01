@@ -18,6 +18,7 @@ export const AssignMappingsCheckboxes = ({
   mappingProp,
   form,
   terminology,
+  table,
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
@@ -101,9 +102,9 @@ export const AssignMappingsCheckboxes = ({
   const getCodeFilters = () => {
     setLoading(true);
     return fetch(
-      `${vocabUrl}/Terminology/${terminology.id}/filter/${uriEncoded(
-        mappingProp
-      )}`,
+      `${vocabUrl}/${terminology ? 'Terminology' : 'Table'}/${
+        terminology ? terminology.id : table.id
+      }/filter/${uriEncoded(mappingProp)}`,
       {
         method: 'GET',
         headers: {

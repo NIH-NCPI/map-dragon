@@ -132,7 +132,11 @@ export const PreferredTerminology = ({
         return error;
       })
       .then(() =>
-        getById(vocabUrl, componentString, `${terminology.id}`)
+        getById(
+          vocabUrl,
+          componentString,
+          `${terminology ? terminology.id : table.id}`
+        )
           .then(data => (terminology ? setTerminology(data) : setTable(data)))
           .catch(error => {
             if (error) {

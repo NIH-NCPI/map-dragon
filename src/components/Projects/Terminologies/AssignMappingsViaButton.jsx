@@ -12,6 +12,7 @@ export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
   setAssignMappingsViaButton,
   terminology,
+  table,
 }) => {
   const [form] = Form.useForm();
 
@@ -76,7 +77,9 @@ export const AssignMappingsViaButton = ({
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminology.id}/mapping/${uriEncoded(
+      `${vocabUrl}/${terminology ? 'Terminology' : 'Table'}/${
+        terminology ? terminology.id : table.id
+      }/mapping/${uriEncoded(
         assignMappingsViaButton.code
       )}?user_input=true&user=${user?.email}`,
       {
@@ -155,6 +158,7 @@ export const AssignMappingsViaButton = ({
               : assignMappingsViaButton?.code
           }
           terminology={terminology}
+          table={table}
         />
       )}
     </Modal>
