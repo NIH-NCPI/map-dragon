@@ -110,8 +110,9 @@ export const AssignMappingsViaButton = ({
       prefTypeKey,
       assignMappingsViaButton?.code,
       vocabUrl,
-      null,
-      terminology
+      table ?? null,
+      terminology ?? null,
+      notification
     );
   };
 

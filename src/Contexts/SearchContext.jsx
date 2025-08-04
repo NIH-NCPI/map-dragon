@@ -68,11 +68,8 @@ export function SearchContextRoot() {
     apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
 
   // Checks if there are apiPreferences (table) or apiPreferencesTerm (terminology) and returns the appropriate one
-  const preferenceType = apiPreferencesTerm
-    ? apiPreferencesTerm
-    : apiPreferences;
-
-  const prefTypeKey = Object.keys(preferenceType)[0];
+  const preferenceType = apiPreferencesTerm ?? apiPreferences;
+  const prefTypeKey = preferenceType && Object.keys(preferenceType)[0];
 
   const context = {
     prefTerminologies,

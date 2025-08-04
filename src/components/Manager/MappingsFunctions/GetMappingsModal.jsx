@@ -229,7 +229,8 @@ export const GetMappingsModal = ({
       mappingProp,
       vocabUrl,
       table,
-      terminology
+      terminology,
+      notification
     );
   };
   const fetchResults = (page, query) => {
