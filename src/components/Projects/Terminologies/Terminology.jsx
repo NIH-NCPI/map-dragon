@@ -43,6 +43,7 @@ import {
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
+import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -145,29 +146,15 @@ code in the terminology, AND the mappings array length for the code is > 0, the 
 and returns the length of the mapping array (i.e. returns the number of codes mapped to the terminology code). 
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
 
-  const noMapping = variable => (
-    <div className="no_mapping_button">
-      <Button
-        onClick={() => {
-          prefTerminologies.length > 0
-            ? setAssignMappingsViaButton({
-                display: variable.display,
-                code: variable.code,
-              })
-            : setGetMappings({
-                display: variable.display,
-                code: variable.code,
-              });
-        }}
-      >
-        {prefTerminologies?.length > 0 ? 'Assign Mappings' : 'Get Mappings'}
-      </Button>
-    </div>
-  );
-
   const matchCode = variable => {
     if (!mapping?.length) {
-      return noMapping(variable);
+      return (
+        <MappingButton
+          variable={variable}
+          setAssignMappingsViaButton={setAssignMappingsViaButton}
+          setGetMappings={setGetMappings}
+        />
+      );
     }
 
     const variableMappings = mapping.find(
@@ -291,7 +278,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         </div>
       ));
     } else {
-      return noMapping(variable);
+      return (
+        <MappingButton
+          variable={variable}
+          setAssignMappingsViaButton={setAssignMappingsViaButton}
+          setGetMappings={setGetMappings}
+        />
+      );
     }
   };
 
