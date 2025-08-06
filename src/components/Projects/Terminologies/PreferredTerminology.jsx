@@ -8,7 +8,13 @@ import { SelectPreferredTerminologies } from './SelectPreferredTerminologies';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 
-export const PreferredTerminology = ({ terminology, setTerminology }) => {
+export const PreferredTerminology = ({
+  terminology,
+  setTerminology,
+  table,
+  setTable,
+  componentString,
+}) => {
   const [form] = Form.useForm();
   const { vocabUrl, user } = useContext(myContext);
   const {
@@ -71,13 +77,18 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
       };
     };
 
-    fetch(`${vocabUrl}/Terminology/${terminology.id}/preferred_terminology`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(preferredTermDTO()),
-    })
+    fetch(
+      `${vocabUrl}/${componentString}/${
+        terminology ? terminology.id : table.id
+      }/preferred_terminology`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(preferredTermDTO()),
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -87,7 +98,9 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
       })
       .then(() =>
         fetch(
-          `${vocabUrl}/Terminology/${terminology.id}/preferred_terminology`,
+          `${vocabUrl}/${componentString}/${
+            terminology ? terminology.id : table.id
+          }/preferred_terminology`,
           {
             method: 'GET',
             headers: {
@@ -119,8 +132,12 @@ export const PreferredTerminology = ({ terminology, setTerminology }) => {
         return error;
       })
       .then(() =>
-        getById(vocabUrl, 'Terminology', `${terminology.id}`)
-          .then(data => setTerminology(data))
+        getById(
+          vocabUrl,
+          componentString,
+          `${terminology ? terminology.id : table.id}`
+        )
+          .then(data => (terminology ? setTerminology(data) : setTable(data)))
           .catch(error => {
             if (error) {
               notification.error({

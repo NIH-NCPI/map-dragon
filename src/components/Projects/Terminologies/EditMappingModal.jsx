@@ -257,7 +257,8 @@ export const EditMappingsModal = ({
       editMappings.code,
       vocabUrl,
       null,
-      terminology
+      terminology,
+      notification
     );
   };
 

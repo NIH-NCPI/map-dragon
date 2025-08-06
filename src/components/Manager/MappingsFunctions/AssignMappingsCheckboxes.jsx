@@ -9,6 +9,7 @@ import { olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { MappingRelationship } from './MappingRelationship';
 
+// Comment
 export const AssignMappingsCheckboxes = ({
   terminologiesToMap,
   setTerminologiesToMap,
@@ -17,11 +18,12 @@ export const AssignMappingsCheckboxes = ({
   mappingProp,
   form,
   terminology,
+  table,
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
     apiPreferences,
-    defaultOntologies,
+    ontologiesToSearch,
     setApiPreferencesCode,
     apiPreferencesCode,
     unformattedPref,
@@ -36,8 +38,6 @@ export const AssignMappingsCheckboxes = ({
     setResultsCount,
     selectedApi,
     setSelectedApi,
-    preferenceType,
-    prefTypeKey,
     page,
     setPage,
   } = useContext(SearchContext);
@@ -91,14 +91,20 @@ export const AssignMappingsCheckboxes = ({
     if (!!mappingProp) {
       getCodeFilters();
     }
+    apiPreferenceKeys?.length > 0
+      ? setSelectedApi(apiPreferenceKeys[0])
+      : setSelectedApi(ontologyApis?.[0]?.api_id || null);
+    if (apiPreferencesCode !== undefined && active === 'search') {
+      fetchResults(0, mappingProp);
+    }
   }, [mappingProp]);
 
   const getCodeFilters = () => {
     setLoading(true);
     return fetch(
-      `${vocabUrl}/Terminology/${terminology.id}/filter/${uriEncoded(
-        mappingProp
-      )}`,
+      `${vocabUrl}/${terminology ? 'Terminology' : 'Table'}/${
+        terminology ? terminology.id : table.id
+      }/filter/${uriEncoded(mappingProp)}`,
       {
         method: 'GET',
         headers: {
@@ -139,27 +145,23 @@ export const AssignMappingsCheckboxes = ({
   const apiPreferenceKeys = Object?.keys(savedApiPreferences ?? {});
 
   useEffect(() => {
-    apiPreferenceKeys?.length > 0
-      ? setSelectedApi(apiPreferenceKeys[0])
-      : setSelectedApi(ontologyApis?.[0]?.api_id || null);
-  }, [mappingProp]);
-
-  useEffect(() => {
-    if (apiPreferencesCode !== undefined && active === 'search') {
-      fetchResults(0, mappingProp);
-    }
-  }, [mappingProp]);
-
-  useEffect(() => {
     if (apiPreferencesCode !== undefined && active === 'search') {
       fetchResults(page, currentSearchProp);
     }
-  }, [page, selectedApi]);
+  }, [page]);
 
   useEffect(() => {
     if (prefTerminologies.length > 0) {
       fetchTerminologies();
     }
+    // sets the code to null on dismount.
+    return () => {
+      form.resetFields;
+      setSelectedMappings([]);
+      setDisplaySelectedMappings([]);
+      setSelectedBoxes([]);
+      setApiResults([]);
+    };
   }, []);
 
   useEffect(() => {
@@ -191,7 +193,7 @@ export const AssignMappingsCheckboxes = ({
     ) {
       fetchResults(page, currentSearchProp);
     }
-  }, [currentSearchProp, apiPreferencesCode, active]);
+  }, [currentSearchProp, ontologiesToSearch, active]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -200,8 +202,7 @@ export const AssignMappingsCheckboxes = ({
   useEffect(() => {
     if (results?.length > 0 && page > 0 && ref.current) {
       const container = ref.current.closest('.ant-modal-body');
-      const scrollTop = ref.current.offsetTop - container.offsetTop;
-      container.scrollTop = scrollTop;
+      container.scrollTop = ref.current.offsetTop - container.offsetTop;
     }
   }, [results]);
   // Sets the value of the selected_mappings in the form to the checkboxes that are selected
@@ -211,27 +212,14 @@ export const AssignMappingsCheckboxes = ({
     });
   }, [selectedBoxes, form]);
 
-  // sets the code to null on dismount.
-  useEffect(
-    () => () => {
-      form.resetFields;
-      setSelectedMappings([]);
-      setDisplaySelectedMappings([]);
-      setSelectedBoxes([]);
-      setApiResults([]);
-    },
-    []
-  );
-
   const handleSearch = query => {
     setCurrentSearchProp(query);
     setPage(0);
   };
 
-  const apiForSearch = selectedApi ?? apiPreferenceKeys[0];
   // The function that makes the API call to search for the passed code.
   const fetchResults = (page, query) => {
-    if (!!!query) {
+    if (!query) {
       return undefined;
     }
 
@@ -239,64 +227,22 @@ export const AssignMappingsCheckboxes = ({
     number of results to return per page (entriesPerPage) and a calculation of the first index to start the results
     on each new batch of results (pageStart, calculated as the number of the page * the number of entries per page */
     const pageStart = page * entriesPerPage;
-    if (
-      // If there are api preferences and one of them is in apiPreferencesCode
-      preferenceType[prefTypeKey]?.api_preference
-    ) {
-      const apiPreferenceOntologies = () => {
-        // Check if apiPreferencesCode contains the key dynamically (based on selectedApi)
-        if (
-          apiForSearch in apiPreferencesCode &&
-          apiPreferencesCode[apiForSearch]?.length > 0
-        ) {
-          // Return the preferred ontologies for the matched key (apiPreferenceKeys[0])
-          return apiPreferencesCode[apiPreferenceKeys[0]]
-            .join(',')
-            .toUpperCase();
-        } else {
-          // If no preferred ontologies, use the default ontologies
-          return defaultOntologies;
-        }
-      };
-
-      //fetch call to search API with either preferred or default ontologies
-      return olsFilterOntologiesSearch(
-        vocabUrl,
-        query,
-        apiPreferencesCode[selectedApi]?.length > 0
-          ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
-          : apiPreferenceOntologies(),
-        page,
-        entriesPerPage,
-        pageStart,
-        selectedBoxes,
-        setResults,
-        setResultsCount,
-        loading ? setLoading : setLoadingResults,
-        results,
-        setMoreAvailable,
-        selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
-        notification
-      );
-    } else
-      return olsFilterOntologiesSearch(
-        vocabUrl,
-        query,
-        apiPreferencesCode[selectedApi]?.length > 0
-          ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
-          : defaultOntologies,
-        page,
-        entriesPerPage,
-        pageStart,
-        selectedBoxes,
-        setResults,
-        setResultsCount,
-        loading ? setLoading : setLoadingResults,
-        results,
-        setMoreAvailable,
-        selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
-        notification
-      );
+    return olsFilterOntologiesSearch(
+      vocabUrl,
+      query,
+      ontologiesToSearch,
+      page,
+      entriesPerPage,
+      pageStart,
+      selectedBoxes,
+      setResults,
+      setResultsCount,
+      loading ? setLoading : setLoadingResults,
+      results,
+      setMoreAvailable,
+      selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
+      notification
+    );
   };
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
   const handleViewMore = e => {

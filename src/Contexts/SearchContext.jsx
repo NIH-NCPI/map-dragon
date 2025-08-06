@@ -27,6 +27,7 @@ export function SearchContextRoot() {
   const { vocabUrl } = useContext(myContext);
   const [defaultOntologies, setDefaultOntologies] = useState([]);
   const [page, setPage] = useState(0);
+  const [ontologiesToSearch, setOntologiesToSearch] = useState([]);
   const entriesPerPage = 100;
   useEffect(() => {
     const fetchDefaultOntologiesData = async () => {
@@ -45,15 +46,30 @@ export function SearchContextRoot() {
     fetchDefaultOntologiesData();
   }, [vocabUrl]);
 
+  useEffect(() => {
+    if (apiPreferencesCode) {
+      const codeToSearch = Object.keys(unformattedPref)?.[0];
+      const savedApiPreferences =
+        unformattedPref?.[codeToSearch]?.api_preference;
+      const apiPreferenceKeys = Object?.keys(savedApiPreferences ?? {});
+      const apiForSearch = selectedApi ?? apiPreferenceKeys[0];
+      setOntologiesToSearch(
+        apiPreferencesCode[selectedApi]?.length > 0
+          ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
+          : preferenceType?.[prefTypeKey]?.api_preference &&
+            apiForSearch in apiPreferencesCode
+          ? apiPreferencesCode[apiPreferenceKeys[0]].join(',').toUpperCase()
+          : defaultOntologies
+      );
+    }
+  }, [apiPreferencesCode, defaultOntologies, selectedApi]);
+
   const preferenceTypeSet = data =>
     apiPreferencesTerm ? setApiPreferencesTerm(data) : setApiPreferences(data);
 
   // Checks if there are apiPreferences (table) or apiPreferencesTerm (terminology) and returns the appropriate one
-  const preferenceType = apiPreferencesTerm
-    ? apiPreferencesTerm
-    : apiPreferences;
-
-  const prefTypeKey = Object.keys(preferenceType)[0];
+  const preferenceType = apiPreferencesTerm ?? apiPreferences;
+  const prefTypeKey = preferenceType && Object.keys(preferenceType)[0];
 
   const context = {
     prefTerminologies,
@@ -97,7 +113,7 @@ export function SearchContextRoot() {
     setMoreAvailable,
     resultsCount,
     setResultsCount,
-    defaultOntologies,
+    ontologiesToSearch,
     selectedApi,
     setSelectedApi,
     page,

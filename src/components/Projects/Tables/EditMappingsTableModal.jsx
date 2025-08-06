@@ -263,7 +263,8 @@ export const EditMappingsTableModal = ({
       mappingProp,
       vocabUrl,
       table,
-      null
+      null,
+      notification
     );
   };
 
