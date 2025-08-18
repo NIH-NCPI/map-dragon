@@ -19,10 +19,6 @@ export const ClearMappings = ({ propId, component }) => {
     return fetch(`${vocabUrl}/${component}/${propId}/mapping`, {
       method: 'DELETE',
       credentials: 'include',
-      // headers: {
-      //   'Content-Type': 'application/json',
-      // },
-      // body: JSON.stringify({ editor: user.email }),
     })
       .then(res => {
         if (res.ok) {

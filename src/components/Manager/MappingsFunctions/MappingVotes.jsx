@@ -13,7 +13,6 @@ export const mappingVotes = (
   component
 ) => {
   const mappingVoteDTO = {
-    editor: user?.email,
     vote: vote,
   };
 

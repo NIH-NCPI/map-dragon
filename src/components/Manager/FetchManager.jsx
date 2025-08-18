@@ -302,7 +302,8 @@ export const ontologyFilterCodeSubmit = (
   mappingProp,
   vocabUrl,
   table,
-  terminology
+  terminology,
+  notification
 ) => {
   const apiPreference = { api_preference: {} };
   if (

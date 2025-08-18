@@ -68,7 +68,6 @@ export const MappingComments = ({
 
   const onFinish = values => {
     const mappingCommentDTO = {
-      editor: user?.email,
       note: values.comment,
     };
 

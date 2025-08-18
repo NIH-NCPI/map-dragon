@@ -24,7 +24,6 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        // body: JSON.stringify({ editor: user.email }),
       }
     )
       .then(response => {

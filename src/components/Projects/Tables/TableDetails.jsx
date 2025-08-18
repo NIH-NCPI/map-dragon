@@ -46,6 +46,9 @@ import {
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
+import { PreferredTerminology } from '../Terminologies/PreferredTerminology';
+import { AssignMappingsViaButton } from '../Terminologies/AssignMappingsViaButton';
+import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -60,7 +63,9 @@ export const TableDetails = () => {
     ucumCodes,
     setUcumCodes,
   } = useContext(myContext);
-  const { setApiPreferences } = useContext(SearchContext);
+  const { setApiPreferences, prefTerminologies, setPrefTerminologies } =
+    useContext(SearchContext);
+
   const {
     getMappings,
     setGetMappings,
@@ -75,6 +80,7 @@ export const TableDetails = () => {
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
+  const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
 
   const [pageSize, setPageSize] = useState(
     parseInt(localStorage.getItem('pageSize'), 10) || 10
@@ -101,7 +107,6 @@ export const TableDetails = () => {
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
       mappings: mapArr,
-      // editor: user.email,
     };
 
     fetch(
@@ -142,75 +147,60 @@ export const TableDetails = () => {
       });
   };
 
-  // fetches the table and sets 'table' to the response
   useEffect(() => {
     tableApiCalls();
   }, []);
 
   const tableApiCalls = async () => {
     setLoading(true);
-    getById(vocabUrl, 'Table', tableId)
-      .then(data => {
-        setTable(data);
-        if (data) {
-          getById(
-            vocabUrl,
-            'Table',
-            `${tableId}/mapping?user_input=True&user=${user?.email}`
-          )
-            .then(data => setMapping(data.codes))
-            .catch(error => {
-              if (error) {
-                console.log(error, 'error');
+    try {
+      const tableData = await getById(vocabUrl, 'Table', tableId);
+      setTable(tableData);
 
-                notification.error({
-                  message: 'Error',
-                  description: 'An error occurred loading mappings.',
-                });
-              }
-              return error;
-            })
-            .then(() =>
-              getById(
-                vocabUrl,
-                'Terminology',
-                'ftd-concept-map-relationship'
-              ).then(data => setRelationshipOptions(data.codes))
-            )
-            .then(() =>
-              fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              })
-            )
-            .then(res => {
-              if (res.ok) {
-                return res.json();
-              } else {
-                throw new Error('An unknown error occurred.');
-              }
-            })
-            .then(data => {
-              setApiPreferences(data);
-            })
-            .finally(() => setLoading(false));
-        } else {
-          setLoading(false);
-        }
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred loading the table.',
-          });
-          setLoading(false);
-        }
-        return error;
-      })
-      .finally(() => setLoading(false));
+      if (tableData) {
+        const mappingData = await getById(
+          vocabUrl,
+          'Table',
+          `${tableId}/mapping?user_input=True&user=${user?.email}`
+        );
+        setMapping(mappingData.codes);
+
+        const prefTerminologyData = await getById(
+          vocabUrl,
+          'Table',
+          `${tableId}/preferred_terminology`
+        );
+        setPrefTerminologies(prefTerminologyData?.references);
+
+        const relationshipData = await getById(
+          vocabUrl,
+          'Terminology',
+          'ftd-concept-map-relationship'
+        );
+        setRelationshipOptions(relationshipData.codes);
+
+        const filterDataRes = await fetch(
+          `${vocabUrl}/Table/${tableId}/filter/self`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        const filterData = await filterDataRes.json();
+        setApiPreferences(filterData);
+      }
+    } catch (error) {
+      if (error) {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred loading data.',
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -230,6 +220,8 @@ export const TableDetails = () => {
   useEffect(
     () => () => {
       setTable({});
+      setApiPreferences(undefined);
+      setPrefTerminologies([]);
     },
     []
   );
@@ -286,23 +278,16 @@ The function maps through the mapping array. For each variable, if the mapping v
 variable in the table, AND the mappings array length for the variable is > 0, the mappings array is mapped through
 and returns the length of the mapping array (i.e. returns the number of variables mapped to the table variable). 
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
-  const noMapping = variable => {
-    return (
-      <div className="no_mapping_button">
-        <Button
-          onClick={() =>
-            setGetMappings({ name: variable.name, code: variable.code })
-          }
-        >
-          Get Mappings
-        </Button>
-      </div>
-    );
-  };
 
   const matchCode = variable => {
     if (!mapping?.length) {
-      return noMapping(variable);
+      return (
+        <MappingButton
+          variable={variable}
+          setGetMappings={setGetMappings}
+          setAssignMappingsViaButton={setAssignMappingsViaButton}
+        />
+      );
     }
 
     const variableMappings = mapping.find(
@@ -430,7 +415,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         </div>
       ));
     } else {
-      return noMapping(variable);
+      return (
+        <MappingButton
+          variable={variable}
+          setGetMappings={setGetMappings}
+          setAssignMappingsViaButton={setAssignMappingsViaButton}
+        />
+      );
     }
   };
 
@@ -544,6 +535,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 {' '}
                 <div className="add_row_buttons">
                   <FilterSelect component={table} table={table} />
+                  <PreferredTerminology
+                    terminology={null}
+                    setTerminology={null}
+                    table={table}
+                    setTable={setTable}
+                    componentString="Table"
+                  />
                   <AddVariable
                     table={table}
                     setTable={setTable}
@@ -629,7 +627,12 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         table={table}
       />
       <ClearMappings propId={tableId} component={'Table'} />
-
+      <AssignMappingsViaButton
+        assignMappingsViaButton={assignMappingsViaButton}
+        setAssignMappingsViaButton={setAssignMappingsViaButton}
+        terminology={null}
+        table={table}
+      />
       <MappingComments
         mappingCode={comment?.code}
         mappingDisplay={comment?.display}
@@ -643,39 +646,3 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     </>
   );
 };
-
-// const tableApiCalls = async () => {
-//   const tableData = await getById(vocabUrl, 'Table', tableId);
-
-//   if (!tableData) {
-//     navigate('/404');
-//   } else {
-//     setTable(tableData);
-
-//     const [tableMappings, tableFilters, mappingRelationships] =
-//       await Promise.all([
-//         getById(vocabUrl, 'Table', `${tableId}/mapping`),
-//         fetch(`${vocabUrl}/Table/${tableId}/filter/self`, {
-//           method: 'GET',
-//           headers: {
-//             'Content-Type': 'application/json',
-//           },
-//         }),
-//         getById(vocabUrl, 'Terminology', 'ftd-concept-map-relationship'),
-//       ]);
-
-//     if (tableMappings) {
-//       setMapping(tableMappings.codes);
-//     }
-
-//     if (tableFilters.ok) {
-//       setApiPreferences(tableFilters.json());
-//     } else {
-//       throw new Error('An unknown error occurred.');
-//     }
-//     if (mappingRelationships) {
-//       setRelationshipOptions(mappingRelationships.codes);
-//     }
-//   }
-//   setLoading(false);
-// };
