@@ -80,9 +80,13 @@ export const GetMappingsModal = ({
     tableId !== undefined ? `?table_id=${tableId}` : '';
 
   useEffect(() => {
-    apiPreferenceKeys?.length > 0
-      ? setSelectedApi(apiPreferenceKeys[0])
-      : setSelectedApi(ontologyApis?.[0]?.api_id || null);
+    if (!selectedApi) {
+      if (apiPreferenceKeys?.length > 0) {
+        setSelectedApi(apiPreferenceKeys[0]);
+      } else {
+        setSelectedApi(ontologyApis?.[0]?.api_id || null);
+      }
+    }
     setInputValue(searchProp);
     setCurrentSearchProp(searchProp);
     setPage(0);
@@ -99,8 +103,6 @@ export const GetMappingsModal = ({
         optionalTableParam
       );
     }
-    console.log('ontolgoiesToSearch', ontologiesToSearch);
-    console.log('apiPreferencesCode', apiPreferencesCode);
     if (apiPreferencesCode !== undefined && ontologiesToSearch !== undefined) {
       fetchResults(0, searchProp);
     }
