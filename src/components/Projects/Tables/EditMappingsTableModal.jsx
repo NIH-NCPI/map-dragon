@@ -255,17 +255,28 @@ export const EditMappingsTableModal = ({
         }
         return error;
       })
+      .then(() =>
+        ontologyFilterCodeSubmit(
+          apiPreferencesCode,
+          preferenceType,
+          prefTypeKey,
+          mappingProp,
+          vocabUrl,
+          table,
+          terminology,
+          notification
+        )
+      )
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the ontology preferences.',
+          });
+        }
+        return error;
+      })
       .finally(() => setLoading(false));
-    ontologyFilterCodeSubmit(
-      apiPreferencesCode,
-      preferenceType,
-      prefTypeKey,
-      mappingProp,
-      vocabUrl,
-      table,
-      null,
-      notification
-    );
   };
 
   return (
