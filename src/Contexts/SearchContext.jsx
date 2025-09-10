@@ -113,6 +113,7 @@ export function SearchContextRoot() {
     setMoreAvailable,
     resultsCount,
     setResultsCount,
+    setOntologiesToSearch,
     ontologiesToSearch,
     selectedApi,
     setSelectedApi,

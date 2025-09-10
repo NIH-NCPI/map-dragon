@@ -31,6 +31,7 @@ export const GetMappingsModal = ({
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
   const {
     preferenceType,
+    setOntologiesToSearch,
     ontologiesToSearch,
     setApiPreferencesCode,
     apiPreferencesCode,
@@ -85,7 +86,7 @@ export const GetMappingsModal = ({
     setInputValue(searchProp);
     setCurrentSearchProp(searchProp);
     setPage(0);
-    if (!!searchProp) {
+    if (!!searchProp && !apiPreferencesCode) {
       getFiltersByCode(
         vocabUrl,
         mappingProp,
@@ -98,10 +99,12 @@ export const GetMappingsModal = ({
         optionalTableParam
       );
     }
-    if (apiPreferencesCode !== undefined) {
+    console.log('ontolgoiesToSearch', ontologiesToSearch);
+    console.log('apiPreferencesCode', apiPreferencesCode);
+    if (apiPreferencesCode !== undefined && ontologiesToSearch !== undefined) {
       fetchResults(0, searchProp);
     }
-  }, [searchProp]);
+  }, [searchProp, ontologiesToSearch]);
 
   useEffect(() => {
     if (apiPreferencesCode !== undefined) {
@@ -116,7 +119,7 @@ export const GetMappingsModal = ({
     if (!!currentSearchProp && apiPreferencesCode !== undefined) {
       fetchResults(page, currentSearchProp);
     }
-  }, [currentSearchProp, ontologiesToSearch]);
+  }, [currentSearchProp]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -152,6 +155,7 @@ export const GetMappingsModal = ({
   const onClose = () => {
     setPage(0);
     setApiPreferencesCode(undefined);
+    setOntologiesToSearch(undefined);
     setSelectedKey(null);
     setPrefTerminologies([]);
     setSelectedApi(undefined);
@@ -221,7 +225,10 @@ export const GetMappingsModal = ({
         }
         return error;
       })
-      .finally(() => setLoadingResults(false));
+      .finally(() => {
+        setLoadingResults(false);
+        onClose();
+      });
     ontologyFilterCodeSubmit(
       apiPreferencesCode,
       preferenceType,
@@ -414,7 +421,6 @@ export const GetMappingsModal = ({
         onOk={() => {
           form.validateFields().then(values => {
             handleSubmit(values);
-            onClose();
           });
         }}
         onCancel={() => {
