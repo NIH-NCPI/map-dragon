@@ -241,9 +241,9 @@ export const EditMappingsTableModal = ({
         }
       })
       .then(data => {
-        setEditMappings(null);
-        form.resetFields();
         setMapping(data.codes);
+        form.resetFields();
+        setEditMappings(null);
         message.success('Mappings updated successfully.');
       })
       .catch(error => {
@@ -263,7 +263,7 @@ export const EditMappingsTableModal = ({
           mappingProp,
           vocabUrl,
           table,
-          terminology,
+          null,
           notification
         )
       )
