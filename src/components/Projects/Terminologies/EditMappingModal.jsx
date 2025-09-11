@@ -249,17 +249,19 @@ export const EditMappingsModal = ({
         }
         return error;
       })
+      .then(() =>
+        ontologyFilterCodeSubmit(
+          apiPreferencesCode,
+          preferenceType,
+          prefTypeKey,
+          editMappings.code,
+          vocabUrl,
+          null,
+          terminology,
+          notification
+        )
+      )
       .finally(() => setLoading(false));
-    ontologyFilterCodeSubmit(
-      apiPreferencesCode,
-      preferenceType,
-      prefTypeKey,
-      editMappings.code,
-      vocabUrl,
-      null,
-      terminology,
-      notification
-    );
   };
 
   return (

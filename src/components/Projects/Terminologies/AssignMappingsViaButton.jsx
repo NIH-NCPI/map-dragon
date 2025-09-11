@@ -98,22 +98,33 @@ export const AssignMappingsViaButton = ({
         }
       })
       .then(data => {
-        setMapping(data.codes);
+        if (data) setMapping(data.codes);
         form.resetFields();
         setAssignMappingsViaButton(false);
         message.success('Changes saved successfully.');
       })
+      .then(() =>
+        ontologyFilterCodeSubmit(
+          apiPreferencesCode,
+          preferenceType,
+          prefTypeKey,
+          assignMappingsViaButton.code,
+          vocabUrl,
+          table ?? null,
+          terminology ?? null,
+          notification
+        )
+      )
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the ontology preferences.',
+          });
+        }
+        return error;
+      })
       .finally(() => setLoading(false));
-    ontologyFilterCodeSubmit(
-      apiPreferencesCode,
-      preferenceType,
-      prefTypeKey,
-      assignMappingsViaButton?.code,
-      vocabUrl,
-      table ?? null,
-      terminology ?? null,
-      notification
-    );
   };
 
   return (
