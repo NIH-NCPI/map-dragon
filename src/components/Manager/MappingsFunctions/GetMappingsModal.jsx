@@ -227,20 +227,28 @@ export const GetMappingsModal = ({
         }
         return error;
       })
-      .finally(() => {
-        setLoadingResults(false);
-        onClose();
-      });
-    ontologyFilterCodeSubmit(
-      apiPreferencesCode,
-      preferenceType,
-      prefTypeKey,
-      mappingProp,
-      vocabUrl,
-      table,
-      terminology,
-      notification
-    );
+      .then(() =>
+        ontologyFilterCodeSubmit(
+          apiPreferencesCode,
+          preferenceType,
+          prefTypeKey,
+          mappingProp,
+          vocabUrl,
+          table,
+          terminology,
+          notification
+        )
+      )
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the ontology preferences.',
+          });
+        }
+        return error;
+      })
+      .finally(() => setLoadingResults(false));
   };
   const fetchResults = (page, query) => {
     if (!query) {
