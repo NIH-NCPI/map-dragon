@@ -87,8 +87,10 @@ export const GetMappingsModal = ({
         setSelectedApi(ontologyApis?.[0]?.api_id || null);
       }
     }
-    setInputValue(searchProp);
-    setCurrentSearchProp(searchProp);
+    setInputValue(currentSearchProp ?? searchProp);
+    if (!currentSearchProp) {
+      setCurrentSearchProp(searchProp);
+    }
     setPage(0);
     if (!!searchProp && !apiPreferencesCode) {
       getFiltersByCode(
@@ -104,13 +106,13 @@ export const GetMappingsModal = ({
       );
     }
     if (apiPreferencesCode !== undefined && ontologiesToSearch !== undefined) {
-      fetchResults(0, searchProp);
+      fetchResults(0, inputValue);
     }
   }, [searchProp, ontologiesToSearch]);
 
   useEffect(() => {
     if (apiPreferencesCode !== undefined) {
-      fetchResults(page, currentSearchProp);
+      fetchResults(page, inputValue);
     }
   }, [page]);
 
@@ -161,6 +163,8 @@ export const GetMappingsModal = ({
     setSelectedKey(null);
     setPrefTerminologies([]);
     setSelectedApi(undefined);
+    setInputValue(null);
+    setCurrentSearchProp(null);
   };
 
   // Sets currentSearchProp to the value of the search bar and sets page to 0.
@@ -248,7 +252,10 @@ export const GetMappingsModal = ({
         }
         return error;
       })
-      .finally(() => setLoadingResults(false));
+      .finally(() => {
+        setLoadingResults(false);
+        onClose();
+      });
   };
   const fetchResults = (page, query) => {
     if (!query) {
