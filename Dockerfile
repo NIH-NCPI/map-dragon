@@ -26,6 +26,10 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy the build output to the Nginx html directory
 COPY --from=build ./dist /usr/share/nginx/html
 
+# Enable using environment vars inside the app
+COPY env.sh /docker-entrypoint.d/env.sh
+RUN chmod +x /docker-entrypoint.d/env.sh
+
 # Expose port 5000
 EXPOSE 5000
 
