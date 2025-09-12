@@ -135,7 +135,7 @@ export const AssignMappingsCheckboxes = ({
     if (apiPreferencesCode !== undefined && active === 'search') {
       fetchResults(page, currentSearchProp);
     }
-  }, [page, selectedApi]);
+  }, [page]);
 
   useEffect(() => {
     return () => {
@@ -176,7 +176,7 @@ export const AssignMappingsCheckboxes = ({
     ) {
       fetchResults(page, currentSearchProp);
     }
-  }, [currentSearchProp, apiPreferencesCode, active]);
+  }, [currentSearchProp, apiPreferencesCode, active, selectedApi]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
