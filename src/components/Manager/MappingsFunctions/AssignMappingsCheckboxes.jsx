@@ -63,26 +63,6 @@ export const AssignMappingsCheckboxes = ({
   let ref = useRef();
   const { Search } = Input;
 
-  // const fetchTerminologies = () => {
-  //   setLoading(true);
-  //   const fetchPromises = prefTerminologies?.map(pref =>
-  //     fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
-  //   );
-
-  //   Promise.all(fetchPromises)
-  //     .then(results => {
-  //       // Once all fetch calls are resolved, set the combined data
-  //       setTerminologiesToMap(results);
-  //     })
-  //     .catch(error => {
-  //       notification.error({
-  //         message: 'Error',
-  //         description: 'An error occurred. Please try again.',
-  //       });
-  //     })
-  //     .finally(() => setLoading(false));
-  // };
-
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
   // if there is a searchProp being passed, it evaluates to true and runs the search function.
   // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
@@ -158,10 +138,6 @@ export const AssignMappingsCheckboxes = ({
   }, [page, selectedApi]);
 
   useEffect(() => {
-    // if (prefTerminologies.length > 0) {
-    //   fetchTerminologies();
-    // }
-    // sets the code to null on dismount.
     return () => {
       form.resetFields;
       setSelectedMappings([]);
