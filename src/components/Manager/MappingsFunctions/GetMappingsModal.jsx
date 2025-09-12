@@ -102,11 +102,7 @@ export const GetMappingsModal = ({
 
   useEffect(() => {
     if (apiPreferencesCode !== undefined) {
-      fetchResults(0, searchProp);
-    }
-
-    if (apiPreferencesCode !== undefined) {
-      fetchResults(page, currentSearchProp);
+      fetchResults(0, currentSearchProp ?? searchProp);
     }
   }, [page, selectedApi]);
 

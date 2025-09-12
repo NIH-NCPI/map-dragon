@@ -115,7 +115,9 @@ export const MappingSearch = ({
       );
     }
     if (apiPreferencesCode !== undefined) {
-      fetchResults(0, searchProp);
+      if (prefTerminologies?.length > 0 && active === 'search') {
+        fetchResults(0, searchProp);
+      }
     }
   }, [searchProp]);
 

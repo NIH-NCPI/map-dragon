@@ -19,6 +19,7 @@ export const AssignMappingsCheckboxes = ({
   form,
   terminology,
   table,
+  loading,
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
@@ -44,7 +45,7 @@ export const AssignMappingsCheckboxes = ({
     prefTypeKey,
   } = useContext(SearchContext);
 
-  const [loading, setLoading] = useState(true);
+  const [loadingFilters, setLoadingFilters] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
@@ -62,25 +63,25 @@ export const AssignMappingsCheckboxes = ({
   let ref = useRef();
   const { Search } = Input;
 
-  const fetchTerminologies = () => {
-    setLoading(true);
-    const fetchPromises = prefTerminologies?.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
-    );
+  // const fetchTerminologies = () => {
+  //   setLoading(true);
+  //   const fetchPromises = prefTerminologies?.map(pref =>
+  //     fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
+  //   );
 
-    Promise.all(fetchPromises)
-      .then(results => {
-        // Once all fetch calls are resolved, set the combined data
-        setTerminologiesToMap(results);
-      })
-      .catch(error => {
-        notification.error({
-          message: 'Error',
-          description: 'An error occurred. Please try again.',
-        });
-      })
-      .finally(() => setLoading(false));
-  };
+  //   Promise.all(fetchPromises)
+  //     .then(results => {
+  //       // Once all fetch calls are resolved, set the combined data
+  //       setTerminologiesToMap(results);
+  //     })
+  //     .catch(error => {
+  //       notification.error({
+  //         message: 'Error',
+  //         description: 'An error occurred. Please try again.',
+  //       });
+  //     })
+  //     .finally(() => setLoading(false));
+  // };
 
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
   // if there is a searchProp being passed, it evaluates to true and runs the search function.
@@ -96,7 +97,7 @@ export const AssignMappingsCheckboxes = ({
   }, [mappingProp]);
 
   const getCodeFilters = () => {
-    setLoading(true);
+    setLoadingFilters(true);
     return fetch(
       `${vocabUrl}/${terminology ? 'Terminology' : 'Table'}/${
         terminology ? terminology.id : table.id
@@ -144,9 +145,7 @@ export const AssignMappingsCheckboxes = ({
     apiPreferenceKeys?.length > 0
       ? setSelectedApi(apiPreferenceKeys[0])
       : setSelectedApi(ontologyApis?.[0]?.api_id || null);
-  }, [mappingProp]);
 
-  useEffect(() => {
     if (apiPreferencesCode !== undefined && active === 'search') {
       fetchResults(0, mappingProp);
     }
@@ -159,9 +158,9 @@ export const AssignMappingsCheckboxes = ({
   }, [page, selectedApi]);
 
   useEffect(() => {
-    if (prefTerminologies.length > 0) {
-      fetchTerminologies();
-    }
+    // if (prefTerminologies.length > 0) {
+    //   fetchTerminologies();
+    // }
     // sets the code to null on dismount.
     return () => {
       form.resetFields;
@@ -179,7 +178,7 @@ export const AssignMappingsCheckboxes = ({
   }, [active]);
 
   useEffect(() => {
-    setActive(terminologiesToMap?.[0]?.id);
+    !loading && setActive(terminologiesToMap?.[0]?.id);
   }, [terminologiesToMap]);
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
@@ -270,7 +269,7 @@ export const AssignMappingsCheckboxes = ({
         selectedBoxes,
         setResults,
         setResultsCount,
-        loading ? setLoading : setLoadingResults,
+        loadingFilters ? setLoadingFilters : setLoadingResults,
         results,
         setMoreAvailable,
         selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
@@ -289,7 +288,7 @@ export const AssignMappingsCheckboxes = ({
         selectedBoxes,
         setResults,
         setResultsCount,
-        loading ? setLoading : setLoadingResults,
+        loadingFilters ? setLoadingFilters : setLoadingResults,
         results,
         setMoreAvailable,
         selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
