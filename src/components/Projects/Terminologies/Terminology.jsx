@@ -82,7 +82,6 @@ export const Terminology = () => {
 
   useEffect(
     () => () => {
-      setApiPreferencesTerm(undefined);
       setPrefTerminologies([]);
     },
     []
