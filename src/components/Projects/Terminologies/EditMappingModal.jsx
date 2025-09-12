@@ -37,13 +37,19 @@ export const EditMappingsModal = ({
     setApiPreferencesCode,
     preferenceType,
     prefTypeKey,
-    ontologyApis,
+    setOntologiesToSearch,
   } = useContext(SearchContext);
   const [loading, setLoading] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
   const [reset, setReset] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
+  const [inputValue, setInputValue] = useState(
+    editMappings?.display ?? editMappings?.code
+  );
+  const [currentSearchProp, setCurrentSearchProp] = useState(
+    editMappings?.display ?? editMappings?.code
+  );
 
   useEffect(() => {
     fetchMappings();
@@ -54,7 +60,10 @@ export const EditMappingsModal = ({
     setOptions([]);
     setSelectedKey(null);
     setApiPreferencesCode(undefined);
+    setOntologiesToSearch(undefined);
     setShowOptions(false);
+    setInputValue(null);
+    setCurrentSearchProp(null);
   };
 
   const fetchMappings = () => {
@@ -261,7 +270,10 @@ export const EditMappingsModal = ({
           notification
         )
       )
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        clearData();
+      });
   };
 
   return (
@@ -279,7 +291,6 @@ export const EditMappingsModal = ({
             editSearch || reset
               ? editUpdatedMappings(values)
               : updateMappings(values);
-            clearData();
             setReset(false);
             setEditSearch(false);
           })
@@ -377,6 +388,10 @@ export const EditMappingsModal = ({
           prefTypeKey={prefTypeKey}
           loadingResults={loadingResults}
           setLoadingResults={setLoadingResults}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          currentSearchProp={currentSearchProp}
+          setCurrentSearchProp={setCurrentSearchProp}
         />
       )}
     </Modal>

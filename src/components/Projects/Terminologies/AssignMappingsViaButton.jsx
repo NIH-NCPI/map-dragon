@@ -23,6 +23,8 @@ export const AssignMappingsViaButton = ({
     preferenceType,
     prefTypeKey,
     apiPreferencesCode,
+    setApiPreferencesCode,
+    setOntologiesToSearch,
   } = useContext(SearchContext);
   const { setMapping, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
@@ -30,11 +32,25 @@ export const AssignMappingsViaButton = ({
   const [loading, setLoading] = useState(false);
   const [mappingProp, setMappingProp] = useState('');
   const [selectedBoxes, setSelectedBoxes] = useState([]);
+  const [inputValue, setInputValue] = useState(
+    assignMappingsViaButton?.display
+      ? assignMappingsViaButton.display
+      : assignMappingsViaButton?.code
+  ); //Sets the value of the search bar
+  const [currentSearchProp, setCurrentSearchProp] = useState(
+    assignMappingsViaButton?.display
+      ? assignMappingsViaButton.display
+      : assignMappingsViaButton?.code
+  );
 
   const onClose = () => {
     setApiResults([]);
     setSelectedBoxes([]);
     setIdsForSelect([]);
+    setApiPreferencesCode(undefined);
+    setOntologiesToSearch(undefined);
+    setInputValue(null);
+    setCurrentSearchProp(null);
   };
   const fetchTerminologies = () => {
     setLoading(true);
@@ -124,7 +140,10 @@ export const AssignMappingsViaButton = ({
         }
         return error;
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        onClose();
+      });
   };
 
   return (
@@ -134,7 +153,6 @@ export const AssignMappingsViaButton = ({
       onOk={() => {
         form.validateFields().then(values => {
           handleSubmit(values);
-          onClose();
         });
       }}
       onCancel={() => {
@@ -171,6 +189,10 @@ export const AssignMappingsViaButton = ({
           }
           terminology={terminology}
           table={table}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          currentSearchProp={currentSearchProp}
+          setCurrentSearchProp={setCurrentSearchProp}
         />
       )}
     </Modal>

@@ -19,6 +19,10 @@ export const AssignMappingsCheckboxes = ({
   form,
   terminology,
   table,
+  inputValue,
+  setInputValue,
+  currentSearchProp,
+  setCurrentSearchProp,
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
@@ -41,13 +45,12 @@ export const AssignMappingsCheckboxes = ({
     page,
     setPage,
   } = useContext(SearchContext);
-
+  console.log('onto', ontologiesToSearch);
+  console.log('pref', apiPreferencesCode);
   const [loading, setLoading] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
   const [results, setResults] = useState([]);
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
-  const [inputValue, setInputValue] = useState(mappingProp); //Sets the value of the search bar
-  const [currentSearchProp, setCurrentSearchProp] = useState(mappingProp);
   const [active, setActive] = useState(null);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
 
@@ -85,19 +88,29 @@ export const AssignMappingsCheckboxes = ({
   // inputValue and currentSearchProp for the search bar is set to the passed searchProp.
   // The function is run when the code changes.
   useEffect(() => {
-    setInputValue(mappingProp);
-    setCurrentSearchProp(mappingProp);
+    setInputValue(currentSearchProp ?? mappingProp);
+    if (!currentSearchProp) {
+      setCurrentSearchProp(mappingProp);
+    }
     setPage(0);
-    if (!!mappingProp) {
+    if (!!mappingProp && !apiPreferencesCode) {
       getCodeFilters();
     }
-    apiPreferenceKeys?.length > 0
-      ? setSelectedApi(apiPreferenceKeys[0])
-      : setSelectedApi(ontologyApis?.[0]?.api_id || null);
-    if (apiPreferencesCode !== undefined && active === 'search') {
-      fetchResults(0, mappingProp);
+    if (!selectedApi) {
+      if (apiPreferenceKeys?.length > 0) {
+        setSelectedApi(apiPreferenceKeys[0]);
+      } else {
+        setSelectedApi(ontologyApis?.[0]?.api_id || null);
+      }
     }
-  }, [mappingProp]);
+    if (
+      apiPreferencesCode !== undefined &&
+      ontologiesToSearch !== undefined &&
+      active === 'search'
+    ) {
+      fetchResults(0, inputValue);
+    }
+  }, [mappingProp, ontologiesToSearch]);
 
   const getCodeFilters = () => {
     setLoading(true);
@@ -146,7 +159,7 @@ export const AssignMappingsCheckboxes = ({
 
   useEffect(() => {
     if (apiPreferencesCode !== undefined && active === 'search') {
-      fetchResults(page, currentSearchProp);
+      fetchResults(page, inputValue);
     }
   }, [page]);
 
@@ -193,7 +206,7 @@ export const AssignMappingsCheckboxes = ({
     ) {
       fetchResults(page, currentSearchProp);
     }
-  }, [currentSearchProp, ontologiesToSearch, active]);
+  }, [currentSearchProp, active]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
