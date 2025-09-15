@@ -70,21 +70,9 @@ jobs:
 
       - name: 'Build Docker Image'
         run: |-
-<<<<<<< HEAD
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
 
           echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_ENV 
-=======
-          if [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
-            SERVICE="${{ env.SERVICE }}"
-          else 
-            SERVICE="${{ env.SERVICE }}-${{ github.event.inputs.environment }}"
-          fi
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${SERVICE}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-
-          echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_ENV 
-          echo "SERVICE=${SERVICE}" >> $GITHUB_ENV 
->>>>>>> 6972ee9 (Console log for getStatusSession, commented out editor property in bodies)
 
           docker build -t "${DOCKER_TAG}" --build-arg ENV=${{ github.event.inputs.environment }} .
 
@@ -97,9 +85,5 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           region: '${{ env.REGION }}'
-<<<<<<< HEAD
           image: ${{ env.DOCKER_TAG }}
           env_vars: ${{ github.event.inputs.version }}
-=======
-          image: ${{ env.DOCKER_TAG }}
->>>>>>> 6972ee9 (Console log for getStatusSession, commented out editor property in bodies)
