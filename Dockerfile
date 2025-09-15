@@ -13,7 +13,8 @@ RUN npm install
 
 # Copy the rest of the application code
 COPY . .
-
+# Line below necessary for Mac only
+# RUN npm install @rollup/rollup-linux-arm64-musl --save-optional
 # Build the React app based on env
 ARG ENV=dev
 RUN npm run build-${ENV}
@@ -27,10 +28,9 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build ./dist /usr/share/nginx/html
 
 # Expose port 5000
-EXPOSE 5000
+EXPOSE 5000 5173
 
 
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
-

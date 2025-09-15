@@ -57,7 +57,7 @@ export const AssignMappingsViaButton = ({
   };
 
   useEffect(() => {
-    fetchTerminologies();
+    assignMappingsViaButton && fetchTerminologies();
   }, [assignMappingsViaButton]);
 
   const handleSubmit = values => {
@@ -171,6 +171,7 @@ export const AssignMappingsViaButton = ({
           }
           terminology={terminology}
           table={table}
+          loading={loading}
         />
       )}
     </Modal>

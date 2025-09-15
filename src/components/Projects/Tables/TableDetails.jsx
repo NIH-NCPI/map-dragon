@@ -221,7 +221,6 @@ export const TableDetails = () => {
   useEffect(
     () => () => {
       setTable({});
-      setApiPreferences(undefined);
       setPrefTerminologies([]);
     },
     []
