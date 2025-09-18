@@ -44,6 +44,7 @@ export const AddTerminology = () => {
       body: JSON.stringify({
         ...values,
         codes: cleanedCodes,
+        editor: user?.email,
       }),
     })
       .then(res => {
