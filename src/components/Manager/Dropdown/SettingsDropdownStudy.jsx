@@ -4,8 +4,9 @@ import { DownOutlined } from '@ant-design/icons';
 import { myContext } from '../../../App';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 
-export const SettingsDropdownStudy = () => {
-  const { setEdit, setDeleteState, user } = useContext(myContext);
+export const SettingsDropdownStudy = ({ study }) => {
+  const { setEdit, setDeleteState, setExportState, user } =
+    useContext(myContext);
 
   // Login functions for each case in the dropdown menu with different props passed depending on selection
   const passEdit = () => {
@@ -18,22 +19,30 @@ export const SettingsDropdownStudy = () => {
   };
   const loginDelete = RequiredLogin({ handleSuccess: passDelete });
 
-  // placeholder items for the dropdown
+  const passExport = () => {
+    setExportState(true);
+  };
+  const loginExport = RequiredLogin({ handleSuccess: passExport });
+
+  // items for the dropdown
   const items = [
     {
       label: 'Edit',
       key: '0',
     },
-    // {
-    //   label: 'Invite collaborators',
-    //   key: '1',
-    // },
     {
       label: 'Delete',
       key: '2',
       danger: true,
     },
   ];
+
+  if (study?.datadictionary?.length) {
+    items.splice(1, 0, {
+      label: 'Export mapped terms',
+      key: '1',
+    });
+  }
 
   // onClick for dropdown. Sets states to true depending on their key.
   // A modal is then triggered to open in the component to perform the desired task.
@@ -43,6 +52,8 @@ export const SettingsDropdownStudy = () => {
     switch (key) {
       case '0':
         return user ? setEdit(true) : loginEdit();
+      case '1':
+        return user ? setExportState(true) : loginExport();
       case '2':
         return user ? setDeleteState(true) : loginDelete();
     }

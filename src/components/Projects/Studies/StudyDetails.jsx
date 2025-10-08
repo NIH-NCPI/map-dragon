@@ -12,6 +12,7 @@ import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
 import { AddDD } from '../DataDictionaries/AddDD';
 import { RemoveStudyDD } from './RemoveStudyDD';
+import { ExportFile } from '../Tables/ExportFile';
 const { Meta } = Card;
 
 export const StudyDetails = () => {
@@ -108,6 +109,9 @@ export const StudyDetails = () => {
                   <div className="study_dropdown">
                     <SettingsDropdownStudy study={study} />
                   </div>
+                  <div className="component_id">
+                    <b>ID</b>: {study?.id}
+                  </div>
                   <div className="study_url">System: {study?.url}</div>
                 </div>
               </Col>
@@ -192,6 +196,7 @@ export const StudyDetails = () => {
                 </Col>
               ))}
             </Row>
+            <ExportFile componentString="Study" component={study} />
           </div>
         </div>
       )}

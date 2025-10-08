@@ -478,6 +478,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     {/* ant.design dropdown for edit. */}
                     <SettingsDropdownTerminology codes={terminology.codes} />
                   </div>
+                  <div className="component_id">
+                    <b>ID</b>: {terminology?.id}
+                  </div>
                 </div>
               </Col>
             </div>
