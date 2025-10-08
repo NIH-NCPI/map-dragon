@@ -1,10 +1,14 @@
-import { Outlet } from 'react-router-dom';
-import Background from '../../assets/Background.png';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 export const PageLayout = () => {
-  return (
-    <>
-      <Outlet />
-    </>
+  const location = useLocation();
+  const isLoggedIn = () => {
+    const storedUser = localStorage.getItem('user');
+    return !!storedUser;
+  };
+  return isLoggedIn() ? (
+    <Outlet />
+  ) : (
+    <Navigate to={`/login?redirect=${location.pathname}`} />
   );
 };

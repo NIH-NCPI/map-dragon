@@ -1,14 +1,29 @@
-import { Login } from "./Login"
-import { useContext } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { Login } from './Login';
+import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../App';
 export const LoginPage = () => {
-    const {user} = useContext(myContext);
-    return <div style={{background:"rgba(0,0,0,.2"}}>
-        {user &&
-        <h2 style={{textAlign:"center",paddingTop:'5rem'}}>You are logged in and can navigate to the rest of the site</h2>}
-        <div style={{ height:"5rem",display:"flex",flexDirection:"column",justifyContent:"space-around",alignItems:"center"}}>
-            <Login />
-        </div>
-        
+  const location = useLocation();
+  const { user } = useContext(myContext);
+  const [redirect, setRedirect] = useState('');
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setRedirect(params.get('redirect'));
+  }, [location.search]);
+  return (
+    <div style={{ background: 'rgba(0,0,0,.2' }}>
+      {user && <Navigate to={redirect} />}
+      <div
+        style={{
+          height: '5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+        }}
+      >
+        <Login />
+      </div>
     </div>
-}
+  );
+};
