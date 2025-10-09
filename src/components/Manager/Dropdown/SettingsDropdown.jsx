@@ -4,7 +4,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { myContext } from '../../../App';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 
-export const SettingsDropdown = ({ dataDictionary }) => {
+export const SettingsDropdown = ({ component }) => {
   const { setEdit, setDeleteState, setExportState, user } =
     useContext(myContext);
 
@@ -37,7 +37,7 @@ export const SettingsDropdown = ({ dataDictionary }) => {
     },
   ];
 
-  if (dataDictionary?.tables?.length) {
+  if (component?.length) {
     items.splice(1, 0, {
       label: 'Export mapped terms',
       key: '1',

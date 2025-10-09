@@ -131,7 +131,7 @@ export const DDDetails = () => {
               <Col span={6}>
                 <div className="study_details_right">
                   <div className="study_dropdown">
-                    <SettingsDropdown dataDictionary={dataDictionary} />
+                    <SettingsDropdown component={dataDictionary?.tables} />
                   </div>
                   <div className="component_id">
                     <b>ID</b>: {dataDictionary?.id}
