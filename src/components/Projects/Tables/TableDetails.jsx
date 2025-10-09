@@ -27,7 +27,7 @@ import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ExportFile } from './ExportFile';
+import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
 import { EditMappingsTableModal } from './EditMappingsTableModal';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
@@ -512,6 +512,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     {/* ant.design dropdown for edit. */}
                     <SettingsDropdownTable table={table} />
                   </div>
+                  <div className="component_id">
+                    <b>ID</b>: {table?.id}
+                  </div>
                 </div>
               </Col>
             </div>
@@ -569,7 +572,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     }}
                   />
                 </Form>
-                <ExportFile table={table} />
+                <ExportFile componentString="Table" component={table} />
               </>
             ) : (
               <Row gutter={[20, 24]}>

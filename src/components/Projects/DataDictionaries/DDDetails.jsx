@@ -22,6 +22,7 @@ import { UploadTable } from '../Tables/UploadTable';
 import { RemoveTableDD } from './RemoveTableDD';
 import { DeleteDD } from './DeleteDD';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
 
 export const DDDetails = () => {
   const [form] = Form.useForm();
@@ -130,10 +131,17 @@ export const DDDetails = () => {
               <Col span={6}>
                 <div className="study_details_right">
                   <div className="study_dropdown">
-                    <SettingsDropdown dataDictionary={dataDictionary} />
+                    <SettingsDropdown component={dataDictionary?.tables} />
+                  </div>
+                  <div className="component_id">
+                    <b>ID</b>: {dataDictionary?.id}
                   </div>
                 </div>
               </Col>
+              <ExportFile
+                componentString="DataDictionary"
+                component={dataDictionary}
+              />
             </div>
           </Row>
           <Divider orientation="left" orientationMargin="0" className="divider">

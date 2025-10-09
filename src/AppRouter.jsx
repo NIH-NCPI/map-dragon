@@ -6,10 +6,7 @@ import {
   Routes,
   Navigate,
 } from 'react-router-dom';
-import { useContext } from 'react';
-import { myContext } from './App.jsx';
 import { NavBar } from './components/Nav/NavBar';
-import { Login } from './components/Auth/Login.jsx';
 import { LoginPage } from './components/Auth/LoginPage.jsx';
 import { Breadcrumbs } from './components/Nav/Breadcrumbs.jsx';
 import { Footer } from './components/Nav/Footer';
@@ -29,15 +26,6 @@ import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
 
 export const AppRouter = () => {
-  const isLoggedIn = () => {
-    const storedUser = localStorage.getItem('user');
-
-    if (storedUser) {
-      return true;
-    } else {
-      return false;
-    }
-  };
   return (
     <BrowserRouter>
       <Routes>
@@ -59,105 +47,50 @@ export const AppRouter = () => {
           }
         >
           <Route index element={<OntologySearch />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/ontologies" element={<OntologyInfo />} />
+          <Route path="/404" element={<Error404 />} />
           <Route element={<PageLayout />}>
             <Route element={<SearchContextRoot />}>
               <Route path="/search/:query" element={<SearchResults />} />
-              <Route path="/404" element={<Error404 />} />
 
-              <Route path="/ontologies" element={<OntologyInfo />} />
-              <Route path="/about" element={<About />} />
-              <Route
-                path="/terminologies"
-                element={
-                  isLoggedIn() ? <TerminologyList /> : <Navigate to="/login" />
-                }
-              />
-              <Route path="/login" element={<LoginPage />} />
+              <Route path="/terminologies" element={<TerminologyList />} />
               <Route
                 path="/terminology"
                 element={<Navigate to="/terminologies" />}
               />
               <Route element={<MappingContextRoot />}>
-                <Route
-                  path="/studies"
-                  element={
-                    isLoggedIn() ? <StudyList /> : <Navigate to="/login" />
-                  }
-                />
+                <Route path="/studies" element={<StudyList />} />
                 <Route path="/study" element={<Navigate to="/studies" />} />
                 <Route path="/Study/:studyId">
-                  <Route
-                    index
-                    element={
-                      isLoggedIn() ? <StudyDetails /> : <Navigate to="/login" />
-                    }
-                  />
+                  <Route index element={<StudyDetails />} />
                   <Route path="DataDictionary">
-                    <Route
-                      index
-                      element={
-                        isLoggedIn() ? (
-                          <StudyDetails />
-                        ) : (
-                          <Navigate to="/login" />
-                        )
-                      }
-                    />
+                    <Route index element={<StudyDetails />} />
                     <Route
                       path="/Study/:studyId/DataDictionary/:DDId/Table/"
-                      element={
-                        isLoggedIn() ? <DDDetails /> : <Navigate to="/login" />
-                      }
+                      element={<DDDetails />}
                     />
                     <Route path="/Study/:studyId/DataDictionary/:DDId">
-                      <Route
-                        index
-                        element={
-                          isLoggedIn() ? (
-                            <DDDetails />
-                          ) : (
-                            <Navigate to="/login" />
-                          )
-                        }
-                      />
+                      <Route index element={<DDDetails />} />
                       <Route
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId"
-                        element={
-                          isLoggedIn() ? (
-                            <TableDetails />
-                          ) : (
-                            <Navigate to="/login" />
-                          )
-                        }
+                        element={<TableDetails />}
                       />
                       <Route
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId/Terminology/:terminologyId"
-                        element={
-                          isLoggedIn() ? (
-                            <Terminology />
-                          ) : (
-                            <Navigate to="/login" />
-                          )
-                        }
+                        element={<Terminology />}
                       />
                       <Route
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId/Terminology/"
-                        element={
-                          isLoggedIn() ? (
-                            <Terminology />
-                          ) : (
-                            <Navigate to="/login" />
-                          )
-                        }
+                        element={<Terminology />}
                       />
                     </Route>
                   </Route>
                 </Route>
                 <Route
                   path="/Terminology/:terminologyId"
-                  element={
-                    isLoggedIn() ? <Terminology /> : <Navigate to="/login" />
-                  }
+                  element={<Terminology />}
                 />
               </Route>
             </Route>

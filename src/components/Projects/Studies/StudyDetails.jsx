@@ -7,11 +7,12 @@ import { getById, handleUpdate } from '../../Manager/FetchManager';
 import { Row, Col, Divider, Skeleton, Card, Form, notification } from 'antd';
 
 import { ellipsisString } from '../../Manager/Utility';
-import { SettingsDropdownStudy } from '../../Manager/Dropdown/SettingsDropdownStudy';
 import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
 import { AddDD } from '../DataDictionaries/AddDD';
 import { RemoveStudyDD } from './RemoveStudyDD';
+import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
+import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 const { Meta } = Card;
 
 export const StudyDetails = () => {
@@ -106,9 +107,22 @@ export const StudyDetails = () => {
               <Col span={6}>
                 <div className="study_details_right">
                   <div className="study_dropdown">
-                    <SettingsDropdownStudy study={study} />
+                    <SettingsDropdown component={study?.datadictionary} />
                   </div>
-                  <div className="study_url">System: {study?.url}</div>
+                  <div>
+                    <div className="id_system">
+                      <div className="comp_id">
+                        <b>ID</b>:
+                      </div>
+                      <div>{study?.id}</div>
+                    </div>
+                    <div className="id_system">
+                      <div className="comp_id">
+                        <b>System</b>:
+                      </div>
+                      <div>{study?.url}</div>
+                    </div>
+                  </div>
                 </div>
               </Col>
             </div>
@@ -192,6 +206,7 @@ export const StudyDetails = () => {
                 </Col>
               ))}
             </Row>
+            <ExportFile componentString="Study" component={study} />
           </div>
         </div>
       )}

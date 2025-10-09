@@ -4,37 +4,51 @@ import { useEffect, useContext, useState, useMemo } from 'react';
 import { getById } from '../Manager/FetchManager';
 import { myContext } from '../../App';
 
+const rootBreadcrumbs = {
+  Study: 'Studies',
+  Terminology: 'Terminologies',
+};
+
 export const Breadcrumbs = () => {
   const { vocabUrl } = useContext(myContext);
   const location = useLocation();
 
   // Memoize path parts to avoid unnecessary recalculations
-  const pathParts = useMemo(() => location.pathname.split('/').filter(Boolean), [location.pathname]);
+  const pathParts = useMemo(
+    () => location.pathname.split('/').filter(Boolean),
+    [location.pathname]
+  );
   const [updatedPathArr, setUpdatedPathArr] = useState([]);
 
   useEffect(() => {
     const controller = new AbortController(); // For canceling stale requests
     const fetchBreadcrumbData = async () => {
-      const pathArr = pathParts.map((path) => ({ title: path, path: path }));
+      const pathArr = pathParts.map(path => ({ title: path, path: path }));
 
       try {
         const promises = [];
         for (let i = 0; i < pathArr.length; i += 2) {
           if (i + 1 < pathArr.length) {
             promises.push(
-              getById(vocabUrl, pathArr[i].path, pathArr[i + 1].path, { signal: controller.signal }).then((result) => {
-                pathArr[i + 1] = { path: pathArr[i].path + '/' + result.id, title: result.name };
+              getById(vocabUrl, pathArr[i].path, pathArr[i + 1].path, {
+                signal: controller.signal,
+              }).then(result => {
+                pathArr[i + 1] = {
+                  path: pathArr[i].path + '/' + result.id,
+                  title: result.name,
+                };
               })
             );
           }
         }
 
         await Promise.all(promises); // Wait for all `getById` calls to finish
-        if (pathArr.length !== 1) {
-          pathArr.splice(0, 1);
-          pathArr.splice(1, 1);
-          pathArr.splice(2, 1);
-          pathArr.splice(3, 1);
+        if (pathArr.length > 1) {
+          for (var i = 2; i < pathArr.length; i++) {
+            pathArr.splice(i, 1);
+          }
+          // Fix title for the root breadcrumb
+          pathArr[0].title = rootBreadcrumbs[pathArr[0].title];
         }
         setUpdatedPathArr([...pathArr]);
       } catch (error) {
@@ -63,7 +77,10 @@ export const Breadcrumbs = () => {
         <Link to="/">Home</Link>{' '}
         {location.pathname !== '/' && <span>&nbsp;&nbsp;/&nbsp;&nbsp;</span>}
       </li>
-      <Breadcrumb itemRender={(route, params, items) => itemRender(route, params, items)} items={updatedPathArr} />
+      <Breadcrumb
+        itemRender={(route, params, items) => itemRender(route, params, items)}
+        items={updatedPathArr}
+      />
     </span>
   );
 };
@@ -72,9 +89,13 @@ function itemRender(currentRoute, params, items) {
   const isLast = currentRoute?.path === items[items.length - 1]?.path;
 
   // Build cumulative path
+  const sliceStart = currentRoute.title === items[0].title ? 0 : 1;
   const cumulativePath = items
-    .slice(0, items.findIndex((item) => item.path === currentRoute.path) + 1)
-    .map((item) => item.path)
+    .slice(
+      sliceStart,
+      items.findIndex(item => item.path === currentRoute.path) + 1
+    )
+    .map(item => item.path)
     .join('/');
 
   return isLast ? (
