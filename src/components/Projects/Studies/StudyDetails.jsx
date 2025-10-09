@@ -11,7 +11,7 @@ import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
 import { AddDD } from '../DataDictionaries/AddDD';
 import { RemoveStudyDD } from './RemoveStudyDD';
-import { ExportFile } from '../Tables/ExportFile';
+import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 const { Meta } = Card;
 

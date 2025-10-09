@@ -27,7 +27,7 @@ import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ExportFile } from './ExportFile';
+import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
 import { EditMappingsTableModal } from './EditMappingsTableModal';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';

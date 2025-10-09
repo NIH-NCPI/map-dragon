@@ -22,7 +22,7 @@ import { UploadTable } from '../Tables/UploadTable';
 import { RemoveTableDD } from './RemoveTableDD';
 import { DeleteDD } from './DeleteDD';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
-import { ExportFile } from '../Tables/ExportFile';
+import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
 
 export const DDDetails = () => {
   const [form] = Form.useForm();
