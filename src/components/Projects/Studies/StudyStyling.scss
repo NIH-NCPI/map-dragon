@@ -50,3 +50,15 @@
 .study_dropdown {
   margin: 0 0 2vh 0;
 }
+
+.id_system {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.comp_id {
+  width: 50px;
+  text-align: right;
+}

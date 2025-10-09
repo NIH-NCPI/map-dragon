@@ -109,10 +109,20 @@ export const StudyDetails = () => {
                   <div className="study_dropdown">
                     <SettingsDropdown component={study?.datadictionary} />
                   </div>
-                  <div className="component_id">
-                    <b>ID</b>: {study?.id}
+                  <div>
+                    <div className="id_system">
+                      <div className="comp_id">
+                        <b>ID</b>:
+                      </div>
+                      <div>{study?.id}</div>
+                    </div>
+                    <div className="id_system">
+                      <div className="comp_id">
+                        <b>System</b>:
+                      </div>
+                      <div>{study?.url}</div>
+                    </div>
                   </div>
-                  <div className="study_url">System: {study?.url}</div>
                 </div>
               </Col>
             </div>
