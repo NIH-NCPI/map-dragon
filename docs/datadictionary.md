@@ -11,8 +11,9 @@ The data should be a valid, ASCII only CSV file with double quotes used for "Quo
 | *Column Name* | *Column Descriptions* | *Column Type* |
 |  ------------ | --------------------- | ------------- |
 | *variable_name* | The human readable name associated with variable name | String |
+| *variable_code* | (optional) machine friendly column header. This must not contain any forward slashes "/". It is recommended that only alphanumeric characters with dashes/underscores. | String |
 | *description* | Fully informative description of the contents associated with this variable/column| String |
-| *data_type* | Data type associated with column data  | integer, number, string, enumeration |
+| *data_type* | Data type associated with column data  | Acceptable enumerated values include: integer, number, string, enumeration |
 | *min* | Minimum value (integers and numbers only) | numeric value |
 | *max* | Maximum acceptable value (integers and numbers only) | numeric value | 
 | *units* | UCUM code for units | UCUM code prefixed with the curie, UCUM. UCUM:ml for example |
