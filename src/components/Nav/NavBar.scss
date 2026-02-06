@@ -1,4 +1,4 @@
-@import '../Styling/Variables';
+@use '../Styling/Variables' as *;
 
 $navColor: #080705;
 $linkColor: #fffc31;
