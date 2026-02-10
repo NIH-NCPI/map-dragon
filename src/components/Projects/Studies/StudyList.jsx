@@ -75,7 +75,7 @@ export const StudyList = () => {
                       bordered={true}
                       style={{
                         border: '1px solid darkgray',
-                        height: '42vh',
+                        height: '332px',
                       }}
                     >
                       <div className="new_study_card_container">
@@ -93,7 +93,7 @@ export const StudyList = () => {
                         bordered={true}
                         style={{
                           border: '1px solid darkgray',
-                          height: '42vh',
+                          height: '332px',
                         }}
                         // a link to the study page to view study details when the 'Edit' button is clicked
                         actions={[
@@ -113,7 +113,7 @@ export const StudyList = () => {
                             // displays the study description up to 240 characters, then displays ellipsis
                             description={ellipsisString(
                               study?.description,
-                              '240'
+                              '240',
                             )}
                           />
                         </Skeleton>

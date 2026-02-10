@@ -32,7 +32,7 @@ export const StudyDetails = () => {
   Promise.all fulfills all of the fetch calls. The response is set to studyDDs  */
   const getStudyDDs = async newStudy => {
     const dDPromises = newStudy?.datadictionary?.map(r =>
-      getById(vocabUrl, 'DataDictionary', r.reference.split('/')[1])
+      getById(vocabUrl, 'DataDictionary', r.reference.split('/')[1]),
     );
     const data = await Promise.all(dDPromises);
     setStudyDDs(data);
@@ -141,7 +141,7 @@ export const StudyDetails = () => {
                     bordered={true}
                     style={{
                       border: '1px solid darkgray',
-                      height: '42vh',
+                      height: '350px',
                     }}
                   >
                     <div className="new_study_card_container">
@@ -164,7 +164,7 @@ export const StudyDetails = () => {
                     bordered={true}
                     style={{
                       border: '1px solid darkgray',
-                      height: '42vh',
+                      height: '350px',
                     }}
                     actions={[
                       <RemoveStudyDD
@@ -185,7 +185,7 @@ export const StudyDetails = () => {
 
                       <Meta
                         style={{
-                          height: '15vh',
+                          height: '125px',
                           border: '1px lightgray solid',
                           borderRadius: '5px',
                           padding: '5px',
@@ -197,7 +197,7 @@ export const StudyDetails = () => {
                       <Meta
                         style={{
                           padding: '0 5px',
-                          margin: '3vh 0 0 0',
+                          margin: '22px 0 0 0',
                         }}
                         description={'# of Tables: ' + dd?.tables.length}
                       />
