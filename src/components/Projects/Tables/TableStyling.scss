@@ -1,5 +1,5 @@
-@import '../../Styling/BackgroundImage';
-@import '../../Styling/Variables';
+@use '../../Styling/BackgroundImage' as background;
+@use '../../Styling/Variables' as *;
 
 .table_id_container {
   margin: 5vh 0 13vh 5%; //Make 10vh bottom without export button

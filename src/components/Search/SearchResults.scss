@@ -1,5 +1,5 @@
-@import '../Styling/Variables';
-@import '../Styling/BackgroundImage.scss';
+@use '../Styling/Variables' as *;
+@use '../Styling/BackgroundImage.scss' as background;
 
 .results_page_container {
   background: white;

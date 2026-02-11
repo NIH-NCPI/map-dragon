@@ -1,4 +1,4 @@
-@import '../../Styling/Variables';
+@use '../../Styling/Variables' as *;
 .terminology_container {
   margin: 5vh 5% 13vh 5%;
   width: 90%;
