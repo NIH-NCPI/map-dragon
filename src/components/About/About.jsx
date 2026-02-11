@@ -1,11 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Descriptions } from 'antd';
 import { myContext } from '../../App';
 import './About.scss';
 
 export const About = () => {
   const { mapDragonVersion, version } = useContext(myContext);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.title = 'About - Map Dragon';
