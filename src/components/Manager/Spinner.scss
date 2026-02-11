@@ -1,4 +1,4 @@
-@import '../Styling/Variables';
+@use '../Styling/Variables' as *;
 
 .loading_screen {
   display: flex;
