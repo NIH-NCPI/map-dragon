@@ -79,7 +79,13 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
 
   return (
     <>
-      <Button danger onClick={() => (user ? setRemove(true) : login())}>
+      <Button
+        danger
+        onClick={e => {
+          e.preventDefault();
+          user ? setRemove(true) : login();
+        }}
+      >
         Remove
       </Button>
       {remove && showConfirm()}

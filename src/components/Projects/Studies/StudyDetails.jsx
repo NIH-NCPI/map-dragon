@@ -3,10 +3,9 @@ import { myContext } from '../../../App';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import './StudyStyling.scss';
-import { getById, handleUpdate } from '../../Manager/FetchManager';
-import { Row, Col, Divider, Skeleton, Card, Form, notification } from 'antd';
+import { getById } from '../../Manager/FetchManager';
+import { Row, Col, Divider, Card, Form, notification } from 'antd';
 
-import { ellipsisString } from '../../Manager/Utility';
 import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
 import { AddDD } from '../DataDictionaries/AddDD';
@@ -138,7 +137,6 @@ export const StudyDetails = () => {
                 <span onClick={() => setAddDD(true)}>
                   <Card
                     hoverable
-                    bordered={true}
                     style={{
                       border: '1px solid darkgray',
                       height: '350px',
@@ -157,30 +155,23 @@ export const StudyDetails = () => {
                 <Col span={6} key={index}>
                   {/* Displays the name if one is available or the id if there is no name.
                   Links to view the details of the DD via the 'View/Edit' button. */}
-
-                  <Card
-                    key={index}
-                    title={dd?.name ? dd?.name : dd?.id}
-                    bordered={true}
-                    style={{
-                      border: '1px solid darkgray',
-                      height: '350px',
-                    }}
-                    actions={[
-                      <RemoveStudyDD
-                        studyId={studyId}
-                        dd={dd}
-                        getStudyDDs={getStudyDDs}
-                      />,
-                      <Link to={`/Study/${studyId}/DataDictionary/${dd?.id}`}>
-                        <button className="manage_term_button">
-                          View / Edit
-                        </button>
-                        ,
-                      </Link>,
-                    ]}
-                  >
-                    <Skeleton loading={loading}>
+                  <Link to={`/Study/${studyId}/DataDictionary/${dd?.id}`}>
+                    <Card
+                      key={index}
+                      hoverable
+                      title={dd?.name ? dd?.name : dd?.id}
+                      style={{
+                        border: '1px solid darkgray',
+                        height: '350px',
+                      }}
+                      actions={[
+                        <RemoveStudyDD
+                          studyId={studyId}
+                          dd={dd}
+                          getStudyDDs={getStudyDDs}
+                        />,
+                      ]}
+                    >
                       {/* Displays the description up to 180 characters, truncated with ellipsis. */}
 
                       <Meta
@@ -190,7 +181,11 @@ export const StudyDetails = () => {
                           borderRadius: '5px',
                           padding: '5px',
                         }}
-                        description={ellipsisString(dd?.description, '180')}
+                        description={
+                          <div style={{ height: '115px', overflowY: 'auto' }}>
+                            {dd?.description}
+                          </div>
+                        }
                       />
                       {/* Displays the number of tables associated with the DD by getting the length of the tables array in the DD */}
 
@@ -201,8 +196,8 @@ export const StudyDetails = () => {
                         }}
                         description={'# of Tables: ' + dd?.tables.length}
                       />
-                    </Skeleton>
-                  </Card>
+                    </Card>
+                  </Link>
                 </Col>
               ))}
             </Row>

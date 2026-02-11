@@ -6,9 +6,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { myContext } from '../../../App';
 import { Spinner } from '../../Manager/Spinner';
 import { getAll } from '../../Manager/FetchManager';
-import { Row, Col, Card, notification, Skeleton } from 'antd';
+import { Row, Col, Card, notification } from 'antd';
 import { AddStudy } from './AddStudy';
-import { ellipsisString } from '../../Manager/Utility';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 const { Meta } = Card;
 
@@ -72,10 +71,9 @@ export const StudyList = () => {
                   >
                     <Card
                       hoverable
-                      bordered={true}
                       style={{
                         border: '1px solid darkgray',
-                        height: '332px',
+                        height: '350px',
                       }}
                     >
                       <div className="new_study_card_container">
@@ -88,36 +86,33 @@ export const StudyList = () => {
                 {studies?.map((study, index) => {
                   return (
                     <Col span={6} key={index}>
-                      <Card
-                        title={study?.name ? study?.name : study?.id}
-                        bordered={true}
-                        style={{
-                          border: '1px solid darkgray',
-                          height: '332px',
-                        }}
-                        // a link to the study page to view study details when the 'Edit' button is clicked
-                        actions={[
-                          <Link to={`/Study/${study?.id}`}>
-                            <button className="manage_term_button">Edit</button>
-                          </Link>,
-                        ]}
-                      >
-                        <Skeleton loading={loading}>
+                      <Link to={`/Study/${study?.id}`}>
+                        <Card
+                          hoverable
+                          title={study?.name ? study?.name : study?.id}
+                          style={{
+                            border: '1px solid darkgray',
+                            height: '350px',
+                          }}
+                        >
                           <Meta
                             style={{
-                              height: '21vh',
+                              height: '185px',
                               border: '1px lightgray solid',
                               borderRadius: '5px',
                               padding: '5px',
                             }}
                             // displays the study description up to 240 characters, then displays ellipsis
-                            description={ellipsisString(
-                              study?.description,
-                              '240',
-                            )}
+                            description={
+                              <div
+                                style={{ height: '175px', overflowY: 'auto' }}
+                              >
+                                {study?.description}
+                              </div>
+                            }
                           />
-                        </Skeleton>
-                      </Card>
+                        </Card>
+                      </Link>
                     </Col>
                   );
                 })}

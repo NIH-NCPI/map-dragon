@@ -1,7 +1,7 @@
 .new_study_card_container {
   display: flex;
   flex-flow: row wrap;
-  font-size: 2rem;
+  font-size: clamp(1rem, 4vw, 2rem);
   height: 175px;
   border: 1px lightgray solid;
   border-radius: 5px;
