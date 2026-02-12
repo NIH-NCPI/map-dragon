@@ -164,12 +164,14 @@ export const StudyDetails = () => {
                         border: '1px solid darkgray',
                         height: '350px',
                       }}
-                      actions={[
-                        <RemoveStudyDD
-                          studyId={studyId}
-                          dd={dd}
-                          getStudyDDs={getStudyDDs}
-                        />,
+                      extra={[
+                        <div className="card_description">
+                          <RemoveStudyDD
+                            studyId={studyId}
+                            dd={dd}
+                            getStudyDDs={getStudyDDs}
+                          />
+                        </div>,
                       ]}
                     >
                       {/* Displays the description up to 180 characters, truncated with ellipsis. */}

@@ -1,5 +1,5 @@
-import { notification, message, Button, Modal } from 'antd';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { Button, message, Modal, notification } from 'antd';
+import { DeleteOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
@@ -80,14 +80,14 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
   return (
     <>
       <Button
+        icon={<DeleteOutlined />}
+        shape="circle"
         danger
         onClick={e => {
           e.preventDefault();
           user ? setRemove(true) : login();
         }}
-      >
-        Remove
-      </Button>
+      />
       {remove && showConfirm()}
     </>
   );
