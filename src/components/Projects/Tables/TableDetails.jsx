@@ -5,7 +5,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
 import {
-  Button,
   Card,
   Col,
   Form,
@@ -13,7 +12,7 @@ import {
   notification,
   Row,
   Table,
-  Tooltip,
+  Tooltip
 } from 'antd';
 import {
   CaretDownOutlined,
@@ -21,7 +20,7 @@ import {
   CloseCircleOutlined,
   DownOutlined,
   MessageOutlined,
-  UpOutlined,
+  UpOutlined
 } from '@ant-design/icons';
 import { EditTableDetails } from './EditTableDetails';
 import { DeleteTable } from './DeleteTable';
@@ -42,7 +41,7 @@ import {
   userVote,
   votesCount,
   relationshipDisplay,
-  uriEncoded,
+  uriEncoded
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
@@ -61,7 +60,7 @@ export const TableDetails = () => {
     setTable,
     user,
     ucumCodes,
-    setUcumCodes,
+    setUcumCodes
   } = useContext(myContext);
   const { setApiPreferences, prefTerminologies, setPrefTerminologies } =
     useContext(SearchContext);
@@ -75,7 +74,7 @@ export const TableDetails = () => {
     editMappings,
     setRelationshipOptions,
     comment,
-    setComment,
+    setComment
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -107,7 +106,7 @@ export const TableDetails = () => {
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user.email,
+      editor: user.email
     };
 
     fetch(
@@ -117,9 +116,9 @@ export const TableDetails = () => {
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -141,7 +140,7 @@ export const TableDetails = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -155,8 +154,12 @@ export const TableDetails = () => {
   const tableApiCalls = async () => {
     setLoading(true);
     try {
-      const tableData = await getById(vocabUrl, 'Table', tableId);
+      const tableData = await getById(vocabUrl, 'Table', tableId, navigate);
       setTable(tableData);
+
+      if (!tableData) {
+        return navigate('/404');
+      }
 
       if (tableData) {
         const mappingData = await getById(
@@ -185,8 +188,8 @@ export const TableDetails = () => {
           {
             method: 'GET',
             headers: {
-              'Content-Type': 'application/json',
-            },
+              'Content-Type': 'application/json'
+            }
           }
         );
         const filterData = await filterDataRes.json();
@@ -196,7 +199,7 @@ export const TableDetails = () => {
       if (error) {
         notification.error({
           message: 'Error',
-          description: 'An error occurred loading data.',
+          description: 'An error occurred loading data.'
         });
       }
     } finally {
@@ -231,12 +234,12 @@ export const TableDetails = () => {
     {
       title: 'Name',
       dataIndex: 'name',
-      width: 120,
+      width: 120
     },
     {
       title: 'Description',
       dataIndex: 'description',
-      width: 200,
+      width: 200
     },
     { title: 'Data Type', dataIndex: 'data_type', width: 100 },
     { title: 'Enumerations', dataIndex: 'enumeration', width: 100 },
@@ -268,8 +271,8 @@ export const TableDetails = () => {
             )}
           </>
         );
-      },
-    },
+      }
+    }
   ];
 
   /* The table may have numerous variables. The API call to fetch the mappings returns all mappings for the table.
@@ -313,7 +316,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     code: code.code,
                     display: code.display,
                     variableMappings: variableMappings.code,
-                    variableDisplay: foundDisplay.name,
+                    variableDisplay: foundDisplay.name
                   })
                 }
               />
@@ -326,14 +329,14 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'blue',
                   cursor: 'not-allowed',
-                  fontSize: '1rem',
+                  fontSize: '1rem'
                 }}
               />
             ) : (
               <UpOutlined
                 className="mapping_actions"
                 style={{
-                  color: 'blue',
+                  color: 'blue'
                 }}
                 onClick={() =>
                   userVote(code) !== 'up' &&
@@ -374,14 +377,14 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'green',
                   cursor: 'not-allowed',
-                  fontSize: '1rem',
+                  fontSize: '1rem'
                 }}
               />
             ) : (
               <DownOutlined
                 className="mapping_actions"
                 style={{
-                  color: 'green',
+                  color: 'green'
                 }}
                 onClick={() =>
                   userVote(code) !== 'down' &&
@@ -463,7 +466,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             View/Edit
           </Link>
         ),
-        mapped_terms: matchCode(variable),
+        mapped_terms: matchCode(variable)
       };
     });
 
@@ -562,13 +565,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                       expandedRowRender,
                       rowExpandable: record =>
                         record.data_type === 'INTEGER' ||
-                        record.data_type === 'QUANTITY',
+                        record.data_type === 'QUANTITY'
                     }}
                     pagination={{
                       showSizeChanger: true,
                       pageSizeOptions: ['10', '20', '30'],
                       pageSize: pageSize, // Use the stored pageSize
-                      onChange: handleTableChange, // Capture pagination changes
+                      onChange: handleTableChange // Capture pagination changes
                     }}
                   />
                 </Form>
@@ -582,10 +585,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                   <span onClick={() => (user ? setLoad(true) : login())}>
                     <Card
                       hoverable
-                      bordered={true}
                       style={{
                         border: '1px solid darkgray',
-                        height: '42vh',
+                        height: '42vh'
                       }}
                     >
                       <div className="new_study_card_container">

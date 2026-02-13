@@ -13,7 +13,7 @@ export const EditCode = ({
   terminology,
   setTerminology,
   form,
-  setSelectedKey,
+  setSelectedKey
 }) => {
   const [loading, setLoading] = useState(false);
   const { TextArea } = Input;
@@ -32,7 +32,7 @@ export const EditCode = ({
       form.setFieldsValue({
         code: tableData.code,
         display: tableData.display,
-        description: tableData.description,
+        description: tableData.description
       });
     }
   }, [editRow, tableData, form]);
@@ -62,21 +62,21 @@ export const EditCode = ({
     setLoading(true);
     const updatedRowDTO = {
       code: {
-        [`${tableData.code}`]: `${values.code}`,
+        [`${tableData.code}`]: `${values.code}`
       },
       display: {
-        [tableData.code]: values.display,
+        [tableData.code]: values.display
       },
       description: {
-        [tableData.code]: values.description,
-      },
+        [tableData.code]: values.description
+      }
     };
     // // If the new code already exists in the terminolgoy and does not match the index being edited,
     // // an error message displays that the code already exists. Otherwise the PUT call is run.
 
     handlePatch(vocabUrl, 'Terminology', terminology, {
       ...updatedRowDTO,
-      editor: user.email,
+      editor: user.email
     })
       .then(data => {
         setTerminology(data);
@@ -88,8 +88,7 @@ export const EditCode = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description:
-              'An error occurred updating the row. Please try again.',
+            description: 'An error occurred updating the row. Please try again.'
           });
         }
         return error;
@@ -106,7 +105,7 @@ export const EditCode = ({
               notification.error({
                 message: 'Error',
                 description:
-                  'An error occurred loading mappings. Please try again.',
+                  'An error occurred loading mappings. Please try again.'
               });
             }
             return error;
@@ -133,7 +132,7 @@ export const EditCode = ({
             setSelectedKey(null);
           }}
           maskClosable={false}
-          destroyOnClose={true}
+          destroyOnHidden={true}
           cancelButtonProps={{ disabled: loading }}
           okButtonProps={{ disabled: loading }}
           closeIcon={false}
@@ -145,7 +144,7 @@ export const EditCode = ({
               <Space
                 style={{
                   display: 'flex',
-                  marginBottom: 3,
+                  marginBottom: 3
                 }}
                 align="baseline"
               >
@@ -154,13 +153,13 @@ export const EditCode = ({
                   label="Code"
                   rules={[
                     { required: true, message: 'Code is required.' },
-                    { validator: validateUnique },
+                    { validator: validateUnique }
                   ]}
                 >
                   <TextArea
                     autoSize={true}
                     style={{
-                      width: '15vw',
+                      width: '15vw'
                     }}
                     autoFocus
                   />
@@ -171,14 +170,14 @@ export const EditCode = ({
                   rules={[
                     {
                       required: true,
-                      message: 'Code display is required.',
-                    },
+                      message: 'Code display is required.'
+                    }
                   ]}
                 >
                   <TextArea
                     autoSize={true}
                     style={{
-                      width: '15vw',
+                      width: '15vw'
                     }}
                     autoFocus
                   />
@@ -187,7 +186,7 @@ export const EditCode = ({
                   <TextArea
                     autoSize={true}
                     style={{
-                      width: '36vw',
+                      width: '36vw'
                     }}
                     autoFocus
                   />

@@ -73,7 +73,6 @@ export function SearchContextRoot() {
     setApiPreferences,
     apiPreferencesCode,
     setApiPreferencesCode,
-    defaultOntologies,
     facetCounts,
     setFacetCounts,
     unformattedPref,
@@ -98,7 +97,7 @@ export function SearchContextRoot() {
     selectedApi,
     setSelectedApi,
     page,
-    setPage,
+    setPage
   };
 
   return (

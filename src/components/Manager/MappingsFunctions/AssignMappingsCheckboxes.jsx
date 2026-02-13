@@ -1,25 +1,24 @@
 import { Checkbox, Form, Input, notification, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, uriEncoded } from '../Utility';
+import { ellipsisString } from '../Utility';
 import { ModalSpinner, ResultsSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { olsFilterOntologiesSearch } from '../FetchManager';
+import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { MappingRelationship } from './MappingRelationship';
 
 // Comment
 export const AssignMappingsCheckboxes = ({
   terminologiesToMap,
-  setTerminologiesToMap,
   selectedBoxes,
   setSelectedBoxes,
   mappingProp,
   form,
   terminology,
   table,
-  loading,
+  loading
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
@@ -42,7 +41,7 @@ export const AssignMappingsCheckboxes = ({
     page,
     setPage,
     preferenceType,
-    prefTypeKey,
+    prefTypeKey
   } = useContext(SearchContext);
 
   const [loadingFilters, setLoadingFilters] = useState(true);
@@ -57,7 +56,7 @@ export const AssignMappingsCheckboxes = ({
   const {
     setSelectedMappings,
     displaySelectedMappings,
-    setDisplaySelectedMappings,
+    setDisplaySelectedMappings
   } = useContext(MappingContext);
 
   let ref = useRef();
@@ -72,50 +71,18 @@ export const AssignMappingsCheckboxes = ({
     setCurrentSearchProp(mappingProp);
     setPage(0);
     if (!!mappingProp) {
-      getCodeFilters();
+      getFiltersByCode(
+        vocabUrl,
+        mappingProp,
+        setApiPreferencesCode,
+        notification,
+        setUnformattedPref,
+        table,
+        terminology,
+        setLoadingFilters
+      );
     }
   }, [mappingProp]);
-
-  const getCodeFilters = () => {
-    setLoadingFilters(true);
-    return fetch(
-      `${vocabUrl}/${terminology ? 'Terminology' : 'Table'}/${
-        terminology ? terminology.id : table.id
-      }/filter/${uriEncoded(mappingProp)}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred loading the ontology preferences.',
-          });
-        }
-      })
-      .then(data => {
-        setUnformattedPref(data);
-
-        const codeToSearch = Object.keys(data)?.[0];
-        const apiPreferences =
-          data[codeToSearch]?.api_preference ?? data[codeToSearch];
-        const updatedPreferences = Object.entries(apiPreferences).reduce(
-          (acc, [key, values]) => {
-            acc[key] = values.map(value => value.toUpperCase());
-            return acc;
-          },
-          {}
-        );
-
-        setApiPreferencesCode(updatedPreferences);
-      });
-  };
 
   const codeToSearch = Object.keys(unformattedPref)?.[0];
   const savedApiPreferences = unformattedPref?.[codeToSearch]?.api_preference;
@@ -191,7 +158,7 @@ export const AssignMappingsCheckboxes = ({
   // Sets the value of the selected_mappings in the form to the checkboxes that are selected
   useEffect(() => {
     form.setFieldsValue({
-      selected_mappings: selectedBoxes,
+      selected_mappings: selectedBoxes
     });
   }, [selectedBoxes, form]);
 
@@ -420,7 +387,7 @@ export const AssignMappingsCheckboxes = ({
   // Then filteres the existing mappings out of the results to only display results that have not yet been selected.
   const getFilteredResults = () => {
     const codesToExclude = new Set([
-      ...displaySelectedMappings?.map(m => m?.code),
+      ...displaySelectedMappings?.map(m => m?.code)
     ]);
     return results?.filter(r => !codesToExclude?.has(r.code));
   };
@@ -509,9 +476,9 @@ export const AssignMappingsCheckboxes = ({
                                       active === term.id
                                         ? 'active_term'
                                         : active !== term.id &&
-                                          active !== 'search'
-                                        ? 'inactive_term'
-                                        : active === 'search' && 'hidden_term'
+                                            active !== 'search'
+                                          ? 'inactive_term'
+                                          : active === 'search' && 'hidden_term'
                                     }
                                     onClick={() => setActive(term.id)}
                                   >
@@ -582,8 +549,8 @@ export const AssignMappingsCheckboxes = ({
                                       valuePropName="value"
                                       rules={[
                                         {
-                                          required: false,
-                                        },
+                                          required: false
+                                        }
                                       ]}
                                     >
                                       {filteredResultsArray?.length > 0 && (
@@ -599,12 +566,12 @@ export const AssignMappingsCheckboxes = ({
                                                     ?.map(d => d)
                                                     .join(','),
                                                   system: d.system,
-                                                  api: d.api,
+                                                  api: d.api
                                                 }),
                                                 label: newSearchDisplay(
                                                   d,
                                                   index
-                                                ),
+                                                )
                                               };
                                             }
                                           )}
@@ -622,8 +589,8 @@ export const AssignMappingsCheckboxes = ({
                                   valuePropName="value"
                                   rules={[
                                     {
-                                      required: false,
-                                    },
+                                      required: false
+                                    }
                                   ]}
                                 >
                                   <Checkbox.Group
@@ -640,9 +607,9 @@ export const AssignMappingsCheckboxes = ({
                                           code: code.code,
                                           display: code.display,
                                           description: code.description,
-                                          system: code.system,
+                                          system: code.system
                                         }),
-                                        label: checkBoxDisplay(code, index),
+                                        label: checkBoxDisplay(code, index)
                                       }))}
                                     onChange={onSelectedChange}
                                   />

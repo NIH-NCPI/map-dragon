@@ -15,7 +15,7 @@ export const EditVariable = ({
   table,
   setTable,
   form,
-  setSelectedKey,
+  setSelectedKey
 }) => {
   const { TextArea } = Input;
   const { vocabUrl, user } = useContext(myContext);
@@ -33,7 +33,7 @@ export const EditVariable = ({
         min: tableData?.min,
         max: tableData?.max,
         units: tableData?.units,
-        enumerations: { reference: tableData?.enumerations?.reference },
+        enumerations: { reference: tableData?.enumerations?.reference }
       });
       setType(tableData.data_type);
     }
@@ -63,8 +63,8 @@ export const EditVariable = ({
     setLoading(true);
     const updatedName = {
       variable: {
-        [`${tableData.name}`]: `${values.name}`,
-      },
+        [`${tableData.name}`]: `${values.name}`
+      }
     };
 
     // If there is a change in the variable name, the name is first sent to the 'rename' endpoint
@@ -75,13 +75,13 @@ export const EditVariable = ({
     if (!table.variables.some(item => item?.name === values?.name)) {
       handlePatch(vocabUrl, 'Table', table, {
         ...updatedName,
-        editor: user.email,
+        editor: user.email
       })
         .catch(error => {
           if (error) {
             notification.error({
               message: 'Error',
-              description: 'An error occurred updating the name.',
+              description: 'An error occurred updating the name.'
             });
           }
           return error;
@@ -92,9 +92,9 @@ export const EditVariable = ({
             {
               method: 'PUT',
               headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ ...values, editor: user.email }),
+              body: JSON.stringify({ ...values, editor: user.email })
             }
           )
             .then(res => {
@@ -123,7 +123,7 @@ export const EditVariable = ({
                 notification.error({
                   message: 'Error',
                   description:
-                    'An error occurred loading mappings. Please try again.',
+                    'An error occurred loading mappings. Please try again.'
                 });
               }
               return error;
@@ -137,9 +137,9 @@ export const EditVariable = ({
         {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ ...values, editor: user.email }),
+          body: JSON.stringify({ ...values, editor: user.email })
         }
       )
         .then(res => {
@@ -168,7 +168,7 @@ export const EditVariable = ({
                 notification.error({
                   message: 'Error',
                   description:
-                    'An error occurred loading mappings. Please try again.',
+                    'An error occurred loading mappings. Please try again.'
                 });
               }
               return error;
@@ -198,7 +198,7 @@ export const EditVariable = ({
             setSelectedKey(null);
           }}
           maskClosable={false}
-          destroyOnClose={true}
+          destroyOnHidden={true}
           cancelButtonProps={{ disabled: loading }}
           okButtonProps={{ disabled: loading }}
           closeIcon={false}
@@ -210,7 +210,7 @@ export const EditVariable = ({
               <Space
                 style={{
                   display: 'flex',
-                  marginBottom: 3,
+                  marginBottom: 3
                 }}
                 align="baseline"
               >
@@ -219,13 +219,13 @@ export const EditVariable = ({
                   label="Variable name"
                   rules={[
                     { required: true, message: 'Variable name is required.' },
-                    { validator: validateUnique },
+                    { validator: validateUnique }
                   ]}
                 >
                   <TextArea
                     autoSize={true}
                     style={{
-                      width: '15vw',
+                      width: '15vw'
                     }}
                     autoFocus
                   />
@@ -236,14 +236,14 @@ export const EditVariable = ({
                   rules={[
                     {
                       required: true,
-                      message: 'Variable description is required.',
-                    },
+                      message: 'Variable description is required.'
+                    }
                   ]}
                 >
                   <TextArea
                     autoSize={true}
                     style={{
-                      width: '39vw',
+                      width: '39vw'
                     }}
                   />
                 </Form.Item>
@@ -253,8 +253,8 @@ export const EditVariable = ({
                   rules={[
                     {
                       required: true,
-                      message: 'Select data type.',
-                    },
+                      message: 'Select data type.'
+                    }
                   ]}
                 >
                   <Select
@@ -269,7 +269,7 @@ export const EditVariable = ({
                       { value: 'STRING', label: 'String' },
                       { value: 'INTEGER', label: 'Integer' },
                       { value: 'QUANTITY', label: 'Quantity' },
-                      { value: 'ENUMERATION', label: 'Enumeration' },
+                      { value: 'ENUMERATION', label: 'Enumeration' }
                     ]}
                   />
                 </Form.Item>

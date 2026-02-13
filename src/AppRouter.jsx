@@ -52,6 +52,7 @@ export const AppRouter = () => {
           <Route path="/ontologies" element={<OntologyInfo />} />
           <Route path="/404" element={<Error404 />} />
           <Route element={<PageLayout />}>
+            <Route path="*" element={<Navigate to="/404" />} />
             <Route element={<SearchContextRoot />}>
               <Route path="/search/:query" element={<SearchResults />} />
 

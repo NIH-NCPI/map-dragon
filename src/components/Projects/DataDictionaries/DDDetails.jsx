@@ -24,7 +24,7 @@ export const DDDetails = () => {
     setEdit,
     dataDictionary,
     setDataDictionary,
-    user,
+    user
   } = useContext(myContext);
   const { studyId, DDId } = useParams();
 
@@ -42,7 +42,7 @@ export const DDDetails = () => {
   Promise.all fulfills all of the fetch calls. The response is set to tablesDD  */
   const getDDTables = async newDD => {
     const tablePromises = newDD?.tables?.map(r =>
-      getById(vocabUrl, 'Table', r.reference.split('/')[1]),
+      getById(vocabUrl, 'Table', r.reference.split('/')[1])
     );
     const data = await Promise.all(tablePromises);
     setTablesDD(data);
@@ -57,7 +57,7 @@ export const DDDetails = () => {
   }, []);
   useEffect(() => {
     setLoading(true);
-    getById(vocabUrl, 'DataDictionary', DDId)
+    getById(vocabUrl, 'DataDictionary', DDId, navigate)
       .then(data => {
         if (data === null) {
           navigate('/404');
@@ -74,7 +74,7 @@ export const DDDetails = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -147,7 +147,7 @@ export const DDDetails = () => {
                     hoverable
                     style={{
                       border: '1px solid darkgray',
-                      height: '350px',
+                      height: '350px'
                     }}
                   >
                     <div className="new_study_card_container">
@@ -170,16 +170,8 @@ export const DDDetails = () => {
                       title={table?.name ? table?.name : table?.id}
                       style={{
                         border: '1px solid darkgray',
-                        height: '350px',
+                        height: '350px'
                       }}
-                      actions={[
-                        // Button to remove a table from a DD
-                        <RemoveTableDD
-                          DDId={DDId}
-                          table={table}
-                          getDDTables={getDDTables}
-                        />,
-                      ]}
                     >
                       {/* Displays the description up to 180 characters, truncated with ellipsis. */}
 
@@ -188,7 +180,7 @@ export const DDDetails = () => {
                           height: '125px',
                           border: '1px lightgray solid',
                           borderRadius: '5px',
-                          padding: '5px',
+                          padding: '5px'
                         }}
                         description={
                           <div style={{ height: '115px', overflowY: 'auto' }}>
@@ -201,10 +193,21 @@ export const DDDetails = () => {
                       <Meta
                         style={{
                           padding: '0 5px',
-                          margin: '22px 0 0 0',
+                          margin: '22px 0 0 0'
                         }}
                         description={
-                          '# of variables: ' + table?.variables.length
+                          <div className="card_description">
+                            <div>
+                              {'# of variables: ' + table?.variables.length}
+                            </div>
+                            <div>
+                              <RemoveTableDD
+                                DDId={DDId}
+                                table={table}
+                                getDDTables={getDDTables}
+                              />
+                            </div>
+                          </div>
                         }
                       />
                     </Card>

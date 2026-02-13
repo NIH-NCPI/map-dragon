@@ -42,7 +42,7 @@ export const StudyDetails = () => {
   // If a study was fetched, calls the getStudyDDs function to fetch the DDs
   // otherwise, sets loading to false.
   useEffect(() => {
-    getById(vocabUrl, 'Study', studyId)
+    getById(vocabUrl, 'Study', studyId, navigate)
       .then(data => {
         if (data === null) {
           navigate('/404');
@@ -164,15 +164,6 @@ export const StudyDetails = () => {
                         border: '1px solid darkgray',
                         height: '350px',
                       }}
-                      extra={[
-                        <div className="card_description">
-                          <RemoveStudyDD
-                            studyId={studyId}
-                            dd={dd}
-                            getStudyDDs={getStudyDDs}
-                          />
-                        </div>,
-                      ]}
                     >
                       {/* Displays the description up to 180 characters, truncated with ellipsis. */}
 
@@ -196,7 +187,18 @@ export const StudyDetails = () => {
                           padding: '0 5px',
                           margin: '22px 0 0 0',
                         }}
-                        description={'# of Tables: ' + dd?.tables.length}
+                        description={
+                          <div className="card_description">
+                            <div>{'# of Tables: ' + dd?.tables.length}</div>
+                            <div>
+                              <RemoveStudyDD
+                                studyId={studyId}
+                                dd={dd}
+                                getStudyDDs={getStudyDDs}
+                              />
+                            </div>
+                          </div>
+                        }
                       />
                     </Card>
                   </Link>

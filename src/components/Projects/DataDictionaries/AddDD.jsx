@@ -67,7 +67,7 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
         setAddDD(false);
       }}
       maskClosable={false}
-      destroyOnClose={true}
+      destroyOnHidden={true}
       cancelButtonProps={{ disabled: loading }}
       okButtonProps={{ disabled: loading }}
       closeIcon={false}
