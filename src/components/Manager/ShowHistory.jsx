@@ -97,7 +97,7 @@ export const ShowHistory = ({
 
         const formattedDate = `${date}T${hour}:${minute}:${second.slice(
           0,
-          2
+          2,
         )}.000Z`;
 
         return {
@@ -128,7 +128,7 @@ export const ShowHistory = ({
         width={'70%'}
         onOk={handleOk}
         closable={false}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         maskClosable={true}
         footer={[
           <Button type="primary" onClick={handleOk}>

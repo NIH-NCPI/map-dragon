@@ -28,22 +28,24 @@ export const TerminologyList = () => {
   const inputRef = useRef(null);
 
   useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
-    getAll(vocabUrl, 'Terminology', navigate)
+    getAll(vocabUrl, 'Terminology', navigate, controller.signal)
       .then(data => {
         setTerms(data);
       })
       .catch(error => {
-        if (error) {
+        if (error?.name !== 'AbortError') {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading terminologies.',
+            description: 'An error occurred loading terminologies.'
           });
         }
         return error;
       })
       .finally(() => setLoading(false));
     localStorage.setItem('pageSize', pageSize);
+    return () => controller.abort();
   }, [pageSize]);
 
   const terminologyTitle = () => {
@@ -73,7 +75,7 @@ export const TerminologyList = () => {
         setSelectedKeys,
         selectedKeys,
         confirm,
-        clearFilters,
+        clearFilters
       }) => (
         <div style={{ padding: 8 }}>
           <Input
@@ -124,17 +126,17 @@ export const TerminologyList = () => {
           }, 100); // Small delay to ensure input is rendered
         }
       },
-      width: 400,
+      width: 400
     },
     {
       title: 'Description',
-      dataIndex: 'description',
+      dataIndex: 'description'
     },
     {
       title: '',
       dataIndex: 'delete_column',
-      width: 10,
-    },
+      width: 10
+    }
   ];
 
   const dataSource = terms.map((item, i) => ({
@@ -148,7 +150,7 @@ export const TerminologyList = () => {
           setDeleteId(item.id);
         }}
       />
-    ),
+    )
   }));
 
   return loading ? (
@@ -167,7 +169,7 @@ export const TerminologyList = () => {
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '30'],
             pageSize: pageSize, // Use the stored pageSize
-            onChange: handleTableChange, // Capture pagination changes
+            onChange: handleTableChange // Capture pagination changes
           }}
         />
       </div>

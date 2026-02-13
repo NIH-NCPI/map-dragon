@@ -3,19 +3,9 @@ import { myContext } from '../../../App';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 const { Meta } = Card;
-import {
-  Row,
-  Col,
-  Divider,
-  Skeleton,
-  Card,
-  notification,
-  Form,
-  Button,
-} from 'antd';
+import { Row, Col, Divider, Card, notification, Form } from 'antd';
 import './DDStyling.scss';
 import { getById } from '../../Manager/FetchManager';
-import { ellipsisString } from '../../Manager/Utility';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { EditDDDetails } from './EditDDDetails';
 import { UploadTable } from '../Tables/UploadTable';
@@ -34,7 +24,7 @@ export const DDDetails = () => {
     setEdit,
     dataDictionary,
     setDataDictionary,
-    user,
+    user
   } = useContext(myContext);
   const { studyId, DDId } = useParams();
 
@@ -67,7 +57,7 @@ export const DDDetails = () => {
   }, []);
   useEffect(() => {
     setLoading(true);
-    getById(vocabUrl, 'DataDictionary', DDId)
+    getById(vocabUrl, 'DataDictionary', DDId, navigate)
       .then(data => {
         if (data === null) {
           navigate('/404');
@@ -84,7 +74,7 @@ export const DDDetails = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -155,10 +145,9 @@ export const DDDetails = () => {
                 <span onClick={() => (user ? setAddTable(true) : login())}>
                   <Card
                     hoverable
-                    bordered={true}
                     style={{
                       border: '1px solid darkgray',
-                      height: '42vh',
+                      height: '350px'
                     }}
                   >
                     <div className="new_study_card_container">
@@ -172,56 +161,57 @@ export const DDDetails = () => {
                 <Col key={index} span={6}>
                   {/* Displays the name if one is available or the id if there is no name.
                   Links to view the details of the table via the 'View/Edit' button. */}
-                  <Card
-                    key={index}
-                    title={table?.name ? table?.name : table?.id}
-                    bordered={true}
-                    style={{
-                      border: '1px solid darkgray',
-                      height: '42vh',
-                    }}
-                    actions={[
-                      // Button to remove a table from a DD
-                      <RemoveTableDD
-                        DDId={DDId}
-                        table={table}
-                        getDDTables={getDDTables}
-                      />,
-                      <Link
-                        to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${table?.id}`}
-                      >
-                        <button className="manage_term_button">
-                          View / Edit
-                        </button>
-                        ,
-                      </Link>,
-                    ]}
+                  <Link
+                    to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${table?.id}`}
                   >
-                    <Skeleton loading={loading}>
+                    <Card
+                      key={index}
+                      hoverable
+                      title={table?.name ? table?.name : table?.id}
+                      style={{
+                        border: '1px solid darkgray',
+                        height: '350px'
+                      }}
+                    >
                       {/* Displays the description up to 180 characters, truncated with ellipsis. */}
 
                       <Meta
                         style={{
-                          height: '15vh',
+                          height: '125px',
                           border: '1px lightgray solid',
                           borderRadius: '5px',
-                          padding: '5px',
+                          padding: '5px'
                         }}
-                        description={ellipsisString(table?.description, '180')}
+                        description={
+                          <div style={{ height: '115px', overflowY: 'auto' }}>
+                            {table?.description}
+                          </div>
+                        }
                       />
                       {/* Displays the number of variables associated with the table
                        by getting the length of the variables array in the table */}
                       <Meta
                         style={{
                           padding: '0 5px',
-                          margin: '3vh 0 0 0',
+                          margin: '22px 0 0 0'
                         }}
                         description={
-                          '# of variables: ' + table?.variables.length
+                          <div className="card_description">
+                            <div>
+                              {'# of variables: ' + table?.variables.length}
+                            </div>
+                            <div>
+                              <RemoveTableDD
+                                DDId={DDId}
+                                table={table}
+                                getDDTables={getDDTables}
+                              />
+                            </div>
+                          </div>
                         }
                       />
-                    </Skeleton>
-                  </Card>
+                    </Card>
+                  </Link>
                 </Col>
               ))}
             </Row>

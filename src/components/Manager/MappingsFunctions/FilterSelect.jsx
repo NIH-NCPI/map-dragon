@@ -29,7 +29,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
     preferenceType,
     prefTypeKey,
     searchText,
-    setSearchText,
+    setSearchText
   } = useContext(SearchContext);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
       Object.keys(item).map(key =>
         item[key].map(value => ({
           api: key,
-          ontology: value,
+          ontology: value
         }))
       )
     )
@@ -107,7 +107,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setLoading(true);
     const apiPreferenceDTO = {
       api_preference: {},
-      editor: user?.email,
+      editor: user?.email
     };
 
     Object.keys(existingOntologies).forEach(api => {
@@ -121,7 +121,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
       // If the api already exists, merge with the existing ones
       if (apiPreferenceDTO.api_preference[api]) {
         apiPreferenceDTO.api_preference[api] = [
-          ...new Set([...apiPreferenceDTO.api_preference[api], ontology_code]),
+          ...new Set([...apiPreferenceDTO.api_preference[api], ontology_code])
         ];
       } else {
         // Otherwise, create a new entry for that api
@@ -142,9 +142,9 @@ export const FilterSelect = ({ component, table, terminology }) => {
       {
         method: method,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(apiPreferenceDTO),
+        body: JSON.stringify(apiPreferenceDTO)
       }
     )
       .then(res => {
@@ -154,28 +154,10 @@ export const FilterSelect = ({ component, table, terminology }) => {
           throw new Error('An unknown error occurred.');
         }
       })
-      .then(() =>
-        fetch(
-          `${vocabUrl}/${(component = table
-            ? `Table/${table.id}/filter/self`
-            : `Terminology/${terminology.id}/filter`)}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        )
-      )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
       .then(data => {
-        preferenceTypeSet(data);
+        preferenceTypeSet({
+          self: { api_preference: data?.onto_api_preference }
+        });
         form.resetFields();
         setAddFilter(false);
         message.success('Preferred ontologies saved successfully.');
@@ -184,7 +166,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the ontology preferences.',
+            description: 'An error occurred saving the ontology preferences.'
           });
         }
         return error;
@@ -214,7 +196,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
         const filteredOntologies = Object.values(ontologiesObject)
           .map(po => ({
             ...po,
-            api: ontologyForPagination?.[0]?.api_id,
+            api: ontologyForPagination?.[0]?.api_id
           }))
           .filter(obj => {
             return !ontologiesToExclude.has(obj.ontology_code);
@@ -242,7 +224,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
         onClick={() => (user ? setAddFilter(true) : login())}
         type="primary"
         style={{
-          marginBottom: 16,
+          marginBottom: 16
         }}
       >
         API Filters {apiPrefObject ? `(${apiPrefLength})` : ''}
@@ -254,8 +236,8 @@ export const FilterSelect = ({ component, table, terminology }) => {
           styles={{
             body: {
               minHeight: '60vh',
-              maxHeight: '60vh',
-            },
+              maxHeight: '60vh'
+            }
           }}
           onOk={() => {
             form.validateFields().then(values => {

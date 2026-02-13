@@ -65,7 +65,7 @@ export const EditDDDetails = ({
         }}
         maskClosable={false}
         closeIcon={false}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
       >

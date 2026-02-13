@@ -8,7 +8,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import {
   getFiltersByCode,
   olsFilterOntologiesSearch,
-  ontologyFilterCodeSubmit,
+  ontologyFilterCodeSubmit
 } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 
@@ -24,7 +24,7 @@ export const GetMappingsModal = ({
   mappingProp,
   mappingDesc,
   table,
-  terminology,
+  terminology
 }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
@@ -47,7 +47,7 @@ export const GetMappingsModal = ({
     selectedApi,
     setSelectedApi,
     page,
-    setPage,
+    setPage
   } = useContext(SearchContext);
   const [loading, setLoading] = useState(true);
   const [loadingResults, setLoadingResults] = useState(false);
@@ -63,7 +63,7 @@ export const GetMappingsModal = ({
     setDisplaySelectedMappings,
     selectedBoxes,
     setSelectedBoxes,
-    idsForSelect,
+    idsForSelect
   } = useContext(MappingContext);
   let ref = useRef();
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
@@ -129,7 +129,7 @@ export const GetMappingsModal = ({
   // Sets the value of the selected_mappings in the form to the checkboxes that are selected
   useEffect(() => {
     form.setFieldsValue({
-      selected_mappings: selectedBoxes,
+      selected_mappings: selectedBoxes
     });
   }, [selectedBoxes, form]);
 
@@ -173,12 +173,12 @@ export const GetMappingsModal = ({
         ? item?.description?.map(item => item).join(',')
         : item?.description,
       system: item?.system,
-      mapping_relationship: idsForSelect[item.code],
+      mapping_relationship: idsForSelect[item.code]
     }));
 
     const mappingsDTO = {
       mappings: selectedMappings,
-      editor: user.email,
+      editor: user.email
     };
 
     setLoadingResults(true);
@@ -189,9 +189,9 @@ export const GetMappingsModal = ({
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -215,7 +215,7 @@ export const GetMappingsModal = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the mapping.',
+            description: 'An error occurred saving the mapping.'
           });
         }
         return error;
@@ -236,7 +236,7 @@ export const GetMappingsModal = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the ontology preferences.',
+            description: 'An error occurred saving the ontology preferences.'
           });
         }
         return error;
@@ -441,7 +441,7 @@ export const GetMappingsModal = ({
   // Then filteres the existing mappings out of the results to only display results that have not yet been selected.
   const getFilteredResults = () => {
     const codesToExclude = new Set([
-      ...displaySelectedMappings?.map(m => m?.code),
+      ...displaySelectedMappings?.map(m => m?.code)
     ]);
     return results?.filter(r => !codesToExclude?.has(r.code));
   };
@@ -481,7 +481,7 @@ export const GetMappingsModal = ({
           setSelectedBoxes([]);
         }}
         maskClosable={false}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
       >
@@ -543,8 +543,8 @@ export const GetMappingsModal = ({
                                   valuePropName="value"
                                   rules={[
                                     {
-                                      required: false,
-                                    },
+                                      required: false
+                                    }
                                   ]}
                                 >
                                   {filteredResultsArray?.length > 0 ? (
@@ -559,9 +559,9 @@ export const GetMappingsModal = ({
                                               description: d.description
                                                 ?.map(d => d)
                                                 .join(','),
-                                              system: d?.system,
+                                              system: d?.system
                                             }),
-                                            label: checkBoxDisplay(d, index),
+                                            label: checkBoxDisplay(d, index)
                                           };
                                         }
                                       )}

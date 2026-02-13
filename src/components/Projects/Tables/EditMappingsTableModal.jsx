@@ -15,7 +15,7 @@ export const EditMappingsTableModal = ({
   setEditMappings,
   tableId,
   setMapping,
-  table,
+  table
 }) => {
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
@@ -32,16 +32,16 @@ export const EditMappingsTableModal = ({
     setDisplaySelectedMappings,
     setShowOptions,
     idsForSelect,
+    setIdsForSelect,
     existingMappings,
-    selectedBoxes,
+    selectedBoxes
   } = useContext(MappingContext);
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
     preferenceType,
     prefTypeKey,
-    ontologyApis,
-    setSelectedApi,
+    setSelectedApi
   } = useContext(SearchContext);
 
   useEffect(() => {
@@ -71,8 +71,8 @@ export const EditMappingsTableModal = ({
         {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       )
         .then(res => {
@@ -102,7 +102,7 @@ export const EditMappingsTableModal = ({
               ftd_code: m.ftd_code,
               display: m.display,
               description: m.description,
-              system: m?.system,
+              system: m?.system
             });
 
             mappings.push(val); // For each mapping in the mappings array, push the stringified object above to the mappings array.
@@ -116,7 +116,7 @@ export const EditMappingsTableModal = ({
                   index={index}
                   variable={editMappings?.name}
                 />
-              ),
+              )
             });
           });
           // termMappings are set to the mappings array. Options are set to the options array.
@@ -127,7 +127,7 @@ export const EditMappingsTableModal = ({
           if (error) {
             notification.error({
               message: 'Error',
-              description: 'An error occurred. Please try again.',
+              description: 'An error occurred. Please try again.'
             });
           }
           return error;
@@ -152,7 +152,7 @@ export const EditMappingsTableModal = ({
 
           return parsedMapping;
         }) ?? [],
-      editor: user.email,
+      editor: user.email
     };
 
     fetch(
@@ -163,9 +163,9 @@ export const EditMappingsTableModal = ({
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -185,7 +185,7 @@ export const EditMappingsTableModal = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -204,7 +204,7 @@ export const EditMappingsTableModal = ({
       display: item.display,
       description: item.description,
       system: item?.system,
-      mapping_relationship: idsForSelect[item.code],
+      mapping_relationship: idsForSelect[item.code]
     }));
 
     const preexistingMappings = existingMappings?.map(item => ({
@@ -212,12 +212,12 @@ export const EditMappingsTableModal = ({
       display: item.display,
       description: item.description,
       system: item?.system,
-      mapping_relationship: idsForSelect[item.code],
+      mapping_relationship: idsForSelect[item.code]
     }));
 
     const mappingsDTO = {
       mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
-      editor: user.email,
+      editor: user.email
     };
 
     fetch(
@@ -228,9 +228,9 @@ export const EditMappingsTableModal = ({
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -250,7 +250,7 @@ export const EditMappingsTableModal = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -271,7 +271,7 @@ export const EditMappingsTableModal = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the ontology preferences.',
+            description: 'An error occurred saving the ontology preferences.'
           });
         }
         return error;
@@ -306,6 +306,7 @@ export const EditMappingsTableModal = ({
         form.resetFields();
         setSelectedMappings([]);
         setDisplaySelectedMappings([]);
+        setIdsForSelect([]);
         reset &&
           getById(vocabUrl, 'Table', `${tableId}/mapping`).then(data =>
             setMapping(data.codes)
@@ -313,7 +314,7 @@ export const EditMappingsTableModal = ({
       }}
       closeIcon={false}
       maskClosable={false}
-      destroyOnClose={true}
+      destroyOnHidden={true}
       footer={(_, { OkBtn, CancelBtn }) => (
         <>
           <div className={!reset ? 'footer_buttons' : 'save_button_only'}>

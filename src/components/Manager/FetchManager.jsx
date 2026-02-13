@@ -1,12 +1,13 @@
 import { uriEncoded } from './Utility';
 
 // Fetches all elements at an endpoint
-export const getAll = (vocabUrl, name, navigate) => {
+export const getAll = (vocabUrl, name, navigate, signal) => {
   return fetch(`${vocabUrl}/${name}`, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
+    signal
   }).then(res => {
     if (res.ok) {
       return res.json();
@@ -25,8 +26,8 @@ export const getById = async (vocabUrl, name, id, navigate) => {
   return fetch(`${vocabUrl}/${name}/${id}`, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
-    },
+      'Content-Type': 'application/json'
+    }
   })
     .then(res => {
       if (res.ok) {
@@ -50,7 +51,7 @@ export const handleDelete = (evt, vocabUrl, name, component, user) => {
 
   if (name === 'Table' || name === 'Terminology') {
     options.headers = {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     };
     options.body = JSON.stringify({ editor: user.email });
   }
@@ -83,9 +84,9 @@ export const handleUpdate = (vocabUrl, name, component, values) => {
   return fetch(`${vocabUrl}/${name}/${component.id}`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(values),
+    body: JSON.stringify(values)
   }).then(res => {
     if (res.ok) {
       return res.json();
@@ -102,9 +103,9 @@ export const handlePost = (vocabUrl, name, body) => {
   return fetch(`${vocabUrl}/${name}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   }).then(res => {
     if (res.ok) {
       return res.json();
@@ -120,9 +121,9 @@ export const handlePatch = (vocabUrl, name, component, body) => {
   return fetch(`${vocabUrl}/${name}/${component.id}/rename`, {
     method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   }).then(res => {
     if (res.ok) {
       return res.json();
@@ -140,8 +141,8 @@ export const getProvenanceByCode = async (vocabUrl, name, id, code) => {
     {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     }
   ).then(res => {
     if (res.ok) {
@@ -158,8 +159,8 @@ export const getOntologies = vocabUrl => {
   return fetch(`${vocabUrl}/OntologyAPI`, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
-    },
+      'Content-Type': 'application/json'
+    }
   }).then(res => {
     if (res.ok) {
       return res.json();
@@ -196,8 +197,8 @@ export const olsFilterOntologiesSearch = (
     {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     }
   )
     .then(res => {
@@ -206,7 +207,7 @@ export const olsFilterOntologiesSearch = (
       } else {
         notification.error({
           message: 'Error',
-          description: `An error occurred searching for ${query}.`,
+          description: `An error occurred searching for ${query}.`
         });
       }
     })
@@ -224,7 +225,7 @@ export const olsFilterOntologiesSearch = (
       }
       const addedApi = data?.results.map(result => ({
         ...result,
-        api: apiToSearch,
+        api: apiToSearch
       }));
       setResults(addedApi);
       setMoreAvailable(data.more_results_available);
@@ -242,8 +243,7 @@ export const getFiltersByCode = (
   setUnformattedPref,
   table,
   terminology,
-  setLoading,
-  optionalTableParam
+  setLoading
 ) => {
   setLoading(true);
   return fetch(
@@ -255,8 +255,8 @@ export const getFiltersByCode = (
     {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     }
   )
     .then(res => {
@@ -265,7 +265,7 @@ export const getFiltersByCode = (
       } else {
         notification.error({
           message: 'Error',
-          description: 'An error occurred loading the ontology preferences.',
+          description: 'An error occurred loading the ontology preferences.'
         });
       }
     })
@@ -312,7 +312,7 @@ export const ontologyFilterCodeSubmit = (
     fetch(fetchUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(apiPreference),
+      body: JSON.stringify(apiPreference)
     })
       .then(res => {
         if (res.ok) {
@@ -325,7 +325,7 @@ export const ontologyFilterCodeSubmit = (
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the ontology preferences.',
+            description: 'An error occurred saving the ontology preferences.'
           });
         }
       });
@@ -335,8 +335,8 @@ export const getDefaultOntologies = async vocabUrl => {
   return fetch(`${vocabUrl}/user/preferences/ontologies`, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
-    },
+      'Content-Type': 'application/json'
+    }
   }).then(res => {
     if (res.ok) {
       return res.json();

@@ -28,7 +28,7 @@ $navHeight: 115px;
   transform: translateY(4px);
 }
 
-@mixin manage_term_button($padding: 1vh 2.5vh) {
+@mixin manage_term_button($padding: 8px 20px) {
   border: 2px solid $yellowColor;
   color: white;
   font-weight: 600;

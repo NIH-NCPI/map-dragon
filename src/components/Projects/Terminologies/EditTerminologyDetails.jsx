@@ -56,7 +56,7 @@ export const EditTerminologyDetails = ({
         }}
         maskClosable={false}
         closeIcon={false}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
       >

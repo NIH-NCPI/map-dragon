@@ -3,10 +3,9 @@ import { myContext } from '../../../App';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from '../../Manager/Spinner';
 import './StudyStyling.scss';
-import { getById, handleUpdate } from '../../Manager/FetchManager';
-import { Row, Col, Divider, Skeleton, Card, Form, notification } from 'antd';
+import { getById } from '../../Manager/FetchManager';
+import { Row, Col, Divider, Card, Form, notification } from 'antd';
 
-import { ellipsisString } from '../../Manager/Utility';
 import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
 import { AddDD } from '../DataDictionaries/AddDD';
@@ -32,7 +31,7 @@ export const StudyDetails = () => {
   Promise.all fulfills all of the fetch calls. The response is set to studyDDs  */
   const getStudyDDs = async newStudy => {
     const dDPromises = newStudy?.datadictionary?.map(r =>
-      getById(vocabUrl, 'DataDictionary', r.reference.split('/')[1])
+      getById(vocabUrl, 'DataDictionary', r.reference.split('/')[1]),
     );
     const data = await Promise.all(dDPromises);
     setStudyDDs(data);
@@ -43,7 +42,7 @@ export const StudyDetails = () => {
   // If a study was fetched, calls the getStudyDDs function to fetch the DDs
   // otherwise, sets loading to false.
   useEffect(() => {
-    getById(vocabUrl, 'Study', studyId)
+    getById(vocabUrl, 'Study', studyId, navigate)
       .then(data => {
         if (data === null) {
           navigate('/404');
@@ -138,10 +137,9 @@ export const StudyDetails = () => {
                 <span onClick={() => setAddDD(true)}>
                   <Card
                     hoverable
-                    bordered={true}
                     style={{
                       border: '1px solid darkgray',
-                      height: '42vh',
+                      height: '350px',
                     }}
                   >
                     <div className="new_study_card_container">
@@ -157,52 +155,53 @@ export const StudyDetails = () => {
                 <Col span={6} key={index}>
                   {/* Displays the name if one is available or the id if there is no name.
                   Links to view the details of the DD via the 'View/Edit' button. */}
-
-                  <Card
-                    key={index}
-                    title={dd?.name ? dd?.name : dd?.id}
-                    bordered={true}
-                    style={{
-                      border: '1px solid darkgray',
-                      height: '42vh',
-                    }}
-                    actions={[
-                      <RemoveStudyDD
-                        studyId={studyId}
-                        dd={dd}
-                        getStudyDDs={getStudyDDs}
-                      />,
-                      <Link to={`/Study/${studyId}/DataDictionary/${dd?.id}`}>
-                        <button className="manage_term_button">
-                          View / Edit
-                        </button>
-                        ,
-                      </Link>,
-                    ]}
-                  >
-                    <Skeleton loading={loading}>
+                  <Link to={`/Study/${studyId}/DataDictionary/${dd?.id}`}>
+                    <Card
+                      key={index}
+                      hoverable
+                      title={dd?.name ? dd?.name : dd?.id}
+                      style={{
+                        border: '1px solid darkgray',
+                        height: '350px',
+                      }}
+                    >
                       {/* Displays the description up to 180 characters, truncated with ellipsis. */}
 
                       <Meta
                         style={{
-                          height: '15vh',
+                          height: '125px',
                           border: '1px lightgray solid',
                           borderRadius: '5px',
                           padding: '5px',
                         }}
-                        description={ellipsisString(dd?.description, '180')}
+                        description={
+                          <div style={{ height: '115px', overflowY: 'auto' }}>
+                            {dd?.description}
+                          </div>
+                        }
                       />
                       {/* Displays the number of tables associated with the DD by getting the length of the tables array in the DD */}
 
                       <Meta
                         style={{
                           padding: '0 5px',
-                          margin: '3vh 0 0 0',
+                          margin: '22px 0 0 0',
                         }}
-                        description={'# of Tables: ' + dd?.tables.length}
+                        description={
+                          <div className="card_description">
+                            <div>{'# of Tables: ' + dd?.tables.length}</div>
+                            <div>
+                              <RemoveStudyDD
+                                studyId={studyId}
+                                dd={dd}
+                                getStudyDDs={getStudyDDs}
+                              />
+                            </div>
+                          </div>
+                        }
                       />
-                    </Skeleton>
-                  </Card>
+                    </Card>
+                  </Link>
                 </Col>
               ))}
             </Row>

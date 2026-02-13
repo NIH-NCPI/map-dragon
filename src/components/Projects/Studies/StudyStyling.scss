@@ -18,6 +18,13 @@
   padding: 8px;
 }
 
+.card_description {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .study_name {
   margin: 0 0 20px 0;
 }
