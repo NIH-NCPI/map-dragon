@@ -1,4 +1,4 @@
-import { notification, message, Button, Modal } from 'antd';
+import { Button, message, Modal, notification } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { useContext, useState } from 'react';
@@ -79,7 +79,13 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
 
   return (
     <>
-      <Button danger onClick={() => (user ? setRemove(true) : login())}>
+      <Button
+        danger
+        onClick={e => {
+          e.preventDefault();
+          user ? setRemove(true) : login();
+        }}
+      >
         Remove
       </Button>
       {remove && showConfirm()}

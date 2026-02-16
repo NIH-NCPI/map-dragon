@@ -6,7 +6,7 @@ import { myContext } from '../../App';
 
 const rootBreadcrumbs = {
   Study: 'Studies',
-  Terminology: 'Terminologies',
+  Terminology: 'Terminologies'
 };
 
 export const Breadcrumbs = () => {
@@ -30,12 +30,12 @@ export const Breadcrumbs = () => {
         for (let i = 0; i < pathArr.length; i += 2) {
           if (i + 1 < pathArr.length) {
             promises.push(
-              getById(vocabUrl, pathArr[i].path, pathArr[i + 1].path, {
-                signal: controller.signal,
+              getById(vocabUrl, pathArr[i].path, pathArr[i + 1].path, null, {
+                signal: controller.signal
               }).then(result => {
                 pathArr[i + 1] = {
                   path: pathArr[i].path + '/' + result.id,
-                  title: result.name,
+                  title: result.name
                 };
               })
             );

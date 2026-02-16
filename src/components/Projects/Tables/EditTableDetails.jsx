@@ -62,7 +62,7 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
         okButtonProps={{ disabled: loading }}
         maskClosable={false}
         closeIcon={false}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         {loading ? (
           <ModalSpinner />

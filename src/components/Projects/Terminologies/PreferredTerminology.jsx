@@ -13,7 +13,7 @@ export const PreferredTerminology = ({
   setTerminology,
   table,
   setTable,
-  componentString,
+  componentString
 }) => {
   const [form] = Form.useForm();
   const { vocabUrl, user } = useContext(myContext);
@@ -21,7 +21,7 @@ export const PreferredTerminology = ({
     setPrefTerminologies,
     prefTerminologies,
     preferredData,
-    setPreferredData,
+    setPreferredData
   } = useContext(SearchContext);
 
   const [open, setOpen] = useState(false);
@@ -56,7 +56,7 @@ export const PreferredTerminology = ({
   // Sets the value of the selected_terminologies in the form to the checkboxes that are selected
   useEffect(() => {
     form.setFieldsValue({
-      selected_terminologies: selectedBoxes,
+      selected_terminologies: selectedBoxes
     });
   }, [selectedBoxes, form]);
 
@@ -66,14 +66,14 @@ export const PreferredTerminology = ({
     const preferredTerminologies = [
       ...(values.existing_terminologies?.map(v => JSON.parse(v)) ?? []),
       ...(values?.selected_terminologies?.map(item => ({
-        preferred_terminology: item.id,
-      })) ?? []),
+        preferred_terminology: item.id
+      })) ?? [])
     ];
 
     const preferredTermDTO = () => {
       return {
         'editor': user.email,
-        'preferred_terminologies': preferredTerminologies,
+        'preferred_terminologies': preferredTerminologies
       };
     };
 
@@ -84,9 +84,9 @@ export const PreferredTerminology = ({
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(preferredTermDTO()),
+        body: JSON.stringify(preferredTermDTO())
       }
     )
       .then(res => {
@@ -104,8 +104,8 @@ export const PreferredTerminology = ({
           {
             method: 'GET',
             headers: {
-              'Content-Type': 'application/json',
-            },
+              'Content-Type': 'application/json'
+            }
           }
         )
       )
@@ -126,7 +126,7 @@ export const PreferredTerminology = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the preferred terminology.',
+            description: 'An error occurred saving the preferred terminology.'
           });
         }
         return error;
@@ -142,7 +142,7 @@ export const PreferredTerminology = ({
             if (error) {
               notification.error({
                 message: 'Error',
-                description: 'An error occurred loading the Terminology.',
+                description: 'An error occurred loading the Terminology.'
               });
             }
             return error;
@@ -166,7 +166,7 @@ export const PreferredTerminology = ({
     const terminologiesToExclude = new Set([
       ...prefTerminologies?.map(pt => `${pt?.name}|${pt?.url}`),
       ...displaySelectedTerminologies?.map(dst => `${dst?.name}|${dst?.url}`),
-      ...preferredData?.map(ep => `${ep?.name}|${ep?.url}`),
+      ...preferredData?.map(ep => `${ep?.name}|${ep?.url}`)
     ]);
 
     return terminologies.filter(
@@ -206,7 +206,7 @@ export const PreferredTerminology = ({
           onClick={() => (user ? setOpen(true) : login())}
           type="primary"
           style={{
-            marginBottom: 16,
+            marginBottom: 16
           }}
         >
           Select Terminology ({prefTerminologies?.length})
@@ -229,15 +229,15 @@ export const PreferredTerminology = ({
         }}
         closeIcon={false}
         maskClosable={false}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
         styles={{
           body: {
             minHeight: '60vh',
             maxHeight: '60vh',
-            overflowY: 'auto',
-          },
+            overflowY: 'auto'
+          }
         }}
         footer={(_, { OkBtn, CancelBtn }) => (
           <>

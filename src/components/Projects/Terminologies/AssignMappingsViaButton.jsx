@@ -12,7 +12,7 @@ export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
   setAssignMappingsViaButton,
   terminology,
-  table,
+  table
 }) => {
   const [form] = Form.useForm();
 
@@ -22,7 +22,7 @@ export const AssignMappingsViaButton = ({
     setApiResults,
     preferenceType,
     prefTypeKey,
-    apiPreferencesCode,
+    apiPreferencesCode
   } = useContext(SearchContext);
   const { setMapping, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
@@ -50,7 +50,7 @@ export const AssignMappingsViaButton = ({
       .catch(error => {
         notification.error({
           message: 'Error',
-          description: 'An error occurred. Please try again.',
+          description: 'An error occurred. Please try again.'
         });
       })
       .finally(() => setLoading(false));
@@ -69,11 +69,11 @@ export const AssignMappingsViaButton = ({
         ? item.description?.map(d => d).join(',')
         : item.description,
       system: item.system,
-      mapping_relationship: idsForSelect[item.code],
+      mapping_relationship: idsForSelect[item.code]
     }));
     const mappingsDTO = {
       mappings: selectedMappings,
-      editor: user.email,
+      editor: user.email
     };
 
     fetch(
@@ -85,9 +85,9 @@ export const AssignMappingsViaButton = ({
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -119,7 +119,7 @@ export const AssignMappingsViaButton = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the ontology preferences.',
+            description: 'An error occurred saving the ontology preferences.'
           });
         }
         return error;
@@ -146,12 +146,12 @@ export const AssignMappingsViaButton = ({
         body: {
           minHeight: '55vh',
           maxHeight: '55vh',
-          overflowY: 'auto',
-        },
+          overflowY: 'auto'
+        }
       }}
       closeIcon={false}
       maskClosable={false}
-      destroyOnClose={true}
+      destroyOnHidden={true}
       cancelButtonProps={{ disabled: loading }}
       okButtonProps={{ disabled: loading }}
     >

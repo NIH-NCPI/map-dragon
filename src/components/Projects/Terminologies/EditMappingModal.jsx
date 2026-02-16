@@ -5,7 +5,7 @@ import {
   message,
   Modal,
   notification,
-  Tooltip,
+  Tooltip
 } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
@@ -24,20 +24,24 @@ export const EditMappingsModal = ({
   terminologyId,
   setMapping,
   mappingDesc,
-  terminology,
+  terminology
 }) => {
   const [form] = Form.useForm();
   const [termMappings, setTermMappings] = useState([]);
   const [options, setOptions] = useState([]);
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
-  const { setShowOptions, idsForSelect, selectedBoxes, existingMappings } =
-    useContext(MappingContext);
+  const {
+    setShowOptions,
+    idsForSelect,
+    setIdsForSelect,
+    selectedBoxes,
+    existingMappings
+  } = useContext(MappingContext);
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
     preferenceType,
-    prefTypeKey,
-    ontologyApis,
+    prefTypeKey
   } = useContext(SearchContext);
   const [loading, setLoading] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
@@ -70,8 +74,8 @@ export const EditMappingsModal = ({
         {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       )
         .then(res => {
@@ -101,7 +105,7 @@ export const EditMappingsModal = ({
               ftd_code: m.ftd_code,
               display: m.display,
               description: m.description,
-              system: m?.system,
+              system: m?.system
             });
 
             mappings.push(val); // For each mapping in the mappings array, push the stringified object above to the mappings array.
@@ -115,7 +119,7 @@ export const EditMappingsModal = ({
                   index={index}
                   variable={editMappings.code}
                 />
-              ),
+              )
             });
           });
           // termMappings are set to the mappings array. Options are set to the options array.
@@ -126,7 +130,7 @@ export const EditMappingsModal = ({
           if (error) {
             notification.error({
               message: 'Error',
-              description: 'An error occurred. Please try again.',
+              description: 'An error occurred. Please try again.'
             });
           }
           return error;
@@ -150,7 +154,7 @@ export const EditMappingsModal = ({
 
           return parsedMapping;
         }) ?? [],
-      editor: user.email,
+      editor: user.email
     };
     fetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
@@ -159,9 +163,9 @@ export const EditMappingsModal = ({
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -182,7 +186,7 @@ export const EditMappingsModal = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -199,7 +203,7 @@ export const EditMappingsModal = ({
       display: item.display,
       description: item.description,
       system: item?.system,
-      mapping_relationship: idsForSelect[item.code],
+      mapping_relationship: idsForSelect[item.code]
     }));
 
     const preexistingMappings = existingMappings?.map(item => ({
@@ -207,12 +211,12 @@ export const EditMappingsModal = ({
       display: item.display,
       description: item.description,
       system: item?.system,
-      mapping_relationship: idsForSelect[item.code],
+      mapping_relationship: idsForSelect[item.code]
     }));
 
     const mappingsDTO = {
       mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
-      editor: user.email,
+      editor: user.email
     };
 
     fetch(
@@ -222,9 +226,9 @@ export const EditMappingsModal = ({
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -244,7 +248,7 @@ export const EditMappingsModal = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -291,6 +295,7 @@ export const EditMappingsModal = ({
         setEditMappings(null);
         setReset(false);
         setEditSearch(false);
+        setIdsForSelect([]);
         reset &&
           getById(vocabUrl, 'Terminology', `${terminologyId}/mapping`).then(
             data => setMapping(data.codes)
@@ -300,7 +305,7 @@ export const EditMappingsModal = ({
       okButtonProps={{ disabled: loading }}
       closeIcon={false}
       maskClosable={false}
-      destroyOnClose={true}
+      destroyOnHidden={true}
       footer={(_, { OkBtn, CancelBtn }) => (
         <>
           <div className={!reset ? 'footer_buttons' : 'save_button_only'}>
