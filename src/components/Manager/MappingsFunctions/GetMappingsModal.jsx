@@ -1,7 +1,7 @@
 import { Checkbox, Form, Input, message, Modal, notification } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString, uriEncoded } from '../Utility';
+import { cleanedSearchTerm, ellipsisString, uriEncoded } from '../Utility';
 import { ModalSpinner, ResultsSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -275,7 +275,7 @@ export const GetMappingsModal = ({
       //fetch call to search API with either preferred or default ontologies
       return olsFilterOntologiesSearch(
         vocabUrl,
-        query,
+        cleanedSearchTerm(query),
         apiPreferencesCode[selectedApi]?.length > 0
           ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
           : apiPreferenceOntologies(),
@@ -294,7 +294,7 @@ export const GetMappingsModal = ({
     } else
       return olsFilterOntologiesSearch(
         vocabUrl,
-        query,
+        cleanedSearchTerm(query),
         apiPreferencesCode[selectedApi]?.length > 0
           ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
           : defaultOntologies,

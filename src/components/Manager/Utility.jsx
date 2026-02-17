@@ -76,10 +76,10 @@ export const relationshipDisplay = variable =>
   variable?.mapping_relationship === 'equivalent'
     ? '(equivalent)'
     : variable.mapping_relationship === 'source-is-narrower-than-target'
-    ? '(narrower)'
-    : variable?.mapping_relationship === 'source-is-broader-than-target'
-    ? '(broader)'
-    : '';
+      ? '(narrower)'
+      : variable?.mapping_relationship === 'source-is-broader-than-target'
+        ? '(broader)'
+        : '';
 
 //URI encoding for "." and ".."
 export const uriEncoded = text => {
@@ -91,6 +91,16 @@ export const uriEncoded = text => {
     return text.replaceAll('#', '<FTD-HASH>');
   }
   return text;
+};
+
+export const cleanedSearchTerm = term => {
+  const chars = {
+    '_': ' ',
+    '|': ' '
+  };
+
+  term = term.replace(/[_|]/g, m => chars[m]);
+  return term;
 };
 
 export const votesCount = code => {

@@ -1,7 +1,7 @@
 import { Checkbox, Form, Input, notification, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
-import { ellipsisString } from '../Utility';
+import { cleanedSearchTerm, ellipsisString } from '../Utility';
 import { ModalSpinner, ResultsSpinner } from '../Spinner';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -23,7 +23,7 @@ export const MappingSearch = ({
   preferenceType,
   prefTypeKey,
   loadingResults,
-  setLoadingResults,
+  setLoadingResults
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
@@ -44,7 +44,7 @@ export const MappingSearch = ({
     selectedApi,
     setSelectedApi,
     page,
-    setPage,
+    setPage
   } = useContext(SearchContext);
   const { tableId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -63,7 +63,7 @@ export const MappingSearch = ({
     setDisplaySelectedMappings,
     selectedBoxes,
     setSelectedBoxes,
-    existingMappings,
+    existingMappings
   } = useContext(MappingContext);
 
   let ref = useRef();
@@ -83,7 +83,7 @@ export const MappingSearch = ({
       .catch(error => {
         notification.error({
           message: 'Error',
-          description: 'An error occurred. Please try again.',
+          description: 'An error occurred. Please try again.'
         });
       })
       .finally(() => setLoading(false));
@@ -189,7 +189,7 @@ export const MappingSearch = ({
   // Sets the value of the selected_mappings in the form to the checkboxes that are selected
   useEffect(() => {
     form.setFieldsValue({
-      selected_mappings: selectedBoxes,
+      selected_mappings: selectedBoxes
     });
   }, [selectedBoxes, form]);
 
@@ -234,7 +234,7 @@ export const MappingSearch = ({
       //fetch call to search API with either preferred or default ontologies
       return olsFilterOntologiesSearch(
         vocabUrl,
-        query,
+        cleanedSearchTerm(query),
         apiPreferencesCode[selectedApi]?.length > 0
           ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
           : apiPreferenceOntologies(),
@@ -253,7 +253,7 @@ export const MappingSearch = ({
     } else
       return olsFilterOntologiesSearch(
         vocabUrl,
-        query,
+        cleanedSearchTerm(query),
         apiPreferencesCode[selectedApi]?.length > 0
           ? apiPreferencesCode?.[selectedApi]?.map(sa => sa?.toUpperCase())
           : defaultOntologies,
@@ -467,7 +467,7 @@ export const MappingSearch = ({
       code: m?.code,
       display: m?.display,
       description: m?.description,
-      system: m?.system,
+      system: m?.system
     })
   );
 
@@ -476,7 +476,7 @@ export const MappingSearch = ({
   const getFilteredResults = () => {
     const codesToExclude = new Set([
       ...mappingsForSearch?.map(m => m?.code),
-      ...displaySelectedMappings?.map(m => m?.code),
+      ...displaySelectedMappings?.map(m => m?.code)
     ]);
     return results?.filter(r => !codesToExclude?.has(r.code));
   };
@@ -566,9 +566,9 @@ export const MappingSearch = ({
                                       active === term.id
                                         ? 'active_term'
                                         : active !== term.id &&
-                                          active !== 'search'
-                                        ? 'inactive_term'
-                                        : active === 'search' && 'hidden_term'
+                                            active !== 'search'
+                                          ? 'inactive_term'
+                                          : active === 'search' && 'hidden_term'
                                     }
                                     onClick={() => setActive(term.id)}
                                   >
@@ -616,8 +616,8 @@ export const MappingSearch = ({
                                   valuePropName="value"
                                   rules={[
                                     {
-                                      required: false,
-                                    },
+                                      required: false
+                                    }
                                   ]}
                                 >
                                   <Checkbox.Group
@@ -629,12 +629,12 @@ export const MappingSearch = ({
                                             code: d.code,
                                             display: d.display,
                                             description: d.description,
-                                            system: d.system,
+                                            system: d.system
                                           }),
                                           label: existingMappingDisplay(
                                             d,
                                             index
-                                          ),
+                                          )
                                         };
                                       }
                                     )}
@@ -680,8 +680,8 @@ export const MappingSearch = ({
                                       valuePropName="value"
                                       rules={[
                                         {
-                                          required: false,
-                                        },
+                                          required: false
+                                        }
                                       ]}
                                     >
                                       {filteredResultsArray?.length > 0 && (
@@ -699,12 +699,12 @@ export const MappingSearch = ({
                                                   system: d?.system,
                                                   api: d.api,
                                                   ontology_prefix:
-                                                    d.ontology_prefix,
+                                                    d.ontology_prefix
                                                 }),
                                                 label: newSearchDisplay(
                                                   d,
                                                   index
-                                                ),
+                                                )
                                               };
                                             }
                                           )}
@@ -722,8 +722,8 @@ export const MappingSearch = ({
                                   valuePropName="value"
                                   rules={[
                                     {
-                                      required: false,
-                                    },
+                                      required: false
+                                    }
                                   ]}
                                 >
                                   <Checkbox.Group
@@ -740,9 +740,9 @@ export const MappingSearch = ({
                                           code: code.code,
                                           display: code.display,
                                           description: code.description,
-                                          system: code.system,
+                                          system: code.system
                                         }),
-                                        label: checkBoxDisplay(code, index),
+                                        label: checkBoxDisplay(code, index)
                                       }))}
                                     onChange={onSelectedChange}
                                   />
