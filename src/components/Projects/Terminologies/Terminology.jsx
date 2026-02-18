@@ -12,7 +12,7 @@ import {
   notification,
   Row,
   Table,
-  Tooltip,
+  Tooltip
 } from 'antd';
 import {
   CaretDownOutlined,
@@ -20,7 +20,7 @@ import {
   CloseCircleOutlined,
   DownOutlined,
   MessageOutlined,
-  UpOutlined,
+  UpOutlined
 } from '@ant-design/icons';
 import { EditMappingsModal } from './EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
@@ -39,7 +39,7 @@ import {
   relationshipDisplay,
   uriEncoded,
   userVote,
-  votesCount,
+  votesCount
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
@@ -61,7 +61,7 @@ export const Terminology = () => {
     setMapping,
     setRelationshipOptions,
     comment,
-    setComment,
+    setComment
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
@@ -95,7 +95,7 @@ export const Terminology = () => {
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user?.email,
+      editor: user?.email
     };
 
     fetch(
@@ -105,9 +105,9 @@ export const Terminology = () => {
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -131,7 +131,7 @@ export const Terminology = () => {
 
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -164,21 +164,20 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       return variableMappings.mappings.map((code, i) => (
         <div className="mapping" key={i}>
           <span>
-            <Tooltip
-              title={code.user_input?.comments_count}
-              mouseEnterDelay={0.75}
-            >
-              <MessageOutlined
-                className="mapping_actions"
-                onClick={() =>
-                  setComment({
-                    code: code.code,
-                    display: code.display,
-                    variableMappings: variableMappings.code,
-                  })
-                }
-              />
-            </Tooltip>
+            <MessageOutlined
+              className={
+                code.user_input?.comments_count
+                  ? 'mapping_actions mapping_actions--active'
+                  : 'mapping_actions mapping_actions--inactive'
+              }
+              onClick={() =>
+                setComment({
+                  code: code.code,
+                  display: code.display,
+                  variableMappings: variableMappings.code
+                })
+              }
+            />
           </span>
           <span className="mapping_votes">
             {userVote(code) === 'up' ? (
@@ -187,14 +186,14 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'blue',
                   cursor: 'not-allowed',
-                  fontSize: '1rem',
+                  fontSize: '1rem'
                 }}
               />
             ) : (
               <UpOutlined
                 className="mapping_actions"
                 style={{
-                  color: 'blue',
+                  color: 'blue'
                 }}
                 onClick={() =>
                   userVote(code) !== 'up' &&
@@ -235,14 +234,14 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'green',
                   cursor: 'not-allowed',
-                  fontSize: '1rem',
+                  fontSize: '1rem'
                 }}
               />
             ) : (
               <DownOutlined
                 className="mapping_actions"
                 style={{
-                  color: 'green',
+                  color: 'green'
                 }}
                 onClick={() =>
                   userVote(code) !== 'down' &&
@@ -308,7 +307,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         code: item.code,
         display: item.display,
         description: item.description,
-        mapped_terms: matchCode(item),
+        mapped_terms: matchCode(item)
       };
     });
 
@@ -347,8 +346,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           {
             method: 'GET',
             headers: {
-              'Content-Type': 'application/json',
-            },
+              'Content-Type': 'application/json'
+            }
           }
         );
 
@@ -383,7 +382,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     } catch (error) {
       notification.error({
         message: 'Error',
-        description: error.message || 'An error occurred loading data.',
+        description: error.message || 'An error occurred loading data.'
       });
     } finally {
       setLoading(false);
@@ -395,17 +394,17 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     {
       title: 'Code',
       dataIndex: 'code',
-      width: 100,
+      width: 100
     },
     {
       title: 'Display',
       dataIndex: 'display',
-      width: 100,
+      width: 100
     },
     {
       title: 'Description',
       dataIndex: 'description',
-      width: 200,
+      width: 200
     },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 350 },
     {
@@ -435,8 +434,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             )}
           </>
         );
-      },
-    },
+      }
+    }
   ];
 
   return (
@@ -513,7 +512,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     showSizeChanger: true,
                     pageSizeOptions: ['10', '20', '30'],
                     pageSize: pageSize, // Use the stored pageSize
-                    onChange: handleTableChange, // Capture pagination changes
+                    onChange: handleTableChange // Capture pagination changes
                   }}
                 />
               </Form>
