@@ -525,7 +525,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             setEditMappings={setEditMappings}
             terminologyId={terminologyId}
             setMapping={setMapping}
-            mappingDesc={editMappings?.description ?? 'No Description'}
+            mappingDesc={
+              editMappings?.description
+                ? editMappings?.description
+                : 'No Description'
+            }
             terminology={terminology}
           />
           <GetMappingsModal
