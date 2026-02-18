@@ -372,7 +372,9 @@ export const EditMappingsModal = ({
           mappingsForSearch={mappingsForSearch}
           form={form}
           onClose={form.resetFields}
-          searchProp={editMappings?.display ?? editMappings?.code}
+          searchProp={
+            editMappings?.display ? editMappings?.display : editMappings?.code
+          }
           mappingProp={editMappings?.code}
           mappingDesc={editMappings?.description ?? 'No description'}
           terminology={terminology}
