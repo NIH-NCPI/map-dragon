@@ -227,7 +227,7 @@ export const MappingSearch = ({
             .toUpperCase();
         } else {
           // If no preferred ontologies, use the default ontologies
-          return defaultOntologies;
+          return selectedApi === 'ols' ? defaultOntologies : ['SNOMEDCT_US'];
         }
       };
 
