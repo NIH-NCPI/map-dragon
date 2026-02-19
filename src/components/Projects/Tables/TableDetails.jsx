@@ -305,6 +305,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       return variableMappings.mappings.map((code, i) => (
         <div className="mapping" key={i}>
           <span>
+            {/* If there are comments, the comment icon is visible by default. Otherwise, it is visible on hover (see SCSS file) */}
             <MessageOutlined
               className={
                 code.user_input?.comments_count
