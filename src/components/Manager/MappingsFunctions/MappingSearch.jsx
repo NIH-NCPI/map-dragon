@@ -534,7 +534,7 @@ export const MappingSearch = ({
                     {!prefTerminologies.length > 0 && (
                       <Search
                         onSearch={handleSearch}
-                        value={inputValue}
+                        value={cleanedSearchTerm(inputValue)}
                         onChange={handleChange}
                         onKeyDown={searchOnTab}
                       />
@@ -586,7 +586,7 @@ export const MappingSearch = ({
                               >
                                 <Search
                                   onSearch={handleSearch}
-                                  value={inputValue}
+                                  value={cleanedSearchTerm(inputValue)}
                                   onChange={handleChange}
                                   onKeyDown={searchOnTab}
                                 />

@@ -112,7 +112,7 @@ The user is then redirected to the search page, which completes the search for t
                 id="search_input_results"
                 type="text"
                 placeholder="Search"
-                defaultValue={query}
+                defaultValue={cleanedSearchTerm(query)}
                 ref={ref}
                 onKeyDown={e => {
                   searchOnEnter(e);

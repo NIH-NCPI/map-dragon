@@ -496,7 +496,7 @@ export const GetMappingsModal = ({
                   <div className="mappings_search_bar">
                     <Search
                       onSearch={handleSearch}
-                      value={inputValue}
+                      value={cleanedSearchTerm(inputValue)}
                       onChange={handleChange}
                       onKeyDown={searchOnTab}
                     />

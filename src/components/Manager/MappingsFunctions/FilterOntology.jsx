@@ -17,7 +17,7 @@ export const FilterOntology = ({
   terminology,
   existingOntologies,
   setExistingOntologies,
-  flattenedFilters,
+  flattenedFilters
 }) => {
   const { Search } = Input;
   const [allCheckboxes, setAllCheckboxes] = useState([]);
@@ -31,7 +31,7 @@ export const FilterOntology = ({
 
   useEffect(() => {
     form.setFieldsValue({
-      ontologies: selectedBoxes,
+      ontologies: selectedBoxes
     });
   }, [selectedBoxes, form]);
 
@@ -39,7 +39,7 @@ export const FilterOntology = ({
     return ontology.flatMap(item =>
       Object.values(item?.ontologies).map(ont => ({
         ...ont,
-        api: ontology?.[0]?.api_id,
+        api: ontology?.[0]?.api_id
       }))
     );
   };
@@ -63,7 +63,7 @@ export const FilterOntology = ({
   const onExistingChange = (checkedValues, api) => {
     setExistingOntologies(prevState => ({
       ...prevState,
-      [api]: checkedValues,
+      [api]: checkedValues
     }));
   };
 
@@ -86,7 +86,7 @@ export const FilterOntology = ({
 
       setDisplaySelectedOntologies(prevState => [
         ...prevState,
-        selectedOntology,
+        selectedOntology
       ]);
 
       // Filters out the selected ontologies from the available ones
@@ -172,8 +172,8 @@ export const FilterOntology = ({
               valuePropName="value"
               rules={[
                 {
-                  required: false,
-                },
+                  required: false
+                }
               ]}
             >
               {flattenedFilters?.length > 0 && (
@@ -186,7 +186,7 @@ export const FilterOntology = ({
                       if (apiOntologies.length > 0) {
                         const options = apiOntologies.map((ff, index) => ({
                           value: ff.ontology,
-                          label: existingDisplay(ff, index),
+                          label: existingDisplay(ff, index)
                         }));
 
                         return (
@@ -248,9 +248,9 @@ export const FilterOntology = ({
               )
               .map((ont, i) => ({
                 value: JSON.stringify({
-                  ontology: ont.ontology_code,
+                  ontology: ont.ontology_code
                 }),
-                label: checkBoxDisplay(ont, i),
+                label: checkBoxDisplay(ont, i)
               }))}
             value={selectedBoxes.map(item =>
               JSON.stringify({ ontology: item.ontology_code })

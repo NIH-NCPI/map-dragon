@@ -96,10 +96,11 @@ export const uriEncoded = text => {
 export const cleanedSearchTerm = term => {
   const chars = {
     '_': ' ',
-    '|': ' '
+    '|': ' ',
+    '#': ' '
   };
 
-  term = term.replace(/[_|]/g, m => chars[m]);
+  term = term?.replace(/[_|#]/g, m => chars[m]);
   return term;
 };
 

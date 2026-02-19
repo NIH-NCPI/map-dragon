@@ -163,7 +163,7 @@ export const AssignMappingsCheckboxes = ({
   }, [selectedBoxes, form]);
 
   const handleSearch = query => {
-    setCurrentSearchProp(query);
+    setCurrentSearchProp(cleanedSearchTerm(query));
     setPage(0);
   };
 
@@ -496,7 +496,7 @@ export const AssignMappingsCheckboxes = ({
                               >
                                 <Search
                                   onSearch={handleSearch}
-                                  value={inputValue}
+                                  value={cleanedSearchTerm(inputValue)}
                                   onChange={handleChange}
                                   onKeyDown={searchOnTab}
                                 />
