@@ -19,7 +19,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
   // Then fetches the updated DD data with the table removed.
   const handleRemove = () => {
     return fetch(`${vocabUrl}/DataDictionary/${DDId}/Table/${table.id}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     })
       .then(res => {
         if (res.ok) {
@@ -33,7 +33,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
           notification.error({
             message: 'Error',
             description:
-              'An error occurred removing the Table. Please try again.',
+              'An error occurred removing the Table. Please try again.'
           });
         }
         return error;
@@ -54,7 +54,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
           notification.error({
             message: 'Error',
             description:
-              'An error occurred loading the updated Data Dictionary. Please try again.',
+              'An error occurred loading the updated Data Dictionary. Please try again.'
           });
         }
         return error;
@@ -75,7 +75,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
       },
       onCancel() {
         setRemove(false);
-      },
+      }
     });
   };
 
@@ -83,6 +83,12 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
     <>
       <Button
         danger
+        style={{
+          fontSize: 'clamp(10px, 1.2vw, 14px)',
+          padding: 'clamp(2px, 0.5vw, 6px) clamp(4px, 0.8vw, 12px)',
+          height: 'auto',
+          minWidth: 0
+        }}
         onClick={e => {
           e.preventDefault();
           user ? setRemove(true) : login();
