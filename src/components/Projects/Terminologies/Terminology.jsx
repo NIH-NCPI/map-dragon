@@ -541,7 +541,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             terminology={terminology}
             setTerminology={setTerminology}
             searchProp={
-              getMappings?.display ? getMappings.display : getMappings?.code
+              getMappings?.name ? getMappings?.name : getMappings?.code
             }
             setGetMappings={setGetMappings}
             setMapping={setMapping}
@@ -553,7 +553,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 : 'No Description'
             }
           />
-
           {/* Displays the edit form */}
           <EditTerminologyDetails
             form={form}

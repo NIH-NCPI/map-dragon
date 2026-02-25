@@ -19,7 +19,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     selectedApi,
     setSelectedApi,
     defaultOntologies,
-    setPage,
+    setPage
   } = useContext(SearchContext);
   const { Search } = Input;
 
@@ -61,7 +61,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     ontologyApis &&
     ontologyApis.map((aap, index) => ({
       value: aap.api_id,
-      label: aap.api_id.toUpperCase(),
+      label: aap.api_id.toUpperCase()
     }));
 
   const defaultApi =
@@ -143,8 +143,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
         updatedApiPreferences[selectedApi] = [
           ...new Set([
             ...updatedApiPreferences[selectedApi],
-            value.toUpperCase(),
-          ]),
+            value.toUpperCase()
+          ])
         ];
       } else {
         // If unchecked, removes the value from apiPreferencesCode for the respective api
@@ -168,7 +168,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
     return {
       ...api,
-      ontologies: sortedOntologies,
+      ontologies: sortedOntologies
     };
   });
 
