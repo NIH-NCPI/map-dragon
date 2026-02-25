@@ -164,21 +164,21 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       return variableMappings.mappings.map((code, i) => (
         <div className="mapping" key={i}>
           <span>
-            <Tooltip
-              title={code.user_input?.comments_count}
-              mouseEnterDelay={0.75}
-            >
-              <MessageOutlined
-                className="mapping_actions"
-                onClick={() =>
-                  setComment({
-                    code: code.code,
-                    display: code.display,
-                    variableMappings: variableMappings.code
-                  })
-                }
-              />
-            </Tooltip>
+            {/* If there are comments, the comment icon is visible by default. Otherwise, it is visible on hover (see SCSS file) */}
+            <MessageOutlined
+              className={
+                code.user_input?.comments_count
+                  ? 'mapping_actions mapping_actions--active' // visible by default
+                  : 'mapping_actions mapping_actions--inactive' // only visible on hover
+              }
+              onClick={() =>
+                setComment({
+                  code: code.code,
+                  display: code.display,
+                  variableMappings: variableMappings.code
+                })
+              }
+            />
           </span>
           <span className="mapping_votes">
             {userVote(code) === 'up' ? (

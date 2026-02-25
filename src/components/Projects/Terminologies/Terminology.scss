@@ -244,6 +244,22 @@ a.terminology_link:hover {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.4s linear;
+
+    &--active {
+      opacity: 1;
+      visibility: visible;
+      &:hover {
+        transition: all 0.4s linear;
+        color: $darkGrey;
+      }
+    }
+
+    &--inactive {
+      :hover {
+        transition: all 0.4s linear;
+        color: $darkGrey;
+      }
+    }
   }
   &:hover .mapping_actions {
     transition: all 0.4s linear;
