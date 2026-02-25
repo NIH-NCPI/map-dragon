@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './OntologySearch.scss';
 import { useNavigate } from 'react-router-dom';
+import { cleanedSearchTerm } from '../Manager/Utility';
 
 export const OntologySearch = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -17,7 +18,7 @@ export const OntologySearch = () => {
     */
     if (e.key === 'Enter') {
       if (ref.current.value) {
-        navigate(`/search/${ref.current.value}`);
+        navigate(`/search/${cleanedSearchTerm(ref.current.value)}`);
       }
     }
   };
