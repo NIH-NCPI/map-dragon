@@ -9,9 +9,13 @@
   display: flex;
   flex-direction: row;
   gap: 2rem;
+  align-items: flex-start;
 }
 
 .api_list {
+  position: sticky;
+  top: 152px;
+  z-index: 10;
   width: 200px;
   min-width: 150px;
   height: fit-content;
@@ -28,7 +32,7 @@
 .inactive_api {
   line-height: 3rem;
   padding: 0 10px;
-  background-color: $lightBlue;
+  background-color: #f2f2f2;
   cursor: pointer;
 }
 
@@ -44,6 +48,7 @@
   flex: 1;
   min-width: 0;
   height: 20%;
+  min-height: 440px;
 }
 
 .ontology_filter {

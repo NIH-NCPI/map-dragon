@@ -234,6 +234,7 @@ export const TableDetails = () => {
     {
       title: 'Name',
       dataIndex: 'name',
+      fixed: 'left',
       width: 120
     },
     {
@@ -558,6 +559,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 </div>
                 <Form form={form}>
                   <Table
+                    scroll={{ x: 'max-content' }}
+                    sticky={{ offsetHeader: 135 }}
                     columns={columns}
                     dataSource={dataSource}
                     expandable={{

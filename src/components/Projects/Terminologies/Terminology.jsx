@@ -395,7 +395,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     {
       title: 'Code',
       dataIndex: 'code',
-      width: 100
+      width: 100,
+      fixed: 'left'
     },
     {
       title: 'Display',
@@ -507,6 +508,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             ) : (
               <Form form={form}>
                 <Table
+                  scroll={{ x: 'max-content' }}
+                  sticky={{ offsetHeader: 135 }}
                   columns={columns}
                   dataSource={dataSource}
                   pagination={{

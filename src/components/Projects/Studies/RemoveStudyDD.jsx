@@ -18,7 +18,7 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
   // Then fetches the updated Study data with the DD removed.
   const handleRemove = () => {
     return fetch(`${vocabUrl}/Study/${studyId}/dd/${dd.id}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     })
       .then(res => {
         if (res.ok) {
@@ -31,7 +31,7 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred removing the DD. Please try again.',
+            description: 'An error occurred removing the DD. Please try again.'
           });
         }
         return error;
@@ -52,7 +52,7 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
           notification.error({
             message: 'Error',
             description:
-              'An error occurred loading the updated Study. Please try again.',
+              'An error occurred loading the updated Study. Please try again.'
           });
         }
         return error;
@@ -73,7 +73,7 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
       },
       onCancel() {
         setRemove(false);
-      },
+      }
     });
   };
 
@@ -81,6 +81,12 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
     <>
       <Button
         danger
+        style={{
+          fontSize: 'clamp(10px, 1.2vw, 14px)',
+          padding: 'clamp(2px, 0.5vw, 6px) clamp(4px, 0.8vw, 12px)',
+          height: 'auto',
+          minWidth: 0
+        }}
         onClick={e => {
           e.preventDefault();
           user ? setRemove(true) : login();
