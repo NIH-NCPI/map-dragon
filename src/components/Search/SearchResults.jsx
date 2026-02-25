@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
 import { SearchSpinner } from '../Manager/Spinner';
 import { SearchContext } from '../../Contexts/SearchContext';
-import { uriEncoded } from '../Manager/Utility';
+import { cleanedSearchTerm, uriEncoded } from '../Manager/Utility';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -17,7 +17,7 @@ export const SearchResults = () => {
     setResultsCount,
     defaultOntologies,
     page,
-    setPage,
+    setPage
   } = useContext(SearchContext);
   const { results, setResults, vocabUrl } = useContext(myContext);
 
@@ -55,13 +55,13 @@ export const SearchResults = () => {
     setLoading(true);
     fetch(
       `${vocabUrl}/ontology_search?keyword=${uriEncoded(
-        query
+        cleanedSearchTerm(query)
       )}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
       {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       }
     )
       .then(res => {
@@ -70,7 +70,7 @@ export const SearchResults = () => {
         } else {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
       })
@@ -92,7 +92,7 @@ The user is then redirected to the search page, which completes the search for t
   const searchOnEnter = e => {
     if (e.key === 'Enter') {
       if (ref.current.value) {
-        setPage(0), navigate(`/search/${ref.current.value}`);
+        (setPage(0), navigate(`/search/${ref.current.value}`));
       }
     }
   };
@@ -112,7 +112,7 @@ The user is then redirected to the search page, which completes the search for t
                 id="search_input_results"
                 type="text"
                 placeholder="Search"
-                defaultValue={query}
+                defaultValue={cleanedSearchTerm(query)}
                 ref={ref}
                 onKeyDown={e => {
                   searchOnEnter(e);
@@ -134,7 +134,7 @@ The user is then redirected to the search page, which completes the search for t
                  the value is transposed into the address bar
                   */
                   if (ref.current.value) {
-                    setPage(0), navigate(`/search/${ref.current.value}`);
+                    (setPage(0), navigate(`/search/${ref.current.value}`));
                   }
                 }}
               >

@@ -5,20 +5,20 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 export const MappingButton = ({
   variable,
   setGetMappings,
-  setAssignMappingsViaButton,
+  setAssignMappingsViaButton
 }) => {
   const { prefTerminologies } = useContext(SearchContext);
 
   const handleClick = () => {
     if (prefTerminologies?.length > 0) {
       setAssignMappingsViaButton({
-        display: variable.name,
-        code: variable.code,
+        display: variable?.name ? variable?.name : variable?.display,
+        code: variable.code
       });
     } else {
       setGetMappings({
-        name: variable.name,
-        code: variable.code,
+        name: variable?.name ? variable?.name : variable?.display,
+        code: variable?.code
       });
     }
   };
