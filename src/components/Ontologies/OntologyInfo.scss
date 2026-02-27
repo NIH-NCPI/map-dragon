@@ -1,10 +1,5 @@
 @use '../Styling/Variables' as *;
 
-.about_container {
-  margin: 0 10vw;
-  line-height: 1.5rem;
-}
-
 .ontology_container {
   display: flex;
   flex-direction: row;
@@ -14,7 +9,7 @@
 
 .api_list {
   position: sticky;
-  top: 152px;
+  top: calc($navHeight + 37px);
   z-index: 10;
   width: 200px;
   min-width: 150px;
