@@ -560,7 +560,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 <Form form={form}>
                   <Table
                     scroll={{ x: 'max-content' }}
-                    sticky={{ offsetHeader: 135 }}
+                    sticky={{ offsetHeader: 80 }}
                     columns={columns}
                     dataSource={dataSource}
                     expandable={{

@@ -1,18 +1,19 @@
 @use '../Styling/Variables' as *;
 
 $navColor: #080705;
-$linkColor: #fffc31;
+$linkColor: #f2f2f4;
 
 nav.navbar {
   z-index: 1;
   width: 100%;
-  min-width: 100%;
+  min-width: fit-content;
   box-sizing: border-box;
-  background-color: $navColor;
   height: $navHeight;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: $navColor;
 }
 
 li {
@@ -26,15 +27,15 @@ li {
     size: 1em;
     weight: 800;
   }
+  cursor: default;
 }
 
 .nav_body {
   min-width: fit-content;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 0 4rem;
-  margin: 0;
+  display: flex;
+  padding: 0 clamp(0vw, 4vw, 4rem);
+  margin-left: auto;
+  width: 100%;
 }
 
 .logo_container {
@@ -42,59 +43,48 @@ li {
   flex-direction: column;
   justify-content: center;
   justify-self: start;
-  margin: 0 2rem;
+  margin-right: clamp(0vw, 2.3vw, 5rem);
 }
 
-.nav_logo {
-  width: 81px;
-  color: white;
-
-  font: {
-    weight: 800;
-    size: 1.3rem;
-  }
-
-  text-align: left;
-  text-decoration: none;
+.logo {
+  width: 50px;
 }
 
 .nav_links {
-  margin: auto;
   display: flex;
   flex-direction: row;
-  gap: 2rem;
-  grid-column-start: 2;
-  flex-wrap: nowrap;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .nav_link {
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: $linkColor;
-  height: 75px;
-  padding: 0 1rem;
-  min-width: 90px;
-  border-radius: 10px;
+  height: 30px;
+  padding: 0 clamp(0vw, 1.2vw, 1rem);
   font-weight: bold;
   cursor: pointer;
-  white-space: nowrap;
+  color: $linkColor;
+  border-bottom: 1px solid transparent;
 }
 
 .nav_link:hover {
-  color: rgb(45, 42, 34);
-  box-shadow: 0 5px 15px rgba(178, 182, 92, 0.8);
+  border-bottom: 1px solid $linkColor;
+}
+
+.nav_separator {
+  height: 30px;
+  width: 1px;
+  background-color: $linkColor;
+  margin: 0 clamp(0vw, 0.5vw, 0.5rem);
 }
 
 .login {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
   align-items: center;
-  justify-self: end;
-  margin-left: 2rem;
+  margin-left: auto;
 }
 
 .breadcrumbs {
