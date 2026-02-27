@@ -70,6 +70,7 @@ export const TerminologyList = () => {
     {
       title: terminologyTitle(),
       dataIndex: 'name',
+      fixed: 'left',
       // Filters table by keystroke
       filterDropdown: ({
         setSelectedKeys,
@@ -157,10 +158,12 @@ export const TerminologyList = () => {
     <Spinner />
   ) : (
     <>
-      <div className="terminology_container">
+      <div className="terminology_list_container">
         <h2>Terminology Index</h2>
         <AddTerminology />
         <Table
+          scroll={{ x: 'max-content' }}
+          sticky={{ offsetHeader: 80 }}
           showSizeChanger={true}
           columns={columns}
           dataSource={dataSource}

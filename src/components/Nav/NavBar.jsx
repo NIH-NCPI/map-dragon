@@ -35,9 +35,6 @@ export const NavBar = () => {
             </li>
           </div>
           <div className="nav_links">
-            <NavLink to="/">
-              <li className="nav_link">Search</li>
-            </NavLink>
             <div
               onClick={() => {
                 if (user) {
@@ -49,6 +46,8 @@ export const NavBar = () => {
             >
               <li className="nav_link">Studies</li>
             </div>
+            <span class="nav_separator"></span>
+
             <div
               onClick={() => {
                 if (user) {
@@ -60,15 +59,25 @@ export const NavBar = () => {
             >
               <li className="nav_link">Terminologies</li>
             </div>
-            <NavLink to="/about">
-              <li className="nav_link">About</li>
-            </NavLink>
-            <NavLink to="https://nih-ncpi.github.io/map-dragon" target="_blank">
-              <li className="nav_link">Help</li>
-            </NavLink>
+            <span class="nav_separator"></span>
 
             <NavLink to="/ontologies">
               <li className="nav_link">Ontologies</li>
+            </NavLink>
+            <span class="nav_separator"></span>
+
+            <NavLink to="https://nih-ncpi.github.io/map-dragon" target="_blank">
+              <li className="nav_link">Help</li>
+            </NavLink>
+            <span class="nav_separator"></span>
+
+            <NavLink to="/about">
+              <li className="nav_link">About</li>
+            </NavLink>
+            <span class="nav_separator"></span>
+
+            <NavLink to="/">
+              <li className="nav_link last_nav_link">Search</li>
             </NavLink>
           </div>
           <div className="login">

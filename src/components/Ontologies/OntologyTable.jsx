@@ -33,6 +33,7 @@ export const OntologyTable = ({ ontology }) => {
     {
       title: ontologyTitle(),
       dataIndex: 'ontology',
+      fixed: 'left',
       filterDropdown: ({
         setSelectedKeys,
         selectedKeys,
@@ -104,7 +105,7 @@ export const OntologyTable = ({ ontology }) => {
       columns={columns}
       dataSource={dataSource}
       scroll={{ x: 'max-content' }}
-      sticky={{ offsetHeader: 135 }}
+      sticky={{ offsetHeader: 80 }}
       pagination={{
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '30'],

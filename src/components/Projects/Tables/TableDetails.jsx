@@ -539,7 +539,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             The expandable rows currently show the min, max, and units properties with no styling. */}
             {table?.variables?.length > 0 ? (
               <>
-                {' '}
                 <div className="add_row_buttons">
                   <FilterSelect component={table} table={table} />
                   <PreferredTerminology
@@ -560,7 +559,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 <Form form={form}>
                   <Table
                     scroll={{ x: 'max-content' }}
-                    sticky={{ offsetHeader: 135 }}
+                    sticky={{ offsetHeader: 80 }}
                     columns={columns}
                     dataSource={dataSource}
                     expandable={{
