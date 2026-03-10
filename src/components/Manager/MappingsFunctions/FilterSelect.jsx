@@ -227,7 +227,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
           marginBottom: 16
         }}
       >
-        API Filters {apiPrefObject ? `(${apiPrefLength})` : ''}
+        Ontology Filters {apiPrefObject ? `(${apiPrefLength})` : ''}
       </Button>
       {addFilter && (
         <Modal

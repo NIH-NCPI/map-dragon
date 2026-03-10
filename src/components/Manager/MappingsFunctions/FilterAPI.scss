@@ -1,0 +1,12 @@
+.api_filters_wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+.api_filters_container {
+    flex: 0 0 25%;
+}
+
+.api_filters_ontology_list {
+    flex: 0 0 75%;
+}

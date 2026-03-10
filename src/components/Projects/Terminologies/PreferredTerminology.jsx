@@ -202,7 +202,7 @@ export const PreferredTerminology = ({
   return (
     <>
       <div className="add_row_button">
-        <Button
+        {/* <Button
           onClick={() => (user ? setOpen(true) : login())}
           type="primary"
           style={{
@@ -210,7 +210,7 @@ export const PreferredTerminology = ({
           }}
         >
           Select Terminology ({prefTerminologies?.length})
-        </Button>
+        </Button> */}
       </div>
       <Modal
         open={open}

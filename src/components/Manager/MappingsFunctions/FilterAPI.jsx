@@ -3,6 +3,8 @@ import { Checkbox, Form, Tooltip } from 'antd';
 import { ModalSpinner, OntologySpinner } from '../Spinner';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
+import './FilterAPI.scss';
+
 
 export const FilterAPI = ({
   form,
@@ -69,25 +71,24 @@ export const FilterAPI = ({
         .finally(() => setTableLoading(false))
     );
   };
-
   const checkboxDisplay = (api, index) => {
     return (
       <>
         <div key={index} className="modal_search_result">
           <div
             className={
-              active === api.api_id
+              active === api?.api_id
                 ? 'active_selected_api'
                 : 'inactive_selected_api'
             }
-            onClick={() => setActive(api.api_id)}
+            onClick={() => setActive(api?.api_id)}
           >
             <div className="modal_term_ontology">
               <div>
-                <b>{api?.api_id.toUpperCase()}</b>
+                <b>{api ? api?.api_id.toUpperCase() : "MapDragon Terminologies"}</b>
               </div>
             </div>
-            <div>{api?.api_name}</div>
+            <div>{api ? api?.api_name : ""}</div>
           </div>
         </div>
       </>
@@ -100,8 +101,9 @@ export const FilterAPI = ({
     <div>
       <div className="api_list">
         <Form form={form} preserve={false}>
-          <div style={{ display: 'flex' }}>
-            <div style={{ flex: '0 0 25%' }}>
+          <div className="api_filters_wrapper">
+            <div className="api_filters_container">
+              <div>
               <div className="api_label">
                 <Tooltip title="Default search with OLS using HP, MAXO, MONDO, NCIT">
                   APIs
@@ -109,7 +111,14 @@ export const FilterAPI = ({
               </div>
               {ontologyApis.map((api, index) => checkboxDisplay(api, index))}
             </div>
-            <div style={{ flex: '0 0 70%' }}>
+            <div>
+              <div className="api_label">
+                  Terminologies
+              </div>
+              {checkboxDisplay(null, null)}
+            </div>
+          </div>
+            <div className="api_filters_ontology_list">
               {tableLoading ? (
                 <div className="ontology_spinner_div">
                   <OntologySpinner />
