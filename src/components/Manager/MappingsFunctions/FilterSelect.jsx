@@ -7,7 +7,12 @@ import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
 import { SearchContext } from '../../../Contexts/SearchContext';
 
-export const FilterSelect = ({ component, table, terminology }) => {
+export const FilterSelect = ({
+  component,
+  table,
+  terminology,
+  componentString
+}) => {
   const [form] = Form.useForm();
 
   const [addFilter, setAddFilter] = useState(false);
@@ -29,7 +34,11 @@ export const FilterSelect = ({ component, table, terminology }) => {
     preferenceType,
     prefTypeKey,
     searchText,
-    setSearchText
+    setSearchText,
+    prefTerminologies,
+    setExistingPreferred,
+    preferredData,
+    setPreferredData
   } = useContext(SearchContext);
 
   useEffect(() => {
@@ -100,11 +109,16 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setSearchText('');
   };
 
+  console.log(selectedBoxes);
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
   const handleSubmit = values => {
     setLoading(true);
+
+    const ontologyBoxes = selectedBoxes.filter(box => box.ontology_code);
+    const terminologyBoxes = selectedBoxes.filter(box => box.id);
+
     const apiPreferenceDTO = {
       api_preference: {},
       editor: user?.email
@@ -114,17 +128,15 @@ export const FilterSelect = ({ component, table, terminology }) => {
       apiPreferenceDTO.api_preference[api] = existingOntologies[api];
     });
 
-    selectedBoxes.forEach(box => {
+    ontologyBoxes.forEach(box => {
       const api = box.api;
       const ontology_code = box.ontology_code;
 
-      // If the api already exists, merge with the existing ones
       if (apiPreferenceDTO.api_preference[api]) {
         apiPreferenceDTO.api_preference[api] = [
           ...new Set([...apiPreferenceDTO.api_preference[api], ontology_code])
         ];
       } else {
-        // Otherwise, create a new entry for that api
         apiPreferenceDTO.api_preference[api] = [ontology_code];
       }
     });
@@ -135,45 +147,57 @@ export const FilterSelect = ({ component, table, terminology }) => {
         ? 'POST'
         : 'PUT';
 
-    fetch(
+    const ontologyFetch = fetch(
       `${vocabUrl}/${(component = table
         ? `Table/${table.id}/filter/self`
         : `Terminology/${terminology.id}/filter`)}`,
       {
         method: method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(apiPreferenceDTO)
       }
-    )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(data => {
+    );
+
+    const terminologyFetch =
+      terminologyBoxes.length > 0
+        ? fetch(
+            `${vocabUrl}/${componentString}/${
+              terminology ? terminology.id : table.id
+            }/preferred_terminology`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                preferred_terminologies: terminologyBoxes
+              })
+            }
+          )
+        : Promise.resolve(null);
+
+    Promise.all([ontologyFetch, terminologyFetch])
+      .then(async ([ontologyRes, terminologyRes]) => {
+        if (!ontologyRes.ok)
+          throw new Error('Error saving ontology preferences.');
+        if (terminologyRes && !terminologyRes.ok)
+          throw new Error('Error saving terminology preferences.');
+
+        const ontologyData = await ontologyRes.json();
         preferenceTypeSet({
-          self: { api_preference: data?.onto_api_preference }
+          self: { api_preference: ontologyData?.onto_api_preference }
         });
+
         form.resetFields();
         setAddFilter(false);
-        message.success('Preferred ontologies saved successfully.');
+        message.success('Preferences saved successfully.');
       })
       .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred saving the ontology preferences.'
-          });
-        }
-        return error;
+        notification.error({
+          message: 'Error',
+          description: error.message || 'An error occurred saving preferences.'
+        });
       })
       .finally(() => setLoading(false));
   };
-
   // Creates a dynamic api preference object
   const apiPrefObject = preferenceType[prefTypeKey]?.api_preference;
 
@@ -294,6 +318,10 @@ export const FilterSelect = ({ component, table, terminology }) => {
               existingOntologies={existingOntologies}
               setExistingOntologies={setExistingOntologies}
               flattenedFilters={flattenedFilters}
+              prefTerminologies={prefTerminologies}
+              setExistingPreferred={setExistingPreferred}
+              preferredData={preferredData}
+              setPreferredData={setPreferredData}
             />
           )}
         </Modal>

@@ -540,7 +540,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             {table?.variables?.length > 0 ? (
               <>
                 <div className="add_row_buttons">
-                  <FilterSelect component={table} table={table} />
+                  <FilterSelect
+                    component={table}
+                    table={table}
+                    componentString={'Table'}
+                  />
                   <PreferredTerminology
                     terminology={null}
                     setTerminology={null}

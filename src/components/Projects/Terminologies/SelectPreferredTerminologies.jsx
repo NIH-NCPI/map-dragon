@@ -17,42 +17,42 @@ export const SelectPreferredTerminologies = ({
   searchText,
   setSearchText,
   paginatedTerminologies,
-  open,
+  open
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
     prefTerminologies,
     setExistingPreferred,
     preferredData,
-    setPreferredData,
+    setPreferredData
   } = useContext(SearchContext);
   const { Search } = Input;
   const [loading, setLoading] = useState(false);
 
-  const fetchTerminologies = () => {
-    setLoading(true);
-    // Maps through prefTerminologies and fetches each terminology by its id
-    const fetchPromises = prefTerminologies?.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
-    );
+  // const fetchTerminologies = () => {
+  //   setLoading(true);
+  //   // Maps through prefTerminologies and fetches each terminology by its id
+  //   const fetchPromises = prefTerminologies?.map(pref =>
+  //     fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
+  //   );
 
-    Promise.all(fetchPromises)
-      .then(results => {
-        // Once all fetch calls are resolved, set the combined data
-        setPreferredData(results);
-        setExistingPreferred(results);
-      })
-      .catch(error => {
-        notification.error({
-          message: 'Error',
-          description: 'An error occurred. Please try again.',
-        });
-      })
-      .finally(() => setLoading(false));
-  };
-  useEffect(() => {
-    prefTerminologies && fetchTerminologies();
-  }, [open]);
+  //   Promise.all(fetchPromises)
+  //     .then(results => {
+  //       // Once all fetch calls are resolved, set the combined data
+  //       setPreferredData(results);
+  //       setExistingPreferred(results);
+  //     })
+  //     .catch(error => {
+  //       notification.error({
+  //         message: 'Error',
+  //         description: 'An error occurred. Please try again.',
+  //       });
+  //     })
+  //     .finally(() => setLoading(false));
+  // };
+  // useEffect(() => {
+  //   prefTerminologies && fetchTerminologies();
+  // }, [open]);
 
   // If the checkbox is checked, it adds the object to the selectedBoxes array
   // If it is unchecked, it filters it out of the selectedBoxes array.
@@ -85,7 +85,7 @@ export const SelectPreferredTerminologies = ({
 
     setDisplaySelectedTerminologies(prevState => [
       ...prevState,
-      selectedTerminology,
+      selectedTerminology
     ]);
 
     // Filters out the selected checkboxes from the results being displayed
@@ -129,7 +129,7 @@ export const SelectPreferredTerminologies = ({
 
   const initialChecked = preferredData?.map(term =>
     JSON.stringify({
-      preferred_terminology: term?.id,
+      preferred_terminology: term?.id
     })
   );
 
@@ -165,8 +165,8 @@ export const SelectPreferredTerminologies = ({
                   valuePropName="value"
                   rules={[
                     {
-                      required: false,
-                    },
+                      required: false
+                    }
                   ]}
                 >
                   {preferredData?.length > 0 ? (
@@ -175,9 +175,9 @@ export const SelectPreferredTerminologies = ({
                       options={preferredData?.map((term, index) => {
                         return {
                           value: JSON.stringify({
-                            preferred_terminology: term?.id,
+                            preferred_terminology: term?.id
                           }),
-                          label: checkBoxDisplay(term, index),
+                          label: checkBoxDisplay(term, index)
                         };
                       })}
                       onChange={onExistingChange}
@@ -219,8 +219,8 @@ export const SelectPreferredTerminologies = ({
               valuePropName="value"
               rules={[
                 {
-                  required: false,
-                },
+                  required: false
+                }
               ]}
             >
               {paginatedTerminologies?.length > 0 ? (
@@ -230,9 +230,9 @@ export const SelectPreferredTerminologies = ({
                     options={paginatedTerminologies?.map((term, index) => {
                       return {
                         value: JSON.stringify({
-                          preferred_terminology: term.id,
+                          preferred_terminology: term.id
                         }),
-                        label: checkBoxDisplay(term, index),
+                        label: checkBoxDisplay(term, index)
                       };
                     })}
                     onChange={onSelectedChange}

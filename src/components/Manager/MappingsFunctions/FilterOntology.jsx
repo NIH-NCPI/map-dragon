@@ -1,8 +1,10 @@
-import { Checkbox, Form, Input } from 'antd';
+import { Checkbox, Form, Input, Tooltip } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterReset } from './FilterReset';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { Link } from 'react-router-dom';
+import { ellipsisString } from '../Utility';
 
 export const FilterOntology = ({
   ontology,
@@ -12,15 +14,21 @@ export const FilterOntology = ({
   setSelectedBoxes,
   displaySelectedOntologies,
   setDisplaySelectedOntologies,
+  displaySelectedTerminologies,
+  setDisplaySelectedTerminologies,
   paginatedOntologies,
   table,
   terminology,
   existingOntologies,
   setExistingOntologies,
-  flattenedFilters
+  flattenedFilters,
+  preferredData,
+  active
 }) => {
   const { Search } = Input;
   const [allCheckboxes, setAllCheckboxes] = useState([]);
+  const [selectedTerminologies, setSelectedTerminologies] = useState([]);
+  const [terminologies, setTerminologies] = useState([]);
   const { setOntologyForPagination } = useContext(myContext);
   const { preferenceType, prefTypeKey, searchText, setSearchText } =
     useContext(SearchContext);
@@ -68,64 +76,131 @@ export const FilterOntology = ({
   };
 
   const onSelectedChange = checkedValues => {
-    if (checkedValues.length > 0) {
-      const selected = JSON.parse(checkedValues[0]);
-      const selectedOntology = allCheckboxes?.find(
-        item => item.ontology_code === selected.ontology
+    if (active === 'term') {
+      const selected = JSON.parse(checkedValues?.[0]);
+      const selectedTerminology = preferredData.find(
+        term => term.id === selected.preferred_terminology
       );
 
-      // Updates selectedOntologies and displaySelectedOntologies to include the new selected items
-      setSelectedOntologies(prevState => [...prevState, selectedOntology]);
+      // Updates selectedTerminologies and displayselectedTerminologys to include the new selected items
+      setSelectedTerminologies(prevState => [
+        ...prevState,
+        selectedTerminology
+      ]);
 
-      // Add the selectedOntology to the selectedBoxes
+      // Adds the selectedTerminologies to the selectedBoxes to ensure they are checked
       setSelectedBoxes(prevState => {
-        const updated = [...prevState, selectedOntology];
-        form.setFieldsValue({ ontologies: updated }); // Update form values
+        const updated = [...prevState, selectedTerminology];
+        // Sets the values for the form to the selectedTerminologiess checkboxes that are checked
+        form.setFieldsValue({ selected_terminologies: updated });
         return updated;
       });
 
-      setDisplaySelectedOntologies(prevState => [
+      setDisplaySelectedTerminologies(prevState => [
         ...prevState,
-        selectedOntology
+        selectedTerminology
       ]);
 
-      // Filters out the selected ontologies from the available ones
-      const updatedOntologies = allCheckboxes?.filter(
-        ont => ont.ontology_code !== selected.ontology
+      // Filters out the selected checkboxes from the results being displayed
+      const updatedTerminologies = preferredData.filter(
+        term => term.id !== selected.preferred_terminology
       );
-      setOntologiesForSelection(updatedOntologies);
+
+      setTerminologies(updatedTerminologies);
+    } else {
+      if (checkedValues.length > 0) {
+        const selected = JSON.parse(checkedValues[0]);
+        const selectedOntology = allCheckboxes?.find(
+          item => item.ontology_code === selected.ontology
+        );
+
+        // Updates selectedOntologies and displaySelectedOntologies to include the new selected items
+        setSelectedOntologies(prevState => [...prevState, selectedOntology]);
+
+        // Add the selectedOntology to the selectedBoxes
+        setSelectedBoxes(prevState => {
+          const updated = [...prevState, selectedOntology];
+          form.setFieldsValue({ ontologies: updated }); // Update form values
+          return updated;
+        });
+
+        setDisplaySelectedOntologies(prevState => [
+          ...prevState,
+          selectedOntology
+        ]);
+
+        // Filters out the selected ontologies from the available ones
+        const updatedOntologies = allCheckboxes?.filter(
+          ont => ont.ontology_code !== selected.ontology
+        );
+        setOntologiesForSelection(updatedOntologies);
+      }
     }
   };
 
-  const checkBoxDisplay = (ont, i) => {
-    return (
-      <>
-        <div key={i} className="modal_search_result">
-          <div>
-            <div className="modal_term_ontology">
-              <div>{ont?.curie}</div>
-            </div>
-            <div>{ont?.ontology_title}</div>
-          </div>
-        </div>
-      </>
-    );
-  };
-
-  const selectedCheckBoxDisplay = (ont, i) => {
+  const checkBoxDisplay = (item, i) => {
     return (
       <>
         <div key={i} className="modal_search_result">
           <div>
             <div className="modal_term_ontology">
               <div>
-                {ont?.curie}{' '}
-                <span className="display_selected_api">
-                  ({ont?.api?.toUpperCase()})
-                </span>
+                {active !== 'term' ? (
+                  item?.curie
+                ) : (
+                  <Link
+                    to={`/Terminology/${item?.id}`}
+                    target="_blank"
+                    className="terminology_link"
+                  >
+                    <b>{item?.name ? item.name : item?.id}</b>
+                  </Link>
+                )}
               </div>
             </div>
-            <div>{ont?.ontology_title}</div>
+            <div>
+              {active !== 'term' ? (
+                item?.ontology_title
+              ) : item?.description?.length > 125 ? (
+                <Tooltip title={item?.description} mouseEnterDelay={0.5}>
+                  {ellipsisString(item?.description, '125')}
+                </Tooltip>
+              ) : (
+                ellipsisString(item?.description, '125')
+              )}
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const selectedCheckBoxDisplay = (item, i) => {
+    return (
+      <>
+        <div key={i} className="modal_search_result">
+          <div>
+            <div className="modal_term_ontology">
+              <div>
+                {item?.curie ? item?.curie : item?.name ? item.name : item?.id}
+                {item?.api && (
+                  <span className="display_selected_api">
+                    ({item?.api?.toUpperCase()})
+                  </span>
+                )}
+              </div>
+            </div>
+            <div>
+              {item?.ontology_title ? (
+                item?.ontology_title
+              ) : item?.description?.length > 125 ? (
+                <Tooltip title={item?.description} mouseEnterDelay={0.5}>
+                  {ellipsisString(item?.description, '125')}
+                </Tooltip>
+              ) : (
+                ellipsisString(item?.description, '125')
+              )}
+            </div>
           </div>
         </div>
       </>
@@ -233,27 +308,69 @@ export const FilterOntology = ({
           </>
         )}
 
+        {displaySelectedTerminologies?.length > 0 && (
+          <>
+            <Form.Item
+              className="pref_group"
+              name="selected_terminologies"
+              valuePropName="value"
+              rules={[{ required: false }]}
+            >
+              <div className="modal_display_results">
+                {displaySelectedTerminologies?.map((selected, i) => (
+                  <Checkbox
+                    key={i}
+                    checked={selectedBoxes.some(box => box.id === selected.id)}
+                    value={selected}
+                    onChange={e => onCheckboxChange(e, selected)}
+                  >
+                    {selectedCheckBoxDisplay(selected, i)}
+                  </Checkbox>
+                ))}
+              </div>
+            </Form.Item>
+          </>
+        )}
+
         <Form.Item name={'ontologies'} valuePropName="value">
           <Checkbox.Group
             className="mappings_checkbox"
-            options={paginatedOntologies
-              ?.filter(
-                checkbox =>
-                  !displaySelectedOntologies.some(
-                    dsm => checkbox.ontology_code === dsm.ontology_code
-                  ) &&
-                  !flattenedFilters.some(
-                    ef => checkbox.ontology_code === ef.ontology
-                  )
-              )
-              .map((ont, i) => ({
-                value: JSON.stringify({
-                  ontology: ont.ontology_code
-                }),
-                label: checkBoxDisplay(ont, i)
-              }))}
+            options={
+              active !== 'term'
+                ? paginatedOntologies
+                    ?.filter(
+                      checkbox =>
+                        !displaySelectedOntologies.some(
+                          dsm => checkbox.ontology_code === dsm.ontology_code
+                        ) &&
+                        !flattenedFilters.some(
+                          ef => checkbox.ontology_code === ef.ontology
+                        )
+                    )
+                    .map((ont, i) => ({
+                      value: JSON.stringify({
+                        ontology: ont.ontology_code
+                      }),
+                      label: checkBoxDisplay(ont, i)
+                    }))
+                : preferredData
+                    ?.filter(
+                      term =>
+                        !displaySelectedTerminologies.some(
+                          t => t.id === term.id
+                        )
+                    )
+                    .map((term, i) => ({
+                      value: JSON.stringify({
+                        preferred_terminology: term?.id
+                      }),
+                      label: checkBoxDisplay(term, i)
+                    }))
+            }
             value={selectedBoxes.map(item =>
-              JSON.stringify({ ontology: item.ontology_code })
+              item?.id
+                ? JSON.stringify({ preferred_terminology: item?.id })
+                : JSON.stringify({ ontology: item?.ontology_code })
             )}
             onChange={onSelectedChange}
           />
