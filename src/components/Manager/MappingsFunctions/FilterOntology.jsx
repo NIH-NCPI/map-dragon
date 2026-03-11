@@ -22,13 +22,19 @@ export const FilterOntology = ({
   existingOntologies,
   setExistingOntologies,
   flattenedFilters,
+  terminologies,
+  setTerminologies,
+  prefTerminologies,
+  existingPreferred,
+  setExistingPreferred,
   preferredData,
+  setPreferredData,
+  paginatedTerminologies,
   active
 }) => {
   const { Search } = Input;
   const [allCheckboxes, setAllCheckboxes] = useState([]);
   const [selectedTerminologies, setSelectedTerminologies] = useState([]);
-  const [terminologies, setTerminologies] = useState([]);
   const { setOntologyForPagination } = useContext(myContext);
   const { preferenceType, prefTypeKey, searchText, setSearchText } =
     useContext(SearchContext);
@@ -74,11 +80,14 @@ export const FilterOntology = ({
       [api]: checkedValues
     }));
   };
+  const onExistingTermChange = checkedValues => {
+    setExistingPreferred(checkedValues);
+  };
 
   const onSelectedChange = checkedValues => {
     if (active === 'term') {
       const selected = JSON.parse(checkedValues?.[0]);
-      const selectedTerminology = preferredData.find(
+      const selectedTerminology = terminologies.find(
         term => term.id === selected.preferred_terminology
       );
 
@@ -102,10 +111,9 @@ export const FilterOntology = ({
       ]);
 
       // Filters out the selected checkboxes from the results being displayed
-      const updatedTerminologies = preferredData.filter(
+      const updatedTerminologies = terminologies.filter(
         term => term.id !== selected.preferred_terminology
       );
-
       setTerminologies(updatedTerminologies);
     } else {
       if (checkedValues.length > 0) {
@@ -207,25 +215,28 @@ export const FilterOntology = ({
     );
   };
 
-  const existingDisplay = (ont, i) => {
+  const existingDisplay = (item, i) => {
     return (
       <>
         <div key={i} className="modal_search_result">
           <div>
             <div className="modal_term_ontology">
-              <div>{ont.ontology.toUpperCase()}</div>
+              <div>
+                {item.ontology
+                  ? item.ontology.toUpperCase()
+                  : (item?.name ?? item?.id)}
+              </div>
             </div>
           </div>
         </div>
       </>
     );
   };
-
   return (
     <>
       <div className="modal_checkbox_wrapper">
         <Search
-          placeholder="Search ontologies"
+          placeholder="Search filters"
           className="api_onto_search_bar"
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
@@ -242,19 +253,22 @@ export const FilterOntology = ({
                 setExistingOntologies={setExistingOntologies}
               />
             </div>
-            <Form.Item
-              name={['existing_filters']}
-              valuePropName="value"
-              rules={[
-                {
-                  required: false
-                }
-              ]}
-            >
-              {flattenedFilters?.length > 0 && (
-                <div className="mappings_checkbox bottom_border_div">
-                  {Array.from(new Set(flattenedFilters.map(ff => ff.api))).map(
-                    api => {
+            <div className="mappings_checkbox bottom_border_div existing_filters_div">
+              <Form.Item
+                name={['existing_filters']}
+                valuePropName="value"
+                rules={[
+                  {
+                    required: false
+                  }
+                ]}
+              >
+                {flattenedFilters?.length > 0 && (
+                  <>
+                    {' '}
+                    {Array.from(
+                      new Set(flattenedFilters.map(ff => ff.api))
+                    ).map(api => {
                       const apiOntologies = flattenedFilters.filter(
                         ff => ff.api === api
                       );
@@ -280,11 +294,45 @@ export const FilterOntology = ({
                         );
                       }
                       return null;
-                    }
-                  )}
-                </div>
+                    })}
+                  </>
+                )}
+              </Form.Item>
+              {preferredData?.length > 0 && (
+                <>
+                  <Form.Item
+                    className="pref_group"
+                    name={['existing_terminologies']}
+                    valuePropName="value_term"
+                    rules={[
+                      {
+                        required: false
+                      }
+                    ]}
+                  >
+                    {preferredData?.length > 0 ? (
+                      <div className="api_wrapper">
+                        <div className="api_header">MD</div>
+                        <Checkbox.Group
+                          value={existingPreferred}
+                          options={preferredData?.map((term, index) => {
+                            return {
+                              value: JSON.stringify({
+                                preferred_terminology: term?.id
+                              }),
+                              label: existingDisplay(term, index)
+                            };
+                          })}
+                          onChange={onExistingTermChange}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                  </Form.Item>
+                </>
               )}
-            </Form.Item>
+            </div>
           </>
         )}
         {displaySelectedOntologies.length > 0 && (
@@ -353,7 +401,7 @@ export const FilterOntology = ({
                       }),
                       label: checkBoxDisplay(ont, i)
                     }))
-                : preferredData
+                : paginatedTerminologies
                     ?.filter(
                       term =>
                         !displaySelectedTerminologies.some(

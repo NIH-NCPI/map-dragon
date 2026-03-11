@@ -62,8 +62,7 @@ export const TableDetails = () => {
     ucumCodes,
     setUcumCodes
   } = useContext(myContext);
-  const { setApiPreferences, prefTerminologies, setPrefTerminologies } =
-    useContext(SearchContext);
+  const { setApiPreferences, setPrefTerminologies } = useContext(SearchContext);
 
   const {
     getMappings,

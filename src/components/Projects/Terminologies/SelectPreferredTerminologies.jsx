@@ -29,30 +29,30 @@ export const SelectPreferredTerminologies = ({
   const { Search } = Input;
   const [loading, setLoading] = useState(false);
 
-  // const fetchTerminologies = () => {
-  //   setLoading(true);
-  //   // Maps through prefTerminologies and fetches each terminology by its id
-  //   const fetchPromises = prefTerminologies?.map(pref =>
-  //     fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
-  //   );
+  const fetchTerminologies = () => {
+    setLoading(true);
+    // Maps through prefTerminologies and fetches each terminology by its id
+    const fetchPromises = prefTerminologies?.map(pref =>
+      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
+    );
 
-  //   Promise.all(fetchPromises)
-  //     .then(results => {
-  //       // Once all fetch calls are resolved, set the combined data
-  //       setPreferredData(results);
-  //       setExistingPreferred(results);
-  //     })
-  //     .catch(error => {
-  //       notification.error({
-  //         message: 'Error',
-  //         description: 'An error occurred. Please try again.',
-  //       });
-  //     })
-  //     .finally(() => setLoading(false));
-  // };
-  // useEffect(() => {
-  //   prefTerminologies && fetchTerminologies();
-  // }, [open]);
+    Promise.all(fetchPromises)
+      .then(results => {
+        // Once all fetch calls are resolved, set the combined data
+        setPreferredData(results);
+        setExistingPreferred(results);
+      })
+      .catch(error => {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred. Please try again.'
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+  useEffect(() => {
+    prefTerminologies && fetchTerminologies();
+  }, [open]);
 
   // If the checkbox is checked, it adds the object to the selectedBoxes array
   // If it is unchecked, it filters it out of the selectedBoxes array.

@@ -25,6 +25,9 @@ export const FilterSelect = ({
   );
   const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [displaySelectedTerminologies, setDisplaySelectedTerminologies] =
+    useState([]);
+  const [terminologies, setTerminologies] = useState([]);
   const { user, vocabUrl, ontologyForPagination } = useContext(myContext);
   const {
     ontologyApis,
@@ -36,6 +39,7 @@ export const FilterSelect = ({
     searchText,
     setSearchText,
     prefTerminologies,
+    existingPreferred,
     setExistingPreferred,
     preferredData,
     setPreferredData
@@ -43,6 +47,7 @@ export const FilterSelect = ({
 
   useEffect(() => {
     setExistingOntologies(initialChecked);
+    setExistingPreferred(initialCheckedterm);
   }, [addFilter]);
 
   const existingFilters = Object.values(
@@ -67,7 +72,14 @@ export const FilterSelect = ({
       .map(item => item.ontology);
   });
 
+  const initialCheckedterm = preferredData?.map(term =>
+    JSON.stringify({
+      preferred_terminology: term?.id
+    })
+  );
+
   const [existingOntologies, setExistingOntologies] = useState(initialChecked);
+
   // Gets the ontologyAPIs on first load, automatically sets active to the first of the list to display on the page
   useEffect(() => {
     setLoading(true);
@@ -78,9 +90,29 @@ export const FilterSelect = ({
           setActive(data[0]?.api_id);
         }
       })
+      .then(() => fetchTerminologies())
       .finally(() => setLoading(false));
   }, []);
 
+  const fetchTerminologies = () => {
+    // Maps through prefTerminologies and fetches each terminology by its id
+    const fetchPromises = prefTerminologies?.map(pref =>
+      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
+    );
+
+    Promise.all(fetchPromises)
+      .then(results => {
+        // Once all fetch calls are resolved, set the combined data
+        setPreferredData(results);
+        setExistingPreferred(results);
+      })
+      .catch(error => {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred. Please try again.'
+        });
+      });
+  };
   // Sets the first API in the list as active
   useEffect(() => {
     setActive(ontologyApis[0]?.api_id);
@@ -109,7 +141,6 @@ export const FilterSelect = ({
     setSearchText('');
   };
 
-  console.log(selectedBoxes);
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
@@ -233,11 +264,38 @@ export const FilterSelect = ({
       }
     }
   };
-
   const filteredOntologiesArray = filterOntologies();
 
   // Pagination
   const paginatedOntologies = filteredOntologiesArray?.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const filterTerminologies = () => {
+    const terminologiesToExclude = new Set([
+      ...prefTerminologies?.map(pt => `${pt?.name}|${pt?.url}`),
+      ...displaySelectedTerminologies?.map(dst => `${dst?.name}|${dst?.url}`),
+      ...preferredData?.map(ep => `${ep?.name}|${ep?.url}`)
+    ]);
+
+    return terminologies.filter(
+      t => !terminologiesToExclude.has(`${t?.name}|${t?.url}`)
+    );
+  };
+
+  const filteredTerminologyArray = filterTerminologies();
+
+  // Searches for terminologies by keystroke
+  const getFilteredItems = () =>
+    filteredTerminologyArray?.filter(
+      item =>
+        item?.name &&
+        item?.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+
+  // Pagination
+  const paginatedTerminologies = getFilteredItems().slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -283,7 +341,11 @@ export const FilterSelect = ({
                   <Pagination
                     current={currentPage}
                     pageSize={pageSize}
-                    total={filteredOntologiesArray?.length}
+                    total={
+                      active === 'term'
+                        ? filteredTerminologyArray?.length
+                        : filteredOntologiesArray?.length
+                    }
                     onChange={handlePageChange}
                     showSizeChanger
                     onShowSizeChange={handlePageSizeChange}
@@ -320,8 +382,13 @@ export const FilterSelect = ({
               flattenedFilters={flattenedFilters}
               prefTerminologies={prefTerminologies}
               setExistingPreferred={setExistingPreferred}
+              existingPreferred={existingPreferred}
               preferredData={preferredData}
-              setPreferredData={setPreferredData}
+              paginatedTerminologies={paginatedTerminologies}
+              displaySelectedTerminologies={displaySelectedTerminologies}
+              setDisplaySelectedTerminologies={setDisplaySelectedTerminologies}
+              terminologies={terminologies}
+              setTerminologies={setTerminologies}
             />
           )}
         </Modal>

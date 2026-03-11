@@ -120,11 +120,13 @@ export const TerminologyList = () => {
       filterIcon: filtered => (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
-      onFilterDropdownOpenChange: open => {
-        if (open) {
-          setTimeout(() => {
-            inputRef.current?.focus(); // Focus cursor on search input
-          }, 100); // Small delay to ensure input is rendered
+      filterDropdownProps: {
+        onOpenChange(open) {
+          if (open) {
+            setTimeout(() => {
+              inputRef.current?.focus(); // Focus cursor on search input
+            }, 100); // Small delay to ensure input is rendered
+          }
         }
       },
       width: 400

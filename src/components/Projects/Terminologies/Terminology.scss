@@ -9,6 +9,9 @@
   width: 90%;
 }
 
+.ant-table-header {
+  overflow: visible !important;
+}
 .description_wrapper {
   display: flex;
   flex-direction: row;

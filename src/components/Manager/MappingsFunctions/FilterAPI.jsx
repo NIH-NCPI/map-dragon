@@ -4,6 +4,8 @@ import { ModalSpinner, OntologySpinner } from '../Spinner';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
 import './FilterAPI.scss';
+import { getAll } from '../FetchManager';
+import { useNavigate } from 'react-router-dom';
 
 export const FilterAPI = ({
   form,
@@ -23,23 +25,31 @@ export const FilterAPI = ({
   setExistingOntologies,
   flattenedFilters,
   prefTerminologies,
+  existingPreferred,
   setExistingPreferred,
   preferredData,
-  setPreferredData
+  setPreferredData,
+  paginatedTerminologies,
+  displaySelectedTerminologies,
+  setDisplaySelectedTerminologies,
+  terminologies,
+  setTerminologies
 }) => {
   const { vocabUrl } = useContext(myContext);
   const [ontology, setOntology] = useState([]);
-  const [displaySelectedTerminologies, setDisplaySelectedTerminologies] =
-    useState([]);
+
+  const [originalTerminologies, setOriginalTerminologies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Fetches the active ontologyAPI each time the active API changes
   useEffect(() => {
     if (active === 'term') {
-      if (!preferredData || preferredData?.length === 0) {
-        fetchTerminologies();
-      }
+      getAll(vocabUrl, 'Terminology', navigate).then(data => {
+        setTerminologies(data);
+        setOriginalTerminologies(data);
+      });
     } else {
       getOntologyApiById();
     }
@@ -81,28 +91,6 @@ export const FilterAPI = ({
         })
         .finally(() => setTableLoading(false))
     );
-  };
-
-  const fetchTerminologies = () => {
-    setLoading(true);
-    // Maps through prefTerminologies and fetches each terminology by its id
-    const fetchPromises = prefTerminologies?.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
-    );
-
-    Promise.all(fetchPromises)
-      .then(results => {
-        // Once all fetch calls are resolved, set the combined data
-        setPreferredData(results);
-        setExistingPreferred(results);
-      })
-      .catch(error => {
-        notification.error({
-          message: 'Error',
-          description: 'An error occurred. Please try again.'
-        });
-      })
-      .finally(() => setLoading(false));
   };
 
   const checkboxDisplay = (api, index) => {
@@ -173,12 +161,18 @@ export const FilterAPI = ({
                   existingOntologies={existingOntologies}
                   setExistingOntologies={setExistingOntologies}
                   flattenedFilters={flattenedFilters}
-                  preferredData={preferredData}
+                  terminologies={terminologies}
                   active={active}
                   displaySelectedTerminologies={displaySelectedTerminologies}
                   setDisplaySelectedTerminologies={
                     setDisplaySelectedTerminologies
                   }
+                  prefTerminologies={prefTerminologies}
+                  existingPreferred={existingPreferred}
+                  setExistingPreferred={setExistingPreferred}
+                  preferredData={preferredData}
+                  setPreferredData={setPreferredData}
+                  paginatedTerminologies={paginatedTerminologies}
                 />
               )}
             </div>

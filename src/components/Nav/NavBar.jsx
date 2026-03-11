@@ -46,7 +46,7 @@ export const NavBar = () => {
             >
               <li className="nav_link">Studies</li>
             </div>
-            <span class="nav_separator"></span>
+            <span className="nav_separator"></span>
 
             <div
               onClick={() => {
