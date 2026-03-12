@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Checkbox, Form, Tooltip } from 'antd';
+import { Form, Tooltip } from 'antd';
 import { ModalSpinner, OntologySpinner } from '../Spinner';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
@@ -24,16 +24,18 @@ export const FilterAPI = ({
   existingOntologies,
   setExistingOntologies,
   flattenedFilters,
-  prefTerminologies,
   existingPreferred,
   setExistingPreferred,
   preferredData,
-  setPreferredData,
   paginatedTerminologies,
   displaySelectedTerminologies,
   setDisplaySelectedTerminologies,
   terminologies,
-  setTerminologies
+  setTerminologies,
+  selectedTerminologies,
+  setSelectedTerminologies,
+  componentString,
+  setPrefTerminologies
 }) => {
   const { vocabUrl } = useContext(myContext);
   const [ontology, setOntology] = useState([]);
@@ -167,12 +169,14 @@ export const FilterAPI = ({
                   setDisplaySelectedTerminologies={
                     setDisplaySelectedTerminologies
                   }
-                  prefTerminologies={prefTerminologies}
                   existingPreferred={existingPreferred}
                   setExistingPreferred={setExistingPreferred}
                   preferredData={preferredData}
-                  setPreferredData={setPreferredData}
                   paginatedTerminologies={paginatedTerminologies}
+                  selectedTerminologies={selectedTerminologies}
+                  setSelectedTerminologies={setSelectedTerminologies}
+                  componentString={componentString}
+                  setPrefTerminologies={setPrefTerminologies}
                 />
               )}
             </div>

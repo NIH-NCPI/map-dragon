@@ -23,18 +23,17 @@ export const FilterOntology = ({
   setExistingOntologies,
   flattenedFilters,
   terminologies,
-  setTerminologies,
-  prefTerminologies,
   existingPreferred,
   setExistingPreferred,
   preferredData,
-  setPreferredData,
   paginatedTerminologies,
+  setSelectedTerminologies,
+  componentString,
+  setPrefTerminologies,
   active
 }) => {
   const { Search } = Input;
   const [allCheckboxes, setAllCheckboxes] = useState([]);
-  const [selectedTerminologies, setSelectedTerminologies] = useState([]);
   const { setOntologyForPagination } = useContext(myContext);
   const { preferenceType, prefTypeKey, searchText, setSearchText } =
     useContext(SearchContext);
@@ -109,12 +108,6 @@ export const FilterOntology = ({
         ...prevState,
         selectedTerminology
       ]);
-
-      // Filters out the selected checkboxes from the results being displayed
-      const updatedTerminologies = terminologies.filter(
-        term => term.id !== selected.preferred_terminology
-      );
-      setTerminologies(updatedTerminologies);
     } else {
       if (checkedValues.length > 0) {
         const selected = JSON.parse(checkedValues[0]);
@@ -191,11 +184,9 @@ export const FilterOntology = ({
             <div className="modal_term_ontology">
               <div>
                 {item?.curie ? item?.curie : item?.name ? item.name : item?.id}
-                {item?.api && (
-                  <span className="display_selected_api">
-                    ({item?.api?.toUpperCase()})
-                  </span>
-                )}
+                <span className="display_selected_api">
+                  {item?.api ? `(${item?.api?.toUpperCase()})` : `(MD)`}
+                </span>
               </div>
             </div>
             <div>
@@ -241,9 +232,10 @@ export const FilterOntology = ({
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
         />
-        {Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).some(
+        {(Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).some(
           key => preferenceType[prefTypeKey]?.api_preference[key]?.length > 0
-        ) && (
+        ) ||
+          preferredData.length > 0) && (
           <>
             <div className="onto_reset">
               <h4>Ontology Filters</h4>
@@ -251,24 +243,28 @@ export const FilterOntology = ({
                 table={table}
                 terminology={terminology}
                 setExistingOntologies={setExistingOntologies}
+                componentString={componentString}
+                setPrefTerminologies={setPrefTerminologies}
+                setExistingPreferred={setExistingPreferred}
               />
             </div>
-            <div className="mappings_checkbox bottom_border_div existing_filters_div">
-              <Form.Item
-                name={['existing_filters']}
-                valuePropName="value"
-                rules={[
-                  {
-                    required: false
-                  }
-                ]}
-              >
-                {flattenedFilters?.length > 0 && (
-                  <>
-                    {' '}
-                    {Array.from(
-                      new Set(flattenedFilters.map(ff => ff.api))
-                    ).map(api => {
+            <div className="mappings_checkbox ">
+              {flattenedFilters?.length > 0 && (
+                <Form.Item
+                  className={`${preferredData?.length < 1 ? 'selected_group' : ''}`}
+                  name={['existing_filters']}
+                  valuePropName="value"
+                  rules={[
+                    {
+                      required: false
+                    }
+                  ]}
+                  style={{
+                    marginBottom: preferredData?.length > 0 ? 0 : ''
+                  }}
+                >
+                  {Array.from(new Set(flattenedFilters.map(ff => ff.api))).map(
+                    api => {
                       const apiOntologies = flattenedFilters.filter(
                         ff => ff.api === api
                       );
@@ -294,14 +290,14 @@ export const FilterOntology = ({
                         );
                       }
                       return null;
-                    })}
-                  </>
-                )}
-              </Form.Item>
+                    }
+                  )}
+                </Form.Item>
+              )}
               {preferredData?.length > 0 && (
                 <>
                   <Form.Item
-                    className="pref_group"
+                    className="selected_group"
                     name={['existing_terminologies']}
                     valuePropName="value_term"
                     rules={[
@@ -311,7 +307,9 @@ export const FilterOntology = ({
                     ]}
                   >
                     {preferredData?.length > 0 ? (
-                      <div className="api_wrapper">
+                      <div
+                        className={`api_wrapper${flattenedFilters?.length > 0 ? ' existing_terminologies' : ''}`}
+                      >
                         <div className="api_header">MD</div>
                         <Checkbox.Group
                           value={existingPreferred}
@@ -337,8 +335,15 @@ export const FilterOntology = ({
         )}
         {displaySelectedOntologies.length > 0 && (
           <>
-            <Form.Item name={'selected_ontologies'} valuePropName="value">
-              <div className="modal_selected bottom_border_div">
+            <Form.Item
+              className={`${displaySelectedTerminologies?.length < 1 ? 'selected_group' : ''}`}
+              name={'selected_ontologies'}
+              valuePropName="value"
+              style={{
+                marginBottom: displaySelectedTerminologies?.length > 0 ? 0 : ''
+              }}
+            >
+              <div className="modal_selected">
                 {displaySelectedOntologies?.map((selected, i) => (
                   <Checkbox
                     key={i}
@@ -359,12 +364,12 @@ export const FilterOntology = ({
         {displaySelectedTerminologies?.length > 0 && (
           <>
             <Form.Item
-              className="pref_group"
+              className="selected_group"
               name="selected_terminologies"
               valuePropName="value"
               rules={[{ required: false }]}
             >
-              <div className="modal_display_results">
+              <div className="modal_selected">
                 {displaySelectedTerminologies?.map((selected, i) => (
                   <Checkbox
                     key={i}

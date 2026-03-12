@@ -59,22 +59,22 @@ export const NavBar = () => {
             >
               <li className="nav_link">Terminologies</li>
             </div>
-            <span class="nav_separator"></span>
+            <span className="nav_separator"></span>
 
             <NavLink to="/ontologies">
               <li className="nav_link">Ontologies</li>
             </NavLink>
-            <span class="nav_separator"></span>
+            <span className="nav_separator"></span>
 
             <NavLink to="https://nih-ncpi.github.io/map-dragon" target="_blank">
               <li className="nav_link">Help</li>
             </NavLink>
-            <span class="nav_separator"></span>
+            <span className="nav_separator"></span>
 
             <NavLink to="/about">
               <li className="nav_link">About</li>
             </NavLink>
-            <span class="nav_separator"></span>
+            <span className="nav_separator"></span>
 
             <NavLink to="/">
               <li className="nav_link last_nav_link">Search</li>

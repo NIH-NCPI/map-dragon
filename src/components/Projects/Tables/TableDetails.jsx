@@ -542,7 +542,10 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                   <FilterSelect
                     component={table}
                     table={table}
+                    terminology={null}
                     componentString={'Table'}
+                    setTerminology={null}
+                    setTable={setTable}
                   />
                   <PreferredTerminology
                     terminology={null}

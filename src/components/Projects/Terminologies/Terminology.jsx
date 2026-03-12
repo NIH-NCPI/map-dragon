@@ -490,8 +490,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             <div className="add_row_buttons">
               <FilterSelect
                 component={terminology}
+                table={null}
                 terminology={terminology}
                 componentString={'Terminology'}
+                setTerminology={setTerminology}
+                setTable={null}
               />
 
               <PreferredTerminology
