@@ -227,7 +227,7 @@ export const FilterOntology = ({
     <>
       <div className="modal_checkbox_wrapper">
         <Search
-          placeholder="Search filters"
+          placeholder={`${active !== 'term' ? `Search ${active.toUpperCase()}` : 'Search terminologies'}`}
           className="api_onto_search_bar"
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
