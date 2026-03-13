@@ -73,7 +73,7 @@ export const Terminology = () => {
   };
 
   useEffect(() => {
-    document.title = 'Terminology - Map Dragon';
+    document.title = 'Terminology - MapDragon';
   }, []);
 
   useEffect(() => {

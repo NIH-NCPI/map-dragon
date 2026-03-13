@@ -24,14 +24,14 @@ export const StudyDetails = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Study - Map Dragon';
+    document.title = 'Study - MapDragon';
   }, []);
   /* Function that maps through the datadictionary array in a study.
   For each DD, it makes a fetch call to the id of the DD.
   Promise.all fulfills all of the fetch calls. The response is set to studyDDs  */
   const getStudyDDs = async newStudy => {
     const dDPromises = newStudy?.datadictionary?.map(r =>
-      getById(vocabUrl, 'DataDictionary', r.reference.split('/')[1]),
+      getById(vocabUrl, 'DataDictionary', r.reference.split('/')[1])
     );
     const data = await Promise.all(dDPromises);
     setStudyDDs(data);
@@ -59,7 +59,7 @@ export const StudyDetails = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
           setLoading(false);
         }
@@ -139,7 +139,7 @@ export const StudyDetails = () => {
                     hoverable
                     style={{
                       border: '1px solid darkgray',
-                      height: '350px',
+                      height: '350px'
                     }}
                   >
                     <div className="new_study_card_container">
@@ -162,7 +162,7 @@ export const StudyDetails = () => {
                       title={dd?.name ? dd?.name : dd?.id}
                       style={{
                         border: '1px solid darkgray',
-                        height: '350px',
+                        height: '350px'
                       }}
                     >
                       {/* Displays the description up to 180 characters, truncated with ellipsis. */}
@@ -172,7 +172,7 @@ export const StudyDetails = () => {
                           height: '125px',
                           border: '1px lightgray solid',
                           borderRadius: '5px',
-                          padding: '5px',
+                          padding: '5px'
                         }}
                         description={
                           <div style={{ height: '115px', overflowY: 'auto' }}>
@@ -185,7 +185,7 @@ export const StudyDetails = () => {
                       <Meta
                         style={{
                           padding: '0 5px',
-                          margin: '22px 0 0 0',
+                          margin: '22px 0 0 0'
                         }}
                         description={
                           <div className="card_description">

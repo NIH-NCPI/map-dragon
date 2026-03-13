@@ -28,7 +28,7 @@ export const NavBar = () => {
               <NavLink className="nav_logo" to="/">
                 <img
                   className="logo"
-                  alt="Map Dragon logo. Yellow circle with MD in the center."
+                  alt="MapDragon logo. Yellow circle with MD in the center."
                   src={Logo}
                 />
               </NavLink>

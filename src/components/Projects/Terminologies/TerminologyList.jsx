@@ -22,7 +22,7 @@ export const TerminologyList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Terminology Index - Map Dragon';
+    document.title = 'Terminology Index - MapDragon';
   }, []);
 
   const inputRef = useRef(null);

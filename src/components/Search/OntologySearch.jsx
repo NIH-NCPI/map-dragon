@@ -10,7 +10,7 @@ export const OntologySearch = () => {
   const ref = useRef();
 
   useEffect(() => {
-    document.title = 'Map Dragon';
+    document.title = 'MapDragon';
   }, []);
   const searchOnEnter = e => {
     /* if the input field has a value (i.e. term being searched), the value is transposed into the address bar. 

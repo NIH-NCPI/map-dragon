@@ -15,7 +15,7 @@ export const Footer = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading the version.',
+            description: 'An error occurred loading the version.'
           });
         }
         return error;
@@ -29,7 +29,7 @@ export const Footer = () => {
           Locutus version: {version?.version}
         </div>
         <div className="footer_content">
-          Map Dragon version: {mapDragonVersion}
+          MapDragon version: {mapDragonVersion}
         </div>
       </div>
     </footer>

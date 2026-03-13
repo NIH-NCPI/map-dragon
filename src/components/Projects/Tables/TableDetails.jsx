@@ -94,7 +94,7 @@ export const TableDetails = () => {
   const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
-    document.title = 'Table - Map Dragon';
+    document.title = 'Table - MapDragon';
   }, []);
 
   useEffect(() => {
