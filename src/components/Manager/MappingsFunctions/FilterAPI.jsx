@@ -109,12 +109,10 @@ export const FilterAPI = ({
           >
             <div className="modal_term_ontology">
               <div>
-                <b>
-                  {api ? api?.api_id.toUpperCase() : 'MapDragon Terminologies'}
-                </b>
+                <b>{api ? api?.api_id.toUpperCase() : 'MD'}</b>
               </div>
             </div>
-            <div>{api ? api?.api_name : ''}</div>
+            <div>{api ? api?.api_name : 'Map Dragon Terminologies'}</div>
           </div>
         </div>
       </>
