@@ -31,7 +31,6 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { TerminologyMenu } from './TerminologyMenu';
 import { LoadCodes } from './LoadCodes';
-import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
@@ -73,7 +72,7 @@ export const Terminology = () => {
   };
 
   useEffect(() => {
-    document.title = 'Terminology - Map Dragon';
+    document.title = 'Terminology - MapDragon';
   }, []);
 
   useEffect(() => {
@@ -488,14 +487,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           </Row>
           <div className="table_container">
             <div className="add_row_buttons">
-              <FilterSelect component={terminology} terminology={terminology} />
-
-              <PreferredTerminology
-                terminology={terminology}
-                setTerminology={setTerminology}
+              <FilterSelect
+                component={terminology}
                 table={null}
+                terminology={terminology}
+                componentString={'Terminology'}
+                setTerminology={setTerminology}
                 setTable={null}
-                componentString="Terminology"
               />
               <AddCode
                 terminology={terminology}

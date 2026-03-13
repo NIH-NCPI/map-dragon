@@ -16,7 +16,7 @@ export const OntologyTable = ({ ontology }) => {
   }, [pageSize]);
 
   useEffect(() => {
-    document.title = 'Ontologies - Map Dragon';
+    document.title = 'Ontologies - MapDragon';
   }, []);
 
   const ontologyTitle = () => {

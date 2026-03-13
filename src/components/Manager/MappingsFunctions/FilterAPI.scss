@@ -1,0 +1,23 @@
+.api_filters_wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.api_filters_container {
+  flex: 0 0 25%;
+}
+
+.api_filters_ontology_list {
+  flex: 0 0 75%;
+}
+
+.api_onto_search_bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+}
+
+.selected_group {
+  border-bottom: solid 1px #eeee;
+}

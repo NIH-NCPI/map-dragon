@@ -277,6 +277,9 @@ export const AssignMappingsCheckboxes = ({
   // again + 1, to move the scrollbar to the first result of the new batch.
   const newSearchDisplay = (d, index) => {
     index === lastCount + 1;
+    const description = Array.isArray(d?.description)
+      ? d?.description?.map(d => d).join(',')
+      : d?.description;
     return (
       <>
         <div
@@ -289,36 +292,22 @@ export const AssignMappingsCheckboxes = ({
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d?.display}</b>
+                <b>{d?.display}fghfdgh</b>
               </div>
               <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
                 <a href={d?.code_iri} target="_blank">
-                  {d?.code}
+                  {d?.code}fdghfg
                 </a>
               </div>
             </div>
-            {d?.description?.length > 100 ? (
-              <Tooltip
-                mouseEnterDelay={0.5}
-                title={d?.description}
-                placement="topRight"
-              >
-                {ellipsisString(
-                  Array.isArray(d?.description)
-                    ? d?.description?.map(d => d).join(',')
-                    : d?.description,
-                  '100'
-                )}
-              </Tooltip>
-            ) : (
-              ellipsisString(
-                Array.isArray(d?.description)
-                  ? d?.description?.map(d => d).join(',')
-                  : d?.description,
-                '100'
-              )
-            )}{' '}
+            <Tooltip
+              mouseEnterDelay={0.5}
+              title={description.length < 100 ? null : description}
+              placement="topRight"
+            >
+              {ellipsisString(description, '100')}
+            </Tooltip>{' '}
           </div>
         </div>
       </>

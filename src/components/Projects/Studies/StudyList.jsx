@@ -23,7 +23,7 @@ export const StudyList = () => {
   const login = RequiredLogin({ handleSuccess: handleSuccess });
   // API call to fetch all studies. Sets response to 'studies' then sets loading to false
   useEffect(() => {
-    document.title = 'Studies - Map Dragon';
+    document.title = 'Studies - MapDragon';
     setLoading(true);
     getAll(vocabUrl, 'Study', navigate)
       .then(data => setStudies(data))
@@ -31,7 +31,7 @@ export const StudyList = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading studies.',
+            description: 'An error occurred loading studies.'
           });
         }
         return error;
@@ -73,7 +73,7 @@ export const StudyList = () => {
                       hoverable
                       style={{
                         border: '1px solid darkgray',
-                        height: '350px',
+                        height: '350px'
                       }}
                     >
                       <div className="new_study_card_container">
@@ -92,7 +92,7 @@ export const StudyList = () => {
                           title={study?.name ? study?.name : study?.id}
                           style={{
                             border: '1px solid darkgray',
-                            height: '350px',
+                            height: '350px'
                           }}
                         >
                           <Meta
@@ -100,7 +100,7 @@ export const StudyList = () => {
                               height: '185px',
                               border: '1px lightgray solid',
                               borderRadius: '5px',
-                              padding: '5px',
+                              padding: '5px'
                             }}
                             // displays the study description up to 240 characters, then displays ellipsis
                             description={

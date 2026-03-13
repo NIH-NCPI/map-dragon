@@ -33,7 +33,7 @@ export const SearchResults = () => {
   const pageStart = page * entriesPerPage;
 
   useEffect(() => {
-    document.title = 'Map Dragon';
+    document.title = 'MapDragon';
   }, []);
 
   // calls the search function when there is a change in the rows, page, or query

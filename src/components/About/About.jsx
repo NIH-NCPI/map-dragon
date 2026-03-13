@@ -7,7 +7,7 @@ export const About = () => {
   const { mapDragonVersion, version } = useContext(myContext);
 
   useEffect(() => {
-    document.title = 'About - Map Dragon';
+    document.title = 'About - MapDragon';
   }, []);
 
   const items = [
@@ -16,17 +16,17 @@ export const About = () => {
       label: 'Locutus version',
       children: `${version?.version}`,
       labelStyle: { width: '120px' },
-      contentStyle: { width: '170px' },
-    },
+      contentStyle: { width: '170px' }
+    }
   ];
 
   if (mapDragonVersion) {
     items.push({
       key: '2',
-      label: 'Map Dragon version',
+      label: 'MapDragon version',
       children: `${mapDragonVersion}`,
       labelStyle: { width: '120px' },
-      contentStyle: { width: '170px' },
+      contentStyle: { width: '170px' }
     });
   }
 

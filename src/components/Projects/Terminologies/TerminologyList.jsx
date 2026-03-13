@@ -22,7 +22,7 @@ export const TerminologyList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Terminology Index - Map Dragon';
+    document.title = 'Terminology Index - MapDragon';
   }, []);
 
   const inputRef = useRef(null);
@@ -120,11 +120,13 @@ export const TerminologyList = () => {
       filterIcon: filtered => (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
-      onFilterDropdownOpenChange: open => {
-        if (open) {
-          setTimeout(() => {
-            inputRef.current?.focus(); // Focus cursor on search input
-          }, 100); // Small delay to ensure input is rendered
+      filterDropdownProps: {
+        onOpenChange(open) {
+          if (open) {
+            setTimeout(() => {
+              inputRef.current?.focus(); // Focus cursor on search input
+            }, 100); // Small delay to ensure input is rendered
+          }
         }
       },
       width: 400

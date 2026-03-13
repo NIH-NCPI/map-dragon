@@ -53,7 +53,7 @@ export const DDDetails = () => {
   // if a DD was fetched, calls the getDDTables function to fetch the tables.
   // otherwise sets loading to false.
   useEffect(() => {
-    document.title = 'Data Dictionary - Map Dragon';
+    document.title = 'Data Dictionary - MapDragon';
   }, []);
   useEffect(() => {
     setLoading(true);

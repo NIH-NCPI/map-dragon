@@ -25,9 +25,7 @@ export const MappingButton = ({
 
   return (
     <div className="no_mapping_button">
-      <Button onClick={handleClick}>
-        {prefTerminologies?.length > 0 ? 'Assign Mappings' : 'Get Mappings'}
-      </Button>
+      <Button onClick={handleClick}>Get Mappings</Button>
     </div>
   );
 };

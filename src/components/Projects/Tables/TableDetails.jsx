@@ -45,7 +45,6 @@ import {
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
-import { PreferredTerminology } from '../Terminologies/PreferredTerminology';
 import { AssignMappingsViaButton } from '../Terminologies/AssignMappingsViaButton';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
 
@@ -62,8 +61,7 @@ export const TableDetails = () => {
     ucumCodes,
     setUcumCodes
   } = useContext(myContext);
-  const { setApiPreferences, prefTerminologies, setPrefTerminologies } =
-    useContext(SearchContext);
+  const { setApiPreferences, setPrefTerminologies } = useContext(SearchContext);
 
   const {
     getMappings,
@@ -95,7 +93,7 @@ export const TableDetails = () => {
   const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
-    document.title = 'Table - Map Dragon';
+    document.title = 'Table - MapDragon';
   }, []);
 
   useEffect(() => {
@@ -540,13 +538,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             {table?.variables?.length > 0 ? (
               <>
                 <div className="add_row_buttons">
-                  <FilterSelect component={table} table={table} />
-                  <PreferredTerminology
-                    terminology={null}
-                    setTerminology={null}
+                  <FilterSelect
+                    component={table}
                     table={table}
+                    terminology={null}
+                    componentString={'Table'}
+                    setTerminology={null}
                     setTable={setTable}
-                    componentString="Table"
                   />
                   <AddVariable
                     table={table}
