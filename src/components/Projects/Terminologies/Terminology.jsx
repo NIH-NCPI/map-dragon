@@ -31,7 +31,6 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { TerminologyMenu } from './TerminologyMenu';
 import { LoadCodes } from './LoadCodes';
-import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { AssignMappingsViaButton } from './AssignMappingsViaButton';
@@ -495,14 +494,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 componentString={'Terminology'}
                 setTerminology={setTerminology}
                 setTable={null}
-              />
-
-              <PreferredTerminology
-                terminology={terminology}
-                setTerminology={setTerminology}
-                table={null}
-                setTable={null}
-                componentString="Terminology"
               />
               <AddCode
                 terminology={terminology}

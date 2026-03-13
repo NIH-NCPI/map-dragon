@@ -45,7 +45,6 @@ import {
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
-import { PreferredTerminology } from '../Terminologies/PreferredTerminology';
 import { AssignMappingsViaButton } from '../Terminologies/AssignMappingsViaButton';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
 
@@ -546,13 +545,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     componentString={'Table'}
                     setTerminology={null}
                     setTable={setTable}
-                  />
-                  <PreferredTerminology
-                    terminology={null}
-                    setTerminology={null}
-                    table={table}
-                    setTable={setTable}
-                    componentString="Table"
                   />
                   <AddVariable
                     table={table}
