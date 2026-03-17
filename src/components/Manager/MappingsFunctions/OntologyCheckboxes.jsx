@@ -66,8 +66,11 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   const defaultApi =
     Object.keys(allApiPreferences).length > 0
-      ? Object.keys(allApiPreferences)[0]
+      ? Object.keys(allApiPreferences).includes('umls')
+        ? 'umls'
+        : 'ols'
       : options[0]?.value;
+
   useEffect(() => {
     setSelectedApi(defaultApi);
   }, []);
@@ -214,7 +217,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
         optionType="button"
         buttonStyle="solid"
         options={options}
-        defaultValue={options[0].value}
+        defaultValue={defaultApi}
         onChange={e => {
           setPage(0);
           setSelectedApi(e.target.value);

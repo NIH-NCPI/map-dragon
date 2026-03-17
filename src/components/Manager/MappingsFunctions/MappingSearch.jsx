@@ -23,7 +23,8 @@ export const MappingSearch = ({
   preferenceType,
   prefTypeKey,
   loadingResults,
-  setLoadingResults
+  setLoadingResults,
+  editSearch
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
@@ -329,7 +330,7 @@ export const MappingSearch = ({
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d?.display}fghfdgh</b>
+                <b>{d?.display}</b>
               </div>
               <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
@@ -375,9 +376,13 @@ export const MappingSearch = ({
                   </span>
                 )}
               </div>
-              <div>
-                <MappingRelationship mapping={d} variable={searchProp} />
-              </div>
+            </div>
+            <div>
+              <MappingRelationship
+                mapping={d}
+                variable={searchProp}
+                editSearch={editSearch}
+              />
             </div>
             <div>
               {d?.description?.length > 85 ? (
@@ -423,9 +428,13 @@ export const MappingSearch = ({
                 <b>{d.display}</b>
               </div>
               <div>{d.ftd_code}</div>
-              <div>
-                <MappingRelationship mapping={d} variable={searchProp} />
-              </div>
+            </div>
+            <div>
+              <MappingRelationship
+                mapping={d}
+                variable={searchProp}
+                editSearch={editSearch}
+              />
             </div>
             <div>
               {d?.description?.length > 100 ? (

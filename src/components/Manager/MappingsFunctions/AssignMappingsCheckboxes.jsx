@@ -292,12 +292,12 @@ export const AssignMappingsCheckboxes = ({
           <div>
             <div className="modal_term_ontology">
               <div>
-                <b>{d?.display}fghfdgh</b>
+                <b>{d?.display}</b>
               </div>
               <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
               <div>
                 <a href={d?.code_iri} target="_blank">
-                  {d?.code}fdghfg
+                  {d?.code}
                 </a>
               </div>
             </div>
@@ -339,9 +339,13 @@ export const AssignMappingsCheckboxes = ({
                   </span>
                 )}
               </div>
-              <div>
-                <MappingRelationship mapping={d} variable={mappingProp} />
-              </div>
+            </div>
+            <div>
+              <MappingRelationship
+                mapping={d}
+                variable={mappingProp}
+                editSearch={true}
+              />
             </div>
             <div>
               {d?.description?.length > 85 ? (

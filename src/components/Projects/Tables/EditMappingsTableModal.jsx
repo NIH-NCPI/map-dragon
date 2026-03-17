@@ -391,6 +391,7 @@ export const EditMappingsTableModal = ({
           prefTypeKey={prefTypeKey}
           loadingResults={loadingResults}
           setLoadingResults={setLoadingResults}
+          editSearch={editSearch}
         />
       )}
     </Modal>

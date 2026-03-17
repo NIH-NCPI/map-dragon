@@ -17,12 +17,50 @@ export const EditMappingsLabel = ({ item, index, variable }) => {
     return findDisplay ? addInfo(findDisplay.display) : null;
   };
 
-  const addInfo = str => {
+  const titleHover = str => {
     const label = item.display ? item.display : item.code;
+
     const result =
       str.includes('Target') && str.includes('Source')
         ? str.replace('Source', variable).replace('Target', label)
         : variable + ' is ' + str + ' to ' + label;
+    return variable?.length + label?.length > 110 && result;
+  };
+
+  const titleHoverDisplay = item => {
+    const findDisplay = relationshipOptions.find(
+      ro => ro.code === item.mapping_relationship
+    );
+
+    return findDisplay ? titleHover(findDisplay.display) : null;
+  };
+  const addInfo = str => {
+    const label = item.display ? item.display : item.code;
+
+    const totalChars = 110;
+    const half = Math.floor(totalChars / 2);
+    let varCount, labelCount;
+    if (variable.length <= half) {
+      varCount = variable.length;
+      labelCount = totalChars - varCount;
+    } else if (label.length <= half) {
+      labelCount = label.length;
+      varCount = totalChars - labelCount;
+    } else {
+      varCount = half + (totalChars % 2);
+      labelCount = half;
+    }
+
+    const result =
+      str.includes('Target') && str.includes('Source')
+        ? str
+            .replace('Source', ellipsisString(variable, varCount))
+            .replace('Target', ellipsisString(label, labelCount))
+        : ellipsisString(variable, varCount) +
+          ' is ' +
+          str +
+          ' to ' +
+          ellipsisString(label, labelCount);
     return result;
   };
 
@@ -35,27 +73,36 @@ export const EditMappingsLabel = ({ item, index, variable }) => {
               <b>{item?.display}</b>
             </div>
             <div>{item?.ftd_code}</div>
-            <div
-              className={
-                !showOptions && item.mapping_relationship
-                  ? 'mapping_relationship'
-                  : ''
-              }
-              onClick={e => {
-                e.preventDefault();
-                setShowOptions(item.mapping_relationship);
-              }}
-            >
-              {item?.mapping_relationship && !showOptions ? (
-                displayRelationship(item)
-              ) : item.mapping_relationship && !!showOptions ? (
-                <MappingRelationship mapping={item} variable={variable} />
-              ) : (
-                !item.mapping_relationship && (
-                  <MappingRelationship mapping={item} variable={variable} />
-                )
-              )}
-            </div>
+          </div>
+          <div
+            title={titleHoverDisplay(item)}
+            className={
+              !showOptions && item.mapping_relationship
+                ? 'mapping_relationship'
+                : ''
+            }
+            onClick={e => {
+              e.preventDefault();
+              setShowOptions(item.mapping_relationship);
+            }}
+          >
+            {item?.mapping_relationship && !showOptions ? (
+              displayRelationship(item)
+            ) : item.mapping_relationship && !!showOptions ? (
+              <MappingRelationship
+                mapping={item}
+                variable={variable}
+                editSearch={'label'}
+              />
+            ) : (
+              !item.mapping_relationship && (
+                <MappingRelationship
+                  mapping={item}
+                  variable={variable}
+                  editSearch={'label'}
+                />
+              )
+            )}
           </div>
           <div>
             {item?.description?.length > 100 ? (
