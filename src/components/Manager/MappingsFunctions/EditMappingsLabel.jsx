@@ -37,7 +37,7 @@ export const EditMappingsLabel = ({ item, index, variable }) => {
   const addInfo = str => {
     const label = item.display ? item.display : item.code;
 
-    const totalChars = 110;
+    const totalChars = 84;
     const half = Math.floor(totalChars / 2);
     let varCount, labelCount;
     if (variable.length <= half) {
@@ -92,14 +92,14 @@ export const EditMappingsLabel = ({ item, index, variable }) => {
               <MappingRelationship
                 mapping={item}
                 variable={variable}
-                editSearch={'label'}
+                editSearch={null}
               />
             ) : (
               !item.mapping_relationship && (
                 <MappingRelationship
                   mapping={item}
                   variable={variable}
-                  editSearch={'label'}
+                  editSearch={null}
                 />
               )
             )}

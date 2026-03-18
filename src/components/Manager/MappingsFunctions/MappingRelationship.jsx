@@ -17,9 +17,7 @@ export const MappingRelationship = ({ mapping, variable, editSearch }) => {
   const addInfo = str => {
     const label = mapping.display ? mapping.display : mapping.code;
     //The MappingSearch window is narrower, so the character count is lower if editSearch is true
-    //The count is higher for 'label' in the EditMappingsModal and in the middle for GetMappingsModal
-    const totalChars =
-      editSearch === true ? 64 : editSearch === 'label' ? 100 : 84;
+    const totalChars = editSearch === true ? 54 : 84;
     //Ensures both variable and mapping are truncated appropriately. If one half of the equation is less than half the totalChars
     // number, it is not truncated and the mapping is truncated at the remaining balance of totalChars
     const half = Math.floor(totalChars / 2);
