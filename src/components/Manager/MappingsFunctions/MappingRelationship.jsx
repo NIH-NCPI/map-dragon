@@ -25,7 +25,7 @@ export const MappingRelationship = ({ mapping, variable, editSearch }) => {
     //Subtracts padding, etc. from modal width to get available width to use for label
     const availableWidth =
       editSearch === 'get'
-        ? modalWidth - 200
+        ? modalWidth - 225
         : editSearch === true
           ? modalWidth - 385
           : modalWidth - 135;
