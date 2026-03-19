@@ -379,9 +379,13 @@ export const GetMappingsModal = ({
                   ({d?.api?.toUpperCase()})
                 </span>
               </div>
-              <div>
-                <MappingRelationship mapping={d} variable={searchProp} />
-              </div>
+            </div>
+            <div>
+              <MappingRelationship
+                mapping={d}
+                variable={searchProp}
+                editSearch={'get'}
+              />
             </div>
             <div>
               {ellipsisString(

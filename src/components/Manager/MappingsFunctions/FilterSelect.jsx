@@ -151,135 +151,107 @@ export const FilterSelect = ({
     setDisplaySelectedTerminologies([]);
     setSearchText('');
   };
+
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
-  const handleSubmit = values => {
-    setLoading(true);
+  const handleSubmit = async values => {
+    try {
+      setLoading(true);
 
-    const ontologyBoxes = selectedBoxes.filter(box => box.ontology_code);
-    const terminologyBoxes = selectedBoxes.filter(box => box.id);
+      const ontologyBoxes = selectedBoxes.filter(box => box.ontology_code);
+      const terminologyBoxes = selectedBoxes.filter(box => box.id);
 
-    const preferredTerminologies = [
-      ...(existingPreferred?.map(ep => JSON.parse(ep)) ?? []),
-      ...(terminologyBoxes?.map(item => ({
-        preferred_terminology: item.id
-      })) ?? [])
-    ];
-    const preferredTermDTO = () => {
-      return {
-        'editor': user.email,
-        'preferred_terminologies': preferredTerminologies
+      const preferredTerminologies = [
+        ...(existingPreferred?.map(ep => JSON.parse(ep)) ?? []),
+        ...(terminologyBoxes?.map(item => ({
+          preferred_terminology: item.id
+        })) ?? [])
+      ];
+      const preferredTermDTO = () => {
+        return {
+          'editor': user.email,
+          'preferred_terminologies': preferredTerminologies
+        };
       };
-    };
 
-    const apiPreferenceDTO = {
-      api_preference: {},
-      editor: user?.email
-    };
+      const apiPreferenceDTO = {
+        api_preference: { ...existingOntologies },
+        editor: user?.email
+      };
 
-    Object.keys(existingOntologies).forEach(api => {
-      apiPreferenceDTO.api_preference[api] = existingOntologies[api];
-    });
+      ontologyBoxes.forEach(box => {
+        const api = box.api;
+        const ontology_code = box.ontology_code;
 
-    ontologyBoxes.forEach(box => {
-      const api = box.api;
-      const ontology_code = box.ontology_code;
-
-      if (apiPreferenceDTO.api_preference[api]) {
-        apiPreferenceDTO.api_preference[api] = [
-          ...new Set([...apiPreferenceDTO.api_preference[api], ontology_code])
-        ];
-      } else {
-        apiPreferenceDTO.api_preference[api] = [ontology_code];
-      }
-    });
-
-    const method =
-      Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).length ===
-      0
-        ? 'POST'
-        : 'PUT';
-    const ontologyFetch = fetch(
-      `${vocabUrl}/${(component = table
-        ? `Table/${table.id}/filter/self`
-        : `Terminology/${terminology.id}/filter`)}`,
-      {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(apiPreferenceDTO)
-      }
-    );
-
-    const terminologyFetch = fetch(
-      `${vocabUrl}/${componentString}/${
-        terminology ? terminology.id : table.id
-      }/preferred_terminology`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(preferredTermDTO())
-      }
-    );
-
-    Promise.all([ontologyFetch, terminologyFetch])
-      .then(async ([ontologyRes, terminologyRes]) => {
-        if (!ontologyRes.ok)
-          throw new Error('Error saving ontology preferences.');
-        if (terminologyRes && !terminologyRes.ok)
-          throw new Error('Error saving terminology preferences.');
-
-        const ontologyData = await ontologyRes.json();
-        const termData = await terminologyRes.json();
-        preferenceTypeSet({
-          self: { api_preference: ontologyData?.onto_api_preference }
-        });
-        setPrefTerminologies(
-          termData?.references?.map(ref => ({
-            reference: `Terminology/${ref.preferred_terminology}`
-          }))
-        );
-        setPreferredData(
-          termData?.references?.map(ref => ({
-            reference: `Terminology/${ref.preferred_terminology}`
-          }))
-        );
-      })
-      .catch(error => {
-        notification.error({
-          message: 'Error',
-          description: error.message || 'An error occurred saving preferences.'
-        });
-      })
-      .then(data => {
-        form.resetFields();
-        setAddFilter(false);
-        message.success('Preferences saved successfully.');
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred saving preferences.'
-          });
+        if (apiPreferenceDTO.api_preference[api]) {
+          apiPreferenceDTO.api_preference[api] = [
+            ...new Set([...apiPreferenceDTO.api_preference[api], ontology_code])
+          ];
+        } else {
+          apiPreferenceDTO.api_preference[api] = [ontology_code];
         }
-      })
-      .then(() =>
-        getById(
-          vocabUrl,
-          componentString,
-          `${terminology ? terminology.id : table.id}`
-        )
-          .then(data => (terminology ? setTerminology(data) : setTable(data)))
-          .catch(() =>
-            notification.error({
-              message: 'Error',
-              description: 'An error occurred loading the resource.'
-            })
-          )
-      )
-      .finally(() => setLoading(false));
+      });
+
+      const method =
+        Object.keys(preferenceType[prefTypeKey]?.api_preference || {})
+          .length === 0
+          ? 'POST'
+          : 'PUT';
+
+      const ontologyFetch = await fetch(
+        `${vocabUrl}/${(component = table
+          ? `Table/${table.id}/filter/self`
+          : `Terminology/${terminology.id}/filter`)}`,
+        {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(apiPreferenceDTO)
+        }
+      );
+
+      const terminologyFetch = await fetch(
+        `${vocabUrl}/${componentString}/${
+          terminology ? terminology.id : table.id
+        }/preferred_terminology`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(preferredTermDTO())
+        }
+      );
+
+      const ontologyData = await ontologyFetch.json();
+
+      const termData = await terminologyFetch.json();
+
+      preferenceTypeSet({
+        self: { api_preference: ontologyData?.onto_api_preference }
+      });
+      setPrefTerminologies(
+        termData?.references?.map(ref => ({
+          reference: `Terminology/${ref.preferred_terminology}`
+        }))
+      );
+      setPreferredData(
+        termData?.references?.map(ref => ({
+          reference: `Terminology/${ref.preferred_terminology}`
+        }))
+      );
+
+      form.resetFields();
+      setAddFilter(false);
+      message.success('Preferences saved successfully.');
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: 'An error occurred saving preferences.'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
   // Creates a dynamic api preference object
   const apiPrefObject = preferenceType[prefTypeKey]?.api_preference;
 

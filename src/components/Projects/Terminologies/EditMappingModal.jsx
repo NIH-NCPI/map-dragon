@@ -206,13 +206,20 @@ export const EditMappingsModal = ({
       mapping_relationship: idsForSelect[item.code]
     }));
 
-    const preexistingMappings = existingMappings?.map(item => ({
-      code: item.code,
-      display: item.display,
-      description: item.description,
-      system: item?.system,
-      mapping_relationship: idsForSelect[item.code]
-    }));
+    const preexistingMappings = existingMappings?.map(item => {
+      const mapping = {
+        code: item.code,
+        display: item.display,
+        description: item.description,
+        system: item?.system,
+        mapping_relationship: item.mapping_relationship
+      };
+
+      if (Object.hasOwn(idsForSelect, mapping.code)) {
+        mapping.mapping_relationship = idsForSelect[mapping.code];
+      }
+      return mapping;
+    });
 
     const mappingsDTO = {
       mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
@@ -382,6 +389,7 @@ export const EditMappingsModal = ({
           prefTypeKey={prefTypeKey}
           loadingResults={loadingResults}
           setLoadingResults={setLoadingResults}
+          editSearch={editSearch}
         />
       )}
     </Modal>
