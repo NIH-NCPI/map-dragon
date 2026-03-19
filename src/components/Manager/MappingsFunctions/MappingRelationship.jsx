@@ -1,49 +1,94 @@
 import { Select } from 'antd';
-import { useContext } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ellipsisString } from '../Utility';
 
 export const MappingRelationship = ({ mapping, variable, editSearch }) => {
   const { relationshipOptions, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
 
+  const fontRef = useRef(null);
+
   const handleSelectChange = (code, value) => {
-    setIdsForSelect(prev => ({
-      ...prev,
-      [code]: value
-    }));
+    setIdsForSelect(prev => {
+      console.log('prev:', JSON.stringify(prev), 'adding:', code, value);
+      return {
+        ...prev,
+        [code]: value
+      };
+    });
   };
 
   const addInfo = str => {
     const label = mapping.display ? mapping.display : mapping.code;
-    //The MappingSearch window is narrower, so the character count is lower if editSearch is true
-    const totalChars = editSearch === true ? 54 : 84;
-    //Ensures both variable and mapping are truncated appropriately. If one half of the equation is less than half the totalChars
-    // number, it is not truncated and the mapping is truncated at the remaining balance of totalChars
-    const half = Math.floor(totalChars / 2);
-    let varCount, labelCount;
-    if (variable.length <= half) {
-      varCount = variable.length;
-      labelCount = totalChars - varCount;
-    } else if (label.length <= half) {
-      labelCount = label.length;
-      varCount = totalChars - labelCount;
-    } else {
-      varCount = half + (totalChars % 2);
-      labelCount = half;
-    }
+    //Gets with of modal (60% of screen size)
+    const modalWidth = document.body.clientWidth * 0.6;
+    //Subtracts padding, etc. from modal width to get available width to use for label
+    const availableWidth =
+      editSearch === 'get'
+        ? modalWidth - 200
+        : editSearch === true
+          ? modalWidth - 385
+          : modalWidth - 135;
+    //Gets font from DOM or falls back to specified font if unable to get font from DOM to accurately size the label
+    const font = fontRef.current
+      ? getComputedStyle(fontRef?.current).font
+      : '14px sans-serif';
+    //Creates a 2D model of the screen to measure pixels of the label with the string inside (in measureText)
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.font = font;
 
-    const result =
+    const middleText =
       str.includes('Target') && str.includes('Source')
-        ? str
-            .replace('Source', ellipsisString(variable, varCount))
-            .replace('Target', ellipsisString(label, labelCount))
-        : ellipsisString(variable, varCount) +
-          ' is ' +
-          str +
-          ' to ' +
-          ellipsisString(label, labelCount);
-    return result;
+        ? str.replace('Source', '').replace('Target', '').trim()
+        : 'is ' + str + ' to';
+
+    //Splits up the label into various portions and measures the width in pixels of each part of the label
+    const middleWidth = ctx.measureText(middleText).width;
+    const remainingWidth = availableWidth - middleWidth;
+    const variableWidth = ctx.measureText(variable).width;
+    const labelWidth = ctx.measureText(label).width;
+
+    let variableMaxWidth, labelMaxWidth;
+    //If both variable and label fit inside their allotted width, no truncation is necessary
+    if (variableWidth + labelWidth <= remainingWidth) {
+      variableMaxWidth = variableWidth;
+      labelMaxWidth = labelWidth;
+      //If variable width is less than half the width of the allotted space, it gives the label more space
+    } else if (variableWidth <= remainingWidth * 0.5) {
+      variableMaxWidth = variableWidth;
+      labelMaxWidth = remainingWidth - variableWidth;
+      //If label width is less than half the width of the allotted space, it gives the variable more space
+    } else if (labelWidth <= remainingWidth * 0.5) {
+      labelMaxWidth = labelWidth;
+      variableMaxWidth = remainingWidth - labelWidth;
+    } else {
+      //If both are long, it splits them evenly
+      variableMaxWidth = remainingWidth * 0.5;
+      labelMaxWidth = remainingWidth * 0.5;
+    }
+    const truncate = (text, maxWidth) => {
+      //If the text already fits inside its allotted width, returns it as is.
+      if (ctx.measureText(text).width <= maxWidth) return text;
+      let truncated = text;
+      // Otherwise, slices one character at a time from the end until the text + "..." fits inside the alloted space
+      while (
+        ctx.measureText(truncated + '...').width > maxWidth &&
+        truncated.length > 0
+      ) {
+        truncated = truncated.slice(0, -1);
+      }
+      return truncated + '...';
+    };
+
+    const truncatedVariable = truncate(variable, variableMaxWidth);
+    const truncatedLabel = truncate(label, labelMaxWidth);
+    //Places the truncated variables and labels into the string
+    return str.includes('Target') && str.includes('Source')
+      ? str
+          .replace('Source', truncatedVariable)
+          .replace('Target', truncatedLabel)
+      : truncatedVariable + ' is ' + str + ' to ' + truncatedLabel;
   };
 
   const titleHover = str => {

@@ -384,7 +384,7 @@ export const GetMappingsModal = ({
               <MappingRelationship
                 mapping={d}
                 variable={searchProp}
-                editSearch={null}
+                editSearch={'get'}
               />
             </div>
             <div>
