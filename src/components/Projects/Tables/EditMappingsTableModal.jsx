@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, message, Modal, notification } from 'antd';
+import { Form, message, Modal, notification } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
@@ -8,18 +8,15 @@ import { ResetTableMappings } from './ResetTableMappings';
 import { uriEncoded } from '../../Manager/Utility';
 import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
 
 export const EditMappingsTableModal = ({
   editMappings,
   setEditMappings,
-  tableId,
   setMapping,
-  table
+  table,
+  terminology
 }) => {
   const [form] = Form.useForm();
-  const [termMappings, setTermMappings] = useState([]);
-  const [options, setOptions] = useState([]);
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
@@ -50,8 +47,8 @@ export const EditMappingsTableModal = ({
 
   const onClose = () => {
     setEditMappings(null);
-    setTermMappings([]);
-    setOptions([]);
+    // setTermMappings([]);
+    // setOptions([]);
     setReset(false);
     setEditSearch(false);
     setSelectedKey(null);
@@ -67,7 +64,11 @@ export const EditMappingsTableModal = ({
     if (editMappings) {
       setLoading(true);
       return fetch(
-        `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(editMappings.code)}`,
+        `${vocabUrl}/${
+          table
+            ? `Table/${table.id}/mapping/${uriEncoded(editMappings.code)}`
+            : `Terminology/${terminology.id}/mapping/${uriEncoded(editMappings.code)}`
+        }`,
         {
           method: 'GET',
           headers: {
@@ -89,7 +90,7 @@ export const EditMappingsTableModal = ({
           // array of mapped codes used to check default values in checkboxes
           const mappings = [];
           // array of mapped codes used to display the the checkboxes and build data structure of object
-          const options = [];
+          // const options = [];
 
           data.mappings.forEach((m, index) => {
             {
@@ -106,22 +107,7 @@ export const EditMappingsTableModal = ({
             });
 
             mappings.push(val); // For each mapping in the mappings array, push the stringified object above to the mappings array.
-            // For each mapping in the mappings array, push the stringified object above to the options array
-            // as the value for the value field for the ant.design checkbox. The label for the checkbox is returned in edditMappingsLabel function.
-            options.push({
-              value: val,
-              label: (
-                <EditMappingsLabel
-                  item={m}
-                  index={index}
-                  variable={editMappings?.name}
-                />
-              )
-            });
           });
-          // termMappings are set to the mappings array. Options are set to the options array.
-          setTermMappings(mappings);
-          setOptions(options);
         })
         .catch(error => {
           if (error) {
@@ -134,63 +120,6 @@ export const EditMappingsTableModal = ({
         })
         .finally(() => setLoading(false));
     }
-  };
-
-  // Function to send a PUT call to update the mappings.
-  // Each mapping in the mappings array being edited is JSON.parsed and turned into objects in the mappings array.
-  const updateMappings = values => {
-    setLoading(true);
-    // If there are changes in the mapping relationship dropdown, the changes are matched to the code and added to the mapping object.
-    const mappingsDTO = {
-      mappings:
-        values?.mappings?.map(v => {
-          const parsedMapping = JSON.parse(v);
-          if (idsForSelect[parsedMapping.code]) {
-            parsedMapping.mapping_relationship =
-              idsForSelect[parsedMapping.code];
-          }
-
-          return parsedMapping;
-        }) ?? [],
-      editor: user.email
-    };
-
-    fetch(
-      `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
-        editMappings.code
-      )}?user_input=true&user=${user?.email}`,
-
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(mappingsDTO)
-      }
-    )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(data => {
-        setMapping(data.codes);
-        setEditMappings(null);
-        form.resetFields();
-        message.success('Mappings updated successfully.');
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred. Please try again.'
-          });
-        }
-        return error;
-      })
-      .finally(() => setLoading(false));
   };
 
   const mappingProp = editMappings?.code;
@@ -225,11 +154,13 @@ export const EditMappingsTableModal = ({
       mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
       editor: user.email
     };
-    fetch(
-      `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
-        editMappings.code
-      )}?user_input=True&user=${user?.email}`,
 
+    fetch(
+      `${vocabUrl}/${
+        table
+          ? `Table/${table.id}/mapping/${uriEncoded(editMappings.code)}?user_input=True&user=${user?.email}`
+          : `Terminology/${terminology.id}/mapping/${uriEncoded(editMappings.code)}?user_input=True&user=${user?.email}`
+      }`,
       {
         method: 'PUT',
         headers: {
@@ -268,7 +199,7 @@ export const EditMappingsTableModal = ({
           mappingProp,
           vocabUrl,
           table,
-          null,
+          terminology,
           notification
         )
       )
@@ -283,7 +214,7 @@ export const EditMappingsTableModal = ({
       })
       .finally(() => setLoading(false));
   };
-
+  // console.log(mappingsForSearch);
   return (
     <Modal
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
@@ -296,14 +227,11 @@ export const EditMappingsTableModal = ({
         form
           .validateFields()
           .then(values => {
-            editSearch || reset
-              ? editUpdatedMappings(values)
-              : updateMappings(values);
+            editUpdatedMappings(values);
             onClose();
           })
           .then(data => {
             setMapping(data);
-            setSelectedKey(null);
           });
       }}
       onCancel={() => {
@@ -312,8 +240,9 @@ export const EditMappingsTableModal = ({
         setSelectedMappings([]);
         setDisplaySelectedMappings([]);
         setIdsForSelect([]);
+        setReset(false);
         reset &&
-          getById(vocabUrl, 'Table', `${tableId}/mapping`).then(data =>
+          getById(vocabUrl, 'Table', `${table.id}/mapping`).then(data =>
             setMapping(data.codes)
           );
       }}
@@ -328,22 +257,17 @@ export const EditMappingsTableModal = ({
             in the MappingSearch modal below. The edit/add button sets editSearch to true and opens 
             the modal to perform the search in MappingSearch below. */}
             <div className="reset_edit_buttons">
-              {!reset && !editSearch && (
-                <>
-                  <ResetTableMappings
-                    tableId={tableId}
-                    editMappings={editMappings}
-                    setReset={resp => {
-                      setReset(resp);
-                      if (resp) {
-                        setMappingsForSearch([]);
-                      }
-                    }}
-                  />
-                  <Button onClick={() => setEditSearch(true)}>
-                    Edit / Add
-                  </Button>
-                </>
+              {!reset && (
+                <ResetTableMappings
+                  tableId={table?.id}
+                  editMappings={editMappings}
+                  setReset={resp => {
+                    setReset(resp);
+                    if (resp) {
+                      setMappingsForSearch([]);
+                    }
+                  }}
+                />
               )}
             </div>
             <div className="cancel_ok_buttons">
@@ -358,26 +282,7 @@ export const EditMappingsTableModal = ({
     >
       {loading ? (
         <ModalSpinner />
-      ) : !reset && !editSearch ? (
-        <>
-          {/* If reset is false, the mappings for the code are displayed with checkboxes */}
-          <div className="modal_search_results_header">
-            <h3>Mappings for: {editMappings?.name}</h3>
-          </div>
-          <Form form={form} layout="vertical" preserve={false}>
-            <Form.Item
-              name={['mappings']}
-              valuePropName="value"
-              // Each checkbox is checked by default. The user can uncheck a checkbox to remove a mapping by clicking the save button.
-              initialValue={termMappings}
-            >
-              <Checkbox.Group className="mappings_checkbox" options={options} />
-            </Form.Item>
-          </Form>
-        </>
       ) : (
-        // If reset or editSearch is true the MappingSearch modal opens to perform the search for the table code
-
         <MappingSearch
           setEditMappings={setEditMappings}
           mappingsForSearch={mappingsForSearch}
@@ -389,9 +294,9 @@ export const EditMappingsTableModal = ({
               ? editMappings?.description
               : 'No Description'
           }
-          component={table}
           mappingProp={editMappings?.code}
           table={table}
+          terminology={null}
           preferenceType={preferenceType}
           prefTypeKey={prefTypeKey}
           loadingResults={loadingResults}

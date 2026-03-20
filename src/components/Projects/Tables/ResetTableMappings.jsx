@@ -19,9 +19,9 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
       {
         method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ editor: user.email }),
+        body: JSON.stringify({ editor: user.email })
       }
     )
       .then(response => {
@@ -45,7 +45,7 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
       .catch(error => {
         notification.error({
           message: 'Error',
-          description: 'An error occurred deleting the mapping(s).',
+          description: 'An error occurred deleting the mapping(s).'
         });
       });
   };
@@ -63,7 +63,7 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
       ),
       onOk() {
         handleDelete();
-      },
+      }
     });
   };
 

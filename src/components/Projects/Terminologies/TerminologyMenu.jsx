@@ -18,7 +18,7 @@ export const TerminologyMenu = ({
   mapping,
   setEditMappings,
   setGetMappings,
-  prefTerminologies,
+  prefTerminologies
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, selectedKey, setSelectedKey, user } = useContext(myContext);
@@ -44,7 +44,7 @@ export const TerminologyMenu = ({
     setAssignMappings(tableData.key);
   };
   const loginAssignMappings = RequiredLogin({
-    handleSuccess: passAssignMappings,
+    handleSuccess: passAssignMappings
   });
 
   const passEditMappings = () => {
@@ -71,9 +71,9 @@ export const TerminologyMenu = ({
       {
         method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ editor: user.email }),
+        body: JSON.stringify({ editor: user.email })
       }
     )
       .then(res => {
@@ -85,7 +85,7 @@ export const TerminologyMenu = ({
         } else {
           notification.error({
             message: 'Error',
-            description: 'An error occurred deleting the code.',
+            description: 'An error occurred deleting the code.'
           });
         }
       })
@@ -100,7 +100,7 @@ export const TerminologyMenu = ({
         } else {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading the Terminology.',
+            description: 'An error occurred loading the Terminology.'
           });
         }
       });
@@ -123,16 +123,9 @@ export const TerminologyMenu = ({
       onCancel() {
         setDeleteRow(false);
         setSelectedKey(null);
-      },
+      }
     });
   };
-
-  // Matches the code in the tableData to the code in the mappings to see if a code has mappings
-  const showEditMappings =
-    mapping?.length > 0 &&
-    mapping?.some(m => {
-      return m?.code === item?.code && m?.mappings?.length > 0;
-    });
 
   // Menu items
   const items = [
@@ -143,20 +136,12 @@ export const TerminologyMenu = ({
         { key: `${tableData.key}-1`, label: 'Edit' },
         { key: `${tableData.key}-2`, label: 'Delete' },
         {
-          key: `${tableData.key}-4`,
-          label: 'History',
-        },
-      ],
-    },
+          key: `${tableData.key}-3`,
+          label: 'History'
+        }
+      ]
+    }
   ];
-
-  // If mappings exist for a code, it adds the "Mappings" label to the menu
-  const mappingsMenuLabel = {
-    key: `${tableData.key}-3`,
-    label: 'Mappings',
-  };
-
-  showEditMappings && items[0]?.children?.splice(2, 0, mappingsMenuLabel);
 
   // onClick function for Menu.
   // If a user is not logged in, the login screen is triggered
@@ -170,20 +155,6 @@ export const TerminologyMenu = ({
       case `${tableData.key}-2`:
         return user ? setDeleteRow(true) : loginDelete();
       case `${tableData.key}-3`:
-        return prefTerminologies.length > 0 && !showEditMappings
-          ? user
-            ? setAssignMappings(tableData.key)
-            : loginAssignMappings()
-          : showEditMappings
-          ? // If mappings exist for a code, sets editMappings to the code and opens EditMappingsTableModal in turn
-            user
-            ? setEditMappings(item)
-            : loginEditMappings()
-          : // If mappings do not exist for a code, sets getMappings to the code and opens GetMappingsModal in turn
-          user
-          ? setGetMappings(item)
-          : loginGetMappings();
-      case `${tableData.key}-4`:
         return setShowHistory(tableData.key);
     }
   };

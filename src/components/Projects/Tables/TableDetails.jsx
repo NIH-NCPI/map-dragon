@@ -273,7 +273,6 @@ export const TableDetails = () => {
       }
     }
   ];
-
   /* The table may have numerous variables. The API call to fetch the mappings returns all mappings for the table.
 The variables in the mappings need to be matched up to each variable in the table.
 The function maps through the mapping array. For each variable, if the mapping variable is equal to the 
@@ -291,11 +290,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         />
       );
     }
-
     const variableMappings = mapping.find(
       item => item?.code === variable?.code
     );
-
     const foundDisplay = table.variables.find(
       item => item?.code === variable?.code
     );
@@ -403,7 +400,16 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             )}
           </span>
           <span className="mapping-display">
-            {code?.ftd_code} - {code?.display} {relationshipDisplay(code)}
+            <span
+              className="stylized_link"
+              onClick={() => {
+                setEditMappings(variable);
+                // setMappingsForSearch(variableMappings?.mappings);
+              }}
+            >
+              {code?.ftd_code}
+            </span>
+            - {code?.display} {relationshipDisplay(code)}
           </span>
           <span
             className="mapping_actions"
@@ -426,7 +432,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       );
     }
   };
-
   const handleRemoveMapping = (variableMappings, code) => {
     const mappingToRemove = variableMappings.mappings.indexOf(code);
     //remove mapping from mappings
@@ -470,7 +475,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     });
 
   const [dataSource, setDataSource] = useState(tableData);
-
   // In progress. Not yet used.
   // Expandable rows for integer and quantity data types to display their additional data.
   // The additional elements include min, max, and units properties.
@@ -543,8 +547,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     table={table}
                     terminology={null}
                     componentString={'Table'}
-                    setTerminology={null}
-                    setTable={setTable}
                   />
                   <AddVariable
                     table={table}
@@ -616,9 +618,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       <EditMappingsTableModal
         editMappings={editMappings}
         setEditMappings={setEditMappings}
-        tableId={tableId}
         setMapping={setMapping}
         table={table}
+        terminology={null}
       />
       <GetMappingsModal
         component={table}

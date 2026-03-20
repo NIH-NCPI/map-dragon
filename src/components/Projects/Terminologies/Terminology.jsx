@@ -4,16 +4,7 @@ import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
-import {
-  Button,
-  Col,
-  Form,
-  message,
-  notification,
-  Row,
-  Table,
-  Tooltip
-} from 'antd';
+import { Col, Form, message, notification, Row, Table, Tooltip } from 'antd';
 import {
   CaretDownOutlined,
   CaretUpOutlined,
@@ -43,6 +34,7 @@ import {
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
+import { EditMappingsTableModal } from '../Tables/EditMappingsTableModal';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -82,6 +74,7 @@ export const Terminology = () => {
   useEffect(
     () => () => {
       setPrefTerminologies([]);
+      setApiPreferencesTerm(null);
     },
     []
   );
@@ -261,8 +254,16 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             )}
           </span>
           <span className="mapping-display">
-            {code?.ftd_code} {code?.display && `- ${code?.display}`}{' '}
-            {relationshipDisplay(code)}
+            <span
+              className="stylized_link"
+              onClick={() => {
+                setEditMappings(variable);
+                // setMappingsForSearch(variableMappings?.mappings);
+              }}
+            >
+              {code?.ftd_code}
+            </span>{' '}
+            {code?.display && `- ${code?.display}`} {relationshipDisplay(code)}
           </span>
           <span
             className="mapping_actions"
@@ -524,13 +525,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           <EditMappingsModal
             editMappings={editMappings}
             setEditMappings={setEditMappings}
-            terminologyId={terminologyId}
             setMapping={setMapping}
-            mappingDesc={
-              editMappings?.description
-                ? editMappings?.description
-                : 'No Description'
-            }
             terminology={terminology}
           />
           <GetMappingsModal

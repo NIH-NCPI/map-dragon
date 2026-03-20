@@ -12,14 +12,14 @@ import { useParams } from 'react-router-dom';
 
 export const MappingSearch = ({
   setEditMappings,
-  form,
   mappingsForSearch,
+  form,
   onClose,
   searchProp,
-  mappingProp,
   mappingDesc,
-  terminology,
+  mappingProp,
   table,
+  terminology,
   preferenceType,
   prefTypeKey,
   loadingResults,

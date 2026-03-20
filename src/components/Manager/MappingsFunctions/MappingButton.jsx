@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 import { useContext } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { getMediaSize } from 'antd/es/grid/style';
 
 export const MappingButton = ({
   variable,
@@ -22,7 +23,6 @@ export const MappingButton = ({
       });
     }
   };
-
   return (
     <div className="no_mapping_button">
       <Button onClick={handleClick}>Get Mappings</Button>

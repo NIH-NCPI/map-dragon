@@ -10,7 +10,6 @@ export const MappingRelationship = ({ mapping, variable, editSearch }) => {
 
   const handleSelectChange = (code, value) => {
     setIdsForSelect(prev => {
-      console.log('prev:', JSON.stringify(prev), 'adding:', code, value);
       return {
         ...prev,
         [code]: value
