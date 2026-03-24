@@ -22,12 +22,10 @@ export const MappingRelationship = ({ mapping, variable, editSearch }) => {
     //Gets with of modal (60% of screen size)
     const modalWidth = document.body.clientWidth * 0.6;
     //Subtracts padding, etc. from modal width to get available width to use for label
+
     const availableWidth =
-      editSearch === 'get'
-        ? modalWidth - 225
-        : editSearch === true
-          ? modalWidth - 385
-          : modalWidth - 135;
+      editSearch === 'true' ? modalWidth - 380 : modalWidth - 225;
+
     //Gets font from DOM or falls back to specified font if unable to get font from DOM to accurately size the label
     const font = fontRef.current
       ? getComputedStyle(fontRef?.current).font

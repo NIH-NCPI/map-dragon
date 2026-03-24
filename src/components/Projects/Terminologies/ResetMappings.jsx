@@ -5,10 +5,17 @@ import './Terminology.scss';
 import { useContext } from 'react';
 import { myContext } from '../../../App';
 import { uriEncoded } from '../../Manager/Utility';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
   const { confirm } = Modal;
   const { vocabUrl, user } = useContext(myContext);
+  const {
+    setExistingMappings,
+    setSelectedBoxes,
+    setDisplaySelectedMappings,
+    setSelectedMappings
+  } = useContext(MappingContext);
 
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
@@ -21,9 +28,9 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
       {
         method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ editor: user.email }),
+        body: JSON.stringify({ editor: user.email })
       }
     )
       .then(response => {
@@ -34,20 +41,16 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
         }
       })
       .then(() => {
-        return fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping`);
+        setExistingMappings([]);
+        setSelectedBoxes([]);
+        setDisplaySelectedMappings([]);
+        setSelectedMappings([]);
+        setReset(true);
       })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(() => setReset(true))
       .catch(error => {
         notification.error({
           message: 'Error',
-          description: 'An error occurred deleting the mapping(s).',
+          description: 'An error occurred deleting the mapping(s).'
         });
       });
   };
@@ -65,7 +68,7 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
       ),
       onOk() {
         handleDelete();
-      },
+      }
     });
   };
 

@@ -262,7 +262,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               }}
             >
               {code?.ftd_code}
-            </span>{' '}
+            </span>
             {code?.display && `- ${code?.display}`} {relationshipDisplay(code)}
           </span>
           <span

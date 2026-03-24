@@ -229,9 +229,11 @@ export const EditMappingsModal = ({
         setEditSearch(false);
         setIdsForSelect([]);
         reset &&
-          getById(vocabUrl, 'Terminology', `${terminology.id}/mapping`).then(
-            data => setMapping(data.codes)
-          );
+          getById(
+            vocabUrl,
+            'Terminology',
+            `${terminology.id}/mapping?user_input=True&user=${user?.email}`
+          ).then(data => setMapping(data.codes));
       }}
       cancelButtonProps={{ disabled: loading }}
       okButtonProps={{ disabled: loading }}
@@ -291,7 +293,7 @@ export const EditMappingsModal = ({
           prefTypeKey={prefTypeKey}
           loadingResults={loadingResults}
           setLoadingResults={setLoadingResults}
-          editSearch={editSearch}
+          editSearch={'true'}
         />
       )}
     </Modal>

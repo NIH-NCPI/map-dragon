@@ -242,9 +242,11 @@ export const EditMappingsTableModal = ({
         setIdsForSelect([]);
         setReset(false);
         reset &&
-          getById(vocabUrl, 'Table', `${table.id}/mapping`).then(data =>
-            setMapping(data.codes)
-          );
+          getById(
+            vocabUrl,
+            'Table',
+            `${table.id}/mapping?user_input=True&user=${user?.email}`
+          ).then(data => setMapping(data.codes));
       }}
       closeIcon={false}
       maskClosable={false}
@@ -301,7 +303,7 @@ export const EditMappingsTableModal = ({
           prefTypeKey={prefTypeKey}
           loadingResults={loadingResults}
           setLoadingResults={setLoadingResults}
-          editSearch={editSearch}
+          editSearch={'true'}
         />
       )}
     </Modal>

@@ -5,10 +5,12 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext } from 'react';
 import { myContext } from '../../../App';
 import { uriEncoded } from '../../Manager/Utility';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
   const { confirm } = Modal;
   const { vocabUrl, user } = useContext(myContext);
+  const { setExistingMappings } = useContext(MappingContext);
 
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
@@ -32,16 +34,9 @@ export const ResetTableMappings = ({ tableId, editMappings, setReset }) => {
         }
       })
       .then(() => {
-        return fetch(`${vocabUrl}/Table/${tableId}/mapping`);
+        setExistingMappings([]);
+        setReset(true);
       })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(() => setReset(true))
       .catch(error => {
         notification.error({
           message: 'Error',
