@@ -14,13 +14,14 @@ export const EditMappingsTableModal = ({
   setEditMappings,
   setMapping,
   table,
-  terminology
+  terminology,
+  mappingsForSearch,
+  setMappingsForSearch
 }) => {
   const [form] = Form.useForm();
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
   const [loading, setLoading] = useState(false);
   const [reset, setReset] = useState(false);
-  const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
 
@@ -41,85 +42,15 @@ export const EditMappingsTableModal = ({
     setSelectedApi
   } = useContext(SearchContext);
 
-  useEffect(() => {
-    fetchMappings();
-  }, [editMappings]);
-
   const onClose = () => {
     setEditMappings(null);
-    // setTermMappings([]);
-    // setOptions([]);
+
     setReset(false);
     setEditSearch(false);
     setSelectedKey(null);
     setApiPreferencesCode(undefined);
     setShowOptions(false);
     setSelectedApi(undefined);
-  };
-
-  const fetchMappings = () => {
-    /* The table code was passed through the editMappings prop.
-    If there is a code, the mappings for the code in the table are fetched.
-    */
-    if (editMappings) {
-      setLoading(true);
-      return fetch(
-        `${vocabUrl}/${
-          table
-            ? `Table/${table.id}/mapping/${uriEncoded(editMappings.code)}`
-            : `Terminology/${terminology.id}/mapping/${uriEncoded(editMappings.code)}`
-        }`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      )
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          }
-        })
-        .then(data => {
-          setMappingsForSearch(data.mappings); // will be passed to MappingSearch.jsx to check existing mappings by default
-          // If the mappings array length for the code is < 1, undefined is returned
-          if (data.mappings.length < 1) {
-            return undefined;
-          }
-          // array of mapped codes used to check default values in checkboxes
-          const mappings = [];
-          // array of mapped codes used to display the the checkboxes and build data structure of object
-          // const options = [];
-
-          data.mappings.forEach((m, index) => {
-            {
-              /* For each mapping in the mappings array, JSON stringify the object below of code, display, and system. 
-          The API does not yet support the description field, so it is commented out for easy future integration
-          */
-            }
-            const val = JSON.stringify({
-              code: m.code,
-              ftd_code: m.ftd_code,
-              display: m.display,
-              description: m.description,
-              system: m?.system
-            });
-
-            mappings.push(val); // For each mapping in the mappings array, push the stringified object above to the mappings array.
-          });
-        })
-        .catch(error => {
-          if (error) {
-            notification.error({
-              message: 'Error',
-              description: 'An error occurred. Please try again.'
-            });
-          }
-          return error;
-        })
-        .finally(() => setLoading(false));
-    }
   };
 
   const mappingProp = editMappings?.code;

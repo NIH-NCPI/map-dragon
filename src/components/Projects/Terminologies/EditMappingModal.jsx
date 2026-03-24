@@ -1,13 +1,5 @@
-import {
-  Button,
-  Checkbox,
-  Form,
-  message,
-  Modal,
-  notification,
-  Tooltip
-} from 'antd';
-import { useContext, useEffect, useState } from 'react';
+import { Form, message, Modal, notification } from 'antd';
+import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { ModalSpinner } from '../../Manager/Spinner';
 import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
@@ -16,17 +8,16 @@ import { uriEncoded } from '../../Manager/Utility';
 import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { EditMappingsLabel } from '../../Manager/MappingsFunctions/EditMappingsLabel';
 
 export const EditMappingsModal = ({
   editMappings,
   setEditMappings,
   setMapping,
-  terminology
+  terminology,
+  mappingsForSearch,
+  setMappingsForSearch
 }) => {
   const [form] = Form.useForm();
-  const [termMappings, setTermMappings] = useState([]);
-  const [options, setOptions] = useState([]);
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
   const {
     setShowOptions,
@@ -44,83 +35,12 @@ export const EditMappingsModal = ({
   const [loading, setLoading] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
   const [reset, setReset] = useState(false);
-  const [mappingsForSearch, setMappingsForSearch] = useState([]);
   const [editSearch, setEditSearch] = useState(false);
 
-  useEffect(() => {
-    fetchMappings();
-  }, [editMappings]);
-
   const clearData = () => {
-    setTermMappings([]);
-    setOptions([]);
     setSelectedKey(null);
     setApiPreferencesCode(undefined);
     setShowOptions(false);
-  };
-
-  const fetchMappings = () => {
-    /* The terminology code was passed through the editMappings prop.
-    If there is a code, the mappings for the code in the terminology are fetched.
-    */
-    if (editMappings) {
-      setLoading(true);
-      return fetch(
-        `${vocabUrl}/Terminology/${terminology.id}/mapping/${uriEncoded(
-          editMappings.code
-        )}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      )
-        .then(res => {
-          if (res.ok) {
-            return res.json();
-          }
-        })
-        .then(data => {
-          setMappingsForSearch(data.mappings); // will be passed to MappingSearch.jsx to check existing mappings by default
-          // If the mappings array length for the code is < 1, undefined is returned
-          if (data.mappings.length < 1) {
-            return undefined;
-          }
-          // array of mapped codes used to check default values in checkboxes
-          const mappings = [];
-          // array of mapped codes used to display the the checkboxes and build data structure of object
-
-          data.mappings.forEach((m, index) => {
-            {
-              /* For each mapping in the mappings array, JSON stringify the object below of code, display, and system. 
-          The API does not yet support the description field, so it is commented out for easy future integration
-          */
-            }
-            const val = JSON.stringify({
-              code: m.code,
-              ftd_code: m.ftd_code,
-              display: m.display,
-              description: m.description,
-              system: m?.system
-            });
-
-            mappings.push(val); // For each mapping in the mappings array, push the stringified object above to the mappings array.
-            // For each mapping in the mappings array, push the stringified object above to the options array
-            // as the value for the value field for the ant.design checkbox. The label for the checkbox is returned in edditMappingsLabel function.
-          });
-        })
-        .catch(error => {
-          if (error) {
-            notification.error({
-              message: 'Error',
-              description: 'An error occurred. Please try again.'
-            });
-          }
-          return error;
-        })
-        .finally(() => setLoading(false));
-    }
   };
 
   // Function to send a PUT call to update the mappings after code name change.

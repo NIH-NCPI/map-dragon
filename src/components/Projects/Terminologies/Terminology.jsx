@@ -34,7 +34,6 @@ import {
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
-import { EditMappingsTableModal } from '../Tables/EditMappingsTableModal';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -43,6 +42,7 @@ export const Terminology = () => {
   const { vocabUrl, user } = useContext(myContext);
   const { setPrefTerminologies, prefTerminologies, setApiPreferencesTerm } =
     useContext(SearchContext);
+
   const {
     editMappings,
     setEditMappings,
@@ -52,7 +52,9 @@ export const Terminology = () => {
     setMapping,
     setRelationshipOptions,
     comment,
-    setComment
+    setComment,
+    mappingsForSearch,
+    setMappingsForSearch
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
@@ -258,7 +260,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               className="stylized_link"
               onClick={() => {
                 setEditMappings(variable);
-                // setMappingsForSearch(variableMappings?.mappings);
+                setMappingsForSearch(variableMappings?.mappings);
               }}
             >
               {code?.ftd_code}
@@ -527,6 +529,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             setEditMappings={setEditMappings}
             setMapping={setMapping}
             terminology={terminology}
+            mappingsForSearch={mappingsForSearch}
+            setMappingsForSearch={setMappingsForSearch}
           />
           <GetMappingsModal
             componentString={'Terminology'}

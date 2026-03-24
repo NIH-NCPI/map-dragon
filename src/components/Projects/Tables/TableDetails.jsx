@@ -72,7 +72,9 @@ export const TableDetails = () => {
     editMappings,
     setRelationshipOptions,
     comment,
-    setComment
+    setComment,
+    mappingsForSearch,
+    setMappingsForSearch
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -404,7 +406,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               className="stylized_link"
               onClick={() => {
                 setEditMappings(variable);
-                // setMappingsForSearch(variableMappings?.mappings);
+                setMappingsForSearch(variableMappings?.mappings);
               }}
             >
               {code?.ftd_code}
@@ -621,6 +623,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         setMapping={setMapping}
         table={table}
         terminology={null}
+        mappingsForSearch={mappingsForSearch}
+        setMappingsForSearch={setMappingsForSearch}
       />
       <GetMappingsModal
         component={table}
