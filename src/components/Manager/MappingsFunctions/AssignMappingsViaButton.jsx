@@ -1,18 +1,18 @@
 import { useContext, useEffect, useState } from 'react';
 import { Form, message, Modal, notification } from 'antd';
-import { AssignMappingsCheckboxes } from '../../Manager/MappingsFunctions/AssignMappingsCheckboxes';
+import { AssignMappingsCheckboxes } from './AssignMappingsCheckboxes';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ModalSpinner } from '../../Manager/Spinner';
-import { ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
-import { uriEncoded } from '../../Manager/Utility';
+import { ModalSpinner } from '../Spinner';
+import { ontologyFilterCodeSubmit } from '../FetchManager';
+import { uriEncoded } from '../Utility';
 
 export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
   setAssignMappingsViaButton,
-  terminology,
-  table
+  component,
+  componentString
 }) => {
   const [form] = Form.useForm();
 
@@ -77,10 +77,8 @@ export const AssignMappingsViaButton = ({
     };
 
     fetch(
-      `${vocabUrl}/${terminology ? 'Terminology' : 'Table'}/${
-        terminology ? terminology.id : table.id
-      }/mapping/${uriEncoded(
-        assignMappingsViaButton.code
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
+        assignMappingsViaButton?.code
       )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
@@ -110,8 +108,8 @@ export const AssignMappingsViaButton = ({
           prefTypeKey,
           assignMappingsViaButton.code,
           vocabUrl,
-          table ?? null,
-          terminology ?? null,
+          component,
+          componentString,
           notification
         )
       )
@@ -169,8 +167,8 @@ export const AssignMappingsViaButton = ({
               ? assignMappingsViaButton.display
               : assignMappingsViaButton?.code
           }
-          terminology={terminology}
-          table={table}
+          component={component}
+          componentString={componentString}
           loading={loading}
         />
       )}

@@ -18,8 +18,8 @@ export const MappingSearch = ({
   searchProp,
   mappingDesc,
   mappingProp,
-  table,
-  terminology,
+  component,
+  componentString,
   preferenceType,
   prefTypeKey,
   loadingResults,
@@ -109,8 +109,8 @@ export const MappingSearch = ({
         setApiPreferencesCode,
         notification,
         setUnformattedPref,
-        table,
-        terminology,
+        component,
+        componentString,
         setLoading,
         optionalTableParam
       );
@@ -126,11 +126,23 @@ export const MappingSearch = ({
   const savedApiPreferences = unformattedPref?.[codeToSearch]?.api_preference;
   const apiPreferenceKeys = Object?.keys(savedApiPreferences ?? {});
 
+  // The '!!' forces currentSearchProp to be evaluated as a boolean.
+  // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
+  // The function is run when the query changes and when the preferred ontology changes.
+  // If there are preferred terminologies, it runs when the OLS search bar is clicked (i.e. active)
   useEffect(() => {
-    if (apiPreferencesCode !== undefined) {
+    if (apiPreferencesCode === undefined) return;
+
+    const getFetch =
+      (prefTerminologies.length > 0 &&
+        active === 'search' &&
+        !!currentSearchProp) ||
+      (prefTerminologies.length === 0 && !!currentSearchProp);
+
+    if (getFetch) {
       fetchResults(page, currentSearchProp);
     }
-  }, [page, selectedApi]);
+  }, [page, selectedApi, currentSearchProp, apiPreferencesCode, active]);
 
   useEffect(() => {
     if (prefTerminologies.length > 0) {
@@ -156,26 +168,6 @@ export const MappingSearch = ({
   useEffect(() => {
     setActive(terminologiesToMap?.[0]?.id);
   }, [terminologiesToMap]);
-  // The '!!' forces currentSearchProp to be evaluated as a boolean.
-  // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
-  // The function is run when the query changes and when the preferred ontology changes.
-  // If there are preferred terminologies, it runs when the OLS search bar is clicked (i.e. active)
-  useEffect(() => {
-    if (
-      prefTerminologies.length > 0 &&
-      active === 'search' &&
-      !!currentSearchProp &&
-      apiPreferencesCode !== undefined
-    ) {
-      fetchResults(page, currentSearchProp);
-    } else if (
-      prefTerminologies.length === 0 &&
-      !!currentSearchProp &&
-      apiPreferencesCode !== undefined
-    ) {
-      fetchResults(page, currentSearchProp);
-    }
-  }, [currentSearchProp, apiPreferencesCode, active]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.

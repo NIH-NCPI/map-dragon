@@ -1,13 +1,18 @@
 import { Button, Modal, notification } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import './Terminology.scss';
+import './MappingsFunctions.scss';
 
 import { useContext } from 'react';
 import { myContext } from '../../../App';
-import { uriEncoded } from '../../Manager/Utility';
+import { uriEncoded } from '../Utility';
 import { MappingContext } from '../../../Contexts/MappingContext';
 
-export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
+export const ResetMappings = ({
+  id,
+  componentString,
+  editMappings,
+  setReset
+}) => {
   const { confirm } = Modal;
   const { vocabUrl, user } = useContext(myContext);
   const {
@@ -22,9 +27,7 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
   // setReset is set to true to open the modal that performs the search for the code again.
   const handleDelete = evt => {
     return fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
-        editMappings.code
-      )}`,
+      `${vocabUrl}/${componentString}/${id}/mapping/${uriEncoded(editMappings.code)}`,
       {
         method: 'DELETE',
         headers: {

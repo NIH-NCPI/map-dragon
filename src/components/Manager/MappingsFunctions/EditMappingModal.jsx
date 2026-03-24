@@ -1,11 +1,11 @@
 import { Form, message, Modal, notification } from 'antd';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner } from '../../Manager/Spinner';
-import { MappingSearch } from '../../Manager/MappingsFunctions/MappingSearch';
+import { ModalSpinner } from '../Spinner';
+import { MappingSearch } from './MappingSearch';
 import { ResetMappings } from './ResetMappings';
-import { uriEncoded } from '../../Manager/Utility';
-import { getById, ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
+import { uriEncoded } from '../Utility';
+import { getById, ontologyFilterCodeSubmit } from '../FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
 
@@ -13,7 +13,8 @@ export const EditMappingsModal = ({
   editMappings,
   setEditMappings,
   setMapping,
-  terminology,
+  component,
+  componentString,
   mappingsForSearch,
   setMappingsForSearch
 }) => {
@@ -76,7 +77,7 @@ export const EditMappingsModal = ({
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminology.id}/mapping/${uriEncoded(
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         editMappings.code
       )}?user_input=true&user=${user?.email}`,
       {
@@ -116,8 +117,8 @@ export const EditMappingsModal = ({
           prefTypeKey,
           editMappings.code,
           vocabUrl,
-          null,
-          terminology,
+          component,
+          componentString,
           notification
         )
       )
@@ -151,8 +152,8 @@ export const EditMappingsModal = ({
         reset &&
           getById(
             vocabUrl,
-            'Terminology',
-            `${terminology.id}/mapping?user_input=True&user=${user?.email}`
+            componentString,
+            `${component.id}/mapping?user_input=True&user=${user?.email}`
           ).then(data => setMapping(data.codes));
       }}
       cancelButtonProps={{ disabled: loading }}
@@ -170,7 +171,8 @@ export const EditMappingsModal = ({
             <div className="reset_edit_buttons">
               {!reset && (
                 <ResetMappings
-                  terminologyId={terminology.id}
+                  id={component.id}
+                  componentString={componentString}
                   editMappings={editMappings}
                   setReset={resp => {
                     setReset(resp);
@@ -207,8 +209,8 @@ export const EditMappingsModal = ({
               : 'No Description'
           }
           mappingProp={editMappings?.code}
-          table={null}
-          terminology={terminology}
+          component={component}
+          componentString={componentString}
           preferenceType={preferenceType}
           prefTypeKey={prefTypeKey}
           loadingResults={loadingResults}

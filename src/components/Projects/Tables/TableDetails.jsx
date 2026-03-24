@@ -27,7 +27,6 @@ import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
-import { EditMappingsTableModal } from './EditMappingsTableModal';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { AddVariable } from './AddVariable';
@@ -45,8 +44,9 @@ import {
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
-import { AssignMappingsViaButton } from '../Terminologies/AssignMappingsViaButton';
+import { AssignMappingsViaButton } from '../../Manager/MappingsFunctions/AssignMappingsViaButton';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
+import { EditMappingsModal } from '../../Manager/MappingsFunctions/EditMappingModal';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -77,6 +77,7 @@ export const TableDetails = () => {
     setMappingsForSearch
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
+
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
   const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
@@ -617,32 +618,33 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       />
       <DeleteTable studyId={studyId} DDId={DDId} />
       <LoadVariables load={load} setLoad={setLoad} />
-      <EditMappingsTableModal
+      <EditMappingsModal
         editMappings={editMappings}
         setEditMappings={setEditMappings}
         setMapping={setMapping}
-        table={table}
-        terminology={null}
+        component={table}
+        componentString={'Table'}
         mappingsForSearch={mappingsForSearch}
         setMappingsForSearch={setMappingsForSearch}
       />
       <GetMappingsModal
         component={table}
         componentString={'Table'}
-        setTable={setTable}
         searchProp={getMappings?.name}
         setGetMappings={setGetMappings}
         setMapping={setMapping}
-        tableId={tableId}
         mappingProp={getMappings?.code}
-        table={table}
+        mappingDesc={
+          getMappings?.description ? getMappings?.description : 'No Description'
+        }
+        tableId={tableId}
       />
       <ClearMappings propId={tableId} component={'Table'} />
       <AssignMappingsViaButton
         assignMappingsViaButton={assignMappingsViaButton}
         setAssignMappingsViaButton={setAssignMappingsViaButton}
-        terminology={null}
-        table={table}
+        component={table}
+        componentString={'Table'}
       />
       <MappingComments
         mappingCode={comment?.code}

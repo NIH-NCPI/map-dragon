@@ -16,8 +16,8 @@ export const AssignMappingsCheckboxes = ({
   setSelectedBoxes,
   mappingProp,
   form,
-  terminology,
-  table,
+  component,
+  componentString,
   loading
 }) => {
   const { vocabUrl } = useContext(myContext);
@@ -77,8 +77,8 @@ export const AssignMappingsCheckboxes = ({
         setApiPreferencesCode,
         notification,
         setUnformattedPref,
-        table,
-        terminology,
+        component,
+        componentString,
         setLoadingFilters
       );
     }

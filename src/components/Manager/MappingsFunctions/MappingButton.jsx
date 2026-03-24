@@ -1,7 +1,6 @@
 import { Button } from 'antd';
 import { useContext } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { getMediaSize } from 'antd/es/grid/style';
 
 export const MappingButton = ({
   variable,
@@ -14,12 +13,14 @@ export const MappingButton = ({
     if (prefTerminologies?.length > 0) {
       setAssignMappingsViaButton({
         display: variable?.name ? variable?.name : variable?.display,
-        code: variable.code
+        code: variable.code,
+        description: variable?.description
       });
     } else {
       setGetMappings({
         name: variable?.name ? variable?.name : variable?.display,
-        code: variable?.code
+        code: variable?.code,
+        description: variable?.description
       });
     }
   };

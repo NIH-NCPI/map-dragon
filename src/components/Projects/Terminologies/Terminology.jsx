@@ -13,7 +13,7 @@ import {
   MessageOutlined,
   UpOutlined
 } from '@ant-design/icons';
-import { EditMappingsModal } from './EditMappingModal';
+import { EditMappingsModal } from '../../Manager/MappingsFunctions/EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
@@ -24,7 +24,7 @@ import { TerminologyMenu } from './TerminologyMenu';
 import { LoadCodes } from './LoadCodes';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
-import { AssignMappingsViaButton } from './AssignMappingsViaButton';
+import { AssignMappingsViaButton } from '../../Manager/MappingsFunctions/AssignMappingsViaButton';
 import {
   relationshipDisplay,
   uriEncoded,
@@ -528,7 +528,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             editMappings={editMappings}
             setEditMappings={setEditMappings}
             setMapping={setMapping}
-            terminology={terminology}
+            component={terminology}
+            componentString={'Terminology'}
             mappingsForSearch={mappingsForSearch}
             setMappingsForSearch={setMappingsForSearch}
           />
@@ -564,8 +565,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           <AssignMappingsViaButton
             assignMappingsViaButton={assignMappingsViaButton}
             setAssignMappingsViaButton={setAssignMappingsViaButton}
-            terminology={terminology}
-            table={null}
+            component={terminology}
+            componentString={'Terminology'}
           />
 
           <MappingComments
