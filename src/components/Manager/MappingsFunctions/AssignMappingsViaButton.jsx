@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import { Form, message, Modal, notification } from 'antd';
-import { AssignMappingsCheckboxes } from './AssignMappingsCheckboxes';
+import { AssignMappingsCheckboxes } from '../../Manager/MappingsFunctions/AssignMappingsCheckboxes';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ModalSpinner } from '../Spinner';
-import { ontologyFilterCodeSubmit } from '../FetchManager';
-import { uriEncoded } from '../Utility';
+import { ModalSpinner } from '../../Manager/Spinner';
+import { ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
@@ -128,7 +128,7 @@ export const AssignMappingsViaButton = ({
   return (
     <Modal
       open={!!assignMappingsViaButton}
-      width={'60%'}
+      width={'70%'}
       onOk={() => {
         form.validateFields().then(values => {
           handleSubmit(values);

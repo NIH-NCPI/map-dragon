@@ -11,7 +11,8 @@ export const ResetMappings = ({
   id,
   componentString,
   editMappings,
-  setReset
+  setReset,
+  form
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, user } = useContext(myContext);
@@ -48,6 +49,7 @@ export const ResetMappings = ({
         setSelectedBoxes([]);
         setDisplaySelectedMappings([]);
         setSelectedMappings([]);
+        form.resetFields();
         setReset(true);
       })
       .catch(error => {

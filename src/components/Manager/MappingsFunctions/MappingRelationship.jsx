@@ -2,7 +2,7 @@ import { Select } from 'antd';
 import { useContext, useEffect, useRef } from 'react';
 import { MappingContext } from '../../../Contexts/MappingContext';
 
-export const MappingRelationship = ({ mapping, variable, editSearch }) => {
+export const MappingRelationship = ({ mapping, variable }) => {
   const { relationshipOptions, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
 
@@ -19,12 +19,11 @@ export const MappingRelationship = ({ mapping, variable, editSearch }) => {
 
   const addInfo = str => {
     const label = mapping.display ? mapping.display : mapping.code;
-    //Gets with of modal (60% of screen size)
-    const modalWidth = document.body.clientWidth * 0.6;
+    //Gets with of modal (70% of screen size)
+    const modalWidth = document.body.clientWidth * 0.7;
     //Subtracts padding, etc. from modal width to get available width to use for label
 
-    const availableWidth =
-      editSearch === 'true' ? modalWidth - 380 : modalWidth - 225;
+    const availableWidth = modalWidth - 390;
 
     //Gets font from DOM or falls back to specified font if unable to get font from DOM to accurately size the label
     const font = fontRef.current

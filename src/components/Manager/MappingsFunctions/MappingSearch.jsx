@@ -23,8 +23,7 @@ export const MappingSearch = ({
   preferenceType,
   prefTypeKey,
   loadingResults,
-  setLoadingResults,
-  editSearch
+  setLoadingResults
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
@@ -370,11 +369,7 @@ export const MappingSearch = ({
               </div>
             </div>
             <div>
-              <MappingRelationship
-                mapping={d}
-                variable={searchProp}
-                editSearch={editSearch}
-              />
+              <MappingRelationship mapping={d} variable={searchProp} />
             </div>
             <div>
               {d?.description?.length > 85 ? (
@@ -422,11 +417,7 @@ export const MappingSearch = ({
               <div>{d.ftd_code}</div>
             </div>
             <div>
-              <MappingRelationship
-                mapping={d}
-                variable={searchProp}
-                editSearch={editSearch}
-              />
+              <MappingRelationship mapping={d} variable={searchProp} />
             </div>
             <div>
               {d?.description?.length > 100 ? (
@@ -721,7 +712,10 @@ export const MappingSearch = ({
                                     options={allCheckboxes
                                       .filter(
                                         checkbox =>
-                                          !displaySelectedMappings.some(
+                                          ![
+                                            ...displaySelectedMappings,
+                                            ...mappingsForSearch
+                                          ].some(
                                             dsm => checkbox.code === dsm.code
                                           )
                                       )

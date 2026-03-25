@@ -36,7 +36,6 @@ export const EditMappingsModal = ({
   const [loading, setLoading] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
   const [reset, setReset] = useState(false);
-  const [editSearch, setEditSearch] = useState(false);
 
   const clearData = () => {
     setSelectedKey(null);
@@ -130,7 +129,7 @@ export const EditMappingsModal = ({
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
       // if there is a code being passed, it evaluates to true and opens the modal.
       open={!!editMappings}
-      width={'60%'}
+      width={'70%'}
       styles={{ body: { height: '60vh', overflowY: 'auto' } }}
       okText="Save"
       onOk={() => {
@@ -147,7 +146,6 @@ export const EditMappingsModal = ({
         form.resetFields();
         setEditMappings(null);
         setReset(false);
-        setEditSearch(false);
         setIdsForSelect([]);
         reset &&
           getById(
@@ -164,10 +162,9 @@ export const EditMappingsModal = ({
       footer={(_, { OkBtn, CancelBtn }) => (
         <>
           <div className={!reset ? 'footer_buttons' : 'save_button_only'}>
-            {/* If reset and editSearch are false, the reset and edit buttons are displayed
+            {/* If reset is false, the reset button is displayed
             The reset button opens a modal to confirm mapping deletion, then the search is performed again
-            in the MappingSearch modal below. The edit/add button sets editSearch to true and opens 
-            the modal to perform the search in MappingSearch below. */}
+            in the MappingSearch modal below. */}
             <div className="reset_edit_buttons">
               {!reset && (
                 <ResetMappings
@@ -180,6 +177,7 @@ export const EditMappingsModal = ({
                       setMappingsForSearch([]);
                     }
                   }}
+                  form={form}
                 />
               )}
             </div>
@@ -194,7 +192,6 @@ export const EditMappingsModal = ({
       {loading ? (
         <ModalSpinner />
       ) : (
-        // If reset or editSearch is true the MappingSearch modal opens to perform the search for the terminology code
         <MappingSearch
           setEditMappings={setEditMappings}
           mappingsForSearch={mappingsForSearch}
@@ -215,7 +212,6 @@ export const EditMappingsModal = ({
           prefTypeKey={prefTypeKey}
           loadingResults={loadingResults}
           setLoadingResults={setLoadingResults}
-          editSearch={'true'}
         />
       )}
     </Modal>

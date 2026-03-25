@@ -379,11 +379,7 @@ export const GetMappingsModal = ({
               </div>
             </div>
             <div>
-              <MappingRelationship
-                mapping={d}
-                variable={searchProp}
-                editSearch={'get'}
-              />
+              <MappingRelationship mapping={d} variable={searchProp} />
             </div>
             <div>
               {ellipsisString(
