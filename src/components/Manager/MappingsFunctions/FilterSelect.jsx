@@ -34,8 +34,6 @@ export const FilterSelect = ({
   const {
     ontologyApis,
     setOntologyApis,
-    apiPreferences,
-    apiPreferencesTerm,
     preferenceTypeSet,
     preferenceType,
     prefTypeKey,
