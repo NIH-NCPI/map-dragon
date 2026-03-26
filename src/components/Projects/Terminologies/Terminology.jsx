@@ -180,9 +180,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 className="mapping_actions user_vote_icon"
                 style={{
                   color: 'blue',
-                  cursor: 'not-allowed',
                   fontSize: '1rem'
                 }}
+                onClick={() =>
+                  userVote(code) === 'up' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    terminologyId,
+                    notification,
+                    setMapping,
+                    'Terminology'
+                  )
+                }
               />
             ) : (
               <UpOutlined
@@ -228,9 +241,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 className="mapping_actions user_vote_icon"
                 style={{
                   color: 'green',
-                  cursor: 'not-allowed',
                   fontSize: '1rem'
                 }}
+                onClick={() =>
+                  userVote(code) === 'down' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    terminologyId,
+                    notification,
+                    setMapping,
+                    'Terminology'
+                  )
+                }
               />
             ) : (
               <DownOutlined
