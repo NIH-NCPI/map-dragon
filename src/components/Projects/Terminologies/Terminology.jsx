@@ -139,7 +139,7 @@ code in the terminology, AND the mappings array length for the code is > 0, the 
 and returns the length of the mapping array (i.e. returns the number of codes mapped to the terminology code). 
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
 
-  const matchCode = variable => {
+  const matchCode = (variable, rowIndex) => {
     if (!mapping?.length) {
       return (
         <MappingButton
@@ -156,14 +156,30 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map((code, i) => (
-        <div className="mapping" key={i}>
+        <div
+          className="mapping"
+          key={i}
+          ref={el => {
+            if (!el) return;
+            const sync = () => {
+              const relationshipEl = document.getElementById(
+                `relationship-${rowIndex}-${i}`
+              );
+              if (relationshipEl) {
+                relationshipEl.style.height = `${el.offsetHeight}px`;
+              }
+            };
+            const observer = new ResizeObserver(sync);
+            observer.observe(el);
+            sync();
+          }}
+        >
           <span>
-            {/* If there are comments, the comment icon is visible by default. Otherwise, it is visible on hover (see SCSS file) */}
             <MessageOutlined
               className={
                 code.user_input?.comments_count
-                  ? 'mapping_actions mapping_actions--active' // visible by default
-                  : 'mapping_actions mapping_actions--inactive' // only visible on hover
+                  ? 'mapping_actions mapping_actions--active'
+                  : 'mapping_actions mapping_actions--inactive'
               }
               onClick={() =>
                 setComment({
@@ -198,10 +214,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               />
             ) : (
               <UpOutlined
-                className="mapping_actions"
-                style={{
-                  color: 'blue'
-                }}
+                key="up"
+                className="mapping_actions vote-icon-wrapper icon-enter"
+                style={{ color: 'blue' }}
                 onClick={() =>
                   userVote(code) !== 'up' &&
                   mappingVotes(
@@ -219,8 +234,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               />
             )}
             <Tooltip
-              title={`up: ${code.user_input?.votes_count.up},
-                down: ${code.user_input?.votes_count.down}`}
+              title={`up: ${code.user_input?.votes_count.up}, down: ${code.user_input?.votes_count.down}`}
               mouseEnterDelay={0.75}
             >
               <span
@@ -258,10 +272,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               />
             ) : (
               <DownOutlined
-                className="mapping_actions"
-                style={{
-                  color: 'green'
-                }}
+                key="down"
+                className="mapping_actions vote-icon-wrapper icon-enter"
+                style={{ color: 'green' }}
                 onClick={() =>
                   userVote(code) !== 'down' &&
                   mappingVotes(
@@ -323,6 +336,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     updateMappings(variableMappings?.mappings, variableMappings?.code);
   };
 
+  const matchRelationship = (variable, rowIndex) => {
+    if (!mapping?.length) return null;
+    const variableMappings = mapping.find(
+      item => item?.code === variable?.code
+    );
+    if (!variableMappings?.mappings?.length) return null;
+    return variableMappings.mappings.map((code, i) => (
+      <div
+        key={i}
+        className="relationship-cell"
+        id={`relationship-${rowIndex}-${i}`}
+      >
+        {relationshipDisplay(code)}
+      </div>
+    ));
+  };
   // data for each column in the table.
   // Map through the codes in the terminology and display the code, display, number of mapped terms,
   // and an edit or get mappings button depending on the condition.
@@ -334,7 +363,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         code: item.code,
         display: item.display,
         description: item.description,
-        mapped_terms: matchCode(item)
+        mapping_relationship: matchRelationship(item, index),
+        mapped_terms: matchCode(item, index)
       };
     });
 
@@ -433,6 +463,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       title: 'Description',
       dataIndex: 'description',
       width: 200
+    },
+    {
+      title: 'Mapping Relationship',
+      dataIndex: 'mapping_relationship',
+      width: 130
     },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 350 },
     {
