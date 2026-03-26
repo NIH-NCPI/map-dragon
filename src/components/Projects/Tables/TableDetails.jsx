@@ -477,7 +477,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             >
               {code?.ftd_code}
             </span>
-            {code?.display && ` - ${code?.display}`} {relationshipDisplay(code)}
+            {code?.display && ` - ${code?.display}`}
           </span>
           <span
             className="mapping_actions"
