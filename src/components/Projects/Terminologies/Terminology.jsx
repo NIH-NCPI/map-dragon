@@ -474,6 +474,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       title: '',
       dataIndex: 'delete_column',
       width: 10,
+      onCell: () => ({ style: { padding: '0', textAlign: 'center' } }),
+      onHeaderCell: () => ({ style: { padding: '0' } }),
       render: (_, tableData) => {
         return (
           <>
