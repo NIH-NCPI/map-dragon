@@ -16,7 +16,7 @@ export const TableMenu = ({
   setLoading,
   mapping,
   setEditMappings,
-  setGetMappings,
+  setGetMappings
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, selectedKey, setSelectedKey, user } = useContext(myContext);
@@ -58,9 +58,9 @@ export const TableMenu = ({
     fetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(varName)}`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ editor: user.email }),
+      body: JSON.stringify({ editor: user.email })
     })
       .then(res => {
         if (res.ok) {
@@ -71,7 +71,7 @@ export const TableMenu = ({
         } else {
           notification.error({
             message: 'Error',
-            description: 'An error occurred deleting the variable.',
+            description: 'An error occurred deleting the variable.'
           });
         }
       })
@@ -86,7 +86,7 @@ export const TableMenu = ({
         } else {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading the Table.',
+            description: 'An error occurred loading the Table.'
           });
         }
       });
@@ -109,18 +109,9 @@ export const TableMenu = ({
       onCancel() {
         setDeleteRow(false);
         setSelectedKey(null);
-      },
+      }
     });
   };
-
-  // Matches the code in the tableData to the code in the mappings to see if a variable has mappings
-  const showEditMappings =
-    mapping?.length > 0 &&
-    mapping?.some(
-      m =>
-        m?.code.toLowerCase() === variable.code.toLowerCase() &&
-        m?.mappings?.length > 0
-    );
 
   // Menu items
   const items = [
@@ -131,20 +122,12 @@ export const TableMenu = ({
         { key: `${tableData.key}-1`, label: 'Edit' },
         { key: `${tableData.key}-2`, label: 'Delete' },
         {
-          key: `${tableData.key}-4`,
-          label: 'History',
-        },
-      ],
-    },
+          key: `${tableData.key}-3`,
+          label: 'History'
+        }
+      ]
+    }
   ];
-
-  // If mappings exist for a variable, it adds the "Mappings" label to the menu
-  const mappingsMenuLabel = {
-    key: `${tableData.key}-3`,
-    label: 'Mappings',
-  };
-
-  showEditMappings && items[0]?.children?.splice(2, 0, mappingsMenuLabel);
 
   // onClick function for Menu.
   // If a user is not logged in, the login screen is triggered
@@ -158,12 +141,6 @@ export const TableMenu = ({
       case `${tableData.key}-2`:
         return user ? setDeleteRow(true) : loginDelete();
       case `${tableData.key}-3`:
-        return (
-          showEditMappings && // If mappings exist for a variable, sets editMappings to the variable and opens EditMappingsTableModal
-          user &&
-          setEditMappings(variable)
-        );
-      case `${tableData.key}-4`:
         return setShowHistory(tableData.key);
     }
   };

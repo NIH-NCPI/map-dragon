@@ -4,16 +4,7 @@ import { myContext } from '../../../App';
 import './Terminology.scss';
 import { Spinner } from '../../Manager/Spinner';
 import { getById } from '../../Manager/FetchManager';
-import {
-  Button,
-  Col,
-  Form,
-  message,
-  notification,
-  Row,
-  Table,
-  Tooltip
-} from 'antd';
+import { Col, Form, message, notification, Row, Table, Tooltip } from 'antd';
 import {
   CaretDownOutlined,
   CaretUpOutlined,
@@ -22,7 +13,7 @@ import {
   MessageOutlined,
   UpOutlined
 } from '@ant-design/icons';
-import { EditMappingsModal } from './EditMappingModal';
+import { EditMappingsModal } from '../../Manager/MappingsFunctions/EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
@@ -33,7 +24,7 @@ import { TerminologyMenu } from './TerminologyMenu';
 import { LoadCodes } from './LoadCodes';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
-import { AssignMappingsViaButton } from './AssignMappingsViaButton';
+import { AssignMappingsViaButton } from '../../Manager/MappingsFunctions/AssignMappingsViaButton';
 import {
   relationshipDisplay,
   uriEncoded,
@@ -51,6 +42,7 @@ export const Terminology = () => {
   const { vocabUrl, user } = useContext(myContext);
   const { setPrefTerminologies, prefTerminologies, setApiPreferencesTerm } =
     useContext(SearchContext);
+
   const {
     editMappings,
     setEditMappings,
@@ -60,7 +52,9 @@ export const Terminology = () => {
     setMapping,
     setRelationshipOptions,
     comment,
-    setComment
+    setComment,
+    mappingsForSearch,
+    setMappingsForSearch
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
@@ -82,6 +76,7 @@ export const Terminology = () => {
   useEffect(
     () => () => {
       setPrefTerminologies([]);
+      setApiPreferencesTerm(null);
     },
     []
   );
@@ -144,7 +139,7 @@ code in the terminology, AND the mappings array length for the code is > 0, the 
 and returns the length of the mapping array (i.e. returns the number of codes mapped to the terminology code). 
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
 
-  const matchCode = variable => {
+  const matchCode = (variable, rowIndex) => {
     if (!mapping?.length) {
       return (
         <MappingButton
@@ -161,14 +156,30 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map((code, i) => (
-        <div className="mapping" key={i}>
+        <div
+          className="mapping"
+          key={i}
+          ref={el => {
+            if (!el) return;
+            const sync = () => {
+              const relationshipEl = document.getElementById(
+                `relationship-${rowIndex}-${i}`
+              );
+              if (relationshipEl) {
+                relationshipEl.style.height = `${el.offsetHeight}px`;
+              }
+            };
+            const observer = new ResizeObserver(sync);
+            observer.observe(el);
+            sync();
+          }}
+        >
           <span>
-            {/* If there are comments, the comment icon is visible by default. Otherwise, it is visible on hover (see SCSS file) */}
             <MessageOutlined
               className={
                 code.user_input?.comments_count
-                  ? 'mapping_actions mapping_actions--active' // visible by default
-                  : 'mapping_actions mapping_actions--inactive' // only visible on hover
+                  ? 'mapping_actions mapping_actions--active'
+                  : 'mapping_actions mapping_actions--inactive'
               }
               onClick={() =>
                 setComment({
@@ -184,17 +195,28 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <CaretUpOutlined
                 className="mapping_actions user_vote_icon"
                 style={{
-                  color: 'blue',
-                  cursor: 'not-allowed',
-                  fontSize: '1rem'
+                  color: 'blue'
                 }}
+                onClick={() =>
+                  userVote(code) === 'up' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    terminologyId,
+                    notification,
+                    setMapping,
+                    'Terminology'
+                  )
+                }
               />
             ) : (
               <UpOutlined
-                className="mapping_actions"
-                style={{
-                  color: 'blue'
-                }}
+                key="up"
+                className="mapping_actions vote-icon-wrapper icon-enter"
+                style={{ color: 'blue' }}
                 onClick={() =>
                   userVote(code) !== 'up' &&
                   mappingVotes(
@@ -212,18 +234,17 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               />
             )}
             <Tooltip
-              title={`up: ${code.user_input?.votes_count.up},
-                down: ${code.user_input?.votes_count.down}`}
+              title={`up: ${code.user_input?.votes_count.up}, down: ${code.user_input?.votes_count.down}`}
               mouseEnterDelay={0.75}
             >
               <span
-                className={
+                className={`votes_count${
                   (code.user_input?.votes_count.down !== 0 ||
                     code.user_input?.votes_count.up !== 0) &&
                   votesCount(code) === 0
-                    ? 'red_votes_count'
-                    : 'votes_count'
-                }
+                    ? ' red_votes_count'
+                    : ''
+                }`}
               >
                 {votesCount(code)}
               </span>
@@ -232,17 +253,28 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <CaretDownOutlined
                 className="mapping_actions user_vote_icon"
                 style={{
-                  color: 'green',
-                  cursor: 'not-allowed',
-                  fontSize: '1rem'
+                  color: 'green'
                 }}
+                onClick={() =>
+                  userVote(code) === 'down' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    terminologyId,
+                    notification,
+                    setMapping,
+                    'Terminology'
+                  )
+                }
               />
             ) : (
               <DownOutlined
-                className="mapping_actions"
-                style={{
-                  color: 'green'
-                }}
+                key="down"
+                className="mapping_actions vote-icon-wrapper icon-enter"
+                style={{ color: 'green' }}
                 onClick={() =>
                   userVote(code) !== 'down' &&
                   mappingVotes(
@@ -261,8 +293,16 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             )}
           </span>
           <span className="mapping-display">
-            {code?.ftd_code} {code?.display && `- ${code?.display}`}{' '}
-            {relationshipDisplay(code)}
+            <span
+              className="stylized_link"
+              onClick={() => {
+                setEditMappings(variable);
+                setMappingsForSearch(variableMappings?.mappings);
+              }}
+            >
+              {code?.ftd_code}
+            </span>
+            {code?.display && ` - ${code?.display}`}
           </span>
           <span
             className="mapping_actions"
@@ -296,6 +336,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     updateMappings(variableMappings?.mappings, variableMappings?.code);
   };
 
+  const matchRelationship = (variable, rowIndex) => {
+    if (!mapping?.length) return null;
+    const variableMappings = mapping.find(
+      item => item?.code === variable?.code
+    );
+    if (!variableMappings?.mappings?.length) return null;
+    return variableMappings.mappings.map((code, i) => (
+      <div
+        key={i}
+        className="relationship-cell"
+        id={`relationship-${rowIndex}-${i}`}
+      >
+        {relationshipDisplay(code)}
+      </div>
+    ));
+  };
   // data for each column in the table.
   // Map through the codes in the terminology and display the code, display, number of mapped terms,
   // and an edit or get mappings button depending on the condition.
@@ -307,7 +363,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         code: item.code,
         display: item.display,
         description: item.description,
-        mapped_terms: matchCode(item)
+        mapping_relationship: matchRelationship(item, index),
+        mapped_terms: matchCode(item, index)
       };
     });
 
@@ -407,11 +464,18 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       dataIndex: 'description',
       width: 200
     },
+    {
+      title: 'Mapping Relationship',
+      dataIndex: 'mapping_relationship',
+      width: 130
+    },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 350 },
     {
       title: '',
       dataIndex: 'delete_column',
       width: 10,
+      onCell: () => ({ style: { padding: '0', textAlign: 'center' } }),
+      onHeaderCell: () => ({ style: { padding: '0' } }),
       render: (_, tableData) => {
         return (
           <>
@@ -524,14 +588,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           <EditMappingsModal
             editMappings={editMappings}
             setEditMappings={setEditMappings}
-            terminologyId={terminologyId}
             setMapping={setMapping}
-            mappingDesc={
-              editMappings?.description
-                ? editMappings?.description
-                : 'No Description'
-            }
-            terminology={terminology}
+            component={terminology}
+            componentString={'Terminology'}
+            mappingsForSearch={mappingsForSearch}
+            setMappingsForSearch={setMappingsForSearch}
           />
           <GetMappingsModal
             componentString={'Terminology'}
@@ -565,8 +626,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           <AssignMappingsViaButton
             assignMappingsViaButton={assignMappingsViaButton}
             setAssignMappingsViaButton={setAssignMappingsViaButton}
-            terminology={terminology}
-            table={null}
+            component={terminology}
+            componentString={'Terminology'}
           />
 
           <MappingComments
