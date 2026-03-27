@@ -463,7 +463,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       width: 200
     },
     {
-      title: 'Mapping Relationship',
+      title: 'Relationship',
       dataIndex: 'mapping_relationship',
       width: 130
     },
