@@ -74,11 +74,11 @@ export const mappingTooltip = code => {
 // Shortened display for mapping relationships in tables
 export const relationshipDisplay = variable =>
   variable?.mapping_relationship === 'equivalent'
-    ? '(equivalent)'
+    ? 'is equivalent to'
     : variable.mapping_relationship === 'source-is-narrower-than-target'
-      ? '(narrower)'
+      ? 'is narrower than'
       : variable?.mapping_relationship === 'source-is-broader-than-target'
-        ? '(broader)'
+        ? 'is broader than'
         : '';
 
 //URI encoding for "." and ".."

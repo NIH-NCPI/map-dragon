@@ -1,29 +1,40 @@
 import { Button, Modal, notification } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import './Terminology.scss';
+import './MappingsFunctions.scss';
 
 import { useContext } from 'react';
 import { myContext } from '../../../App';
-import { uriEncoded } from '../../Manager/Utility';
+import { uriEncoded } from '../Utility';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
-export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
+export const ResetMappings = ({
+  id,
+  componentString,
+  editMappings,
+  setReset,
+  form
+}) => {
   const { confirm } = Modal;
   const { vocabUrl, user } = useContext(myContext);
+  const {
+    setExistingMappings,
+    setSelectedBoxes,
+    setDisplaySelectedMappings,
+    setSelectedMappings
+  } = useContext(MappingContext);
 
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
   // setReset is set to true to open the modal that performs the search for the code again.
   const handleDelete = evt => {
     return fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
-        editMappings.code
-      )}`,
+      `${vocabUrl}/${componentString}/${id}/mapping/${uriEncoded(editMappings.code)}`,
       {
         method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ editor: user.email }),
+        body: JSON.stringify({ editor: user.email })
       }
     )
       .then(response => {
@@ -34,20 +45,17 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
         }
       })
       .then(() => {
-        return fetch(`${vocabUrl}/Terminology/${terminologyId}/mapping`);
+        setExistingMappings([]);
+        setSelectedBoxes([]);
+        setDisplaySelectedMappings([]);
+        setSelectedMappings([]);
+        form.resetFields();
+        setReset(true);
       })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
-        }
-      })
-      .then(() => setReset(true))
       .catch(error => {
         notification.error({
           message: 'Error',
-          description: 'An error occurred deleting the mapping(s).',
+          description: 'An error occurred deleting the mapping(s).'
         });
       });
   };
@@ -65,7 +73,7 @@ export const ResetMappings = ({ terminologyId, editMappings, setReset }) => {
       ),
       onOk() {
         handleDelete();
-      },
+      }
     });
   };
 

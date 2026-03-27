@@ -3,7 +3,7 @@ import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterAPI } from './FilterAPI';
-import { getById, getOntologies } from '../FetchManager';
+import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
 import { SearchContext } from '../../../Contexts/SearchContext';
 
@@ -11,9 +11,7 @@ export const FilterSelect = ({
   component,
   table,
   terminology,
-  componentString,
-  setTerminology,
-  setTable
+  componentString
 }) => {
   const [form] = Form.useForm();
 
@@ -36,7 +34,6 @@ export const FilterSelect = ({
   const {
     ontologyApis,
     setOntologyApis,
-    apiPreferences,
     preferenceTypeSet,
     preferenceType,
     prefTypeKey,
@@ -403,7 +400,6 @@ export const FilterSelect = ({
               active={active}
               setActive={setActive}
               paginatedOntologies={paginatedOntologies}
-              apiPreferences={apiPreferences}
               table={table}
               terminology={terminology}
               existingOntologies={existingOntologies}

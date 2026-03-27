@@ -19,6 +19,7 @@ export function MappingContextRoot() {
   const [voteCount, setVoteCount] = useState(0);
   const [mappingComments, setMappingComments] = useState([]);
   const [comment, setComment] = useState(false);
+  const [mappingsForSearch, setMappingsForSearch] = useState([]);
 
   const context = {
     editMappings,
@@ -51,6 +52,8 @@ export function MappingContextRoot() {
     setMappingComments,
     comment,
     setComment,
+    mappingsForSearch,
+    setMappingsForSearch
   };
 
   return (

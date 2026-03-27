@@ -27,7 +27,6 @@ import { DeleteTable } from './DeleteTable';
 import { LoadVariables } from './LoadVariables';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
-import { EditMappingsTableModal } from './EditMappingsTableModal';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { AddVariable } from './AddVariable';
@@ -45,8 +44,9 @@ import {
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
-import { AssignMappingsViaButton } from '../Terminologies/AssignMappingsViaButton';
+import { AssignMappingsViaButton } from '../../Manager/MappingsFunctions/AssignMappingsViaButton';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
+import { EditMappingsModal } from '../../Manager/MappingsFunctions/EditMappingModal';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -72,9 +72,12 @@ export const TableDetails = () => {
     editMappings,
     setRelationshipOptions,
     comment,
-    setComment
+    setComment,
+    mappingsForSearch,
+    setMappingsForSearch
   } = useContext(MappingContext);
   const { studyId, DDId, tableId } = useParams();
+
   const [loading, setLoading] = useState(true);
   const [load, setLoad] = useState(false);
   const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
@@ -241,12 +244,20 @@ export const TableDetails = () => {
       width: 200
     },
     { title: 'Data Type', dataIndex: 'data_type', width: 100 },
-    { title: 'Enumerations', dataIndex: 'enumeration', width: 100 },
+    { title: 'Enumerations', dataIndex: 'enumeration', width: 50 },
+    {
+      title: 'Relationship',
+      dataIndex: 'mapping_relationship',
+      width: 130,
+      onHeaderCell: () => ({ style: { whiteSpace: 'nowrap' } })
+    },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 300 },
     {
       title: '',
       dataIndex: 'delete_column',
       width: 10,
+      onCell: () => ({ style: { padding: '0', textAlign: 'center' } }),
+      onHeaderCell: () => ({ style: { padding: '0' } }),
       render: (_, tableData) => {
         return (
           <>
@@ -254,7 +265,6 @@ export const TableDetails = () => {
               // If the tableData key is not "newRow" (i.e. it is not a newly added input field to add a new row)
               // The actions/mappings menu is displayed
               <>
-                {/* <div className="edit_delete_buttons"> */}
                 <TableMenu
                   table={table}
                   setTable={setTable}
@@ -274,6 +284,22 @@ export const TableDetails = () => {
     }
   ];
 
+  const matchRelationship = (variable, rowIndex) => {
+    if (!mapping?.length) return null;
+    const variableMappings = mapping.find(
+      item => item?.code === variable?.code
+    );
+    if (!variableMappings?.mappings?.length) return null;
+    return variableMappings.mappings.map((code, i) => (
+      <div
+        key={i}
+        className="relationship-cell"
+        id={`relationship-${rowIndex}-${i}`}
+      >
+        {relationshipDisplay(code)}
+      </div>
+    ));
+  };
   /* The table may have numerous variables. The API call to fetch the mappings returns all mappings for the table.
 The variables in the mappings need to be matched up to each variable in the table.
 The function maps through the mapping array. For each variable, if the mapping variable is equal to the 
@@ -281,7 +307,7 @@ variable in the table, AND the mappings array length for the variable is > 0, th
 and returns the length of the mapping array (i.e. returns the number of variables mapped to the table variable). 
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
 
-  const matchCode = variable => {
+  const matchCode = (variable, rowIndex) => {
     if (!mapping?.length) {
       return (
         <MappingButton
@@ -291,18 +317,33 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         />
       );
     }
-
     const variableMappings = mapping.find(
       item => item?.code === variable?.code
     );
-
     const foundDisplay = table.variables.find(
       item => item?.code === variable?.code
     );
 
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map((code, i) => (
-        <div className="mapping" key={i}>
+        <div
+          className="mapping"
+          key={i}
+          ref={el => {
+            if (!el) return;
+            const sync = () => {
+              const relationshipEl = document.getElementById(
+                `relationship-${rowIndex}-${i}`
+              );
+              if (relationshipEl) {
+                relationshipEl.style.height = `${el.offsetHeight}px`;
+              }
+            };
+            const observer = new ResizeObserver(sync);
+            observer.observe(el);
+            sync();
+          }}
+        >
           <span>
             {/* If there are comments, the comment icon is visible by default. Otherwise, it is visible on hover (see SCSS file) */}
             <MessageOutlined
@@ -327,9 +368,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 className="mapping_actions user_vote_icon"
                 style={{
                   color: 'blue',
-                  cursor: 'not-allowed',
                   fontSize: '1rem'
                 }}
+                onClick={() =>
+                  userVote(code) === 'up' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    tableId,
+                    notification,
+                    setMapping,
+                    'Table'
+                  )
+                }
               />
             ) : (
               <UpOutlined
@@ -375,9 +429,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 className="mapping_actions user_vote_icon"
                 style={{
                   color: 'green',
-                  cursor: 'not-allowed',
                   fontSize: '1rem'
                 }}
+                onClick={() =>
+                  userVote(code) === 'down' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    tableId,
+                    notification,
+                    setMapping,
+                    'Table'
+                  )
+                }
               />
             ) : (
               <DownOutlined
@@ -403,7 +470,16 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             )}
           </span>
           <span className="mapping-display">
-            {code?.ftd_code} - {code?.display} {relationshipDisplay(code)}
+            <span
+              className="stylized_link"
+              onClick={() => {
+                setEditMappings(variable);
+                setMappingsForSearch(variableMappings?.mappings);
+              }}
+            >
+              {code?.ftd_code}
+            </span>
+            {code?.display && ` - ${code?.display}`}
           </span>
           <span
             className="mapping_actions"
@@ -426,7 +502,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       );
     }
   };
-
   const handleRemoveMapping = (variableMappings, code) => {
     const mappingToRemove = variableMappings.mappings.indexOf(code);
     //remove mapping from mappings
@@ -465,12 +540,12 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             View/Edit
           </Link>
         ),
+        mapping_relationship: matchRelationship(variable, index),
         mapped_terms: matchCode(variable)
       };
     });
 
   const [dataSource, setDataSource] = useState(tableData);
-
   // In progress. Not yet used.
   // Expandable rows for integer and quantity data types to display their additional data.
   // The additional elements include min, max, and units properties.
@@ -543,8 +618,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     table={table}
                     terminology={null}
                     componentString={'Table'}
-                    setTerminology={null}
-                    setTable={setTable}
                   />
                   <AddVariable
                     table={table}
@@ -613,30 +686,33 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       />
       <DeleteTable studyId={studyId} DDId={DDId} />
       <LoadVariables load={load} setLoad={setLoad} />
-      <EditMappingsTableModal
+      <EditMappingsModal
         editMappings={editMappings}
         setEditMappings={setEditMappings}
-        tableId={tableId}
         setMapping={setMapping}
-        table={table}
+        component={table}
+        componentString={'Table'}
+        mappingsForSearch={mappingsForSearch}
+        setMappingsForSearch={setMappingsForSearch}
       />
       <GetMappingsModal
         component={table}
         componentString={'Table'}
-        setTable={setTable}
         searchProp={getMappings?.name}
         setGetMappings={setGetMappings}
         setMapping={setMapping}
-        tableId={tableId}
         mappingProp={getMappings?.code}
-        table={table}
+        mappingDesc={
+          getMappings?.description ? getMappings?.description : 'No Description'
+        }
+        tableId={tableId}
       />
       <ClearMappings propId={tableId} component={'Table'} />
       <AssignMappingsViaButton
         assignMappingsViaButton={assignMappingsViaButton}
         setAssignMappingsViaButton={setAssignMappingsViaButton}
-        terminology={null}
-        table={table}
+        component={table}
+        componentString={'Table'}
       />
       <MappingComments
         mappingCode={comment?.code}

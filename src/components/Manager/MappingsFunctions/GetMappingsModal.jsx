@@ -16,15 +16,14 @@ import { MappingRelationship } from './MappingRelationship';
 import { useParams } from 'react-router-dom';
 
 export const GetMappingsModal = ({
+  component,
   componentString,
+  searchProp,
   setGetMappings,
   setMapping,
-  searchProp,
-  component,
   mappingProp,
   mappingDesc,
-  table,
-  terminology
+  tableId
 }) => {
   const [form] = Form.useForm();
   const { Search } = Input;
@@ -55,7 +54,6 @@ export const GetMappingsModal = ({
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
-  const { tableId } = useParams();
 
   const {
     setSelectedMappings,
@@ -92,8 +90,8 @@ export const GetMappingsModal = ({
         setApiPreferencesCode,
         notification,
         setUnformattedPref,
-        table,
-        terminology,
+        component,
+        componentString,
         setLoading,
         optionalTableParam
       );
@@ -227,8 +225,8 @@ export const GetMappingsModal = ({
           prefTypeKey,
           mappingProp,
           vocabUrl,
-          table,
-          terminology,
+          component,
+          componentString,
           notification
         )
       )
@@ -381,11 +379,7 @@ export const GetMappingsModal = ({
               </div>
             </div>
             <div>
-              <MappingRelationship
-                mapping={d}
-                variable={searchProp}
-                editSearch={'get'}
-              />
+              <MappingRelationship mapping={d} variable={searchProp} />
             </div>
             <div>
               {ellipsisString(

@@ -241,17 +241,13 @@ export const getFiltersByCode = (
   setApiPreferencesCode,
   notification,
   setUnformattedPref,
-  table,
-  terminology,
+  component,
+  componentString,
   setLoading
 ) => {
   setLoading(true);
   return fetch(
-    `${vocabUrl}/${
-      table
-        ? `Table/${table.id}/filter/${uriEncoded(mappingProp)}`
-        : `Terminology/${terminology.id}/filter/${uriEncoded(mappingProp)}`
-    }`,
+    `${vocabUrl}/${componentString}/${component.id}/filter/${uriEncoded(mappingProp)}`,
     {
       method: 'GET',
       headers: {
@@ -293,8 +289,8 @@ export const ontologyFilterCodeSubmit = (
   prefTypeKey,
   mappingProp,
   vocabUrl,
-  table,
-  terminology,
+  component,
+  componentString,
   notification
 ) => {
   const apiPreference = { api_preference: {} };
@@ -306,9 +302,7 @@ export const ontologyFilterCodeSubmit = (
       ) !== JSON.stringify(apiPreferencesCode?.sort()))
   ) {
     apiPreference.api_preference = apiPreferencesCode;
-    const fetchUrl = `${vocabUrl}/${
-      !table ? `Terminology/${terminology?.id}` : `Table/${table?.id}`
-    }/filter/${uriEncoded(mappingProp)}`;
+    const fetchUrl = `${vocabUrl}/${componentString}/${component?.id}/filter/${uriEncoded(mappingProp)}`;
     fetch(fetchUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
