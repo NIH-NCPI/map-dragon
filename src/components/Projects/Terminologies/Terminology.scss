@@ -212,17 +212,38 @@ a.terminology_link:hover {
 .votes_count {
   background-color: rgb(230, 229, 229);
   padding: 0 3px;
+  box-sizing: border-box;
+  min-width: 20px;
+  text-align: center;
+  display: inline-block;
+  line-height: 1.5;
+  vertical-align: middle;
 }
+
 .red_votes_count {
   color: red;
 }
 
 .mapping_votes {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   align-items: center;
   padding-right: 0.25rem;
   font-size: 0.7rem;
+  margin-left: 1px;
+  .anticon {
+    font-size: 14px;
+    width: 12px;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .user_vote_icon {
+    font-size: 16px !important;
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .no_mapping_button {

@@ -367,8 +367,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <CaretUpOutlined
                 className="mapping_actions user_vote_icon"
                 style={{
-                  color: 'blue',
-                  fontSize: '1rem'
+                  color: 'blue'
                 }}
                 onClick={() =>
                   userVote(code) === 'up' &&
@@ -413,13 +412,13 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               mouseEnterDelay={0.75}
             >
               <span
-                className={
+                className={`votes_count${
                   (code.user_input?.votes_count.down !== 0 ||
                     code.user_input?.votes_count.up !== 0) &&
                   votesCount(code) === 0
-                    ? 'red_votes_count'
-                    : 'votes_count'
-                }
+                    ? ' red_votes_count'
+                    : ''
+                }`}
               >
                 {votesCount(code)}
               </span>
@@ -428,8 +427,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <CaretDownOutlined
                 className="mapping_actions user_vote_icon"
                 style={{
-                  color: 'green',
-                  fontSize: '1rem'
+                  color: 'green'
                 }}
                 onClick={() =>
                   userVote(code) === 'down' &&

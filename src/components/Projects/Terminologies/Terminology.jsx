@@ -193,9 +193,10 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           <span className="mapping_votes">
             {userVote(code) === 'up' ? (
               <CaretUpOutlined
-                key="caret-up"
-                className="mapping_actions user_vote_icon vote-icon-wrapper icon-enter"
-                style={{ color: 'blue', fontSize: '1rem' }}
+                className="mapping_actions user_vote_icon"
+                style={{
+                  color: 'blue'
+                }}
                 onClick={() =>
                   userVote(code) === 'up' &&
                   mappingVotes(
@@ -237,22 +238,23 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               mouseEnterDelay={0.75}
             >
               <span
-                className={
+                className={`votes_count${
                   (code.user_input?.votes_count.down !== 0 ||
                     code.user_input?.votes_count.up !== 0) &&
                   votesCount(code) === 0
-                    ? 'red_votes_count'
-                    : 'votes_count'
-                }
+                    ? ' red_votes_count'
+                    : ''
+                }`}
               >
                 {votesCount(code)}
               </span>
             </Tooltip>
             {userVote(code) === 'down' ? (
               <CaretDownOutlined
-                key="caret-down"
-                className="mapping_actions user_vote_icon vote-icon-wrapper icon-enter"
-                style={{ color: 'green', fontSize: '1rem' }}
+                className="mapping_actions user_vote_icon"
+                style={{
+                  color: 'green'
+                }}
                 onClick={() =>
                   userVote(code) === 'down' &&
                   mappingVotes(
@@ -472,6 +474,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       title: '',
       dataIndex: 'delete_column',
       width: 10,
+      onCell: () => ({ style: { padding: '0', textAlign: 'center' } }),
+      onHeaderCell: () => ({ style: { padding: '0' } }),
       render: (_, tableData) => {
         return (
           <>
