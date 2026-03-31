@@ -16,8 +16,8 @@ export const AssignMappingsCheckboxes = ({
   setSelectedBoxes,
   mappingProp,
   form,
-  terminology,
-  table,
+  component,
+  componentString,
   loading
 }) => {
   const { vocabUrl } = useContext(myContext);
@@ -77,8 +77,8 @@ export const AssignMappingsCheckboxes = ({
         setApiPreferencesCode,
         notification,
         setUnformattedPref,
-        table,
-        terminology,
+        component,
+        componentString,
         setLoadingFilters
       );
     }
@@ -106,7 +106,7 @@ export const AssignMappingsCheckboxes = ({
 
   useEffect(() => {
     return () => {
-      form.resetFields;
+      form.resetFields();
       setSelectedMappings([]);
       setDisplaySelectedMappings([]);
       setSelectedBoxes([]);
@@ -341,11 +341,7 @@ export const AssignMappingsCheckboxes = ({
               </div>
             </div>
             <div>
-              <MappingRelationship
-                mapping={d}
-                variable={mappingProp}
-                editSearch={true}
-              />
+              <MappingRelationship mapping={d} variable={mappingProp} />
             </div>
             <div>
               {d?.description?.length > 85 ? (

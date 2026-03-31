@@ -18,7 +18,6 @@ export const FilterAPI = ({
   active,
   setActive,
   paginatedOntologies,
-  apiPreferences,
   table,
   terminology,
   existingOntologies,
@@ -155,7 +154,6 @@ export const FilterAPI = ({
                   displaySelectedOntologies={displaySelectedOntologies}
                   setDisplaySelectedOntologies={setDisplaySelectedOntologies}
                   paginatedOntologies={paginatedOntologies}
-                  apiPreferences={apiPreferences}
                   table={table}
                   terminology={terminology}
                   existingOntologies={existingOntologies}

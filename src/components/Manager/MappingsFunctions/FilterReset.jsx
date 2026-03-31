@@ -26,51 +26,43 @@ export const FilterReset = ({
     }
   }, [remove]);
 
-  const deleteOntologies = evt => {
-    const ontoDelete = fetch(
-      `${vocabUrl}/${
-        table
-          ? `Table/${table.id}/filter/self`
-          : `Terminology/${terminology.id}/filter`
-      }`,
-      {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ editor: user.email })
-      }
-    );
+  const deleteOntologies = async evt => {
+    try {
+      const ontoDelete = await fetch(
+        `${vocabUrl}/${
+          table
+            ? `Table/${table.id}/filter/self`
+            : `Terminology/${terminology.id}/filter`
+        }`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ editor: user.email })
+        }
+      );
 
-    const terminologyDelete = fetch(
-      `${vocabUrl}/${componentString}/${
-        table ? table.id : terminology.id
-      }/preferred_terminology`,
-      {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ editor: user.email })
-      }
-    );
+      const terminologyDelete = await fetch(
+        `${vocabUrl}/${componentString}/${
+          table ? table.id : terminology.id
+        }/preferred_terminology`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ editor: user.email })
+        }
+      );
 
-    Promise.all([ontoDelete, terminologyDelete])
-      .then(async ([ontoRes, termRes]) => {
-        if (!ontoRes.ok)
-          throw new Error('Error deleting ontology preferences.');
-        if (termRes && !termRes.ok)
-          throw new Error('Error deleting terminology preferences.');
-
-        setExistingOntologies([]);
-        setExistingPreferred([]);
-        setPrefTerminologies([]);
-        preferenceTypeSet({ self: { api_preference: {} } });
-        message.success('Filters deleted successfully.');
-      })
-      .catch(error => {
-        notification.error({
-          message: 'Error',
-          description:
-            error.message || 'An error occurred deleting preferences.'
-        });
+      setExistingOntologies([]);
+      setExistingPreferred([]);
+      setPrefTerminologies([]);
+      preferenceTypeSet({ self: { api_preference: {} } });
+      message.success('Filters deleted successfully.');
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: 'An error occurred deleting preferences.'
       });
+    }
   };
 
   const showConfirm = () => {

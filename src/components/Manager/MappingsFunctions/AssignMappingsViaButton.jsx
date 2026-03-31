@@ -11,8 +11,8 @@ import { uriEncoded } from '../../Manager/Utility';
 export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
   setAssignMappingsViaButton,
-  terminology,
-  table
+  component,
+  componentString
 }) => {
   const [form] = Form.useForm();
 
@@ -77,10 +77,8 @@ export const AssignMappingsViaButton = ({
     };
 
     fetch(
-      `${vocabUrl}/${terminology ? 'Terminology' : 'Table'}/${
-        terminology ? terminology.id : table.id
-      }/mapping/${uriEncoded(
-        assignMappingsViaButton.code
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
+        assignMappingsViaButton?.code
       )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
@@ -110,8 +108,8 @@ export const AssignMappingsViaButton = ({
           prefTypeKey,
           assignMappingsViaButton.code,
           vocabUrl,
-          table ?? null,
-          terminology ?? null,
+          component,
+          componentString,
           notification
         )
       )
@@ -130,7 +128,7 @@ export const AssignMappingsViaButton = ({
   return (
     <Modal
       open={!!assignMappingsViaButton}
-      width={'60%'}
+      width={'70%'}
       onOk={() => {
         form.validateFields().then(values => {
           handleSubmit(values);
@@ -169,8 +167,8 @@ export const AssignMappingsViaButton = ({
               ? assignMappingsViaButton.display
               : assignMappingsViaButton?.code
           }
-          terminology={terminology}
-          table={table}
+          component={component}
+          componentString={componentString}
           loading={loading}
         />
       )}

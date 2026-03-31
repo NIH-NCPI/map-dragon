@@ -75,3 +75,12 @@ input::file-selector-button:hover {
   gap: 10px;
   margin-left: 50px;
 }
+
+.stylized_link {
+  color: $lightBlue;
+  cursor: pointer;
+  &:hover {
+    color: $darkBlue;
+    transition: all 0.4s linear;
+  }
+}
