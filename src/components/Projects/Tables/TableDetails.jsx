@@ -246,7 +246,7 @@ export const TableDetails = () => {
     { title: 'Data Type', dataIndex: 'data_type', width: 100 },
     { title: 'Enumerations', dataIndex: 'enumeration', width: 50 },
     {
-      title: 'Mapping Relationship',
+      title: 'Relationship',
       dataIndex: 'mapping_relationship',
       width: 130,
       onHeaderCell: () => ({ style: { whiteSpace: 'nowrap' } })
