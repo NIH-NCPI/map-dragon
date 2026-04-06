@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import './MappingsFunctions.scss';
 
-export const OntologyCheckboxes = ({ preferenceType }) => {
+export const OntologyCheckboxes = ({ preferenceType, terminologiesToMap }) => {
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
@@ -29,7 +29,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   const apiPreferences =
     unformattedPref[codeToSearch]?.api_preference ??
     unformattedPref[codeToSearch];
-  const apiPreferenceKeys = Object.keys(apiPreferences);
+  const apiPreferenceKeys = Object.keys(apiPreferences ?? {});
 
   apiPreferenceKeys?.forEach(key => {
     // Dynamically assigns the api values to allApiPreferences variable
@@ -57,13 +57,19 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     apiPreferencesCode.ols = selectedOntologies;
   }
 
-  const options =
-    ontologyApis &&
-    ontologyApis.map((aap, index) => ({
-      value: aap.api_id,
-      label: aap.api_id.toUpperCase()
-    }));
+  const optionsSetup = () => {
+    const ontologies =
+      ontologyApis &&
+      ontologyApis.map((aap, index) => ({
+        value: aap.api_id,
+        label: aap.api_id.toUpperCase()
+      }));
+    prefTerminologies?.length > 0 &&
+      ontologies.push({ value: 'md', label: 'MD' });
+    return ontologies;
+  };
 
+  const options = optionsSetup();
   const defaultApi =
     Object.keys(allApiPreferences).length > 0
       ? Object.keys(allApiPreferences).includes('umls')
@@ -113,7 +119,6 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   else {
     existingOntologies = selectedOntologies;
   }
-
   useEffect(() => {
     setCheckedOntologies(existingOntologies.map(eo => eo.toUpperCase()));
   }, [preferenceType, selectedApi]);
@@ -204,10 +209,19 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     return filtered;
   };
 
+  const getFilteredTerminologies = searchText => {
+    const filtered = terminologiesToMap?.filter(item => {
+      const key = Object.keys(item)[0];
+      return key?.toUpperCase().startsWith(searchText?.toUpperCase());
+    });
+    return filtered;
+  };
+
+  console.log(getFilteredTerminologies(searchText));
   return (
     <div
       className={
-        active === 'search' || prefTerminologies.length === 0
+        active !== 'md' || prefTerminologies.length === 0
           ? 'ontology_form'
           : 'ontology_form_pref'
       }
@@ -224,45 +238,76 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
         }}
       />
       <Search
-        placeholder="Ontologies"
+        placeholder={selectedApi !== 'md' ? 'Ontologies' : 'Terminologies'}
         className="onto_search_bar"
         value={searchText}
         onChange={e => setSearchText(e.target.value)}
       />
-      <Form.Item
-        name="selected_ontologies"
-        valuePropName="value"
-        rules={[{ required: false }]}
-      >
-        <div className="modal_display_results">
-          {getFilteredItems(searchText)
-            .sort((a, b) => {
-              const key1 = Object.keys(a)[0].toUpperCase();
-              const key2 = Object.keys(b)[0].toUpperCase();
+      {selectedApi !== 'md' ? (
+        <Form.Item
+          name="selected_ontologies"
+          valuePropName="value"
+          rules={[{ required: false }]}
+        >
+          <div className="modal_display_results">
+            {getFilteredItems(searchText)
+              .sort((a, b) => {
+                const key1 = Object.keys(a)[0].toUpperCase();
+                const key2 = Object.keys(b)[0].toUpperCase();
 
-              const selectedOnts1 = existingOntologies?.includes(key1);
-              const selectedOnts2 = existingOntologies?.includes(key2);
+                const selectedOnts1 = existingOntologies?.includes(key1);
+                const selectedOnts2 = existingOntologies?.includes(key2);
 
-              // If both are in existingOntologies, they stay in their relative order
-              // If only one is in existingOntologies, it is displayed to the top
-              return selectedOnts2 - selectedOnts1;
-            })
-            .map((item, i) => {
-              const key = Object.keys(item)[0];
-              const value = item[key];
-              return (
-                <Checkbox
-                  key={i}
-                  value={key}
-                  checked={checkedOntologiesArray?.includes(key.toUpperCase())}
-                  onChange={onCheckboxChange}
-                >
-                  {`${key.toUpperCase()} ${value !== 0 ? `(${value})` : ''}`}
-                </Checkbox>
-              );
-            })}
-        </div>
-      </Form.Item>
+                // If both are in existingOntologies, they stay in their relative order
+                // If only one is in existingOntologies, it is displayed to the top
+                return selectedOnts2 - selectedOnts1;
+              })
+              .map((item, i) => {
+                const key = Object.keys(item)[0];
+                const value = item[key];
+                return (
+                  <Checkbox
+                    key={i}
+                    value={key}
+                    checked={checkedOntologiesArray?.includes(
+                      key.toUpperCase()
+                    )}
+                    onChange={onCheckboxChange}
+                  >
+                    {`${key.toUpperCase()} ${value !== 0 ? `(${value})` : ''}`}
+                  </Checkbox>
+                );
+              })}
+          </div>
+        </Form.Item>
+      ) : (
+        <Form.Item
+          name="selected_ontologies"
+          valuePropName="value"
+          rules={[{ required: false }]}
+        >
+          <div className="modal_display_results">
+            {getFilteredTerminologies(searchText)
+              ?.sort((a, b) => {
+                const key1 = Object.keys(a)[0];
+                const key2 = Object.keys(b)[0];
+
+                return key2 - key1;
+              })
+              .map((item, i) => {
+                return (
+                  <Checkbox
+                    key={i}
+                    value={item?.name}
+                    // onChange={onCheckboxChange}
+                  >
+                    {item?.name}
+                  </Checkbox>
+                );
+              })}
+          </div>
+        </Form.Item>
+      )}
     </div>
   );
 };

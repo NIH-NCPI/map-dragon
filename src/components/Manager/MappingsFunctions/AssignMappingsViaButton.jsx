@@ -36,29 +36,6 @@ export const AssignMappingsViaButton = ({
     setSelectedBoxes([]);
     setIdsForSelect([]);
   };
-  const fetchTerminologies = () => {
-    setLoading(true);
-    const fetchPromises = prefTerminologies?.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
-    );
-
-    Promise.all(fetchPromises)
-      .then(results => {
-        // Once all fetch calls are resolved, set the combined data
-        setTerminologiesToMap(results);
-      })
-      .catch(error => {
-        notification.error({
-          message: 'Error',
-          description: 'An error occurred. Please try again.'
-        });
-      })
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    assignMappingsViaButton && fetchTerminologies();
-  }, [assignMappingsViaButton]);
 
   const handleSubmit = values => {
     setLoading(true);
@@ -153,25 +130,21 @@ export const AssignMappingsViaButton = ({
       cancelButtonProps={{ disabled: loading }}
       okButtonProps={{ disabled: loading }}
     >
-      {loading ? (
-        <ModalSpinner />
-      ) : (
-        <AssignMappingsCheckboxes
-          form={form}
-          terminologiesToMap={terminologiesToMap}
-          setTerminologiesToMap={setTerminologiesToMap}
-          selectedBoxes={selectedBoxes}
-          setSelectedBoxes={setSelectedBoxes}
-          mappingProp={
-            assignMappingsViaButton?.display
-              ? assignMappingsViaButton.display
-              : assignMappingsViaButton?.code
-          }
-          component={component}
-          componentString={componentString}
-          loading={loading}
-        />
-      )}
+      <AssignMappingsCheckboxes
+        form={form}
+        terminologiesToMap={terminologiesToMap}
+        setTerminologiesToMap={setTerminologiesToMap}
+        selectedBoxes={selectedBoxes}
+        setSelectedBoxes={setSelectedBoxes}
+        mappingProp={
+          assignMappingsViaButton?.display
+            ? assignMappingsViaButton.display
+            : assignMappingsViaButton?.code
+        }
+        component={component}
+        componentString={componentString}
+        loading={loading}
+      />
     </Modal>
   );
 };
