@@ -51,8 +51,9 @@ export const AssignMappingsCheckboxes = ({
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [inputValue, setInputValue] = useState(mappingProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(mappingProp);
-  const [active, setActive] = useState(null);
+  const [activeTerms, setActiveTerms] = useState([]);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
+  const [selectedTerms, setSelectedTerms] = useState([]);
 
   const {
     setSelectedMappings,
@@ -110,6 +111,19 @@ export const AssignMappingsCheckboxes = ({
     selectedApi === 'md' && fetchTerminologies();
   }, [selectedApi]);
 
+  useEffect(() => {
+    if (terminologiesToMap?.length) {
+      setActiveTerms([terminologiesToMap?.[0]?.id]);
+
+      const allCodes = terminologiesToMap.flatMap(term => term.codes ?? []);
+      setAllCheckboxes(allCodes);
+    }
+  }, [selectedApi, terminologiesToMap]);
+
+  const termCodes = allCheckboxes?.filter(code =>
+    activeTerms?.includes(code?.terminology_id)
+  );
+
   const codeToSearch = Object.keys(unformattedPref)?.[0];
   const savedApiPreferences = unformattedPref?.[codeToSearch]?.api_preference;
   const apiPreferenceKeys = Object?.keys(savedApiPreferences ?? {});
@@ -119,7 +133,7 @@ export const AssignMappingsCheckboxes = ({
       ? setSelectedApi(apiPreferenceKeys[0])
       : setSelectedApi(ontologyApis?.[0]?.api_id || null);
 
-    if (apiPreferencesCode !== undefined && active !== 'md') {
+    if (apiPreferencesCode !== undefined && selectedApi !== 'md') {
       fetchResults(0, mappingProp);
     }
   }, [mappingProp]);
@@ -141,14 +155,9 @@ export const AssignMappingsCheckboxes = ({
   }, []);
 
   // useEffect(() => {
-  //   setAllCheckboxes(
-  //     terminologiesToMap.find(term => term.id === active)?.codes ?? []
-  //   );
-  // }, [active]);
+  //   !loading && setActiveTerms(terminologiesToMap?.[0]);
+  // }, [terminologiesToMap]);
 
-  useEffect(() => {
-    !loading && setActive(terminologiesToMap?.[0]?.id);
-  }, [terminologiesToMap]);
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
   // The function is run when the query changes and when the preferred ontology changes.
@@ -169,7 +178,7 @@ export const AssignMappingsCheckboxes = ({
     ) {
       fetchResults(page, currentSearchProp);
     }
-  }, [currentSearchProp, apiPreferencesCode, active, selectedApi]);
+  }, [currentSearchProp, apiPreferencesCode, selectedApi]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -471,8 +480,10 @@ export const AssignMappingsCheckboxes = ({
                     <div className="all_checkboxes_container">
                       <div className="mapping_modal_left">
                         <OntologyCheckboxes
+                          form={form}
                           apiPreferences={apiPreferences}
-                          active={active}
+                          activeTerms={activeTerms}
+                          setActiveTerms={setActiveTerms}
                           terminologiesToMap={terminologiesToMap}
                         />
                       </div>
@@ -504,7 +515,7 @@ export const AssignMappingsCheckboxes = ({
                                   </div>
                                 </Form.Item>
                               )}
-                              {active !== 'md' ? (
+                              {selectedApi !== 'md' ? (
                                 results?.length > 0 ? (
                                   <>
                                     <Form.Item
@@ -558,7 +569,7 @@ export const AssignMappingsCheckboxes = ({
                                 >
                                   <Checkbox.Group
                                     className="mappings_checkbox"
-                                    options={allCheckboxes
+                                    options={termCodes
                                       .filter(
                                         checkbox =>
                                           !displaySelectedMappings.some(

@@ -4,14 +4,19 @@ import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import './MappingsFunctions.scss';
 
-export const OntologyCheckboxes = ({ preferenceType, terminologiesToMap }) => {
+export const OntologyCheckboxes = ({
+  form,
+  preferenceType,
+  activeTerms,
+  setActiveTerms,
+  terminologiesToMap
+}) => {
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
     facetCounts,
     ontologyApis,
     prefTypeKey,
-    active,
     prefTerminologies,
     checkedOntologies,
     setCheckedOntologies,
@@ -80,6 +85,16 @@ export const OntologyCheckboxes = ({ preferenceType, terminologiesToMap }) => {
   useEffect(() => {
     setSelectedApi(defaultApi);
   }, []);
+
+  const initialTerm = [terminologiesToMap?.[0]?.id];
+
+  useEffect(() => {
+    if (initialTerm) {
+      form.setFieldsValue({
+        selected_ontologies: initialTerm
+      });
+    }
+  }, [initialTerm, form]);
 
   let processedApiPreferencesCode;
 
@@ -165,6 +180,11 @@ export const OntologyCheckboxes = ({ preferenceType, terminologiesToMap }) => {
     });
   };
 
+  const onTermChange = checkedValues => {
+    setActiveTerms(checkedValues);
+    setSelectedTerms(prev => ({ ...prev, [selectedApi]: checkedValues }));
+  };
+
   const formattedFacetCounts = ontologyCounts(facetCounts);
 
   const sortedData = ontologyApis.map(api => {
@@ -217,11 +237,10 @@ export const OntologyCheckboxes = ({ preferenceType, terminologiesToMap }) => {
     return filtered;
   };
 
-  console.log(getFilteredTerminologies(searchText));
   return (
     <div
       className={
-        active !== 'md' || prefTerminologies.length === 0
+        selectedApi !== 'md' || prefTerminologies.length === 0
           ? 'ontology_form'
           : 'ontology_form_pref'
       }
@@ -245,7 +264,7 @@ export const OntologyCheckboxes = ({ preferenceType, terminologiesToMap }) => {
       />
       {selectedApi !== 'md' ? (
         <Form.Item
-          name="selected_ontologies"
+          name="selected_terminologies"
           valuePropName="value"
           rules={[{ required: false }]}
         >
@@ -281,32 +300,24 @@ export const OntologyCheckboxes = ({ preferenceType, terminologiesToMap }) => {
           </div>
         </Form.Item>
       ) : (
-        <Form.Item
-          name="selected_ontologies"
-          valuePropName="value"
-          rules={[{ required: false }]}
-        >
-          <div className="modal_display_results">
-            {getFilteredTerminologies(searchText)
-              ?.sort((a, b) => {
-                const key1 = Object.keys(a)[0];
-                const key2 = Object.keys(b)[0];
+        <Checkbox.Group
+          defaultValue={initialTerm}
+          value={activeTerms}
+          options={getFilteredTerminologies(searchText)
+            ?.sort((a, b) => {
+              const key1 = Object.keys(a)[0];
+              const key2 = Object.keys(b)[0];
 
-                return key2 - key1;
-              })
-              .map((item, i) => {
-                return (
-                  <Checkbox
-                    key={i}
-                    value={item?.name}
-                    // onChange={onCheckboxChange}
-                  >
-                    {item?.name}
-                  </Checkbox>
-                );
-              })}
-          </div>
-        </Form.Item>
+              return key2 - key1;
+            })
+            .map((item, i) => {
+              return {
+                value: item?.id,
+                label: item?.name
+              };
+            })}
+          onChange={onTermChange}
+        />
       )}
     </div>
   );
