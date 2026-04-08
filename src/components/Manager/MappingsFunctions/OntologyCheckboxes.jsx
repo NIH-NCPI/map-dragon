@@ -88,14 +88,6 @@ export const OntologyCheckboxes = ({
 
   const initialTerm = [terminologiesToMap?.[0]?.id];
 
-  useEffect(() => {
-    if (initialTerm) {
-      form.setFieldsValue({
-        selected_ontologies: initialTerm
-      });
-    }
-  }, [initialTerm, form]);
-
   let processedApiPreferencesCode;
 
   // Ensures the data sent to the API is in the correct format.
