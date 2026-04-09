@@ -5,7 +5,6 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import './MappingsFunctions.scss';
 
 export const OntologyCheckboxes = ({
-  form,
   preferenceType,
   activeTerms,
   setActiveTerms,
@@ -62,6 +61,7 @@ export const OntologyCheckboxes = ({
     apiPreferencesCode.ols = selectedOntologies;
   }
 
+  // If prefTerminologies exist, adds "MD" label to show on screen for API options
   const optionsSetup = () => {
     const ontologies =
       ontologyApis &&
@@ -69,6 +69,7 @@ export const OntologyCheckboxes = ({
         value: aap.api_id,
         label: aap.api_id.toUpperCase()
       }));
+
     prefTerminologies?.length > 0 &&
       ontologies.push({ value: 'md', label: 'MD' });
     return ontologies;
@@ -174,7 +175,6 @@ export const OntologyCheckboxes = ({
 
   const onTermChange = checkedValues => {
     setActiveTerms(checkedValues);
-    setSelectedTerms(prev => ({ ...prev, [selectedApi]: checkedValues }));
   };
 
   const formattedFacetCounts = ontologyCounts(facetCounts);
@@ -222,10 +222,10 @@ export const OntologyCheckboxes = ({
   };
 
   const getFilteredTerminologies = searchText => {
-    const filtered = terminologiesToMap?.filter(item => {
-      const key = Object.keys(item)[0];
-      return key?.toUpperCase().startsWith(searchText?.toUpperCase());
-    });
+    const filtered = terminologiesToMap?.filter(item =>
+      item?.name?.toUpperCase().startsWith(searchText?.toUpperCase())
+    );
+
     return filtered;
   };
 
@@ -292,6 +292,7 @@ export const OntologyCheckboxes = ({
           </div>
         </Form.Item>
       ) : (
+        // Checkboxes for Preferred Terminologies
         <Checkbox.Group
           defaultValue={initialTerm}
           value={activeTerms}

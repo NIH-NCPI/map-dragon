@@ -51,6 +51,7 @@ export const AssignMappingsCheckboxes = ({
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [inputValue, setInputValue] = useState(mappingProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(mappingProp);
+  const [searchedTerm, setSearchedTerm] = useState(mappingProp);
   const [activeTerms, setActiveTerms] = useState([]);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
   const [selectedTerms, setSelectedTerms] = useState([]);
@@ -71,9 +72,8 @@ export const AssignMappingsCheckboxes = ({
 
   useEffect(() => {
     setInputValue(mappingProp);
-    setCurrentSearchProp(mappingProp);
     setPage(0);
-    if (typeof mappingProp === 'string') {
+    if (!!mappingProp) {
       getFiltersByCode(
         vocabUrl,
         mappingProp,
@@ -86,6 +86,11 @@ export const AssignMappingsCheckboxes = ({
       );
     }
   }, [mappingProp]);
+
+  useEffect(() => {
+    setCurrentSearchProp(searchedTerm);
+    setInputValue(searchedTerm);
+  }, [selectedApi]);
 
   const fetchTerminologies = () => {
     setLoadingResults(true);
@@ -113,16 +118,27 @@ export const AssignMappingsCheckboxes = ({
 
   useEffect(() => {
     if (terminologiesToMap?.length) {
-      setActiveTerms([terminologiesToMap?.[0]?.id]);
+      setActiveTerms(prev =>
+        prev?.length ? prev : terminologiesToMap?.map(t => t.id)
+      );
 
       const allCodes = terminologiesToMap.flatMap(term => term.codes ?? []);
       setAllCheckboxes(allCodes);
     }
   }, [selectedApi, terminologiesToMap]);
 
-  const termCodes = allCheckboxes?.filter(code =>
-    activeTerms?.includes(code?.terminology_id)
-  );
+  const termCodes = () => {
+    const matchedCodes = allCheckboxes?.filter(code =>
+      activeTerms?.includes(code?.terminology_id)
+    );
+
+    const foundInput = matchedCodes?.filter(
+      item =>
+        item?.code?.toUpperCase().includes(inputValue?.toUpperCase()) ||
+        item?.display?.toUpperCase().includes(inputValue?.toUpperCase())
+    );
+    return foundInput;
+  };
 
   const codeToSearch = Object.keys(unformattedPref)?.[0];
   const savedApiPreferences = unformattedPref?.[codeToSearch]?.api_preference;
@@ -154,14 +170,9 @@ export const AssignMappingsCheckboxes = ({
     };
   }, []);
 
-  // useEffect(() => {
-  //   !loading && setActiveTerms(terminologiesToMap?.[0]);
-  // }, [terminologiesToMap]);
-
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
   // The function is run when the query changes and when the preferred ontology changes.
-  // If there are preferred terminologies, it runs when the OLS search bar is clicked (i.e. active)
   useEffect(() => {
     if (
       prefTerminologies.length > 0 &&
@@ -199,6 +210,7 @@ export const AssignMappingsCheckboxes = ({
 
   const handleSearch = query => {
     setCurrentSearchProp(cleanedSearchTerm(query));
+    setSearchedTerm(inputValue);
     setPage(0);
   };
 
@@ -423,6 +435,7 @@ export const AssignMappingsCheckboxes = ({
     if (e.key === 'Tab') {
       e.preventDefault();
       handleSearch(e.target.value);
+      setSearchedTerm(inputValue);
     }
   };
 
@@ -480,7 +493,6 @@ export const AssignMappingsCheckboxes = ({
                     <div className="all_checkboxes_container">
                       <div className="mapping_modal_left">
                         <OntologyCheckboxes
-                          form={form}
                           apiPreferences={apiPreferences}
                           activeTerms={activeTerms}
                           setActiveTerms={setActiveTerms}
@@ -558,6 +570,7 @@ export const AssignMappingsCheckboxes = ({
                                   <h3>No results found</h3>
                                 )
                               ) : (
+                                //Preferred Terminology results
                                 <Form.Item
                                   name={['mappings']}
                                   valuePropName="value"
@@ -567,26 +580,30 @@ export const AssignMappingsCheckboxes = ({
                                     }
                                   ]}
                                 >
-                                  <Checkbox.Group
-                                    className="mappings_checkbox"
-                                    options={termCodes
-                                      .filter(
-                                        checkbox =>
-                                          !displaySelectedMappings.some(
-                                            dsm => checkbox.code === dsm.code
-                                          )
-                                      )
-                                      .map((code, index) => ({
-                                        value: JSON.stringify({
-                                          code: code.code,
-                                          display: code.display,
-                                          description: code.description,
-                                          system: code.system
-                                        }),
-                                        label: checkBoxDisplay(code, index)
-                                      }))}
-                                    onChange={onSelectedChange}
-                                  />
+                                  {termCodes().length ? (
+                                    <Checkbox.Group
+                                      className="mappings_checkbox"
+                                      options={termCodes()
+                                        .filter(
+                                          checkbox =>
+                                            !displaySelectedMappings.some(
+                                              dsm => checkbox.code === dsm.code
+                                            )
+                                        )
+                                        .map((code, index) => ({
+                                          value: JSON.stringify({
+                                            code: code.code,
+                                            display: code.display,
+                                            description: code.description,
+                                            system: code.system
+                                          }),
+                                          label: checkBoxDisplay(code, index)
+                                        }))}
+                                      onChange={onSelectedChange}
+                                    />
+                                  ) : (
+                                    <h3>No results found</h3>
+                                  )}
                                 </Form.Item>
                               )}
                             </>

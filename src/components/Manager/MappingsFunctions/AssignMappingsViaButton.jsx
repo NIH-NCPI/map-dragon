@@ -4,7 +4,6 @@ import { AssignMappingsCheckboxes } from '../../Manager/MappingsFunctions/Assign
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ModalSpinner } from '../../Manager/Spinner';
 import { ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { uriEncoded } from '../../Manager/Utility';
 
@@ -28,7 +27,6 @@ export const AssignMappingsViaButton = ({
     useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [mappingProp, setMappingProp] = useState('');
   const [selectedBoxes, setSelectedBoxes] = useState([]);
 
   const onClose = () => {
