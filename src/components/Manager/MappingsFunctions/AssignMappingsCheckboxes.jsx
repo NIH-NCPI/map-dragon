@@ -16,6 +16,7 @@ export const AssignMappingsCheckboxes = ({
   selectedBoxes,
   setSelectedBoxes,
   mappingProp,
+  mappingDesc,
   form,
   component,
   componentString,
@@ -52,14 +53,14 @@ export const AssignMappingsCheckboxes = ({
   const [inputValue, setInputValue] = useState(mappingProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(mappingProp);
   const [searchedTerm, setSearchedTerm] = useState(mappingProp);
-  const [activeTerms, setActiveTerms] = useState([]);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
-  const [selectedTerms, setSelectedTerms] = useState([]);
 
   const {
     setSelectedMappings,
     displaySelectedMappings,
-    setDisplaySelectedMappings
+    setDisplaySelectedMappings,
+    activeTerms,
+    setActiveTerms
   } = useContext(MappingContext);
 
   let ref = useRef();
@@ -113,7 +114,7 @@ export const AssignMappingsCheckboxes = ({
   };
 
   useEffect(() => {
-    selectedApi === 'md' && fetchTerminologies();
+    selectedApi === 'md' && !terminologiesToMap.length && fetchTerminologies();
   }, [selectedApi]);
 
   useEffect(() => {
@@ -145,17 +146,28 @@ export const AssignMappingsCheckboxes = ({
   const apiPreferenceKeys = Object?.keys(savedApiPreferences ?? {});
 
   useEffect(() => {
-    apiPreferenceKeys?.length > 0
-      ? setSelectedApi(apiPreferenceKeys[0])
-      : setSelectedApi(ontologyApis?.[0]?.api_id || null);
-
-    if (apiPreferencesCode !== undefined && selectedApi !== 'md') {
-      fetchResults(0, mappingProp);
+    if (selectedApi !== 'md' && selectedApi !== null) {
+      apiPreferenceKeys?.length > 0
+        ? setSelectedApi(apiPreferenceKeys[0])
+        : setSelectedApi(ontologyApis?.[0]?.api_id || null);
     }
+
+    // if (
+    //   apiPreferencesCode !== undefined &&
+    //   Object.keys(apiPreferencesCode).length > 0 &&
+    //   selectedApi !== 'md' &&
+    //   selectedApi !== null
+    // ) {
+    //   fetchResults(0, mappingProp);
+    // }
   }, [mappingProp]);
 
   useEffect(() => {
-    if (apiPreferencesCode !== undefined && selectedApi !== 'md') {
+    if (
+      apiPreferencesCode !== undefined &&
+      selectedApi !== 'md' &&
+      selectedApi !== null
+    ) {
       fetchResults(page, currentSearchProp);
     }
   }, [page]);
@@ -175,21 +187,15 @@ export const AssignMappingsCheckboxes = ({
   // The function is run when the query changes and when the preferred ontology changes.
   useEffect(() => {
     if (
-      prefTerminologies.length > 0 &&
-      selectedApi !== 'md' &&
-      !!currentSearchProp &&
-      apiPreferencesCode !== undefined
-    ) {
-      fetchResults(page, currentSearchProp);
-    } else if (
-      prefTerminologies.length === 0 &&
-      !!currentSearchProp &&
-      apiPreferencesCode !== undefined &&
-      selectedApi !== 'md'
-    ) {
-      fetchResults(page, currentSearchProp);
-    }
-  }, [currentSearchProp, apiPreferencesCode, selectedApi]);
+      selectedApi === null ||
+      selectedApi === 'md' ||
+      !currentSearchProp ||
+      apiPreferencesCode === undefined ||
+      loadingFilters
+    )
+      return;
+    fetchResults(page, currentSearchProp);
+  }, [currentSearchProp, apiPreferencesCode, selectedApi, loadingFilters]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -486,6 +492,7 @@ export const AssignMappingsCheckboxes = ({
                       onKeyDown={searchOnTab}
                     />
                   </div>
+                  <span className="search-desc">{mappingDesc}</span>
                 </div>
                 {/* ant.design form displaying the checkboxes with the search results.  */}
                 <div className="result_container">

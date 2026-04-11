@@ -243,6 +243,7 @@ export const OntologyCheckboxes = ({
         buttonStyle="solid"
         options={options}
         defaultValue={defaultApi}
+        value={selectedApi}
         onChange={e => {
           setPage(0);
           setSelectedApi(e.target.value);

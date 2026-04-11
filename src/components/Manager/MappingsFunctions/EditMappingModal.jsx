@@ -31,7 +31,8 @@ export const EditMappingsModal = ({
     apiPreferencesCode,
     setApiPreferencesCode,
     preferenceType,
-    prefTypeKey
+    prefTypeKey,
+    setSelectedApi
   } = useContext(SearchContext);
   const [loading, setLoading] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
@@ -41,6 +42,7 @@ export const EditMappingsModal = ({
     setSelectedKey(null);
     setApiPreferencesCode(undefined);
     setShowOptions(false);
+    setSelectedApi(null);
   };
 
   // Function to send a PUT call to update the mappings after code name change.

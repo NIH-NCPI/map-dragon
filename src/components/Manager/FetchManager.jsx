@@ -280,7 +280,8 @@ export const getFiltersByCode = (
       );
 
       setApiPreferencesCode(updatedPreferences);
-    });
+    })
+    .finally(() => setLoading(false));
 };
 
 export const ontologyFilterCodeSubmit = (

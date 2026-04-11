@@ -17,11 +17,11 @@ export const AssignMappingsViaButton = ({
 
   const { vocabUrl, user } = useContext(myContext);
   const {
-    prefTerminologies,
     setApiResults,
     preferenceType,
     prefTypeKey,
-    apiPreferencesCode
+    apiPreferencesCode,
+    setSelectedApi
   } = useContext(SearchContext);
   const { setMapping, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
@@ -33,6 +33,7 @@ export const AssignMappingsViaButton = ({
     setApiResults([]);
     setSelectedBoxes([]);
     setIdsForSelect([]);
+    setSelectedApi(null);
   };
 
   const handleSubmit = values => {
@@ -139,6 +140,7 @@ export const AssignMappingsViaButton = ({
             ? assignMappingsViaButton.display
             : assignMappingsViaButton?.code
         }
+        mappingDesc={assignMappingsViaButton?.description}
         component={component}
         componentString={componentString}
         loading={loading}

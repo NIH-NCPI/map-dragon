@@ -20,6 +20,7 @@ export function MappingContextRoot() {
   const [mappingComments, setMappingComments] = useState([]);
   const [comment, setComment] = useState(false);
   const [mappingsForSearch, setMappingsForSearch] = useState([]);
+  const [activeTerms, setActiveTerms] = useState([]);
 
   const context = {
     editMappings,
@@ -53,7 +54,9 @@ export function MappingContextRoot() {
     comment,
     setComment,
     mappingsForSearch,
-    setMappingsForSearch
+    setMappingsForSearch,
+    activeTerms,
+    setActiveTerms
   };
 
   return (
