@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Form, message, Modal, notification } from 'antd';
 import { AssignMappingsCheckboxes } from '../../Manager/MappingsFunctions/AssignMappingsCheckboxes';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ModalSpinner } from '../../Manager/Spinner';
 import { ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { uriEncoded } from '../../Manager/Utility';
 
@@ -17,48 +16,28 @@ export const AssignMappingsViaButton = ({
   const [form] = Form.useForm();
 
   const { vocabUrl, user } = useContext(myContext);
+  const { setActiveTerms } = useContext(MappingContext);
   const {
-    prefTerminologies,
     setApiResults,
     preferenceType,
     prefTypeKey,
-    apiPreferencesCode
+    apiPreferencesCode,
+    setSelectedApi
   } = useContext(SearchContext);
   const { setMapping, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [mappingProp, setMappingProp] = useState('');
   const [selectedBoxes, setSelectedBoxes] = useState([]);
 
   const onClose = () => {
     setApiResults([]);
     setSelectedBoxes([]);
     setIdsForSelect([]);
+    setSelectedApi(null);
+    setTerminologiesToMap([]);
+    setActiveTerms([]);
   };
-  const fetchTerminologies = () => {
-    setLoading(true);
-    const fetchPromises = prefTerminologies?.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
-    );
-
-    Promise.all(fetchPromises)
-      .then(results => {
-        // Once all fetch calls are resolved, set the combined data
-        setTerminologiesToMap(results);
-      })
-      .catch(error => {
-        notification.error({
-          message: 'Error',
-          description: 'An error occurred. Please try again.'
-        });
-      })
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    assignMappingsViaButton && fetchTerminologies();
-  }, [assignMappingsViaButton]);
 
   const handleSubmit = values => {
     setLoading(true);
@@ -153,25 +132,22 @@ export const AssignMappingsViaButton = ({
       cancelButtonProps={{ disabled: loading }}
       okButtonProps={{ disabled: loading }}
     >
-      {loading ? (
-        <ModalSpinner />
-      ) : (
-        <AssignMappingsCheckboxes
-          form={form}
-          terminologiesToMap={terminologiesToMap}
-          setTerminologiesToMap={setTerminologiesToMap}
-          selectedBoxes={selectedBoxes}
-          setSelectedBoxes={setSelectedBoxes}
-          mappingProp={
-            assignMappingsViaButton?.display
-              ? assignMappingsViaButton.display
-              : assignMappingsViaButton?.code
-          }
-          component={component}
-          componentString={componentString}
-          loading={loading}
-        />
-      )}
+      <AssignMappingsCheckboxes
+        form={form}
+        terminologiesToMap={terminologiesToMap}
+        setTerminologiesToMap={setTerminologiesToMap}
+        selectedBoxes={selectedBoxes}
+        setSelectedBoxes={setSelectedBoxes}
+        mappingProp={
+          assignMappingsViaButton?.display
+            ? assignMappingsViaButton.display
+            : assignMappingsViaButton?.code
+        }
+        mappingDesc={assignMappingsViaButton?.description}
+        component={component}
+        componentString={componentString}
+        loading={loading}
+      />
     </Modal>
   );
 };

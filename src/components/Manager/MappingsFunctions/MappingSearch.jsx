@@ -52,6 +52,7 @@ export const MappingSearch = ({
   const [lastCount, setLastCount] = useState(0); //save last count as count of the results before you fetch data again
   const [inputValue, setInputValue] = useState(searchProp); //Sets the value of the search bar
   const [currentSearchProp, setCurrentSearchProp] = useState(searchProp);
+  const [searchedTerm, setSearchedTerm] = useState(searchProp);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [active, setActive] = useState(null);
   const [allCheckboxes, setAllCheckboxes] = useState([]);
@@ -63,14 +64,21 @@ export const MappingSearch = ({
     setDisplaySelectedMappings,
     selectedBoxes,
     setSelectedBoxes,
-    existingMappings
+    existingMappings,
+    activeTerms,
+    setActiveTerms
   } = useContext(MappingContext);
 
   let ref = useRef();
   const { Search } = Input;
 
+  useEffect(() => {
+    setCurrentSearchProp(searchedTerm);
+    setInputValue(searchedTerm);
+  }, [selectedApi]);
+
   const fetchTerminologies = () => {
-    setLoading(true);
+    setLoadingResults(true);
     const fetchPromises = prefTerminologies?.map(pref =>
       fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
     );
@@ -86,8 +94,12 @@ export const MappingSearch = ({
           description: 'An error occurred. Please try again.'
         });
       })
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingResults(false));
   };
+
+  useEffect(() => {
+    selectedApi === 'md' && !terminologiesToMap.length && fetchTerminologies();
+  }, [selectedApi]);
   const optionalTableParam =
     tableId !== undefined ? `?table_id=${tableId}` : '';
   // since the code is passed through searchProp, the '!!' forces it to be evaluated as a boolean.
@@ -96,11 +108,12 @@ export const MappingSearch = ({
   // The function is run when the code changes.
   useEffect(() => {
     setInputValue(searchProp);
-    setCurrentSearchProp(searchProp);
     setPage(0);
-    apiPreferenceKeys?.length > 0
-      ? setSelectedApi(apiPreferenceKeys[0])
-      : setSelectedApi(ontologyApis?.[0]?.api_id || null);
+    if (selectedApi !== 'md') {
+      apiPreferenceKeys?.length > 0
+        ? setSelectedApi(apiPreferenceKeys[0])
+        : setSelectedApi(ontologyApis?.[0]?.api_id || null);
+    }
     if (!!searchProp) {
       getFiltersByCode(
         vocabUrl,
@@ -115,11 +128,28 @@ export const MappingSearch = ({
       );
     }
     if (apiPreferencesCode !== undefined) {
-      if (prefTerminologies?.length > 0 && active === 'search') {
+      if (
+        prefTerminologies?.length > 0 &&
+        selectedApi !== 'md' &&
+        selectedApi !== null
+      ) {
         fetchResults(0, searchProp);
       }
     }
   }, [searchProp]);
+
+  const termCodes = () => {
+    const matchedCodes = allCheckboxes?.filter(code =>
+      activeTerms?.includes(code?.terminology_id)
+    );
+
+    const foundInput = matchedCodes?.filter(
+      item =>
+        item?.code?.toUpperCase().includes(inputValue?.toUpperCase()) ||
+        item?.display?.toUpperCase().includes(inputValue?.toUpperCase())
+    );
+    return foundInput;
+  };
 
   const codeToSearch = Object.keys(unformattedPref)?.[0];
   const savedApiPreferences = unformattedPref?.[codeToSearch]?.api_preference;
@@ -128,25 +158,15 @@ export const MappingSearch = ({
   // The '!!' forces currentSearchProp to be evaluated as a boolean.
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
   // The function is run when the query changes and when the preferred ontology changes.
-  // If there are preferred terminologies, it runs when the OLS search bar is clicked (i.e. active)
   useEffect(() => {
     if (apiPreferencesCode === undefined) return;
 
-    const getFetch =
-      (prefTerminologies.length > 0 &&
-        active === 'search' &&
-        !!currentSearchProp) ||
-      (prefTerminologies.length === 0 && !!currentSearchProp);
-
-    if (getFetch) {
+    if (selectedApi !== 'md' && selectedApi !== null && !!currentSearchProp) {
       fetchResults(page, currentSearchProp);
     }
-  }, [page, selectedApi, currentSearchProp, apiPreferencesCode, active]);
+  }, [page, selectedApi, currentSearchProp, apiPreferencesCode]);
 
   useEffect(() => {
-    if (prefTerminologies.length > 0) {
-      fetchTerminologies();
-    }
     // sets the code to null on dismount.
     return () => {
       onClose();
@@ -159,14 +179,15 @@ export const MappingSearch = ({
   }, []);
 
   useEffect(() => {
-    setAllCheckboxes(
-      terminologiesToMap.find(term => term.id === active)?.codes ?? []
-    );
-  }, [active]);
+    if (terminologiesToMap?.length) {
+      setActiveTerms(prev =>
+        prev?.length ? prev : terminologiesToMap?.map(t => t.id)
+      );
 
-  useEffect(() => {
-    setActive(terminologiesToMap?.[0]?.id);
-  }, [terminologiesToMap]);
+      const allCodes = terminologiesToMap.flatMap(term => term.codes ?? []);
+      setAllCheckboxes(allCodes);
+    }
+  }, [selectedApi, terminologiesToMap]);
 
   /* Pagination is handled via a "View More" link at the bottom of the page. 
   Each click on the "View More" link makes an API call to fetch the next 15 results.
@@ -187,6 +208,7 @@ export const MappingSearch = ({
 
   const handleSearch = query => {
     setCurrentSearchProp(query);
+    setSearchedTerm(inputValue);
     setPage(0);
   };
 
@@ -349,18 +371,20 @@ export const MappingSearch = ({
         <div key={index} className="modal_search_result" id="scrollbar">
           <div>
             <div className="modal_term_ontology">
+              {d?.display ? (
+                <div>
+                  <b>{d?.display}</b>
+                </div>
+              ) : (
+                ''
+              )}
+              {d?.ontology_prefix ? (
+                <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
+              ) : (
+                ''
+              )}
               <div>
-                <b>{d?.display}</b>
-              </div>
-              <div className="api_ontology_prefix">{d?.ontology_prefix}</div>
-              <div>
-                <a
-                  href={d?.code_iri}
-                  target="_blank"
-                  className="api_ontology_code"
-                >
-                  {d?.code}
-                </a>
+                {d?.code}
                 {d?.api && (
                   <span className="display_selected_api">
                     ({d?.api?.toUpperCase()})
@@ -411,9 +435,13 @@ export const MappingSearch = ({
         >
           <div>
             <div className="modal_term_ontology">
-              <div>
-                <b>{d.display}</b>
-              </div>
+              {d.display ? (
+                <div>
+                  <b>{d.display}</b>
+                </div>
+              ) : (
+                ''
+              )}
               <div>{d.ftd_code}</div>
             </div>
             <div>
@@ -469,6 +497,7 @@ export const MappingSearch = ({
     if (e.key === 'Tab') {
       e.preventDefault();
       handleSearch(e.target.value);
+      setSearchedTerm(inputValue);
     }
   };
 
@@ -512,14 +541,12 @@ export const MappingSearch = ({
                 <div className="modal_search_results_header">
                   <h4>{searchProp}</h4>
                   <div className="mappings_search_bar">
-                    {!prefTerminologies.length > 0 && (
-                      <Search
-                        onSearch={handleSearch}
-                        value={cleanedSearchTerm(inputValue)}
-                        onChange={handleChange}
-                        onKeyDown={searchOnTab}
-                      />
-                    )}
+                    <Search
+                      onSearch={handleSearch}
+                      value={cleanedSearchTerm(inputValue)}
+                      onChange={handleChange}
+                      onKeyDown={searchOnTab}
+                    />
                   </div>
                   <span className="search-desc">{mappingDesc}</span>
                 </div>
@@ -528,61 +555,12 @@ export const MappingSearch = ({
                   <Form form={form} layout="vertical" preserve={false}>
                     <div className="all_checkboxes_container">
                       <div className="mapping_modal_left">
-                        {terminologiesToMap?.length > 0 && (
-                          <div className="assign_map_checkbox_container">
-                            <div className="assign_map_checkbox_wrapper">
-                              <div
-                                className="pref_tab"
-                                onClick={() =>
-                                  setActive(terminologiesToMap?.[0]?.id)
-                                }
-                              >
-                                <b>Preferred Terminologies</b>
-                              </div>
-                              <div className="">
-                                {terminologiesToMap.map((term, i) => (
-                                  <div
-                                    key={i}
-                                    className={
-                                      active === term.id
-                                        ? 'active_term'
-                                        : active !== term.id &&
-                                            active !== 'search'
-                                          ? 'inactive_term'
-                                          : active === 'search' && 'hidden_term'
-                                    }
-                                    onClick={() => setActive(term.id)}
-                                  >
-                                    {term.name}
-                                  </div>
-                                ))}
-                              </div>
-                              <div
-                                onClick={() => setActive('search')}
-                                className={
-                                  active === 'search'
-                                    ? 'active_term'
-                                    : 'inactive_term'
-                                }
-                              >
-                                <Search
-                                  onSearch={handleSearch}
-                                  value={cleanedSearchTerm(inputValue)}
-                                  onChange={handleChange}
-                                  onKeyDown={searchOnTab}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        {((prefTerminologies.length > 0 &&
-                          active === 'search') ||
-                          prefTerminologies.length === 0) && (
-                          <OntologyCheckboxes
-                            apiPreferences={apiPreferences}
-                            active={active}
-                          />
-                        )}
+                        <OntologyCheckboxes
+                          apiPreferences={apiPreferences}
+                          activeTerms={activeTerms}
+                          setActiveTerms={setActiveTerms}
+                          terminologiesToMap={terminologiesToMap}
+                        />
                       </div>
                       <div>
                         <div className="result_form">
@@ -634,15 +612,9 @@ export const MappingSearch = ({
                                       <Checkbox
                                         key={i}
                                         onChange={e => onCheckboxChange(e, sm)}
-                                        checked={
-                                          active === 'search'
-                                            ? selectedBoxes.some(
-                                                box => box.code === sm.code
-                                              )
-                                            : selectedBoxes.some(
-                                                box => box.code === sm.code
-                                              )
-                                        }
+                                        checked={selectedBoxes.some(
+                                          box => box.code === sm.code
+                                        )}
                                         value={sm}
                                       >
                                         {selectedTermsDisplay(sm, i)}
@@ -651,9 +623,7 @@ export const MappingSearch = ({
                                   </div>
                                 </Form.Item>
                               )}
-                              {(prefTerminologies.length > 0 &&
-                                active === 'search') ||
-                              prefTerminologies.length === 0 ? (
+                              {selectedApi !== 'md' ? (
                                 results?.length > 0 ? (
                                   <>
                                     <Form.Item
@@ -698,6 +668,7 @@ export const MappingSearch = ({
                                   <h3>No results found</h3>
                                 )
                               ) : (
+                                //Preferred Terminology results
                                 <Form.Item
                                   name={['mappings']}
                                   valuePropName="value"
@@ -707,29 +678,33 @@ export const MappingSearch = ({
                                     }
                                   ]}
                                 >
-                                  <Checkbox.Group
-                                    className="mappings_checkbox"
-                                    options={allCheckboxes
-                                      .filter(
-                                        checkbox =>
-                                          ![
-                                            ...displaySelectedMappings,
-                                            ...mappingsForSearch
-                                          ].some(
-                                            dsm => checkbox.code === dsm.code
-                                          )
-                                      )
-                                      .map((code, index) => ({
-                                        value: JSON.stringify({
-                                          code: code.code,
-                                          display: code.display,
-                                          description: code.description,
-                                          system: code.system
-                                        }),
-                                        label: checkBoxDisplay(code, index)
-                                      }))}
-                                    onChange={onSelectedChange}
-                                  />
+                                  {termCodes().length ? (
+                                    <Checkbox.Group
+                                      className="mappings_checkbox"
+                                      options={termCodes()
+                                        .filter(
+                                          checkbox =>
+                                            ![
+                                              ...displaySelectedMappings,
+                                              ...mappingsForSearch
+                                            ].some(
+                                              dsm => checkbox.code === dsm.code
+                                            )
+                                        )
+                                        .map((code, index) => ({
+                                          value: JSON.stringify({
+                                            code: code.code,
+                                            display: code.display,
+                                            description: code.description,
+                                            system: code.system
+                                          }),
+                                          label: checkBoxDisplay(code, index)
+                                        }))}
+                                      onChange={onSelectedChange}
+                                    />
+                                  ) : (
+                                    <h3>No results found</h3>
+                                  )}
                                 </Form.Item>
                               )}
                             </>
@@ -738,7 +713,7 @@ export const MappingSearch = ({
                       </div>
                     </div>
                   </Form>
-                  {((prefTerminologies.length > 0 && active === 'search') ||
+                  {((prefTerminologies.length > 0 && selectedApi !== 'md') ||
                     prefTerminologies.length === 0) && (
                     <div className="view_more_wrapper">
                       {/* 'View More' pagination */}

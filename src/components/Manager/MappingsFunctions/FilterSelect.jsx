@@ -6,6 +6,7 @@ import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
 import { ModalSpinner } from '../Spinner';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
 export const FilterSelect = ({
   component,
@@ -46,6 +47,7 @@ export const FilterSelect = ({
     setPreferredData,
     setPrefTerminologies
   } = useContext(SearchContext);
+  const { setActiveTerms } = useContext(MappingContext);
 
   useEffect(() => {
     setExistingOntologies(initialChecked);
@@ -235,7 +237,8 @@ export const FilterSelect = ({
           reference: `Terminology/${ref.preferred_terminology}`
         }))
       );
-
+      const ids = termData?.references.map(r => r.preferred_terminology);
+      setActiveTerms(ids);
       form.resetFields();
       setAddFilter(false);
       message.success('Preferences saved successfully.');
