@@ -108,7 +108,6 @@ export const MappingSearch = ({
   // The function is run when the code changes.
   useEffect(() => {
     setInputValue(searchProp);
-    // setCurrentSearchProp(searchProp);
     setPage(0);
     if (selectedApi !== 'md') {
       apiPreferenceKeys?.length > 0
