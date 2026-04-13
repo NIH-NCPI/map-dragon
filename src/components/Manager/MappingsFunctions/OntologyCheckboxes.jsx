@@ -87,8 +87,6 @@ export const OntologyCheckboxes = ({
     setSelectedApi(defaultApi);
   }, []);
 
-  const initialTerm = [terminologiesToMap?.[0]?.id];
-
   let processedApiPreferencesCode;
 
   // Ensures the data sent to the API is in the correct format.
@@ -129,7 +127,7 @@ export const OntologyCheckboxes = ({
   }
   useEffect(() => {
     setCheckedOntologies(existingOntologies.map(eo => eo.toUpperCase()));
-  }, [preferenceType, selectedApi]);
+  }, [preferenceType, selectedApi, existingOntologies]);
 
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
@@ -295,7 +293,6 @@ export const OntologyCheckboxes = ({
       ) : (
         // Checkboxes for Preferred Terminologies
         <Checkbox.Group
-          defaultValue={initialTerm}
           value={activeTerms}
           options={getFilteredTerminologies(searchText)
             ?.sort((a, b) => {

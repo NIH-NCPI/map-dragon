@@ -373,19 +373,18 @@ export const AssignMappingsCheckboxes = ({
         <div key={index} className="modal_search_result" id="scrollbar">
           <div>
             <div className="modal_term_ontology">
-              <div>
+              {d?.display ? (
                 <div>
-                  <b>{d?.display}</b>
+                  <div>
+                    <b>{d?.display}</b>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                ''
+              )}
               <div>
-                <a
-                  href={d?.code_iri}
-                  target="_blank"
-                  className="api_ontology_code"
-                >
-                  {d?.code}
-                </a>
+                {d?.code}
+
                 {d.api && (
                   <span className="display_selected_api">
                     ({d?.api?.toUpperCase()})

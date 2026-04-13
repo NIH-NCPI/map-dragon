@@ -34,6 +34,7 @@ export const AssignMappingsViaButton = ({
     setSelectedBoxes([]);
     setIdsForSelect([]);
     setSelectedApi(null);
+    setTerminologiesToMap([]);
   };
 
   const handleSubmit = values => {
