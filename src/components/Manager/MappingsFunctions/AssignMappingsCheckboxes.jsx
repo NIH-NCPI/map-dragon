@@ -151,15 +151,6 @@ export const AssignMappingsCheckboxes = ({
         ? setSelectedApi(apiPreferenceKeys[0])
         : setSelectedApi(ontologyApis?.[0]?.api_id || null);
     }
-
-    // if (
-    //   apiPreferencesCode !== undefined &&
-    //   Object.keys(apiPreferencesCode).length > 0 &&
-    //   selectedApi !== 'md' &&
-    //   selectedApi !== null
-    // ) {
-    //   fetchResults(0, mappingProp);
-    // }
   }, [mappingProp]);
 
   useEffect(() => {

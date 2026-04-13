@@ -16,6 +16,7 @@ export const AssignMappingsViaButton = ({
   const [form] = Form.useForm();
 
   const { vocabUrl, user } = useContext(myContext);
+  const { setActiveTerms } = useContext(MappingContext);
   const {
     setApiResults,
     preferenceType,
@@ -35,6 +36,7 @@ export const AssignMappingsViaButton = ({
     setIdsForSelect([]);
     setSelectedApi(null);
     setTerminologiesToMap([]);
+    setActiveTerms([]);
   };
 
   const handleSubmit = values => {
