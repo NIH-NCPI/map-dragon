@@ -146,6 +146,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           variable={variable}
           setAssignMappingsViaButton={setAssignMappingsViaButton}
           setGetMappings={setGetMappings}
+          component={terminology}
+          componentString={'Terminology'}
         />
       );
     }
@@ -321,6 +323,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           variable={variable}
           setAssignMappingsViaButton={setAssignMappingsViaButton}
           setGetMappings={setGetMappings}
+          component={terminology}
+          componentString={'Terminology'}
         />
       );
     }

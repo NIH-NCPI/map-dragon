@@ -221,3 +221,21 @@
 .api_ontology_code {
   font-weight: 600;
 }
+
+.no_mapping_button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.none_required {
+  width: 93px;
+  text-wrap: pretty;
+  font-size: 12px;
+  padding: 0 0;
+}
+
+.no_mapping_spinner {
+  width: 93px;
+  text-align: center;
+}
