@@ -1,8 +1,7 @@
-import { Button, Modal, Table } from 'antd';
+import { Button, Modal, Spin, Table } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { getProvenanceByCode } from './FetchManager';
 import { myContext } from '../../App';
-import { ModalSpinner } from './Spinner';
 
 export const ShowHistory = ({
   showHistory,
@@ -11,7 +10,7 @@ export const ShowHistory = ({
   component,
   componentName,
   code,
-  setSelectedKey,
+  setSelectedKey
 }) => {
   const { vocabUrl } = useContext(myContext);
   const [provData, setProvData] = useState([]);
@@ -42,30 +41,30 @@ export const ShowHistory = ({
     {
       title: 'Time Stamp (UTC)',
       dataIndex: 'timestamp',
-      width: 100,
+      width: 100
     },
     {
       title: 'Action',
       dataIndex: 'action',
-      width: 100,
+      width: 100
     },
     {
       title: 'Old Value',
       dataIndex: 'old_value',
       width: 100,
-      render: valuesRender,
+      render: valuesRender
     },
     {
       title: 'New Value',
       dataIndex: 'new_value',
       width: 100,
-      render: valuesRender,
+      render: valuesRender
     },
     {
       title: 'Editor',
       dataIndex: 'editor',
-      width: 100,
-    },
+      width: 100
+    }
   ];
 
   const handleOk = () => {
@@ -97,7 +96,7 @@ export const ShowHistory = ({
 
         const formattedDate = `${date}T${hour}:${minute}:${second.slice(
           0,
-          2,
+          2
         )}.000Z`;
 
         return {
@@ -107,7 +106,7 @@ export const ShowHistory = ({
           action: prov.action,
           old_value: prov.old_value,
           new_value: prov.new_value,
-          editor: prov.editor,
+          editor: prov.editor
         };
       })
       .sort((a, b) => {
@@ -133,33 +132,34 @@ export const ShowHistory = ({
         footer={[
           <Button type="primary" onClick={handleOk}>
             Close
-          </Button>,
+          </Button>
         ]}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <>
-            <div>
-              <h4>{code}</h4>
+        <div className="modal_spinner_div">
+          {loading && (
+            <div className="modal_spinner_style">
+              <Spin />
             </div>
-            <Table
-              scroll={{
-                x: 'max-content',
-                y: 60 * 5,
-              }}
-              columns={columns}
-              dataSource={dataSource}
-              pagination={{
-                showSizeChanger: true,
-                pageSizeOptions: ['10', '20', '30'],
-                pageSize: pageSize, // Use the stored pageSize
-                onChange: handleTableChange,
-              }} // Capture pagination changes
-              size="small"
-            />
-          </>
-        )}
+          )}
+          <div>
+            <h4>{code}</h4>
+          </div>
+          <Table
+            scroll={{
+              x: 'max-content',
+              y: 60 * 5
+            }}
+            columns={columns}
+            dataSource={dataSource}
+            pagination={{
+              showSizeChanger: true,
+              pageSizeOptions: ['10', '20', '30'],
+              pageSize: pageSize, // Use the stored pageSize
+              onChange: handleTableChange
+            }} // Capture pagination changes
+            size="small"
+          />
+        </div>
       </Modal>
     )
   );
