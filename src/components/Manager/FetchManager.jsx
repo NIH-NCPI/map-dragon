@@ -183,7 +183,6 @@ export const olsFilterOntologiesSearch = (
   setResults,
   setResultsCount,
   setLoading,
-  results,
   setMoreAvailable,
   apiToSearch,
   notification
@@ -212,24 +211,23 @@ export const olsFilterOntologiesSearch = (
       }
     })
     .then(data => {
-      // if the page > 0 (i.e. if this is not the first batch of results), the new results
-      // are concatenated to the old
       if (selectedBoxes) {
         data.results = data?.results?.filter(
           d => !selectedBoxes.some(box => box.code === d.code)
         );
       }
+      // if the page > 0 (i.e. if this is not the first batch of results), the new results
+      // are concatenated to the old
+      setResults(prevResults => {
+        const merged =
+          page > 0 && prevResults?.length > 0
+            ? prevResults.concat(data.results)
+            : data.results;
 
-      if (page > 0 && results?.length > 0) {
-        data.results = results?.concat(data.results);
-      }
-      const addedApi = data?.results.map(result => ({
-        ...result,
-        api: apiToSearch
-      }));
-      setResults(addedApi);
+        return merged.map(result => ({ ...result, api: apiToSearch }));
+      });
+
       setMoreAvailable(data.more_results_available);
-
       setResultsCount(data?.results?.length);
     })
     .finally(() => setLoading(false));

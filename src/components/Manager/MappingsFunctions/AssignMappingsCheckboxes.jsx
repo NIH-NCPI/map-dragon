@@ -257,7 +257,6 @@ export const AssignMappingsCheckboxes = ({
         setResults,
         setResultsCount,
         loadingFilters ? setLoadingFilters : setLoadingResults,
-        results,
         setMoreAvailable,
         selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
         notification
@@ -276,7 +275,6 @@ export const AssignMappingsCheckboxes = ({
         setResults,
         setResultsCount,
         loadingFilters ? setLoadingFilters : setLoadingResults,
-        results,
         setMoreAvailable,
         selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
         notification
@@ -464,6 +462,8 @@ export const AssignMappingsCheckboxes = ({
       </>
     );
   };
+  // console.log(results);
+  // console.log(page);
 
   return (
     <>
