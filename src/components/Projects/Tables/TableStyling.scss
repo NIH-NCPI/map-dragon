@@ -87,8 +87,6 @@ input::file-selector-button:hover {
 
 .ant-table-header {
   overflow-x: auto !important;
-}
-
-.ant-table-header::-webkit-scrollbar {
-  background: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
