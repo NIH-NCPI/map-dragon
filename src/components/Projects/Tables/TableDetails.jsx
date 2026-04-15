@@ -314,6 +314,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           variable={variable}
           setGetMappings={setGetMappings}
           setAssignMappingsViaButton={setAssignMappingsViaButton}
+          component={table}
+          componentString={'Table'}
         />
       );
     }
@@ -352,14 +354,15 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                   ? 'mapping_actions mapping_actions--active'
                   : 'mapping_actions mapping_actions--inactive'
               }
-              onClick={() =>
+              onClick={e => {
+                e.stopPropagation();
                 setComment({
                   code: code.code,
                   display: code.display,
                   variableMappings: variableMappings.code,
                   variableDisplay: foundDisplay.name
-                })
-              }
+                });
+              }}
             />
           </span>
           <span className="mapping_votes">
@@ -369,20 +372,21 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'blue'
                 }}
-                onClick={() =>
+                onClick={e => {
+                  e.stopPropagation();
                   userVote(code) === 'up' &&
-                  mappingVotes(
-                    variableMappings,
-                    code,
-                    user,
-                    'reset',
-                    vocabUrl,
-                    tableId,
-                    notification,
-                    setMapping,
-                    'Table'
-                  )
-                }
+                    mappingVotes(
+                      variableMappings,
+                      code,
+                      user,
+                      'reset',
+                      vocabUrl,
+                      tableId,
+                      notification,
+                      setMapping,
+                      'Table'
+                    );
+                }}
               />
             ) : (
               <UpOutlined
@@ -390,20 +394,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'blue'
                 }}
-                onClick={() =>
+                onClick={e => {
+                  e.stopPropagation();
+
                   userVote(code) !== 'up' &&
-                  mappingVotes(
-                    variableMappings,
-                    code,
-                    user,
-                    'up',
-                    vocabUrl,
-                    tableId,
-                    notification,
-                    setMapping,
-                    'Table'
-                  )
-                }
+                    mappingVotes(
+                      variableMappings,
+                      code,
+                      user,
+                      'up',
+                      vocabUrl,
+                      tableId,
+                      notification,
+                      setMapping,
+                      'Table'
+                    );
+                }}
               />
             )}
             <Tooltip
@@ -429,20 +435,21 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'green'
                 }}
-                onClick={() =>
+                onClick={e => {
+                  e.stopPropagation();
                   userVote(code) === 'down' &&
-                  mappingVotes(
-                    variableMappings,
-                    code,
-                    user,
-                    'reset',
-                    vocabUrl,
-                    tableId,
-                    notification,
-                    setMapping,
-                    'Table'
-                  )
-                }
+                    mappingVotes(
+                      variableMappings,
+                      code,
+                      user,
+                      'reset',
+                      vocabUrl,
+                      tableId,
+                      notification,
+                      setMapping,
+                      'Table'
+                    );
+                }}
               />
             ) : (
               <DownOutlined
@@ -450,27 +457,31 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'green'
                 }}
-                onClick={() =>
+                onClick={e => {
+                  e.stopPropagation();
+
                   userVote(code) !== 'down' &&
-                  mappingVotes(
-                    variableMappings,
-                    code,
-                    user,
-                    'down',
-                    vocabUrl,
-                    tableId,
-                    notification,
-                    setMapping,
-                    'Table'
-                  )
-                }
+                    mappingVotes(
+                      variableMappings,
+                      code,
+                      user,
+                      'down',
+                      vocabUrl,
+                      tableId,
+                      notification,
+                      setMapping,
+                      'Table'
+                    );
+                }}
               />
             )}
           </span>
           <span className="mapping-display">
             <span
               className="stylized_link"
-              onClick={() => {
+              onClick={e => {
+                e.stopPropagation();
+
                 setEditMappings(variable);
                 setMappingsForSearch(variableMappings?.mappings);
               }}
@@ -481,7 +492,10 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           </span>
           <span
             className="mapping_actions"
-            onClick={() => handleRemoveMapping(variableMappings, code)}
+            onClick={e => {
+              e.stopPropagation();
+              handleRemoveMapping(variableMappings, code);
+            }}
           >
             <CloseCircleOutlined
               className="mapping_actions"
@@ -496,6 +510,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           variable={variable}
           setGetMappings={setGetMappings}
           setAssignMappingsViaButton={setAssignMappingsViaButton}
+          component={table}
+          componentString={'Table'}
         />
       );
     }
@@ -632,7 +648,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                     columns={columns}
                     dataSource={dataSource}
                     expandable={{
-                      expandRowByClick: 'true',
+                      expandRowByClick: true,
                       expandedRowRender,
                       rowExpandable: record =>
                         record.data_type === 'INTEGER' ||

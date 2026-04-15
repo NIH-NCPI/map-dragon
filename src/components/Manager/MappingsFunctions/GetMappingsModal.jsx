@@ -13,7 +13,6 @@ import {
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 
 import { MappingRelationship } from './MappingRelationship';
-import { useParams } from 'react-router-dom';
 
 export const GetMappingsModal = ({
   component,
