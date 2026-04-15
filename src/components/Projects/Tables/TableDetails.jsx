@@ -564,31 +564,9 @@ It then shows the mappings as table data and alows the user to delete a mapping 
   // Expandable rows for integer and quantity data types to display their additional data.
   // The additional elements include min, max, and units properties.
   const expandedRowRender = record => {
-    return <ExpandedRowTable record={record} className="expanded_row" />;
+    return <ExpandedRowTable record={record} />;
   };
 
-  const SyncTableScroll = () => {
-    useEffect(() => {
-      const tableBody = document.querySelector('.ant-table-body');
-      const tableHeader = document.querySelector('.ant-table-header');
-
-      if (tableBody && tableHeader) {
-        // Sync horizontal scroll
-        tableBody.addEventListener('scroll', () => {
-          tableHeader.scrollLeft = tableBody.scrollLeft;
-        });
-      }
-
-      return () => {
-        // Cleanup event listener when component is unmounted
-        if (tableBody) {
-          tableBody.removeEventListener('scroll', () => {});
-        }
-      };
-    }, []);
-
-    return null; // This component doesn't need to render anything
-  };
   return (
     <>
       {loading ? (
