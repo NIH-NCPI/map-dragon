@@ -1,35 +1,35 @@
-import { Button, Form, Upload, Modal, notification, message } from 'antd';
+import { Button, Form, message, Modal, notification, Spin, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 
 export const LoadCodes = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
-  const { vocabUrl, importState, setImportState, user } = useContext(myContext);
+  const { vocabUrl, importState, setImportState } = useContext(myContext);
   const [loading, setLoading] = useState(false);
 
   const termUpload = values => {
     const cleanedCodes = values.codes.map(item => ({
       ...item,
-      code: item.code.toLowerCase().replaceAll(' ', '_'),
+      code: item?.code?.toLowerCase().replaceAll(' ', '_')
     }));
 
     setLoading(true);
     fetch(`${vocabUrl}/Terminology/${terminology.id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         ...values,
         codes: cleanedCodes,
         name: terminology.name,
         description: terminology.description,
-        url: terminology.url,
-      }),
+        url: terminology.url
+      })
     })
       .then(res => {
         if (res.status === 400) {
@@ -37,7 +37,7 @@ export const LoadCodes = ({ terminology, setTerminology }) => {
             notification.error({
               message: 'Error',
               description: `${error.message_to_user}`,
-              duration: 10,
+              duration: 10
             });
             throw new Error('400 error');
           });
@@ -57,7 +57,7 @@ export const LoadCodes = ({ terminology, setTerminology }) => {
         if (error.message !== '400 error') {
           notification.error({
             message: 'Error',
-            description: 'An error occurred uploading the codes',
+            description: 'An error occurred uploading the codes'
           });
         }
       })
@@ -75,7 +75,7 @@ export const LoadCodes = ({ terminology, setTerminology }) => {
       complete: function (result) {
         values.codes = result.data;
         termUpload(values);
-      },
+      }
     });
   };
 
@@ -104,35 +104,36 @@ export const LoadCodes = ({ terminology, setTerminology }) => {
         maskClosable={false}
         closeIcon={false}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <Form form={form} layout="vertical" name="form_in_modal">
-            <h2>Upload Codes</h2>
-            <Form.Item
-              name="codes"
-              rules={[{ required: true, message: 'Please select file.' }]}
-              extra="CSV files only, in Data Dictionary format."
-            >
-              <Upload
-                maxCount={1}
-                onRemove={file => {
-                  const index = fileList.indexOf(file);
-                  const newFileList = fileList.slice();
-                  newFileList.splice(index, 1);
-                  setFileList(newFileList);
-                }}
-                beforeUpload={file => {
-                  setFileList([...fileList, file]);
-                  return false;
-                }}
-                accept=".csv"
-              >
-                <Button icon={<UploadOutlined />}>Select File</Button>
-              </Upload>
-            </Form.Item>
-          </Form>
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        <Form form={form} layout="vertical" name="form_in_modal">
+          <h2>Upload Codes</h2>
+          <Form.Item
+            name="codes"
+            rules={[{ required: true, message: 'Please select file.' }]}
+            extra="CSV files only, in Data Dictionary format."
+          >
+            <Upload
+              maxCount={1}
+              onRemove={file => {
+                const index = fileList.indexOf(file);
+                const newFileList = fileList.slice();
+                newFileList.splice(index, 1);
+                setFileList(newFileList);
+              }}
+              beforeUpload={file => {
+                setFileList([...fileList, file]);
+                return false;
+              }}
+              accept=".csv"
+            >
+              <Button icon={<UploadOutlined />}>Select File</Button>
+            </Upload>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

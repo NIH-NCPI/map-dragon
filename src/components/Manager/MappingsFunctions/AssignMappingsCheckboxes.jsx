@@ -9,7 +9,6 @@ import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { MappingRelationship } from './MappingRelationship';
 
-// Comment
 export const AssignMappingsCheckboxes = ({
   terminologiesToMap,
   setTerminologiesToMap,
@@ -22,8 +21,6 @@ export const AssignMappingsCheckboxes = ({
   componentString,
   loading
 }) => {
-  const initialApiSet = useRef(false);
-
   const { vocabUrl } = useContext(myContext);
   const {
     apiPreferences,
@@ -68,18 +65,6 @@ export const AssignMappingsCheckboxes = ({
   let ref = useRef();
   const { Search } = Input;
 
-  const prevSelectedApi = useRef(selectedApi);
-  useEffect(() => {
-    if (prevSelectedApi.current !== selectedApi) {
-      console.trace(
-        'selectedApi changed from',
-        prevSelectedApi.current,
-        'to',
-        selectedApi
-      );
-      prevSelectedApi.current = selectedApi;
-    }
-  });
   // since the code is passed through mappingProp, the '!!' forces it to be evaluated as a boolean.
   // if there is a mappingProp being passed, it evaluates to true and runs the search function.
   // inputValue and currentmappingProp for the search bar is set to the passed mappingProp.
@@ -168,8 +153,6 @@ export const AssignMappingsCheckboxes = ({
   // }, [mappingProp]);
 
   useEffect(() => {
-    if (!initialApiSet.current || !mappingProp) return; // ← guard both
-
     if (apiPreferenceKeys?.length > 0) {
       setSelectedApi(apiPreferenceKeys[0]);
     } else {
@@ -178,8 +161,6 @@ export const AssignMappingsCheckboxes = ({
   }, [mappingProp]);
 
   useEffect(() => {
-    console.log('EFFECT 2 fired', { page });
-
     if (
       apiPreferencesCode !== undefined &&
       selectedApi !== 'md' &&
@@ -203,12 +184,6 @@ export const AssignMappingsCheckboxes = ({
   // If there is a currentSearchProp in the search bar, it evaluates to true and runs the search function.
   // The function is run when the query changes and when the preferred ontology changes.
   useEffect(() => {
-    console.log('EFFECT 1 fired', {
-      currentSearchProp,
-      selectedApi,
-      apiPreferencesCode
-    });
-
     if (
       selectedApi === null ||
       selectedApi === 'md' ||
@@ -524,7 +499,6 @@ export const AssignMappingsCheckboxes = ({
                           activeTerms={activeTerms}
                           setActiveTerms={setActiveTerms}
                           terminologiesToMap={terminologiesToMap}
-                          initialApiSet={initialApiSet}
                         />
                       </div>
                       <div>

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, useContext } from 'react';
-import { notification } from 'antd';
+import { notification, Spin } from 'antd';
 import { myContext } from '../../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import './SearchResults.scss';
-import { SearchSpinner } from '../Manager/Spinner';
+import '../Manager/Spinner.scss';
 import { SearchContext } from '../../Contexts/SearchContext';
 import { cleanedSearchTerm, uriEncoded } from '../Manager/Utility';
 
@@ -143,57 +143,51 @@ The user is then redirected to the search page, which completes the search for t
             </div>
           </div>
         </div>
-
         <>
           {/* if loading has finished, the results are displayed*/}
-          {loading === false ? (
-            <>
-              {' '}
-              <div className="search_results">
-                <div className="search_results_header">
-                  {/* Text that displays the term being searched, obtained from the address bar through the "query" param */}
-                  <h2>Search results for: {query}</h2>
-                </div>
-                {/* if the length of the results array is greater than 0 (i.e. there is a return with results for the search term),
+          <div className="search_results">
+            <div className="search_results_header">
+              {/* Text that displays the term being searched, obtained from the address bar through the "query" param */}
+              <h2>Search results for: {query}</h2>
+            </div>
+            {/* if the length of the results array is greater than 0 (i.e. there is a return with results for the search term),
                 the results are displayed. */}
-                {results?.length > 0 ? (
-                  results?.map((d, index) => {
-                    return (
-                      <>
-                        <div
-                          key={index}
-                          pageref={
-                            index === lastCount + 1 ? pageref : undefined
-                          }
-                          className="search_result"
-                        >
-                          <div className="term_ontology">
-                            <div>
-                              <b>{d.display}</b>
-                            </div>
-                            <div>
-                              <a href={d.code_iri} target="_blank">
-                                {d.code}
-                              </a>
-                            </div>
-                          </div>
-                          <div>{d.description}</div>
-                          <div>Ontology: {d.ontology_prefix}</div>
+            {results?.length > 0 ? (
+              results?.map((d, index) => {
+                return (
+                  <>
+                    <div
+                      key={index}
+                      pageref={index === lastCount + 1 ? pageref : undefined}
+                      className="search_result"
+                    >
+                      <div className="term_ontology">
+                        <div>
+                          <b>{d.display}</b>
                         </div>
-                      </>
-                    );
-                  })
-                ) : (
-                  /* if the length of the results array is not greater than 0 (i.e. there are no results found for the search term),
+                        <div>
+                          <a href={d.code_iri} target="_blank">
+                            {d.code}
+                          </a>
+                        </div>
+                      </div>
+                      <div>{d.description}</div>
+                      <div>Ontology: {d.ontology_prefix}</div>
+                    </div>
+                  </>
+                );
+              })
+            ) : (
+              /* if the length of the results array is not greater than 0 (i.e. there are no results found for the search term),
                 the "No results found" is displayed */
-                  <h4>No results found.</h4>
-                )}
-              </div>
-            </>
-          ) : (
-            /* if the search results are still loading, the loading spinner is displayed */
-            <div className="loading_spinner">
-              <SearchSpinner />
+              <h4>No results found.</h4>
+            )}
+          </div>
+          {/* if the search results are still loading, the loading spinner is
+          displayed */}
+          {loading && (
+            <div className="loading_overlay">
+              <Spin />
             </div>
           )}
         </>

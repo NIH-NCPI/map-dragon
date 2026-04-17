@@ -1,7 +1,7 @@
-import { Form, Input, message, Modal, notification, Space } from 'antd';
+import { Form, Input, message, Modal, notification, Space, Spin } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../Contexts/MappingContext';
@@ -137,63 +137,64 @@ export const EditCode = ({
           okButtonProps={{ disabled: loading }}
           closeIcon={false}
         >
-          {loading ? (
-            <ModalSpinner />
-          ) : (
-            <Form form={form} layout="vertical" preserve={false}>
-              <Space
-                style={{
-                  display: 'flex',
-                  marginBottom: 3
-                }}
-                align="baseline"
-              >
-                <Form.Item
-                  name={['code']}
-                  label="Code"
-                  rules={[
-                    { required: true, message: 'Code is required.' },
-                    { validator: validateUnique }
-                  ]}
-                >
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '15vw'
-                    }}
-                    autoFocus
-                  />
-                </Form.Item>
-                <Form.Item
-                  name={['display']}
-                  label="Code display"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Code display is required.'
-                    }
-                  ]}
-                >
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '15vw'
-                    }}
-                    autoFocus
-                  />
-                </Form.Item>
-                <Form.Item name={['description']} label="Code description">
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '36vw'
-                    }}
-                    autoFocus
-                  />
-                </Form.Item>
-              </Space>
-            </Form>
+          {loading && (
+            <div className="loading_overlay_modal">
+              <Spin />
+            </div>
           )}
+          <Form form={form} layout="vertical" preserve={false}>
+            <Space
+              style={{
+                display: 'flex',
+                marginBottom: 3
+              }}
+              align="baseline"
+            >
+              <Form.Item
+                name={['code']}
+                label="Code"
+                rules={[
+                  { required: true, message: 'Code is required.' },
+                  { validator: validateUnique }
+                ]}
+              >
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '15vw'
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item
+                name={['display']}
+                label="Code display"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Code display is required.'
+                  }
+                ]}
+              >
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '15vw'
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item name={['description']} label="Code description">
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '36vw'
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+            </Space>
+          </Form>
         </Modal>
       )}
     </>

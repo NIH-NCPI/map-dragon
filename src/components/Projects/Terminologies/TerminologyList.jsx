@@ -1,10 +1,10 @@
-import { Button, Input, notification, Space, Table } from 'antd';
+import { Button, Input, notification, Space, Spin, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAll } from '../../Manager/FetchManager';
-import { Spinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { AddTerminology } from './AddTerminology';
 import { DeleteOutlined } from '@ant-design/icons';
 import { DeleteTerminology } from './DeleteTerminology';
@@ -156,10 +156,14 @@ export const TerminologyList = () => {
     )
   }));
 
-  return loading ? (
-    <Spinner />
-  ) : (
+  return (
     <>
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
+        </div>
+      )}
+
       <div className="terminology_list_container">
         <h2>Terminology Index</h2>
         <AddTerminology />
