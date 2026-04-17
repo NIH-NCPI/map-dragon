@@ -126,7 +126,14 @@ export const OntologyCheckboxes = ({
     existingOntologies = selectedOntologies;
   }
   useEffect(() => {
-    setCheckedOntologies(existingOntologies.map(eo => eo.toUpperCase()));
+    const onts = existingOntologies.map(eo => eo.toUpperCase());
+
+    setCheckedOntologies(prev => {
+      if (prev.length === onts.length && prev.every((v, i) => v === onts[i])) {
+        return prev;
+      }
+      return onts;
+    });
   }, [preferenceType, selectedApi, existingOntologies]);
 
   const onCheckboxChange = e => {
