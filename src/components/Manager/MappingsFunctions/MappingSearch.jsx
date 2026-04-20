@@ -2,7 +2,6 @@ import { Checkbox, Form, Input, notification, Spin, Tooltip } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { cleanedSearchTerm, ellipsisString } from '../Utility';
-import { ModalSpinner, ResultsSpinner } from '../Spinner';
 import '../Spinner.scss';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { SearchContext } from '../../../Contexts/SearchContext';
@@ -260,7 +259,6 @@ export const MappingSearch = ({
         setResults,
         setResultsCount,
         loading ? setLoading : setLoadingResults,
-        results,
         setMoreAvailable,
         selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
         notification
@@ -279,12 +277,12 @@ export const MappingSearch = ({
         setResults,
         setResultsCount,
         loading ? setLoading : setLoadingResults,
-        results,
         setMoreAvailable,
         selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0],
         notification
       );
   };
+
   // the 'View More' pagination onClick increments the page. The search function is triggered to run on page change in the useEffect.
   const handleViewMore = e => {
     e.preventDefault();
@@ -501,7 +499,10 @@ export const MappingSearch = ({
       setSearchedTerm(inputValue);
     }
   };
-  console.log('api', selectedApi);
+  console.log(
+    'api',
+    selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0]
+  );
 
   const checkBoxDisplay = (item, index) => {
     return (
