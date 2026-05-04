@@ -499,10 +499,6 @@ export const MappingSearch = ({
       setSearchedTerm(inputValue);
     }
   };
-  console.log(
-    'api',
-    selectedApi !== undefined ? selectedApi : apiPreferenceKeys[0]
-  );
 
   const checkBoxDisplay = (item, index) => {
     return (

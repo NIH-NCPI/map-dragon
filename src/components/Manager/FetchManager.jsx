@@ -188,7 +188,6 @@ export const olsFilterOntologiesSearch = (
   notification
 ) => {
   setLoading(true);
-  console.log('fetch api', apiToSearch);
   return fetch(
     `${vocabUrl}/ontology_search?keyword=${uriEncoded(
       query

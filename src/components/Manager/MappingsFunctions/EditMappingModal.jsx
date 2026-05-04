@@ -1,7 +1,7 @@
-import { Form, message, Modal, notification } from 'antd';
+import { Form, message, Modal, notification, Spin } from 'antd';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner } from '../Spinner';
+import '../Spinner.scss';
 import { MappingSearch } from './MappingSearch';
 import { ResetMappings } from './ResetMappings';
 import { uriEncoded } from '../Utility';
@@ -191,31 +191,32 @@ export const EditMappingsModal = ({
         </>
       )}
     >
-      {loading ? (
-        <ModalSpinner />
-      ) : (
-        <MappingSearch
-          setEditMappings={setEditMappings}
-          mappingsForSearch={mappingsForSearch}
-          form={form}
-          onClose={form.resetFields}
-          searchProp={
-            editMappings?.display ? editMappings?.display : editMappings?.code
-          }
-          mappingDesc={
-            editMappings?.description
-              ? editMappings?.description
-              : 'No Description'
-          }
-          mappingProp={editMappings?.code}
-          component={component}
-          componentString={componentString}
-          preferenceType={preferenceType}
-          prefTypeKey={prefTypeKey}
-          loadingResults={loadingResults}
-          setLoadingResults={setLoadingResults}
-        />
+      {loading && (
+        <div className="loading_overlay_modal">
+          <Spin />
+        </div>
       )}
+      <MappingSearch
+        setEditMappings={setEditMappings}
+        mappingsForSearch={mappingsForSearch}
+        form={form}
+        onClose={form.resetFields}
+        searchProp={
+          editMappings?.display ? editMappings?.display : editMappings?.code
+        }
+        mappingDesc={
+          editMappings?.description
+            ? editMappings?.description
+            : 'No Description'
+        }
+        mappingProp={editMappings?.code}
+        component={component}
+        componentString={componentString}
+        preferenceType={preferenceType}
+        prefTypeKey={prefTypeKey}
+        loadingResults={loadingResults}
+        setLoadingResults={setLoadingResults}
+      />
     </Modal>
   );
 };

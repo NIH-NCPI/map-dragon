@@ -4,7 +4,6 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { myContext } from '../../../App';
 import { uriEncoded } from '../Utility';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { SmallSpinner } from '../Spinner';
 
 export const MappingButton = ({
   variable,

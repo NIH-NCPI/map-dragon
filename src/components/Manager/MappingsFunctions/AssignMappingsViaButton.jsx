@@ -119,13 +119,7 @@ export const AssignMappingsViaButton = ({
         onClose();
         setAssignMappingsViaButton(false);
       }}
-      styles={{
-        body: {
-          minHeight: '55vh',
-          maxHeight: '55vh',
-          overflowY: 'auto'
-        }
-      }}
+      styles={{ body: { height: '60vh', overflowY: 'auto' } }}
       closeIcon={false}
       maskClosable={false}
       destroyOnHidden={true}
