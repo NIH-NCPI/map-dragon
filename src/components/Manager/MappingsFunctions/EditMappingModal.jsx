@@ -179,6 +179,7 @@ export const EditMappingsModal = ({
                       setMappingsForSearch([]);
                     }
                   }}
+                  setExistingMappings={setExistingMappings}
                   form={form}
                 />
               )}
