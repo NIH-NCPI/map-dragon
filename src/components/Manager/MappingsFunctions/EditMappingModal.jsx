@@ -1,5 +1,5 @@
 import { Form, message, Modal, notification, Spin } from 'antd';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import '../Spinner.scss';
 import { MappingSearch } from './MappingSearch';
@@ -20,13 +20,8 @@ export const EditMappingsModal = ({
 }) => {
   const [form] = Form.useForm();
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
-  const {
-    setShowOptions,
-    idsForSelect,
-    setIdsForSelect,
-    selectedBoxes,
-    existingMappings
-  } = useContext(MappingContext);
+  const { setShowOptions, idsForSelect, setIdsForSelect, selectedBoxes } =
+    useContext(MappingContext);
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
@@ -37,6 +32,7 @@ export const EditMappingsModal = ({
   const [loading, setLoading] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
   const [reset, setReset] = useState(false);
+  const [existingMappings, setExistingMappings] = useState(mappingsForSearch);
 
   const clearData = () => {
     setSelectedKey(null);
@@ -45,6 +41,10 @@ export const EditMappingsModal = ({
     setSelectedApi(null);
   };
 
+  // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
+  useEffect(() => {
+    setExistingMappings(mappingsForSearch);
+  }, [mappingsForSearch]);
   // Function to send a PUT call to update the mappings after code name change.
   // The existing and new mappings are JSON.parsed combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
@@ -197,6 +197,7 @@ export const EditMappingsModal = ({
         </div>
       )}
       <MappingSearch
+        editMappings={editMappings}
         setEditMappings={setEditMappings}
         mappingsForSearch={mappingsForSearch}
         form={form}
@@ -216,6 +217,8 @@ export const EditMappingsModal = ({
         prefTypeKey={prefTypeKey}
         loadingResults={loadingResults}
         setLoadingResults={setLoadingResults}
+        existingMappings={existingMappings}
+        setExistingMappings={setExistingMappings}
       />
     </Modal>
   );

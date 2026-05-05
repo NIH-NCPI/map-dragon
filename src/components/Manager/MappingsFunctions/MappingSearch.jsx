@@ -11,6 +11,7 @@ import { MappingRelationship } from './MappingRelationship';
 import { useParams } from 'react-router-dom';
 
 export const MappingSearch = ({
+  editMappings,
   setEditMappings,
   mappingsForSearch,
   form,
@@ -23,7 +24,9 @@ export const MappingSearch = ({
   preferenceType,
   prefTypeKey,
   loadingResults,
-  setLoadingResults
+  setLoadingResults,
+  existingMappings,
+  setExistingMappings
 }) => {
   const { vocabUrl } = useContext(myContext);
   const {
@@ -58,13 +61,11 @@ export const MappingSearch = ({
   const [allCheckboxes, setAllCheckboxes] = useState([]);
 
   const {
-    setExistingMappings,
-    setSelectedMappings,
     displaySelectedMappings,
     setDisplaySelectedMappings,
+    setSelectedMappings,
     selectedBoxes,
     setSelectedBoxes,
-    existingMappings,
     activeTerms,
     setActiveTerms
   } = useContext(MappingContext);
@@ -465,10 +466,6 @@ export const MappingSearch = ({
     );
   };
 
-  // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
-  useEffect(() => {
-    setExistingMappings(mappingsForSearch);
-  }, []);
   // Iterates through the array of previously selected mappings. Returns a JSON stringified object to use as default checked values separate from the search results.
   const initialChecked = existingMappings.map(m =>
     JSON.stringify({
