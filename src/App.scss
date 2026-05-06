@@ -1,3 +1,7 @@
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   background: url('./assets/Background.png');
   background-size: cover;
@@ -7,6 +11,12 @@ body {
   margin: 0;
   padding: 0;
   min-width: fit-content;
+}
+
+//Overrides ant.design style added when modal opens, which is causing the scrollbar gutter not to work
+html body {
+  overflow-y: auto !important;
+  width: 100% !important;
 }
 
 .approuter_div {
