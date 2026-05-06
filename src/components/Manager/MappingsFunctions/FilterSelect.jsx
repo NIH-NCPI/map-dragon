@@ -1,10 +1,18 @@
-import { Button, Form, message, Modal, notification, Pagination } from 'antd';
+import {
+  Button,
+  Form,
+  message,
+  Modal,
+  notification,
+  Pagination,
+  Spin
+} from 'antd';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
-import { ModalSpinner } from '../Spinner';
+import '../Spinner.scss';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
 
@@ -389,39 +397,40 @@ export const FilterSelect = ({
             </>
           )}
         >
-          {loading ? (
-            <ModalSpinner />
-          ) : (
-            <FilterAPI
-              form={form}
-              setSelectedOntologies={setSelectedOntologies}
-              selectedBoxes={selectedBoxes}
-              setSelectedBoxes={setSelectedBoxes}
-              displaySelectedOntologies={displaySelectedOntologies}
-              setDisplaySelectedOntologies={setDisplaySelectedOntologies}
-              ontologyApis={ontologyApis}
-              active={active}
-              setActive={setActive}
-              paginatedOntologies={paginatedOntologies}
-              table={table}
-              terminology={terminology}
-              existingOntologies={existingOntologies}
-              setExistingOntologies={setExistingOntologies}
-              flattenedFilters={flattenedFilters}
-              setExistingPreferred={setExistingPreferred}
-              existingPreferred={existingPreferred}
-              preferredData={preferredData}
-              paginatedTerminologies={paginatedTerminologies}
-              displaySelectedTerminologies={displaySelectedTerminologies}
-              setDisplaySelectedTerminologies={setDisplaySelectedTerminologies}
-              terminologies={terminologies}
-              setTerminologies={setTerminologies}
-              selectedTerminologies={selectedTerminologies}
-              setSelectedTerminologies={setSelectedTerminologies}
-              componentString={componentString}
-              setPrefTerminologies={setPrefTerminologies}
-            />
+          {loading && (
+            <div className="loading_overlay_modal">
+              <Spin />
+            </div>
           )}
+          <FilterAPI
+            form={form}
+            setSelectedOntologies={setSelectedOntologies}
+            selectedBoxes={selectedBoxes}
+            setSelectedBoxes={setSelectedBoxes}
+            displaySelectedOntologies={displaySelectedOntologies}
+            setDisplaySelectedOntologies={setDisplaySelectedOntologies}
+            ontologyApis={ontologyApis}
+            active={active}
+            setActive={setActive}
+            paginatedOntologies={paginatedOntologies}
+            table={table}
+            terminology={terminology}
+            existingOntologies={existingOntologies}
+            setExistingOntologies={setExistingOntologies}
+            flattenedFilters={flattenedFilters}
+            setExistingPreferred={setExistingPreferred}
+            existingPreferred={existingPreferred}
+            preferredData={preferredData}
+            paginatedTerminologies={paginatedTerminologies}
+            displaySelectedTerminologies={displaySelectedTerminologies}
+            setDisplaySelectedTerminologies={setDisplaySelectedTerminologies}
+            terminologies={terminologies}
+            setTerminologies={setTerminologies}
+            selectedTerminologies={selectedTerminologies}
+            setSelectedTerminologies={setSelectedTerminologies}
+            componentString={componentString}
+            setPrefTerminologies={setPrefTerminologies}
+          />
         </Modal>
       )}
     </>

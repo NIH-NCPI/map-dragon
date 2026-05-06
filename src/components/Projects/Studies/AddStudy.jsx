@@ -1,9 +1,9 @@
 import { React, useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import './StudyStyling.scss';
-import { Form, Input, message, notification, Modal } from 'antd';
+import { Form, Input, message, Modal, notification, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 
 export const AddStudy = ({ addStudy, setAddStudy }) => {
   const [loading, setLoading] = useState(false);
@@ -20,12 +20,12 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
     fetch(`${vocabUrl}/Study`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         ...values,
-        datadictionary: [],
-      }),
+        datadictionary: []
+      })
     })
       .then(res => {
         if (res.status === 201) {
@@ -34,7 +34,7 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
           notification.error({
             message: 'Error',
             description:
-              'An error occurred creating the Study. Please try again.',
+              'An error occurred creating the Study. Please try again.'
           });
         }
       })
@@ -69,54 +69,55 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
       okButtonProps={{ disabled: loading }}
       closeIcon={false}
     >
-      {loading ? (
-        <ModalSpinner />
-      ) : (
-        <Form form={form} layout="vertical" name="form_in_modal">
-          <h2>Create Study</h2>
-          <Form.Item
-            name="name"
-            label="Name / Short Code"
-            rules={[{ required: true, message: 'Please input Study name.' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="title"
-            label="Title"
-            rules={[{ required: true, message: 'Please input Study title.' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: false }]}
-          >
-            <TextArea />
-          </Form.Item>
-          <Form.Item
-            name="identifier_prefix"
-            label="Identifier Prefix"
-            rules={[
-              {
-                required: true,
-                message: 'Please input Study identifier prefix.',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="url"
-            label="System"
-            rules={[{ required: true, message: 'Please input Study system.' }]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
+      {loading && (
+        <div className="loading_overlay_modal">
+          <Spin />
+        </div>
       )}
+      <Form form={form} layout="vertical" name="form_in_modal">
+        <h2>Create Study</h2>
+        <Form.Item
+          name="name"
+          label="Name / Short Code"
+          rules={[{ required: true, message: 'Please input Study name.' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="title"
+          label="Title"
+          rules={[{ required: true, message: 'Please input Study title.' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="description"
+          label="Description"
+          rules={[{ required: false }]}
+        >
+          <TextArea />
+        </Form.Item>
+        <Form.Item
+          name="identifier_prefix"
+          label="Identifier Prefix"
+          rules={[
+            {
+              required: true,
+              message: 'Please input Study identifier prefix.'
+            }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="url"
+          label="System"
+          rules={[{ required: true, message: 'Please input Study system.' }]}
+        >
+          <Input />
+        </Form.Item>
+      </Form>
     </Modal>
   );
 };

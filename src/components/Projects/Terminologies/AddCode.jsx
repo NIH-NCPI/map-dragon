@@ -7,10 +7,10 @@ import {
   message,
   Modal,
   notification,
-  Select,
   Space,
+  Spin
 } from 'antd';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
 
@@ -35,9 +35,9 @@ export const AddCode = ({ terminology, setTerminology }) => {
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ ...values, editor: user.email }),
+        body: JSON.stringify({ ...values, editor: user.email })
       }
     )
       .then(res => {
@@ -58,7 +58,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred adding the code.',
+            description: 'An error occurred adding the code.'
           });
         }
         return error;
@@ -88,7 +88,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
           onClick={() => (user ? setAddRow(true) : login())}
           type="primary"
           style={{
-            marginBottom: 16,
+            marginBottom: 16
           }}
         >
           Add code
@@ -111,57 +111,58 @@ export const AddCode = ({ terminology, setTerminology }) => {
         okButtonProps={{ disabled: loading }}
         closeIcon={false}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <Form form={form} layout="vertical">
-            <Space
-              style={{
-                display: 'flex',
-                marginBottom: 3,
-              }}
-              align="baseline"
-            >
-              <Form.Item
-                name={['code']}
-                label="Code name"
-                rules={[
-                  { required: true, message: 'Input code name' },
-                  { validator: validateUnique },
-                ]}
-              >
-                <Input
-                  style={{
-                    width: '13vw',
-                  }}
-                  autoFocus
-                />
-              </Form.Item>
-              <Form.Item
-                name={['display']}
-                label="Code display"
-                rules={[{ required: true, message: 'Input variable display' }]}
-              >
-                <Input
-                  rows={1}
-                  style={{
-                    width: '13vw',
-                  }}
-                  autoFocus
-                />
-              </Form.Item>
-              <Form.Item name={['description']} label="Code description">
-                <TextArea
-                  rows={1}
-                  style={{
-                    width: '30vw',
-                  }}
-                  autoFocus
-                />
-              </Form.Item>
-            </Space>
-          </Form>
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        <Form form={form} layout="vertical">
+          <Space
+            style={{
+              display: 'flex',
+              marginBottom: 3
+            }}
+            align="baseline"
+          >
+            <Form.Item
+              name={['code']}
+              label="Code name"
+              rules={[
+                { required: true, message: 'Input code name' },
+                { validator: validateUnique }
+              ]}
+            >
+              <Input
+                style={{
+                  width: '13vw'
+                }}
+                autoFocus
+              />
+            </Form.Item>
+            <Form.Item
+              name={['display']}
+              label="Code display"
+              rules={[{ required: true, message: 'Input variable display' }]}
+            >
+              <Input
+                rows={1}
+                style={{
+                  width: '13vw'
+                }}
+                autoFocus
+              />
+            </Form.Item>
+            <Form.Item name={['description']} label="Code description">
+              <TextArea
+                rows={1}
+                style={{
+                  width: '30vw'
+                }}
+                autoFocus
+              />
+            </Form.Item>
+          </Space>
+        </Form>
       </Modal>
     </>
   );

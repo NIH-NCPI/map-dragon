@@ -1,8 +1,8 @@
-import { Form, Input, message, Modal, notification } from 'antd';
+import { Form, Input, message, Modal, notification, Spin } from 'antd';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { handleUpdate } from '../../Manager/FetchManager';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 
 export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
     form.setFieldsValue({
       name: table?.name,
       description: table?.description,
-      url: table?.url,
+      url: table?.url
     });
   };
 
@@ -26,7 +26,7 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
       ...values,
       filename: table.filename,
       variables: table?.variables,
-      editor: user.email,
+      editor: user.email
     })
       .then(data => {
         setTable(data);
@@ -38,7 +38,7 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
       .catch(error => {
         notification.error({
           message: 'Error',
-          description: 'An error occurred editing the Table.',
+          description: 'An error occurred editing the Table.'
         });
       })
       .finally(() => setLoading(false));
@@ -64,41 +64,40 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
         closeIcon={false}
         destroyOnHidden={true}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <Form
-            form={form}
-            layout="vertical"
-            preserve={false}
-            onChange={changeHandler()}
-          >
-            <h2>{table?.name ? table?.name : table?.id}</h2>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[{ required: true, message: 'Please input Table name.' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label="Description"
-              rules={[{ required: false }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="url"
-              label="System"
-              rules={[
-                { required: true, message: 'Please input Table system.' },
-              ]}
-            >
-              <Input />
-            </Form.Item>{' '}
-          </Form>
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        <Form
+          form={form}
+          layout="vertical"
+          preserve={false}
+          onChange={changeHandler()}
+        >
+          <h2>{table?.name ? table?.name : table?.id}</h2>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, message: 'Please input Table name.' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: false }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="url"
+            label="System"
+            rules={[{ required: true, message: 'Please input Table system.' }]}
+          >
+            <Input />
+          </Form.Item>{' '}
+        </Form>
       </Modal>
     </>
   );

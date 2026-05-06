@@ -1,15 +1,15 @@
-import { Form, Input, Modal, notification, message } from 'antd';
+import { Form, Input, message, Modal, notification, Spin } from 'antd';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { handleUpdate } from '../../Manager/FetchManager';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 
 export const EditDDDetails = ({
   form,
   dataDictionary,
   setDataDictionary,
   edit,
-  setEdit,
+  setEdit
 }) => {
   const [loading, setLoading] = useState(false);
   const { vocabUrl } = useContext(myContext);
@@ -17,7 +17,7 @@ export const EditDDDetails = ({
   const changeHandler = () => {
     form.setFieldsValue({
       name: dataDictionary.name,
-      description: dataDictionary.description,
+      description: dataDictionary.description
     });
   };
 
@@ -28,7 +28,7 @@ export const EditDDDetails = ({
     setLoading(true);
     handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
       ...values,
-      tables: dataDictionary?.tables,
+      tables: dataDictionary?.tables
     })
       .then(data => {
         setDataDictionary(data);
@@ -41,7 +41,7 @@ export const EditDDDetails = ({
           notification.error({
             message: 'Error',
             description:
-              'An error occurred editing the Data Dictionary. Please try again.',
+              'An error occurred editing the Data Dictionary. Please try again.'
           });
         }
         return error;
@@ -69,39 +69,40 @@ export const EditDDDetails = ({
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <Form
-            form={form}
-            layout="vertical"
-            preserve={false}
-            onChange={changeHandler()}
-          >
-            <h2>
-              {dataDictionary.name ? dataDictionary.name : dataDictionary.id}
-            </h2>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input Data Dictionary name.',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label="Description"
-              rules={[{ required: false }]}
-            >
-              <Input />
-            </Form.Item>
-          </Form>
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        <Form
+          form={form}
+          layout="vertical"
+          preserve={false}
+          onChange={changeHandler()}
+        >
+          <h2>
+            {dataDictionary.name ? dataDictionary.name : dataDictionary.id}
+          </h2>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              {
+                required: true,
+                message: 'Please input Data Dictionary name.'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: false }]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

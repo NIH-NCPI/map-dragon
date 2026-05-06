@@ -1,10 +1,10 @@
 import { React, useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { Form, Input, notification, message, Modal } from 'antd';
+import { Form, Input, Modal, message, notification, Spin } from 'antd';
 import './DDStyling.scss';
 import { handlePost, handleUpdate } from '../../Manager/FetchManager';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 
 export const AddDD = ({ addDD, setAddDD, study }) => {
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
     const newDDArray = [...study.datadictionary];
     handlePost(vocabUrl, 'DataDictionary', {
       ...values,
-      tables: [],
+      tables: []
     })
       .then(data => {
         setDataDictionary(data);
@@ -34,7 +34,7 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
 
         handleUpdate(vocabUrl, 'Study', study, {
           ...study,
-          datadictionary: newDDArray,
+          datadictionary: newDDArray
         });
         message.success('Data Dictionary added successfully.');
 
@@ -45,7 +45,7 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
           notification.error({
             message: 'Error',
             description:
-              'An error occurred adding the Data Dictionary. Please try again.',
+              'An error occurred adding the Data Dictionary. Please try again.'
           });
         }
         return error;
@@ -72,34 +72,30 @@ export const AddDD = ({ addDD, setAddDD, study }) => {
       okButtonProps={{ disabled: loading }}
       closeIcon={false}
     >
-      {loading ? (
-        <ModalSpinner />
-      ) : (
-        <Form
-          form={form}
-          layout="vertical"
-          name="form_in_modal"
-          preserve={false}
-        >
-          <h2>Create Data Dictionary</h2>
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[
-              { required: true, message: 'Please input Data Dictionary name.' },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: false }]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
+      {loading && (
+        <div className="loading_overlay_modal">
+          <Spin />
+        </div>
       )}
+      <Form form={form} layout="vertical" name="form_in_modal" preserve={false}>
+        <h2>Create Data Dictionary</h2>
+        <Form.Item
+          name="name"
+          label="Name"
+          rules={[
+            { required: true, message: 'Please input Data Dictionary name.' }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="description"
+          label="Description"
+          rules={[{ required: false }]}
+        >
+          <Input />
+        </Form.Item>
+      </Form>
     </Modal>
   );
 };
