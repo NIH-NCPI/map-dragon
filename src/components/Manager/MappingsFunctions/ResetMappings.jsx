@@ -12,16 +12,13 @@ export const ResetMappings = ({
   componentString,
   editMappings,
   setReset,
+  setExistingMappings,
   form
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, user } = useContext(myContext);
-  const {
-    setExistingMappings,
-    setSelectedBoxes,
-    setDisplaySelectedMappings,
-    setSelectedMappings
-  } = useContext(MappingContext);
+  const { setSelectedBoxes, setDisplaySelectedMappings, setSelectedMappings } =
+    useContext(MappingContext);
 
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.

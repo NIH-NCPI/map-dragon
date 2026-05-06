@@ -1,7 +1,7 @@
-import { Form, message, Modal, notification } from 'antd';
-import { useContext, useState } from 'react';
+import { Form, message, Modal, notification, Spin } from 'antd';
+import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner } from '../Spinner';
+import '../Spinner.scss';
 import { MappingSearch } from './MappingSearch';
 import { ResetMappings } from './ResetMappings';
 import { uriEncoded } from '../Utility';
@@ -20,13 +20,8 @@ export const EditMappingsModal = ({
 }) => {
   const [form] = Form.useForm();
   const { vocabUrl, setSelectedKey, user } = useContext(myContext);
-  const {
-    setShowOptions,
-    idsForSelect,
-    setIdsForSelect,
-    selectedBoxes,
-    existingMappings
-  } = useContext(MappingContext);
+  const { setShowOptions, idsForSelect, setIdsForSelect, selectedBoxes } =
+    useContext(MappingContext);
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
@@ -37,6 +32,7 @@ export const EditMappingsModal = ({
   const [loading, setLoading] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
   const [reset, setReset] = useState(false);
+  const [existingMappings, setExistingMappings] = useState(mappingsForSearch);
 
   const clearData = () => {
     setSelectedKey(null);
@@ -45,6 +41,10 @@ export const EditMappingsModal = ({
     setSelectedApi(null);
   };
 
+  // Sets existingMappings to the mappings that have already been mapped to pass them to the body of the PUT call on save.
+  useEffect(() => {
+    setExistingMappings(mappingsForSearch);
+  }, [mappingsForSearch]);
   // Function to send a PUT call to update the mappings after code name change.
   // The existing and new mappings are JSON.parsed combined into one mappings array to be passed into the body of the PUT call.
   const editUpdatedMappings = values => {
@@ -179,6 +179,7 @@ export const EditMappingsModal = ({
                       setMappingsForSearch([]);
                     }
                   }}
+                  setExistingMappings={setExistingMappings}
                   form={form}
                 />
               )}
@@ -191,31 +192,35 @@ export const EditMappingsModal = ({
         </>
       )}
     >
-      {loading ? (
-        <ModalSpinner />
-      ) : (
-        <MappingSearch
-          setEditMappings={setEditMappings}
-          mappingsForSearch={mappingsForSearch}
-          form={form}
-          onClose={form.resetFields}
-          searchProp={
-            editMappings?.display ? editMappings?.display : editMappings?.code
-          }
-          mappingDesc={
-            editMappings?.description
-              ? editMappings?.description
-              : 'No Description'
-          }
-          mappingProp={editMappings?.code}
-          component={component}
-          componentString={componentString}
-          preferenceType={preferenceType}
-          prefTypeKey={prefTypeKey}
-          loadingResults={loadingResults}
-          setLoadingResults={setLoadingResults}
-        />
+      {loading && (
+        <div className="loading_overlay_modal">
+          <Spin />
+        </div>
       )}
+      <MappingSearch
+        editMappings={editMappings}
+        setEditMappings={setEditMappings}
+        mappingsForSearch={mappingsForSearch}
+        form={form}
+        onClose={form.resetFields}
+        searchProp={
+          editMappings?.display ? editMappings?.display : editMappings?.code
+        }
+        mappingDesc={
+          editMappings?.description
+            ? editMappings?.description
+            : 'No Description'
+        }
+        mappingProp={editMappings?.code}
+        component={component}
+        componentString={componentString}
+        preferenceType={preferenceType}
+        prefTypeKey={prefTypeKey}
+        loadingResults={loadingResults}
+        setLoadingResults={setLoadingResults}
+        existingMappings={existingMappings}
+        setExistingMappings={setExistingMappings}
+      />
     </Modal>
   );
 };

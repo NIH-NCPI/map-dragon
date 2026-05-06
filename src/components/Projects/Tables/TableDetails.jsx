@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import './TableStyling.scss';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Spinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { getById } from '../../Manager/FetchManager';
 import {
   Card,
@@ -11,6 +11,7 @@ import {
   message,
   notification,
   Row,
+  Spin,
   Table,
   Tooltip
 } from 'antd';
@@ -569,127 +570,126 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
   return (
     <>
-      {loading ? (
-        // If page is loading, display loading spinner. Otherwise display code below
-
-        <Spinner />
-      ) : (
-        <div className="table_id_container">
-          <Row gutter={30}>
-            <div className="study_details_container">
-              <Col span={15}>
-                <div className="study_details">
-                  <div className="study_name">
-                    {/* Displays table name if there is one. If no name, displays DD id */}
-
-                    <h2>{table?.name ? table?.name : table?.id}</h2>
-                  </div>
-                  <div className="study_desc">
-                    {/* Displays the DD description if there is one.
-                    If there is no description, 'No description provided' is displayed in a gray font */}
-                    {table?.description ? (
-                      table?.description
-                    ) : (
-                      <span className="no_description">
-                        No description provided.
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </Col>
-              <Col span={6}>
-                <div className="study_details_right">
-                  <div className="study_dropdown">
-                    {/* ant.design dropdown for edit. */}
-                    <SettingsDropdownTable table={table} />
-                  </div>
-                  <div className="component_id">
-                    <b>ID</b>: {table?.id}
-                  </div>
-                </div>
-              </Col>
-            </div>
-          </Row>
-          {table?.filename ? (
-            <>
-              <div className="terminology_details terminology_desc">
-                File name: {table?.filename}
-              </div>
-            </>
-          ) : (
-            ''
-          )}
-          <div className="terminology_details">{table?.url}</div>
-          <div className="terminology_details terminology_desc"></div>
-          <div className="table_container">
-            {/* ant.design table displaying the pre-defined columns and data, with expandable rows. 
-            The expandable rows currently show the min, max, and units properties with no styling. */}
-            {table?.variables?.length > 0 ? (
-              <>
-                <div className="add_row_buttons">
-                  <FilterSelect
-                    component={table}
-                    table={table}
-                    terminology={null}
-                    componentString={'Table'}
-                  />
-                  <AddVariable
-                    table={table}
-                    setTable={setTable}
-                    dataSource={dataSource}
-                    setDataSource={setDataSource}
-                    form={form}
-                  />
-                </div>
-                <Form form={form}>
-                  <Table
-                    scroll={{ x: 'max-content' }}
-                    sticky={{ offsetHeader: 80 }}
-                    columns={columns}
-                    dataSource={dataSource}
-                    expandable={{
-                      expandRowByClick: true,
-                      expandedRowRender,
-                      rowExpandable: record =>
-                        record.data_type === 'INTEGER' ||
-                        record.data_type === 'QUANTITY'
-                    }}
-                    pagination={{
-                      showSizeChanger: true,
-                      pageSizeOptions: ['10', '20', '30'],
-                      pageSize: pageSize, // Use the stored pageSize
-                      onChange: handleTableChange // Capture pagination changes
-                    }}
-                  />
-                </Form>
-                <ExportFile componentString="Table" component={table} />
-              </>
-            ) : (
-              <Row gutter={[20, 24]}>
-                <Col span={6}>
-                  {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
-                and triggers the modal to open*/}
-                  <span onClick={() => (user ? setLoad(true) : login())}>
-                    <Card
-                      hoverable
-                      style={{
-                        border: '1px solid darkgray',
-                        height: '42vh'
-                      }}
-                    >
-                      <div className="new_study_card_container">
-                        <div className="new_study_card">
-                          Upload Variables (CSV)
-                        </div>
-                      </div>
-                    </Card>
-                  </span>
-                </Col>
-              </Row>
-            )}
-          </div>
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
         </div>
       )}
+      <div className="table_id_container">
+        <Row gutter={30}>
+          <div className="study_details_container">
+            <Col span={15}>
+              <div className="study_details">
+                <div className="study_name">
+                  {/* Displays table name if there is one. If no name, displays DD id */}
+
+                  <h2>{table?.name ? table?.name : table?.id}</h2>
+                </div>
+                <div className="study_desc">
+                  {/* Displays the DD description if there is one.
+                    If there is no description, 'No description provided' is displayed in a gray font */}
+                  {table?.description ? (
+                    table?.description
+                  ) : (
+                    <span className="no_description">
+                      No description provided.
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className="study_details_right">
+                <div className="study_dropdown">
+                  {/* ant.design dropdown for edit. */}
+                  <SettingsDropdownTable table={table} />
+                </div>
+                <div className="component_id">
+                  <b>ID</b>: {table?.id}
+                </div>
+              </div>
+            </Col>
+          </div>
+        </Row>
+        {table?.filename ? (
+          <>
+            <div className="terminology_details terminology_desc">
+              File name: {table?.filename}
+            </div>
+          </>
+        ) : (
+          ''
+        )}
+        <div className="terminology_details">{table?.url}</div>
+        <div className="terminology_details terminology_desc"></div>
+        <div className="table_container">
+          {/* ant.design table displaying the pre-defined columns and data, with expandable rows. 
+            The expandable rows currently show the min, max, and units properties with no styling. */}
+          {table?.variables?.length > 0 ? (
+            <>
+              <div className="add_row_buttons">
+                <FilterSelect
+                  component={table}
+                  table={table}
+                  terminology={null}
+                  componentString={'Table'}
+                />
+                <AddVariable
+                  table={table}
+                  setTable={setTable}
+                  dataSource={dataSource}
+                  setDataSource={setDataSource}
+                  form={form}
+                />
+              </div>
+              <Form form={form}>
+                <Table
+                  scroll={{ x: 'max-content' }}
+                  sticky={{ offsetHeader: 80 }}
+                  columns={columns}
+                  dataSource={dataSource}
+                  expandable={{
+                    expandRowByClick: true,
+                    expandedRowRender,
+                    rowExpandable: record =>
+                      record.data_type === 'INTEGER' ||
+                      record.data_type === 'QUANTITY'
+                  }}
+                  pagination={{
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '30'],
+                    pageSize: pageSize, // Use the stored pageSize
+                    onChange: handleTableChange // Capture pagination changes
+                  }}
+                />
+              </Form>
+              <ExportFile componentString="Table" component={table} />
+            </>
+          ) : (
+            <Row gutter={[20, 24]}>
+              <Col span={6}>
+                {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
+                and triggers the modal to open*/}
+                <span onClick={() => (user ? setLoad(true) : login())}>
+                  <Card
+                    hoverable
+                    style={{
+                      border: '1px solid darkgray',
+                      height: '42vh'
+                    }}
+                  >
+                    <div className="new_study_card_container">
+                      <div className="new_study_card">
+                        Upload Variables (CSV)
+                      </div>
+                    </div>
+                  </Card>
+                </span>
+              </Col>
+            </Row>
+          )}
+        </div>
+      </div>
 
       {/* Displays the edit form */}
       <EditTableDetails

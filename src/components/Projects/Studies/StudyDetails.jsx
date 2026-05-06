@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Spinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import './StudyStyling.scss';
 import { getById } from '../../Manager/FetchManager';
-import { Row, Col, Divider, Card, Form, notification } from 'antd';
+import { Card, Col, Divider, Form, notification, Row, Spin } from 'antd';
 
 import { EditStudyDetails } from './EditStudyDetails';
 import { DeleteStudy } from './DeleteStudy';
@@ -76,139 +76,140 @@ export const StudyDetails = () => {
 
   return (
     <>
-      {loading ? (
-        // If page is loading, display loading spinner. Otherwise display code below
-        <Spinner />
-      ) : (
-        <div className="studies_container">
-          <Row gutter={30}>
-            <div className="study_details_container">
-              <Col span={15}>
-                <div className="study_details">
-                  <div className="study_name">
-                    {/* Displays study name if there is one. If no name, displays study id */}
-                    <h2>{study?.name ? study?.name : study?.id}</h2>
-                  </div>
-                  <div className="study_desc">{study?.title}</div>
-                  <div className="study_desc">
-                    {/* Displays the study description if there is one.
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
+        </div>
+      )}
+      <div className="studies_container">
+        <Row gutter={30}>
+          <div className="study_details_container">
+            <Col span={15}>
+              <div className="study_details">
+                <div className="study_name">
+                  {/* Displays study name if there is one. If no name, displays study id */}
+                  <h2>{study?.name ? study?.name : study?.id}</h2>
+                </div>
+                <div className="study_desc">{study?.title}</div>
+                <div className="study_desc">
+                  {/* Displays the study description if there is one.
                     If there is no description, 'No description provided' is displayed in a gray font */}
-                    {study?.description ? (
-                      study?.description
-                    ) : (
-                      <span className="no_description">
-                        No description provided.
-                      </span>
-                    )}
+                  {study?.description ? (
+                    study?.description
+                  ) : (
+                    <span className="no_description">
+                      No description provided.
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className="study_details_right">
+                <div className="study_dropdown">
+                  <SettingsDropdown component={study?.datadictionary} />
+                </div>
+                <div>
+                  <div className="id_system">
+                    <div className="comp_id">
+                      <b>ID</b>:
+                    </div>
+                    <div>{study?.id}</div>
+                  </div>
+                  <div className="id_system">
+                    <div className="comp_id">
+                      <b>System</b>:
+                    </div>
+                    <div>{study?.url}</div>
                   </div>
                 </div>
-              </Col>
-              <Col span={6}>
-                <div className="study_details_right">
-                  <div className="study_dropdown">
-                    <SettingsDropdown component={study?.datadictionary} />
-                  </div>
-                  <div>
-                    <div className="id_system">
-                      <div className="comp_id">
-                        <b>ID</b>:
-                      </div>
-                      <div>{study?.id}</div>
-                    </div>
-                    <div className="id_system">
-                      <div className="comp_id">
-                        <b>System</b>:
-                      </div>
-                      <div>{study?.url}</div>
-                    </div>
-                  </div>
-                </div>
-              </Col>
-            </div>
-          </Row>
-          <Divider orientation="left" orientationMargin="0" className="divider">
-            <h4>Data Dictionaries</h4>
-          </Divider>
-          <div className="study_details_cards_container">
-            <Row gutter={[20, 24]}>
-              <Col span={6}>
-                {/* The first column is a card that opens a modal to add a new study. It sets 'addStudy' to true on click
+              </div>
+            </Col>
+          </div>
+        </Row>
+        <Divider orientation="left" orientationMargin="0" className="divider">
+          <h4>Data Dictionaries</h4>
+        </Divider>
+        <div className="study_details_cards_container">
+          <Row gutter={[20, 24]}>
+            <Col span={6}>
+              {/* The first column is a card that opens a modal to add a new study. It sets 'addStudy' to true on click
                 and triggers the modal to open*/}
-                <span onClick={() => setAddDD(true)}>
+              <span onClick={() => setAddDD(true)}>
+                <Card
+                  hoverable
+                  style={{
+                    border: '1px solid darkgray',
+                    height: '350px'
+                  }}
+                >
+                  <div className="new_study_card_container">
+                    <div className="new_study_card">
+                      Create New Data Dictionary
+                    </div>
+                  </div>
+                </Card>
+              </span>
+            </Col>
+            {/* Cards with DD information associated with the study. */}
+            {studyDDs?.map((dd, index) => (
+              <Col span={6} key={index}>
+                {/* Displays the name if one is available or the id if there is no name.
+                  Links to view the details of the DD via the 'View/Edit' button. */}
+                <Link to={`/Study/${studyId}/DataDictionary/${dd?.id}`}>
                   <Card
+                    key={index}
                     hoverable
+                    title={dd?.name ? dd?.name : dd?.id}
                     style={{
                       border: '1px solid darkgray',
                       height: '350px'
                     }}
                   >
-                    <div className="new_study_card_container">
-                      <div className="new_study_card">
-                        Create New Data Dictionary
-                      </div>
-                    </div>
-                  </Card>
-                </span>
-              </Col>
-              {/* Cards with DD information associated with the study. */}
-              {studyDDs?.map((dd, index) => (
-                <Col span={6} key={index}>
-                  {/* Displays the name if one is available or the id if there is no name.
-                  Links to view the details of the DD via the 'View/Edit' button. */}
-                  <Link to={`/Study/${studyId}/DataDictionary/${dd?.id}`}>
-                    <Card
-                      key={index}
-                      hoverable
-                      title={dd?.name ? dd?.name : dd?.id}
+                    {/* Displays the description up to 180 characters, truncated with ellipsis. */}
+
+                    <Meta
                       style={{
-                        border: '1px solid darkgray',
-                        height: '350px'
+                        height: '125px',
+                        border: '1px lightgray solid',
+                        borderRadius: '5px',
+                        padding: '5px'
                       }}
-                    >
-                      {/* Displays the description up to 180 characters, truncated with ellipsis. */}
+                      description={
+                        <div style={{ height: '115px', overflowY: 'auto' }}>
+                          {dd?.description}
+                        </div>
+                      }
+                    />
+                    {/* Displays the number of tables associated with the DD by getting the length of the tables array in the DD */}
 
-                      <Meta
-                        style={{
-                          height: '125px',
-                          border: '1px lightgray solid',
-                          borderRadius: '5px',
-                          padding: '5px'
-                        }}
-                        description={
-                          <div style={{ height: '115px', overflowY: 'auto' }}>
-                            {dd?.description}
+                    <Meta
+                      style={{
+                        padding: '0 5px',
+                        margin: '22px 0 0 0'
+                      }}
+                      description={
+                        <div className="card_description">
+                          <div>{'# of Tables: ' + dd?.tables.length}</div>
+                          <div>
+                            <RemoveStudyDD
+                              studyId={studyId}
+                              dd={dd}
+                              getStudyDDs={getStudyDDs}
+                            />
                           </div>
-                        }
-                      />
-                      {/* Displays the number of tables associated with the DD by getting the length of the tables array in the DD */}
-
-                      <Meta
-                        style={{
-                          padding: '0 5px',
-                          margin: '22px 0 0 0'
-                        }}
-                        description={
-                          <div className="card_description">
-                            <div>{'# of Tables: ' + dd?.tables.length}</div>
-                            <div>
-                              <RemoveStudyDD
-                                studyId={studyId}
-                                dd={dd}
-                                getStudyDDs={getStudyDDs}
-                              />
-                            </div>
-                          </div>
-                        }
-                      />
-                    </Card>
-                  </Link>
-                </Col>
-              ))}
-            </Row>
-            <ExportFile componentString="Study" component={study} />
-          </div>
+                        </div>
+                      }
+                    />
+                  </Card>
+                </Link>
+              </Col>
+            ))}
+          </Row>
+          <ExportFile componentString="Study" component={study} />
         </div>
-      )}
+      </div>
+
       {/* Modal to edit details */}
       <EditStudyDetails
         form={form}

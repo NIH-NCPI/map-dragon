@@ -2,9 +2,18 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { myContext } from '../../../App';
 import './Terminology.scss';
-import { Spinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { getById } from '../../Manager/FetchManager';
-import { Col, Form, message, notification, Row, Table, Tooltip } from 'antd';
+import {
+  Col,
+  Form,
+  message,
+  notification,
+  Row,
+  Spin,
+  Table,
+  Tooltip
+} from 'antd';
 import {
   CaretDownOutlined,
   CaretUpOutlined,
@@ -510,142 +519,139 @@ It then shows the mappings as table data and alows the user to delete a mapping 
   return (
     <>
       {/* If page is still loading, display loading spinner. */}
-      {loading ? (
-        <Spinner />
-      ) : (
-        <div className="terminology_container">
-          <Row gutter={30}>
-            <div className="study_details_container">
-              <Col span={15}>
-                <div className="study_details">
-                  <div className="study_name">
-                    {/* Displays table name if there is one. If no name, displays DD id */}
-
-                    <h2>
-                      {terminology?.name ? terminology?.name : terminology?.id}
-                    </h2>
-                  </div>
-                  <div className="terminology_url">{terminology?.url}</div>
-
-                  <div className="terminology_desc">
-                    {/* Displays the DD description if there is one.
-                    If there is no description, 'No description provided' is displayed in a gray font */}
-                    {terminology?.description ? (
-                      terminology?.description
-                    ) : (
-                      <span className="no_description">
-                        No description provided.
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </Col>
-              <Col span={6}>
-                <div className="study_details_right">
-                  <div className="study_dropdown">
-                    {/* ant.design dropdown for edit. */}
-                    <SettingsDropdownTerminology codes={terminology.codes} />
-                  </div>
-                  <div className="component_id">
-                    <b>ID</b>: {terminology?.id}
-                  </div>
-                </div>
-              </Col>
-            </div>
-          </Row>
-          <div className="table_container">
-            <div className="add_row_buttons">
-              <FilterSelect
-                component={terminology}
-                table={null}
-                terminology={terminology}
-                componentString={'Terminology'}
-                setTerminology={setTerminology}
-                setTable={null}
-              />
-              <AddCode
-                terminology={terminology}
-                setTerminology={setTerminology}
-              />
-            </div>
-            {/* ant.design table with columns */}
-            {loading ? (
-              <Spinner />
-            ) : (
-              <Form form={form}>
-                <Table
-                  scroll={{ x: 'max-content' }}
-                  sticky={{ offsetHeader: 80 }}
-                  columns={columns}
-                  dataSource={dataSource}
-                  pagination={{
-                    showSizeChanger: true,
-                    pageSizeOptions: ['10', '20', '30'],
-                    pageSize: pageSize, // Use the stored pageSize
-                    onChange: handleTableChange // Capture pagination changes
-                  }}
-                />
-              </Form>
-            )}
-          </div>
-          {/* The modals to edit and get mappings with data being passed. */}
-          <EditMappingsModal
-            editMappings={editMappings}
-            setEditMappings={setEditMappings}
-            setMapping={setMapping}
-            component={terminology}
-            componentString={'Terminology'}
-            mappingsForSearch={mappingsForSearch}
-            setMappingsForSearch={setMappingsForSearch}
-          />
-          <GetMappingsModal
-            componentString={'Terminology'}
-            component={terminology}
-            terminology={terminology}
-            setTerminology={setTerminology}
-            searchProp={
-              getMappings?.name ? getMappings?.name : getMappings?.code
-            }
-            setGetMappings={setGetMappings}
-            setMapping={setMapping}
-            terminologyId={terminologyId}
-            mappingProp={getMappings?.code}
-            mappingDesc={
-              getMappings?.description
-                ? getMappings?.description
-                : 'No Description'
-            }
-          />
-          {/* Displays the edit form */}
-          <EditTerminologyDetails
-            form={form}
-            terminology={terminology}
-            setTerminology={setTerminology}
-          />
-          <ClearMappings propId={terminologyId} component={'Terminology'} />
-          <LoadCodes
-            terminology={terminology}
-            setTerminology={setTerminology}
-          />
-          <AssignMappingsViaButton
-            assignMappingsViaButton={assignMappingsViaButton}
-            setAssignMappingsViaButton={setAssignMappingsViaButton}
-            component={terminology}
-            componentString={'Terminology'}
-          />
-
-          <MappingComments
-            mappingCode={comment?.code}
-            mappingDisplay={comment?.display}
-            variableMappings={comment?.variableMappings}
-            variableDisplay={comment?.variableMappings}
-            setComment={setComment}
-            idProp={terminologyId}
-            setMapping={setMapping}
-            component="Terminology"
-          />
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
         </div>
       )}
+      <div className="terminology_container">
+        <Row gutter={30}>
+          <div className="study_details_container">
+            <Col span={15}>
+              <div className="study_details">
+                <div className="study_name">
+                  {/* Displays table name if there is one. If no name, displays DD id */}
+
+                  <h2>
+                    {terminology?.name ? terminology?.name : terminology?.id}
+                  </h2>
+                </div>
+                <div className="terminology_url">{terminology?.url}</div>
+
+                <div className="terminology_desc">
+                  {/* Displays the DD description if there is one.
+                    If there is no description, 'No description provided' is displayed in a gray font */}
+                  {terminology?.description ? (
+                    terminology?.description
+                  ) : (
+                    <span className="no_description">
+                      No description provided.
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className="study_details_right">
+                <div className="study_dropdown">
+                  {/* ant.design dropdown for edit. */}
+                  <SettingsDropdownTerminology codes={terminology.codes} />
+                </div>
+                <div className="component_id">
+                  <b>ID</b>: {terminology?.id}
+                </div>
+              </div>
+            </Col>
+          </div>
+        </Row>
+        <div className="table_container">
+          <div className="add_row_buttons">
+            <FilterSelect
+              component={terminology}
+              table={null}
+              terminology={terminology}
+              componentString={'Terminology'}
+              setTerminology={setTerminology}
+              setTable={null}
+            />
+            <AddCode
+              terminology={terminology}
+              setTerminology={setTerminology}
+            />
+          </div>
+          {/* ant.design table with columns */}
+          {loading && (
+            <div className="loading_overlay">
+              <Spin />
+            </div>
+          )}
+          <Form form={form}>
+            <Table
+              scroll={{ x: 'max-content' }}
+              sticky={{ offsetHeader: 80 }}
+              columns={columns}
+              dataSource={dataSource}
+              pagination={{
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '30'],
+                pageSize: pageSize, // Use the stored pageSize
+                onChange: handleTableChange // Capture pagination changes
+              }}
+            />
+          </Form>
+        </div>
+        {/* The modals to edit and get mappings with data being passed. */}
+        <EditMappingsModal
+          editMappings={editMappings}
+          setEditMappings={setEditMappings}
+          setMapping={setMapping}
+          component={terminology}
+          componentString={'Terminology'}
+          mappingsForSearch={mappingsForSearch}
+          setMappingsForSearch={setMappingsForSearch}
+        />
+        <GetMappingsModal
+          componentString={'Terminology'}
+          component={terminology}
+          terminology={terminology}
+          setTerminology={setTerminology}
+          searchProp={getMappings?.name ? getMappings?.name : getMappings?.code}
+          setGetMappings={setGetMappings}
+          setMapping={setMapping}
+          terminologyId={terminologyId}
+          mappingProp={getMappings?.code}
+          mappingDesc={
+            getMappings?.description
+              ? getMappings?.description
+              : 'No Description'
+          }
+        />
+        {/* Displays the edit form */}
+        <EditTerminologyDetails
+          form={form}
+          terminology={terminology}
+          setTerminology={setTerminology}
+        />
+        <ClearMappings propId={terminologyId} component={'Terminology'} />
+        <LoadCodes terminology={terminology} setTerminology={setTerminology} />
+        <AssignMappingsViaButton
+          assignMappingsViaButton={assignMappingsViaButton}
+          setAssignMappingsViaButton={setAssignMappingsViaButton}
+          component={terminology}
+          componentString={'Terminology'}
+        />
+
+        <MappingComments
+          mappingCode={comment?.code}
+          mappingDisplay={comment?.display}
+          variableMappings={comment?.variableMappings}
+          variableDisplay={comment?.variableMappings}
+          setComment={setComment}
+          idProp={terminologyId}
+          setMapping={setMapping}
+          component="Terminology"
+        />
+      </div>
     </>
   );
 };

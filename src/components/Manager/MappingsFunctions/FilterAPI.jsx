@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
-import { Form, Tooltip } from 'antd';
-import { ModalSpinner, OntologySpinner } from '../Spinner';
+import { Form, Spin, Tooltip } from 'antd';
+import '../Spinner.scss';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
 import './FilterAPI.scss';
@@ -118,33 +118,39 @@ export const FilterAPI = ({
     );
   };
 
-  return loading ? (
-    <ModalSpinner />
-  ) : (
-    <div>
-      <div className="api_list">
-        <Form form={form} preserve={false}>
-          <div className="api_filters_wrapper">
-            <div className="api_filters_container">
-              <div>
-                <div className="api_label">
-                  <Tooltip title="Default search with OLS using HP, MAXO, MONDO, NCIT">
-                    APIs
-                  </Tooltip>
+  return (
+    <>
+      {loading && (
+        <div className="loading_overlay_modal">
+          <Spin />
+        </div>
+      )}
+      <div>
+        <div className="api_list">
+          <Form form={form} preserve={false}>
+            <div className="api_filters_wrapper">
+              <div className="api_filters_container">
+                <div>
+                  <div className="api_label">
+                    <Tooltip title="Default search with OLS using HP, MAXO, MONDO, NCIT">
+                      APIs
+                    </Tooltip>
+                  </div>
+                  {ontologyApis.map((api, index) =>
+                    checkboxDisplay(api, index)
+                  )}
                 </div>
-                {ontologyApis.map((api, index) => checkboxDisplay(api, index))}
-              </div>
-              <div>
-                <div className="api_label">Terminologies</div>
-                {checkboxDisplay(null, null)}
-              </div>
-            </div>
-            <div className="api_filters_ontology_list">
-              {tableLoading ? (
-                <div className="ontology_spinner_div">
-                  <OntologySpinner />
+                <div>
+                  <div className="api_label">Terminologies</div>
+                  {checkboxDisplay(null, null)}
                 </div>
-              ) : (
+              </div>
+              <div className="api_filters_ontology_list">
+                {tableLoading && (
+                  <div className="loading_overlay_modal">
+                    <Spin />
+                  </div>
+                )}
                 <FilterOntology
                   ontology={ontology}
                   form={form}
@@ -174,11 +180,11 @@ export const FilterAPI = ({
                   componentString={componentString}
                   setPrefTerminologies={setPrefTerminologies}
                 />
-              )}
+              </div>
             </div>
-          </div>
-        </Form>
+          </Form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

@@ -1,8 +1,8 @@
-import { Button, Form, Input, Modal, notification } from 'antd';
+import { Button, Form, Input, Modal, notification, Spin } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ModalSpinner } from '../Spinner';
+import '../Spinner.scss';
 import { getById } from '../FetchManager';
 import { uriEncoded } from '../Utility';
 
@@ -194,11 +194,12 @@ export const MappingComments = ({
             </Button>
           </Form.Item>
         </Form>
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          mappingComments?.map((mc, i) => commentDisplay(mc, i))
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        {mappingComments?.map((mc, i) => commentDisplay(mc, i))}
       </Modal>
     </>
   );

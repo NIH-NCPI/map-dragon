@@ -240,13 +240,7 @@ export const OntologyCheckboxes = ({
   };
 
   return (
-    <div
-      className={
-        selectedApi !== 'md' || prefTerminologies.length === 0
-          ? 'ontology_form'
-          : 'ontology_form_pref'
-      }
-    >
+    <div className="ontology_form">
       <Radio.Group
         className="api_radio"
         optionType="button"
