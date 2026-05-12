@@ -29,7 +29,7 @@ function App() {
     name: '',
     description: '',
     title: '',
-    url: '',
+    url: ''
   }; //initial state of study
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
@@ -39,7 +39,7 @@ function App() {
   const [version, setVersion] = useState({});
 
   message.config({
-    top: '25vh',
+    top: '25vh'
   });
 
   return (
@@ -81,7 +81,7 @@ function App() {
           ucumCodes,
           setUcumCodes,
           version,
-          setVersion,
+          setVersion
         }}
       >
         <AppRouter />
