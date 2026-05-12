@@ -124,16 +124,18 @@ export const TerminologyList = () => {
         onOpenChange(open) {
           if (open) {
             setTimeout(() => {
-              inputRef.current?.focus(); // Focus cursor on search input
+              inputRef.current?.focus(); // Focuses cursor on search input
             }, 100); // Small delay to ensure input is rendered
           }
         }
       },
-      width: 400
+      getPopupContainer: triggerNode => triggerNode.parentNode,
+      width: 300
     },
     {
       title: 'Description',
-      dataIndex: 'description'
+      dataIndex: 'description',
+      width: 500
     },
     {
       title: '',
@@ -173,7 +175,6 @@ export const TerminologyList = () => {
           showSizeChanger={true}
           columns={columns}
           dataSource={dataSource}
-          getPopupContainer={trigger => trigger.parentNode}
           pagination={{
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '30'],
