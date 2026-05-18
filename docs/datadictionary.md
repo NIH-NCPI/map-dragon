@@ -15,7 +15,7 @@ The data should be a valid, ASCII only CSV file with double quotes used for "Quo
 | _variable_name_ | The human readable name associated with variable name                                                             | String                                                       |
 | _description_   | Fully informative description of the contents associated with this variable/column                                | String                                                       |
 | _data_type_     | Data type associated with column data. See the table below for more information.                                                                              | String                        |
-  | _min_           | Minimum value.                                                                          | numeric value                                                |
+| _min_           | Minimum value.                                                                          | numeric value                                                |
 | _max_           | Maximum acceptable value                                                             | numeric value                                                |
 | _units_         | UCUM code for units. UCUM code prefixed with the curie, UCUM. UCUM:ml for example                                                                                       | String |
 | _enumerations_  | Semi-colon separated list of enumerated values. See below for more details about formatting the enumeration list. | String                                                       |
