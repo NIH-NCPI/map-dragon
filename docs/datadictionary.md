@@ -14,11 +14,23 @@ The data should be a valid, ASCII only CSV file with double quotes used for "Quo
 | --------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | _variable_name_ | The human readable name associated with variable name                                                             | String                                                       |
 | _description_   | Fully informative description of the contents associated with this variable/column                                | String                                                       |
-| _data_type_     | Data type associated with column data                                                                             | integer, number, string, enumeration                         |
+| _data_type_     | Data type associated with column data                                                                             | integer, number, string, enumeration, boolean, date, datetime                         |
 | _min_           | Minimum value (integers and numbers only)                                                                         | numeric value                                                |
 | _max_           | Maximum acceptable value (integers and numbers only)                                                              | numeric value                                                |
 | _units_         | UCUM code for units                                                                                               | UCUM code prefixed with the curie, UCUM. UCUM:ml for example |
 | _enumerations_  | Semi-colon separated list of enumerated values. See below for more details about formatting the enumeration list. | String                                                       |
+
+### Data Types Supported
+
+| Data Type | Alternate Names | Note |
+| --------- | --------------- | ---- | 
+| string | | Alphanumeric text data used for names, free-text notes and identifiers | 
+| boolean | bool | Binary logical values. Represents only two states, True of False | 
+| enumerations | | A predefined list of allowed text values that incoming data must use to be conformant. |
+| integer | int | Whole numbers without decimal points. |
+| quantity | number, float, numeric | Continuous numeric values with decimal points. | 
+| date | | Calender date without a time component | 
+| datetime | | Combined calendar date and specific time of day. |
 
 ### Formatting for Enumerations
 
