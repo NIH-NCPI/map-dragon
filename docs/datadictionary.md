@@ -25,7 +25,7 @@ The data should be a valid, ASCII only CSV file with double quotes used for "Quo
 | Data Type | Alternate Names | Definition | Submission Requirements | Notes on Application Funcionality |
 | --------- | --------------- | ---------- | ----------------------- | --------------------------------- |
 | string | | Alphanumeric text data used for names, free-text notes and identifiers | | |
-| boolean | bool | Binary logical values. Represents only two states, True of False. | Requires values within the 'enumerations' column. | |
+| boolean | bool | Binary logical values. Represents only two states, True of False. | | |
 | enumeration | | A predefined list of allowed text values that incoming data must use to be conformant. | Requires values within the 'enumerations' column. At the top level, enumerations are just a list of terms separated by semi-colons. For enumerated types with specified codes, these will be provided in the following format: 1=Male;2=Female;0=Unknown;-1=Preferred Not To Answer | In this example, the following codes are extracted: 1, 2, 0 and -1 and assigned the following displays (in order): Male, Female, Unknown and Preferred Not To Answer.|
 | integer | int | Whole numbers without decimal points. | | The submitted min, max, and units will be visible, for a variable of this data type. |
 | quantity | number, float, numeric | Continuous numeric values with decimal points. | | The submitted min, max, and units will be visible for a variable of this data type. |
