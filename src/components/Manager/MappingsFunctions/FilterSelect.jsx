@@ -5,7 +5,8 @@ import {
   Modal,
   notification,
   Pagination,
-  Spin
+  Spin,
+  Tooltip
 } from 'antd';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { useContext, useEffect, useState } from 'react';
@@ -39,6 +40,7 @@ export const FilterSelect = ({
   const [displaySelectedTerminologies, setDisplaySelectedTerminologies] =
     useState([]);
   const [terminologies, setTerminologies] = useState([]);
+  const [initialState, setInitialState] = useState('');
   const { user, vocabUrl, ontologyForPagination } = useContext(myContext);
   const {
     ontologyApis,
@@ -159,6 +161,13 @@ export const FilterSelect = ({
     setSearchText('');
   };
 
+  const currentSelections = () =>
+    JSON.stringify([
+      ...selectedBoxes,
+      ...existingPreferred,
+      ...Object.entries(existingOntologies)
+    ]);
+
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
@@ -266,9 +275,13 @@ export const FilterSelect = ({
   // Calculates the total length of all arrays to display number of ontology filters
   const apiPrefLength = () => {
     const ontoLength =
-      apiPrefObject &&
-      Object.values(apiPrefObject)?.reduce((acc, arr) => acc + arr.length, 0);
-    const termLength = prefTerminologies && prefTerminologies.length;
+      (apiPrefObject &&
+        Object.values(apiPrefObject)?.reduce(
+          (acc, arr) => acc + arr.length,
+          0
+        )) ??
+      0;
+    const termLength = prefTerminologies?.length ?? 0;
 
     return ontoLength + termLength;
   };
@@ -351,6 +364,11 @@ export const FilterSelect = ({
       {addFilter && (
         <Modal
           open={addFilter}
+          afterOpenChange={open => {
+            if (open) {
+              setInitialState(currentSelections);
+            }
+          }}
           width={'70%'}
           styles={{
             body: {
@@ -358,6 +376,7 @@ export const FilterSelect = ({
               maxHeight: '60vh'
             }
           }}
+          okButtonProps={{ disabled: initialState === currentSelections() }}
           onOk={() => {
             form.validateFields().then(values => {
               handleSubmit(values);
@@ -391,7 +410,17 @@ export const FilterSelect = ({
                 </div>
                 <div className="cancel_ok_buttons">
                   <CancelBtn />
-                  <OkBtn />
+                  <Tooltip
+                    title={
+                      initialState === currentSelections()
+                        ? 'No changes made'
+                        : null
+                    }
+                  >
+                    <div>
+                      <OkBtn />
+                    </div>
+                  </Tooltip>
                 </div>
               </div>
             </>

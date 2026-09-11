@@ -375,18 +375,17 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 }}
                 onClick={e => {
                   e.stopPropagation();
-                  userVote(code) === 'up' &&
-                    mappingVotes(
-                      variableMappings,
-                      code,
-                      user,
-                      'reset',
-                      vocabUrl,
-                      tableId,
-                      notification,
-                      setMapping,
-                      'Table'
-                    );
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    tableId,
+                    notification,
+                    setMapping,
+                    'Table'
+                  );
                 }}
               />
             ) : (
@@ -397,7 +396,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 }}
                 onClick={e => {
                   e.stopPropagation();
-
                   userVote(code) !== 'up' &&
                     mappingVotes(
                       variableMappings,
@@ -438,18 +436,17 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 }}
                 onClick={e => {
                   e.stopPropagation();
-                  userVote(code) === 'down' &&
-                    mappingVotes(
-                      variableMappings,
-                      code,
-                      user,
-                      'reset',
-                      vocabUrl,
-                      tableId,
-                      notification,
-                      setMapping,
-                      'Table'
-                    );
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    tableId,
+                    notification,
+                    setMapping,
+                    'Table'
+                  );
                 }}
               />
             ) : (

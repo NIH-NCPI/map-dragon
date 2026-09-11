@@ -1,4 +1,4 @@
-import { Form, message, Modal, notification, Spin } from 'antd';
+import { Form, message, Modal, notification, Spin, Tooltip } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import '../Spinner.scss';
@@ -31,8 +31,16 @@ export const EditMappingsModal = ({
   } = useContext(SearchContext);
   const [loading, setLoading] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
+  const [initialState, setInitialState] = useState('');
   const [reset, setReset] = useState(false);
   const [existingMappings, setExistingMappings] = useState(mappingsForSearch);
+
+  const currentSelections = () =>
+    JSON.stringify([
+      ...selectedBoxes.map(obj => obj.code),
+      ...existingMappings.map(obj => obj.code),
+      ...idsForSelect.map(obj => obj.code)
+    ]);
 
   const clearData = () => {
     setSelectedKey(null);
@@ -131,6 +139,11 @@ export const EditMappingsModal = ({
       // since the code is passed through editMappings, the '!!' forces it to be evaluated as a boolean.
       // if there is a code being passed, it evaluates to true and opens the modal.
       open={!!editMappings}
+      afterOpenChange={open => {
+        if (open) {
+          setInitialState(currentSelections);
+        }
+      }}
       width={'70%'}
       styles={{ body: { height: '60vh', overflowY: 'auto' } }}
       okText="Save"
@@ -157,7 +170,9 @@ export const EditMappingsModal = ({
           ).then(data => setMapping(data.codes));
       }}
       cancelButtonProps={{ disabled: loading }}
-      okButtonProps={{ disabled: loading }}
+      okButtonProps={{
+        disabled: loading || initialState === currentSelections()
+      }}
       closeIcon={false}
       maskClosable={false}
       destroyOnHidden={true}
@@ -186,7 +201,17 @@ export const EditMappingsModal = ({
             </div>
             <div className="cancel_ok_buttons">
               <CancelBtn />
-              <OkBtn />
+              <Tooltip
+                title={
+                  initialState === currentSelections()
+                    ? 'No changes made'
+                    : null
+                }
+              >
+                <div>
+                  <OkBtn />
+                </div>
+              </Tooltip>{' '}
             </div>
           </div>
         </>

@@ -1,16 +1,13 @@
 // Function that takes in a string and a number value.
 // It truncates the string to the specified number of characters, then displays an ellipsis
-export const ellipsisString = (str, num) => {
-  if (typeof str == 'string' && str.length > num) {
-    return str.slice(0, num) + '...';
-  } else {
-    return str;
-  }
-};
+export const ellipsisString = (str, num) =>
+  typeof str == 'string' && str.length > num ? str.slice(0, num) + '...' : str;
 
 /* The results from the API sometimes show duplicate entries for codes that were imported from other ontologies.
   We only want to display the codes from their source ontologies, not the imported duplicates. This function ensures the
-  curie in the code id matches the ontology prefix of the object. */
+  curie in the code id matches the ontology prefix of the object. 
+  
+  No longer being used. Function kept for reference*/
 
 export const ontologyReducer = d =>
   d.reduce(
@@ -24,19 +21,6 @@ export const ontologyReducer = d =>
     },
     { results: [], filteredResults: [] }
   );
-
-// This function matches the ontology prop to its system in the object that will be sent to the API
-export const systemsMatch = (ontologyCode, ontologyApis) => {
-  // Searches for the ontology that contains the requested ontology code
-  const ontologyApi = ontologyApis.find(
-    api => api.ontologies[ontologyCode?.toLowerCase()]
-  );
-  if (ontologyApi) {
-    // Return the system URL for the matching ontology
-    return ontologyApi.ontologies[ontologyCode?.toLowerCase()].system;
-  }
-  return null; // If not found, return null or handle accordingly
-};
 
 // Iterates over the facet counts in the result to make an object of search results per ontology
 export const ontologyCounts = arr => {
@@ -59,17 +43,6 @@ export const ontologyCounts = arr => {
 };
 
 export const cleanedName = data => data?.toLowerCase().replaceAll(' ', '_');
-
-export const mappingTooltip = code => {
-  return (
-    <>
-      <div className="mapping_tooltip">
-        <div>{code.code}</div>
-        <div>{code?.display}</div>
-      </div>
-    </>
-  );
-};
 
 // Shortened display for mapping relationships in tables
 export const relationshipDisplay = variable =>
@@ -104,13 +77,7 @@ export const cleanedSearchTerm = term => {
   return term;
 };
 
-export const votesCount = code => {
-  const calculatedCount =
-    code.user_input?.votes_count.up - code.user_input?.votes_count.down;
-  return calculatedCount;
-};
+export const votesCount = code =>
+  code.user_input?.votes_count.up - code.user_input?.votes_count.down;
 
-export const userVote = code => {
-  const foundVote = code.user_input?.users_vote;
-  return foundVote;
-};
+export const userVote = code => code.user_input?.users_vote;
