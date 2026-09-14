@@ -108,44 +108,54 @@ export const AppRouter = () => {
                       }
                     />
                     <Route path="/Study/:studyId/DataDictionary/:DDId">
-                      <Route index element={ isLoggedIn() ? (
+                      <Route
+                        index
+                        element={
+                          isLoggedIn() ? (
                             <DDDetails />
                           ) : (
                             <Navigate to="/login" />
-                          )} />
+                          )
+                        }
+                      />
                       <Route
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId"
-                        element={isLoggedIn() ? (
+                        element={
+                          isLoggedIn() ? (
                             <TableDetails />
                           ) : (
-                            <Navigate to="/login" />}
+                            <Navigate to="/login" />
+                          )
+                        }
                       />
                       <Route
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId/Terminology/:terminologyId"
-                        element={isLoggedIn() ? (
+                        element={
+                          isLoggedIn() ? (
                             <Terminology />
                           ) : (
                             <Navigate to="/login" />
-                          )}
+                          )
+                        }
                       />
                       <Route
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId/Terminology/"
-                        element={isLoggedIn() ? (
+                        element={
+                          isLoggedIn() ? (
                             <Terminology />
                           ) : (
                             <Navigate to="/login" />
-                          )}
+                          )
+                        }
                       />
                     </Route>
                   </Route>
                 </Route>
                 <Route
                   path="/Terminology/:terminologyId"
-                  element={isLoggedIn() ? (
-                            <Terminology />
-                          ) : (
-                            <Navigate to="/login" />
-                          )}
+                  element={
+                    isLoggedIn() ? <Terminology /> : <Navigate to="/login" />
+                  }
                 />
               </Route>
             </Route>

@@ -6,7 +6,8 @@ import { myContext } from '../../App';
 import { startSession } from '../Manager/SessionsManager';
 
 export const Login = () => {
-  const { user, setUser,setUserPic, userPic, vocabUrl } = useContext(myContext);
+  const { user, setUser, setUserPic, userPic, vocabUrl } =
+    useContext(myContext);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -16,20 +17,26 @@ export const Login = () => {
       setUserPic(JSON.parse(storedUserPic));
     }
   }, []);
-  
+
   // If there is a user, it displays the Logout function with user information. Otherwise, it displays the login button
   return user ? (
-    <Logout user={user} setUser={setUser} userPic={userPic} setUserPic={setUserPic} />
+    <Logout
+      user={user}
+      setUser={setUser}
+      userPic={userPic}
+      setUserPic={setUserPic}
+    />
   ) : (
     // Logs user in, decodes the JWT token, saves the decoded JWT in local storage and sets user to it
     <div>
       <GoogleLogin
         theme="filled_black"
         onSuccess={credentialResponse => {
+          console.log(credentialResponse);
           const credentialResponseDecoded = jwtDecode(
             credentialResponse.credential
           );
-          console.log(credentialResponseDecoded,"credentialResponseDecoded");
+          console.log(credentialResponseDecoded, 'credentialResponseDecoded');
           localStorage.setItem(
             'user',
             JSON.stringify(credentialResponseDecoded.email)
@@ -38,7 +45,7 @@ export const Login = () => {
             'picture',
             JSON.stringify(credentialResponseDecoded.picture)
           );
-          startSession(vocabUrl, credentialResponseDecoded.email);
+          startSession(vocabUrl, credentialResponse.credential);
           setUser(credentialResponseDecoded.email);
           setUserPic(credentialResponseDecoded.picture);
         }}
@@ -46,7 +53,6 @@ export const Login = () => {
           console.log('Login Failed');
         }}
       />
-
     </div>
   );
 };

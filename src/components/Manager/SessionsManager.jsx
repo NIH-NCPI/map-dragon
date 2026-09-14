@@ -1,9 +1,8 @@
-export const startSession = (vocabUrl, email) => {
+export const startSession = (vocabUrl, token) => {
   const body = {
-    'user_id': email
-    // 'affiliation': 'affiliation',
+    'credential': token
   };
-  return fetch(`${vocabUrl}/session/start`, {
+  return fetch(`${vocabUrl}/auth/google`, {
     method: 'POST',
     credentials: 'include',
     body: JSON.stringify(body),
@@ -13,7 +12,7 @@ export const startSession = (vocabUrl, email) => {
   }).then(async res => {
     const data = await res.json();
     if (res.ok) {
-      console.log(data.message);
+      console.log('RESPONSE MESSAGE:', data.message);
       return data;
     } else {
       throw new Error(data.message || 'Unknown error occurred');
