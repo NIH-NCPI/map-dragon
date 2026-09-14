@@ -16,7 +16,7 @@ export const OntologyTable = ({ ontology }) => {
   }, [pageSize]);
 
   useEffect(() => {
-    document.title = 'Ontologies - Map Dragon';
+    document.title = 'Ontologies - MapDragon';
   }, []);
 
   const ontologyTitle = () => {
@@ -33,11 +33,12 @@ export const OntologyTable = ({ ontology }) => {
     {
       title: ontologyTitle(),
       dataIndex: 'ontology',
+      fixed: 'left',
       filterDropdown: ({
         setSelectedKeys,
         selectedKeys,
         confirm,
-        clearFilters,
+        clearFilters
       }) => (
         <div style={{ padding: 8 }}>
           <Input
@@ -75,19 +76,19 @@ export const OntologyTable = ({ ontology }) => {
       filterIcon: filtered => (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
-      width: 400,
+      width: 400
     },
 
     {
       title: 'Curie',
       dataIndex: 'curie',
-      width: 100,
+      width: 100
     },
     {
       title: 'Version',
       dataIndex: 'version',
-      width: 200,
-    },
+      width: 200
+    }
   ];
 
   const dataSource = ontology.flatMap(item =>
@@ -95,7 +96,7 @@ export const OntologyTable = ({ ontology }) => {
       key: i,
       ontology: ont.ontology_title,
       curie: ont.curie,
-      version: ont.version,
+      version: ont.version
     }))
   );
 
@@ -103,14 +104,13 @@ export const OntologyTable = ({ ontology }) => {
     <Table
       columns={columns}
       dataSource={dataSource}
-      scroll={{
-        y: 470,
-      }}
+      scroll={{ x: 'max-content' }}
+      sticky={{ offsetHeader: 80 }}
       pagination={{
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '30'],
         pageSize: pageSize, // Use the stored pageSize
-        onChange: handleTableChange, // Capture pagination changes
+        onChange: handleTableChange // Capture pagination changes
       }}
     />
   );

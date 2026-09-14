@@ -1,8 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
-import { Checkbox, Form, Tooltip } from 'antd';
-import { ModalSpinner, OntologySpinner } from '../Spinner';
+import { Form, Spin, Tooltip } from 'antd';
+import '../Spinner.scss';
 import { myContext } from '../../../App';
 import { FilterOntology } from './FilterOntology';
+import './FilterAPI.scss';
+import { getAll } from '../FetchManager';
+import { useNavigate } from 'react-router-dom';
 
 export const FilterAPI = ({
   form,
@@ -15,21 +18,42 @@ export const FilterAPI = ({
   active,
   setActive,
   paginatedOntologies,
-  apiPreferences,
   table,
   terminology,
   existingOntologies,
   setExistingOntologies,
   flattenedFilters,
+  existingPreferred,
+  setExistingPreferred,
+  preferredData,
+  paginatedTerminologies,
+  displaySelectedTerminologies,
+  setDisplaySelectedTerminologies,
+  terminologies,
+  setTerminologies,
+  selectedTerminologies,
+  setSelectedTerminologies,
+  componentString,
+  setPrefTerminologies
 }) => {
   const { vocabUrl } = useContext(myContext);
   const [ontology, setOntology] = useState([]);
+
+  const [originalTerminologies, setOriginalTerminologies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Fetches the active ontologyAPI each time the active API changes
   useEffect(() => {
-    active && getOntologyApiById();
+    if (active === 'term') {
+      getAll(vocabUrl, 'Terminology', navigate).then(data => {
+        setTerminologies(data);
+        setOriginalTerminologies(data);
+      });
+    } else {
+      getOntologyApiById();
+    }
   }, [active]);
 
   const getOntologyApiById = () => {
@@ -39,8 +63,8 @@ export const FilterAPI = ({
         method: 'GET',
         credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       })
         .then(res => {
           if (res.ok) {
@@ -62,7 +86,7 @@ export const FilterAPI = ({
 
             return {
               ...api,
-              ontologies: sortedOntologies,
+              ontologies: sortedOntologies
             };
           });
           setOntology(sortedData);
@@ -77,45 +101,57 @@ export const FilterAPI = ({
         <div key={index} className="modal_search_result">
           <div
             className={
-              active === api.api_id
+              (api ? active === api?.api_id : active === 'term')
                 ? 'active_selected_api'
                 : 'inactive_selected_api'
             }
-            onClick={() => setActive(api.api_id)}
+            onClick={() => setActive(api ? api?.api_id : 'term')}
           >
             <div className="modal_term_ontology">
               <div>
-                <b>{api?.api_id.toUpperCase()}</b>
+                <b>{api ? api?.api_id.toUpperCase() : 'MD'}</b>
               </div>
             </div>
-            <div>{api?.api_name}</div>
+            <div>{api ? api?.api_name : 'MapDragon Terminologies'}</div>
           </div>
         </div>
       </>
     );
   };
 
-  return loading ? (
-    <ModalSpinner />
-  ) : (
-    <div>
-      <div className="api_list">
-        <Form form={form} preserve={false}>
-          <div style={{ display: 'flex' }}>
-            <div style={{ flex: '0 0 25%' }}>
-              <div className="api_label">
-                <Tooltip title="Default search with OLS using HP, MAXO, MONDO, NCIT">
-                  APIs
-                </Tooltip>
-              </div>
-              {ontologyApis.map((api, index) => checkboxDisplay(api, index))}
-            </div>
-            <div style={{ flex: '0 0 70%' }}>
-              {tableLoading ? (
-                <div className="ontology_spinner_div">
-                  <OntologySpinner />
+  return (
+    <>
+      {loading && (
+        <div className="loading_overlay_modal">
+          <Spin />
+        </div>
+      )}
+      <div>
+        <div className="api_list">
+          <Form form={form} preserve={false}>
+            <div className="api_filters_wrapper">
+              <div className="api_filters_container">
+                <div>
+                  <div className="api_label">
+                    <Tooltip title="Default search with OLS using HP, MAXO, MONDO, NCIT">
+                      APIs
+                    </Tooltip>
+                  </div>
+                  {ontologyApis.map((api, index) =>
+                    checkboxDisplay(api, index)
+                  )}
                 </div>
-              ) : (
+                <div>
+                  <div className="api_label">Terminologies</div>
+                  {checkboxDisplay(null, null)}
+                </div>
+              </div>
+              <div className="api_filters_ontology_list">
+                {tableLoading && (
+                  <div className="loading_overlay_modal">
+                    <Spin />
+                  </div>
+                )}
                 <FilterOntology
                   ontology={ontology}
                   form={form}
@@ -125,18 +161,31 @@ export const FilterAPI = ({
                   displaySelectedOntologies={displaySelectedOntologies}
                   setDisplaySelectedOntologies={setDisplaySelectedOntologies}
                   paginatedOntologies={paginatedOntologies}
-                  apiPreferences={apiPreferences}
                   table={table}
                   terminology={terminology}
                   existingOntologies={existingOntologies}
                   setExistingOntologies={setExistingOntologies}
                   flattenedFilters={flattenedFilters}
+                  terminologies={terminologies}
+                  active={active}
+                  displaySelectedTerminologies={displaySelectedTerminologies}
+                  setDisplaySelectedTerminologies={
+                    setDisplaySelectedTerminologies
+                  }
+                  existingPreferred={existingPreferred}
+                  setExistingPreferred={setExistingPreferred}
+                  preferredData={preferredData}
+                  paginatedTerminologies={paginatedTerminologies}
+                  selectedTerminologies={selectedTerminologies}
+                  setSelectedTerminologies={setSelectedTerminologies}
+                  componentString={componentString}
+                  setPrefTerminologies={setPrefTerminologies}
                 />
-              )}
+              </div>
             </div>
-          </div>
-        </Form>
+          </Form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

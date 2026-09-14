@@ -1,11 +1,21 @@
-import { Form, Input, message, Modal, notification, Select, Space } from 'antd';
+import {
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Select,
+  Space,
+  Spin
+} from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import EditDataTypeSubForm from './EditDataTypeSubForm';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const EditVariable = ({
   editRow,
@@ -14,7 +24,7 @@ export const EditVariable = ({
   table,
   setTable,
   form,
-  setSelectedKey,
+  setSelectedKey
 }) => {
   const { TextArea } = Input;
   const { vocabUrl, user } = useContext(myContext);
@@ -32,7 +42,7 @@ export const EditVariable = ({
         min: tableData?.min,
         max: tableData?.max,
         units: tableData?.units,
-        enumerations: { reference: tableData?.enumerations?.reference },
+        enumerations: { reference: tableData?.enumerations?.reference }
       });
       setType(tableData.data_type);
     }
@@ -62,8 +72,8 @@ export const EditVariable = ({
     setLoading(true);
     const updatedName = {
       variable: {
-        [`${tableData.name}`]: `${values.name}`,
-      },
+        [`${tableData.name}`]: `${values.name}`
+      }
     };
 
     // If there is a change in the variable name, the name is first sent to the 'rename' endpoint
@@ -73,27 +83,29 @@ export const EditVariable = ({
     // endpoint with a PUT request to edit the data for the variable.
     if (!table.variables.some(item => item?.name === values?.name)) {
       handlePatch(vocabUrl, 'Table', table, {
-        ...updatedName,
+        ...updatedName
       })
         .catch(error => {
           if (error) {
             notification.error({
               message: 'Error',
-              description: 'An error occurred updating the name.',
+              description: 'An error occurred updating the name.'
             });
           }
           return error;
         })
         .then(() => {
-          fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values),
-            // body: JSON.stringify({ ...values, editor: user.email }),
-          })
+          fetch(
+            `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
+            {
+              method: 'PUT',
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(values)
+            }
+          )
             .then(res => {
               if (res.ok) {
                 return res.json();
@@ -120,7 +132,7 @@ export const EditVariable = ({
                 notification.error({
                   message: 'Error',
                   description:
-                    'An error occurred loading mappings. Please try again.',
+                    'An error occurred loading mappings. Please try again.'
                 });
               }
               return error;
@@ -129,14 +141,16 @@ export const EditVariable = ({
         );
     } else {
       setLoading(true);
-      fetch(`${vocabUrl}/Table/${table.id}/variable/${values.name}`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // body: JSON.stringify({ ...values, editor: user.email }),
-      })
+      fetch(
+        `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
+        {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
         .then(res => {
           if (res.ok) {
             return res.json();
@@ -154,7 +168,7 @@ export const EditVariable = ({
           if (error) {
             notification.error({
               message: 'Error',
-              description: 'An error occurred editing the variable.',
+              description: 'An error occurred editing the variable.'
             });
           }
           return error;
@@ -173,7 +187,7 @@ export const EditVariable = ({
                 notification.error({
                   message: 'Error',
                   description:
-                    'An error occurred loading mappings. Please try again.',
+                    'An error occurred loading mappings. Please try again.'
                 });
               }
               return error;
@@ -203,92 +217,93 @@ export const EditVariable = ({
             setSelectedKey(null);
           }}
           maskClosable={false}
-          destroyOnClose={true}
+          destroyOnHidden={true}
           cancelButtonProps={{ disabled: loading }}
           okButtonProps={{ disabled: loading }}
           closeIcon={false}
         >
-          {loading ? (
-            <ModalSpinner />
-          ) : (
-            <Form form={form} layout="vertical" preserve={false}>
-              <Space
-                style={{
-                  display: 'flex',
-                  marginBottom: 3,
-                }}
-                align="baseline"
-              >
-                <Form.Item
-                  name={['name']}
-                  label="Variable name"
-                  rules={[
-                    { required: true, message: 'Variable name is required.' },
-                    { validator: validateUnique },
-                  ]}
-                >
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '15vw',
-                    }}
-                    autoFocus
-                  />
-                </Form.Item>
-                <Form.Item
-                  name={['description']}
-                  label="Variable description"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Variable description is required.',
-                    },
-                  ]}
-                >
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '39vw',
-                    }}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Data Type"
-                  name={['data_type']}
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Select data type.',
-                    },
-                  ]}
-                >
-                  <Select
-                    value={form.getFieldValue('data_type')}
-                    style={{ width: '10vw' }}
-                    placeholder="Select data type"
-                    onChange={value => {
-                      form.setFieldsValue({ data_type: value });
-                      setType(value);
-                    }}
-                    options={[
-                      { value: 'STRING', label: 'String' },
-                      { value: 'INTEGER', label: 'Integer' },
-                      { value: 'QUANTITY', label: 'Quantity' },
-                      { value: 'ENUMERATION', label: 'Enumeration' },
-                    ]}
-                  />
-                </Form.Item>
-              </Space>
-              <EditDataTypeSubForm
-                setLoading={setLoading}
-                type={type}
-                setType={setType}
-                form={form}
-                editRow={editRow}
-                tableData={tableData}
-              />
-            </Form>
+          {loading && (
+            <div className="loading_overlay_modal">
+              <Spin />
+            </div>
           )}
+          <Form form={form} layout="vertical" preserve={false}>
+            <Space
+              style={{
+                display: 'flex',
+                marginBottom: 3
+              }}
+              align="baseline"
+            >
+              <Form.Item
+                name={['name']}
+                label="Variable name"
+                rules={[
+                  { required: true, message: 'Variable name is required.' },
+                  { validator: validateUnique }
+                ]}
+              >
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '15vw'
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item
+                name={['description']}
+                label="Variable description"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Variable description is required.'
+                  }
+                ]}
+              >
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '39vw'
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Data Type"
+                name={['data_type']}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Select data type.'
+                  }
+                ]}
+              >
+                <Select
+                  value={form.getFieldValue('data_type')}
+                  style={{ width: '10vw' }}
+                  placeholder="Select data type"
+                  onChange={value => {
+                    form.setFieldsValue({ data_type: value });
+                    setType(value);
+                  }}
+                  options={[
+                    { value: 'STRING', label: 'String' },
+                    { value: 'INTEGER', label: 'Integer' },
+                    { value: 'QUANTITY', label: 'Quantity' },
+                    { value: 'ENUMERATION', label: 'Enumeration' }
+                  ]}
+                />
+              </Form.Item>
+            </Space>
+            <EditDataTypeSubForm
+              setLoading={setLoading}
+              type={type}
+              setType={setType}
+              form={form}
+              editRow={editRow}
+              tableData={tableData}
+            />
+          </Form>
         </Modal>
       )}
     </>

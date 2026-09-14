@@ -1,27 +1,18 @@
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Spinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 const { Meta } = Card;
-import {
-  Row,
-  Col,
-  Divider,
-  Skeleton,
-  Card,
-  notification,
-  Form,
-  Button,
-} from 'antd';
+import { Card, Col, Divider, Form, notification, Row, Spin } from 'antd';
 import './DDStyling.scss';
 import { getById } from '../../Manager/FetchManager';
-import { ellipsisString } from '../../Manager/Utility';
 import { SettingsDropdown } from '../../Manager/Dropdown/SettingsDropdown';
 import { EditDDDetails } from './EditDDDetails';
 import { UploadTable } from '../Tables/UploadTable';
 import { RemoveTableDD } from './RemoveTableDD';
 import { DeleteDD } from './DeleteDD';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
 
 export const DDDetails = () => {
   const [form] = Form.useForm();
@@ -33,7 +24,7 @@ export const DDDetails = () => {
     setEdit,
     dataDictionary,
     setDataDictionary,
-    user,
+    user
   } = useContext(myContext);
   const { studyId, DDId } = useParams();
 
@@ -62,11 +53,11 @@ export const DDDetails = () => {
   // if a DD was fetched, calls the getDDTables function to fetch the tables.
   // otherwise sets loading to false.
   useEffect(() => {
-    document.title = 'Data Dictionary - Map Dragon';
+    document.title = 'Data Dictionary - MapDragon';
   }, []);
   useEffect(() => {
     setLoading(true);
-    getById(vocabUrl, 'DataDictionary', DDId)
+    getById(vocabUrl, 'DataDictionary', DDId, navigate)
       .then(data => {
         if (data === null) {
           navigate('/404');
@@ -83,7 +74,7 @@ export const DDDetails = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -96,130 +87,137 @@ export const DDDetails = () => {
 
   return (
     <>
-      {loading ? (
-        // If page is loading, display loading spinner. Otherwise display code below
-        <Spinner />
-      ) : (
-        <div className="studies_container">
-          <Row gutter={30}>
-            <div className="study_details_container">
-              <Col span={15}>
-                <div className="study_details">
-                  <div className="study_name">
-                    {/* Displays DD name if there is one. If no name, displays DD id */}
-
-                    <h2>
-                      {dataDictionary?.name
-                        ? dataDictionary?.name
-                        : dataDictionary?.id}
-                    </h2>
-                  </div>
-                  <div className="study_desc">
-                    {/* Displays the DD description if there is one.
-                    If there is no description, 'No description provided' is displayed in a gray font */}
-                    {dataDictionary?.description ? (
-                      dataDictionary?.description
-                    ) : (
-                      <span className="no_description">
-                        No description provided.
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </Col>
-              <Col span={6}>
-                <div className="study_details_right">
-                  <div className="study_dropdown">
-                    <SettingsDropdown dataDictionary={dataDictionary} />
-                  </div>
-                </div>
-              </Col>
-            </div>
-          </Row>
-          <Divider orientation="left" orientationMargin="0" className="divider">
-            <h4>Tables</h4>
-          </Divider>
-          <div className="study_details_cards_container">
-            <Row gutter={[20, 24]}>
-              <Col span={6}>
-                {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
-                and triggers the modal to open*/}
-                <span onClick={() => (user ? setAddTable(true) : login())}>
-                  <Card
-                    hoverable
-                    bordered={true}
-                    style={{
-                      border: '1px solid darkgray',
-                      height: '42vh',
-                    }}
-                  >
-                    <div className="new_study_card_container">
-                      <div className="new_study_card">Upload Table</div>
-                    </div>
-                  </Card>
-                </span>
-              </Col>
-              {/* Cards with table information associated with the DD. */}
-              {tablesDD?.map((table, index) => (
-                <Col key={index} span={6}>
-                  {/* Displays the name if one is available or the id if there is no name.
-                  Links to view the details of the table via the 'View/Edit' button. */}
-                  <Card
-                    key={index}
-                    title={table?.name ? table?.name : table?.id}
-                    bordered={true}
-                    style={{
-                      border: '1px solid darkgray',
-                      height: '42vh',
-                    }}
-                    actions={[
-                      // Button to remove a table from a DD
-                      <RemoveTableDD
-                        DDId={DDId}
-                        table={table}
-                        getDDTables={getDDTables}
-                      />,
-                      <Link
-                        to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${table?.id}`}
-                      >
-                        <button className="manage_term_button">
-                          View / Edit
-                        </button>
-                        ,
-                      </Link>,
-                    ]}
-                  >
-                    <Skeleton loading={loading}>
-                      {/* Displays the description up to 180 characters, truncated with ellipsis. */}
-
-                      <Meta
-                        style={{
-                          height: '15vh',
-                          border: '1px lightgray solid',
-                          borderRadius: '5px',
-                          padding: '5px',
-                        }}
-                        description={ellipsisString(table?.description, '180')}
-                      />
-                      {/* Displays the number of variables associated with the table
-                       by getting the length of the variables array in the table */}
-                      <Meta
-                        style={{
-                          padding: '0 5px',
-                          margin: '3vh 0 0 0',
-                        }}
-                        description={
-                          '# of variables: ' + table?.variables.length
-                        }
-                      />
-                    </Skeleton>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </div>
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
         </div>
       )}
+      <div className="studies_container">
+        <Row gutter={30}>
+          <div className="study_details_container">
+            <Col span={15}>
+              <div className="study_details">
+                <div className="study_name">
+                  {/* Displays DD name if there is one. If no name, displays DD id */}
+
+                  <h2>
+                    {dataDictionary?.name
+                      ? dataDictionary?.name
+                      : dataDictionary?.id}
+                  </h2>
+                </div>
+                <div className="study_desc">
+                  {/* Displays the DD description if there is one.
+                    If there is no description, 'No description provided' is displayed in a gray font */}
+                  {dataDictionary?.description ? (
+                    dataDictionary?.description
+                  ) : (
+                    <span className="no_description">
+                      No description provided.
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className="study_details_right">
+                <div className="study_dropdown">
+                  <SettingsDropdown component={dataDictionary?.tables} />
+                </div>
+                <div className="component_id">
+                  <b>ID</b>: {dataDictionary?.id}
+                </div>
+              </div>
+            </Col>
+            <ExportFile
+              componentString="DataDictionary"
+              component={dataDictionary}
+            />
+          </div>
+        </Row>
+        <Divider orientation="left" orientationMargin="0" className="divider">
+          <h4>Tables</h4>
+        </Divider>
+        <div className="study_details_cards_container">
+          <Row gutter={[20, 24]}>
+            <Col span={6}>
+              {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
+                and triggers the modal to open*/}
+              <span onClick={() => (user ? setAddTable(true) : login())}>
+                <Card
+                  hoverable
+                  style={{
+                    border: '1px solid darkgray',
+                    height: '350px'
+                  }}
+                >
+                  <div className="new_study_card_container">
+                    <div className="new_study_card">Upload Table</div>
+                  </div>
+                </Card>
+              </span>
+            </Col>
+            {/* Cards with table information associated with the DD. */}
+            {tablesDD?.map((table, index) => (
+              <Col key={index} span={6}>
+                {/* Displays the name if one is available or the id if there is no name.
+                  Links to view the details of the table via the 'View/Edit' button. */}
+                <Link
+                  to={`/Study/${studyId}/DataDictionary/${DDId}/Table/${table?.id}`}
+                >
+                  <Card
+                    key={index}
+                    hoverable
+                    title={table?.name ? table?.name : table?.id}
+                    style={{
+                      border: '1px solid darkgray',
+                      height: '350px'
+                    }}
+                  >
+                    {/* Displays the description up to 180 characters, truncated with ellipsis. */}
+
+                    <Meta
+                      style={{
+                        height: '125px',
+                        border: '1px lightgray solid',
+                        borderRadius: '5px',
+                        padding: '5px'
+                      }}
+                      description={
+                        <div style={{ height: '115px', overflowY: 'auto' }}>
+                          {table?.description}
+                        </div>
+                      }
+                    />
+                    {/* Displays the number of variables associated with the table
+                       by getting the length of the variables array in the table */}
+                    <Meta
+                      style={{
+                        padding: '0 5px',
+                        margin: '22px 0 0 0'
+                      }}
+                      description={
+                        <div className="card_description">
+                          <div>
+                            {'# of variables: ' + table?.variables.length}
+                          </div>
+                          <div>
+                            <RemoveTableDD
+                              DDId={DDId}
+                              table={table}
+                              getDDTables={getDDTables}
+                            />
+                          </div>
+                        </div>
+                      }
+                    />
+                  </Card>
+                </Link>
+              </Col>
+            ))}
+          </Row>
+        </div>
+      </div>
 
       {/* Displays the edit form */}
       <EditDDDetails

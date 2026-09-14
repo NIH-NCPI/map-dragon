@@ -1,9 +1,10 @@
-import { Button, Form, Input, Modal, notification } from 'antd';
+import { Button, Form, Input, Modal, notification, Spin } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ModalSpinner } from '../Spinner';
+import '../Spinner.scss';
 import { getById } from '../FetchManager';
+import { uriEncoded } from '../Utility';
 
 export const MappingComments = ({
   mappingCode,
@@ -13,7 +14,7 @@ export const MappingComments = ({
   setComment,
   idProp,
   setMapping,
-  component,
+  component
 }) => {
   const [form] = Form.useForm();
   const { vocabUrl, user } = useContext(myContext);
@@ -35,12 +36,15 @@ export const MappingComments = ({
   const getComments = () => {
     setLoading(true);
     return fetch(
-      `${vocabUrl}/${component}/${idProp}/user_input/${variableMappings}/mapping/${mappingCode}/mapping_conversations`,
+      `${vocabUrl}/${component}/${idProp}/user_input/${uriEncoded(
+        variableMappings
+      )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
         method: 'GET',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       }
     )
       .then(res => {
@@ -55,7 +59,7 @@ export const MappingComments = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the comment.',
+            description: 'An error occurred saving the comment.'
           });
         }
         return error;
@@ -66,17 +70,20 @@ export const MappingComments = ({
   const onFinish = values => {
     const mappingCommentDTO = {
       editor: user?.email,
-      note: values.comment,
+      note: values.comment
     };
 
     return fetch(
-      `${vocabUrl}/${component}/${idProp}/user_input/${variableMappings}/mapping/${mappingCode}/mapping_conversations`,
+      `${vocabUrl}/${component}/${idProp}/user_input/${uriEncoded(
+        variableMappings
+      )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingCommentDTO),
+        body: JSON.stringify(mappingCommentDTO)
       }
     )
       .then(res => {
@@ -91,7 +98,7 @@ export const MappingComments = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred saving the comment.',
+            description: 'An error occurred saving the comment.'
           });
         }
         return error;
@@ -107,7 +114,7 @@ export const MappingComments = ({
             if (error) {
               notification.error({
                 message: 'Error',
-                description: 'An error occurred loading mappings.',
+                description: 'An error occurred loading mappings.'
               });
             }
             return error;
@@ -124,7 +131,7 @@ export const MappingComments = ({
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true,
+      hour12: true
     });
   };
 
@@ -149,13 +156,13 @@ export const MappingComments = ({
           body: {
             minHeight: '60vh',
             maxHeight: '60vh',
-            overflowY: 'auto',
-          },
+            overflowY: 'auto'
+          }
         }}
         footer={[<Button onClick={onClose}>Close</Button>]}
         maskClosable={false}
         closeIcon={false}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <span className="comment_code_display">{variableDisplay}: </span>
         {mappingDisplay ? mappingDisplay : mappingCode}
@@ -175,7 +182,7 @@ export const MappingComments = ({
               rows={1}
               style={{
                 width: 500,
-                resize: 'vertical',
+                resize: 'vertical'
               }}
               showCount
               maxLength={1000}
@@ -189,11 +196,12 @@ export const MappingComments = ({
             </Button>
           </Form.Item>
         </Form>
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          mappingComments?.map((mc, i) => commentDisplay(mc, i))
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        {mappingComments?.map((mc, i) => commentDisplay(mc, i))}
       </Modal>
     </>
   );

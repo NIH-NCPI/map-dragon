@@ -4,10 +4,9 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { EditCode } from './EditCode';
 import { ShowHistory } from '../../Manager/ShowHistory';
-import { getById } from '../../Manager/FetchManager';
-import { AssignMappings } from '../../Manager/MappingsFunctions/AssignMappings';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const TerminologyMenu = ({
   tableData,
@@ -19,7 +18,7 @@ export const TerminologyMenu = ({
   mapping,
   setEditMappings,
   setGetMappings,
-  prefTerminologies,
+  prefTerminologies
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, selectedKey, setSelectedKey, user } = useContext(myContext);
@@ -45,7 +44,7 @@ export const TerminologyMenu = ({
     setAssignMappings(tableData.key);
   };
   const loginAssignMappings = RequiredLogin({
-    handleSuccess: passAssignMappings,
+    handleSuccess: passAssignMappings
   });
 
   const passEditMappings = () => {
@@ -71,9 +70,8 @@ export const TerminologyMenu = ({
       method: 'DELETE',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
-      },
-      // body: JSON.stringify({ editor: user.email }),
+        'Content-Type': 'application/json'
+      }
     })
       .then(res => {
         if (res.ok) {
@@ -84,12 +82,15 @@ export const TerminologyMenu = ({
         } else {
           notification.error({
             message: 'Error',
-            description: 'An error occurred deleting the code.',
+            description: 'An error occurred deleting the code.'
           });
         }
       })
       .then(() => {
-        return fetch(`${vocabUrl}/Terminology/${terminology.id}`);
+        return fetch(`${vocabUrl}/Terminology/${terminology.id}`, {
+          method: 'GET',
+          credentials: 'include'
+        });
       })
       .then(res => {
         if (res.ok) {
@@ -99,7 +100,7 @@ export const TerminologyMenu = ({
         } else {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading the Terminology.',
+            description: 'An error occurred loading the Terminology.'
           });
         }
       });
@@ -122,16 +123,9 @@ export const TerminologyMenu = ({
       onCancel() {
         setDeleteRow(false);
         setSelectedKey(null);
-      },
+      }
     });
   };
-
-  // Matches the code in the tableData to the code in the mappings to see if a code has mappings
-  const showEditMappings =
-    mapping?.length > 0 &&
-    mapping?.some(m => {
-      return m?.code === item?.code && m?.mappings?.length > 0;
-    });
 
   // Menu items
   const items = [
@@ -143,19 +137,10 @@ export const TerminologyMenu = ({
         { key: `${tableData.key}-2`, label: 'Delete' },
         {
           key: `${tableData.key}-3`,
-          label:
-            prefTerminologies?.length > 0 && !showEditMappings
-              ? 'Assign Mappings'
-              : showEditMappings
-              ? 'Mappings'
-              : 'Get Mappings',
-        },
-        {
-          key: `${tableData.key}-4`,
-          label: 'History',
-        },
-      ],
-    },
+          label: 'History'
+        }
+      ]
+    }
   ];
 
   // onClick function for Menu.
@@ -170,20 +155,6 @@ export const TerminologyMenu = ({
       case `${tableData.key}-2`:
         return user ? setDeleteRow(true) : loginDelete();
       case `${tableData.key}-3`:
-        return prefTerminologies.length > 0 && !showEditMappings
-          ? user
-            ? setAssignMappings(tableData.key)
-            : loginAssignMappings()
-          : showEditMappings
-          ? // If mappings exist for a code, sets editMappings to the code and opens EditMappingsTableModal in turn
-            user
-            ? setEditMappings(item)
-            : loginEditMappings()
-          : // If mappings do not exist for a code, sets getMappings to the code and opens GetMappingsModal in turn
-          user
-          ? setGetMappings(item)
-          : loginGetMappings();
-      case `${tableData.key}-4`:
         return setShowHistory(tableData.key);
     }
   };
@@ -218,13 +189,6 @@ export const TerminologyMenu = ({
         tableData={tableData}
         setSelectedKey={setSelectedKey}
         code={tableData.code}
-      />
-      <AssignMappings
-        tableData={tableData}
-        setSelectedKey={setSelectedKey}
-        terminology={terminology}
-        assignMappings={assignMappings}
-        setAssignMappings={setAssignMappings}
       />
     </>
   );

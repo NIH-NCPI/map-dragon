@@ -8,10 +8,11 @@ export const RequiredLogin = ({ handleSuccess }) => {
     onSuccess: tokenResponse => {
       fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${tokenResponse?.access_token}`,
-        },
+          Authorization: `Bearer ${tokenResponse?.access_token}`
+        }
       })
         .then(res => res.json())
         .then(data => {
@@ -24,7 +25,7 @@ export const RequiredLogin = ({ handleSuccess }) => {
     },
     onError: () => {
       console.log('Login Failed');
-    },
+    }
   });
 
   return login;

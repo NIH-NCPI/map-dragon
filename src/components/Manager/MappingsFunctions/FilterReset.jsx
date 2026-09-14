@@ -1,79 +1,70 @@
 import { Button, message, Modal, notification } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { useParams } from 'react-router-dom';
+import { getById } from '../FetchManager';
 
-export const FilterReset = ({ table, terminology, setExistingOntologies }) => {
+export const FilterReset = ({
+  table,
+  terminology,
+  setExistingOntologies,
+  setExistingPreferred,
+  setPrefTerminologies,
+  componentString
+}) => {
   const { confirm } = Modal;
 
   const { user, vocabUrl } = useContext(myContext);
   const { preferenceTypeSet } = useContext(SearchContext);
   const [remove, setRemove] = useState(false);
 
-  const deleteOntologies = evt => {
-    // If deleting from a table, 'self' in endpoint
-    // If deleting from a terminology, the terminology code in endpoint
-    return fetch(
-      `${vocabUrl}/${
-        table
-          ? `Table/${table.id}/filter/self`
-          : `Terminology/${terminology.id}/filter`
-      }`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-      .then(res => {
-        if (res.ok) {
-          return res.json().then(data => {
-            setExistingOntologies([]);
-            message.success('Ontology filters deleted successfully.');
-          });
-        } else {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred deleting the table.',
-          });
+  useEffect(() => {
+    if (remove) {
+      showConfirm();
+    }
+  }, [remove]);
+
+  const deleteOntologies = async evt => {
+    try {
+      const ontoDelete = await fetch(
+        `${vocabUrl}/${
+          table
+            ? `Table/${table.id}/filter/self`
+            : `Terminology/${terminology.id}/filter`
+        }`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ editor: user.email })
         }
-      })
-      .then(() =>
-        // Fetch the updated api preferences
-        fetch(
-          `${vocabUrl}/${
-            table
-              ? `Table/${table.id}/filter/self`
-              : `Terminology/${terminology.id}/filter`
-          }`,
-          {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        )
-      )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          notification.error({
-            message: 'Error',
-            description: `An error occurred loading the ${
-              table ? 'table' : 'terminology'
-            }.`,
-          });
+      );
+
+      const terminologyDelete = await fetch(
+        `${vocabUrl}/${componentString}/${
+          table ? table.id : terminology.id
+        }/preferred_terminology`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ editor: user.email })
         }
-      })
-      .then(data => {
-        preferenceTypeSet(data);
+      );
+
+      setExistingOntologies([]);
+      setExistingPreferred([]);
+      setPrefTerminologies([]);
+      preferenceTypeSet({ self: { api_preference: {} } });
+      message.success('Filters deleted successfully.');
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: 'An error occurred deleting preferences.'
       });
+    }
   };
 
   const showConfirm = () => {
@@ -89,7 +80,7 @@ export const FilterReset = ({ table, terminology, setExistingOntologies }) => {
       },
       onCancel() {
         setRemove(false);
-      },
+      }
     });
   };
 
@@ -98,7 +89,6 @@ export const FilterReset = ({ table, terminology, setExistingOntologies }) => {
       <Button danger onClick={() => (user ? setRemove(true) : login())}>
         Reset
       </Button>
-      {remove && showConfirm()}
     </>
   );
 };

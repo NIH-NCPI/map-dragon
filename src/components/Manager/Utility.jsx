@@ -74,12 +74,35 @@ export const mappingTooltip = code => {
 // Shortened display for mapping relationships in tables
 export const relationshipDisplay = variable =>
   variable?.mapping_relationship === 'equivalent'
-    ? '(equivalent)'
+    ? 'is equivalent to'
     : variable.mapping_relationship === 'source-is-narrower-than-target'
-    ? '(narrower)'
-    : variable?.mapping_relationship === 'source-is-broader-than-target'
-    ? '(broader)'
-    : '';
+      ? 'is narrower than'
+      : variable?.mapping_relationship === 'source-is-broader-than-target'
+        ? 'is broader than'
+        : '';
+
+//URI encoding for "." and ".."
+export const uriEncoded = text => {
+  if (text === '.') {
+    return text.replace('.', '<FTD-DOT>');
+  } else if (text === '..') {
+    return text.replace('..', '<FTD-DOT-DOT>');
+  } else if (text.includes('#')) {
+    return text.replaceAll('#', '<FTD-HASH>');
+  }
+  return text;
+};
+
+export const cleanedSearchTerm = term => {
+  const chars = {
+    '_': ' ',
+    '|': ' ',
+    '#': ' '
+  };
+
+  term = term?.replace(/[_|#]/g, m => chars[m]);
+  return term;
+};
 
 export const votesCount = code => {
   const calculatedCount =

@@ -1,5 +1,5 @@
-@import '../../Styling/BackgroundImage';
-@import '../../Styling/Variables';
+@use '../../Styling/BackgroundImage' as background;
+@use '../../Styling/Variables' as *;
 
 .table_id_container {
   margin: 5vh 0 13vh 5%; //Make 10vh bottom without export button
@@ -76,29 +76,17 @@ input::file-selector-button:hover {
   margin-left: 50px;
 }
 
-.mapping {
-  &-display {
-    white-space: nowrap;
-  }
-  display: flex;
-  .remove-mapping {
-    padding-left: 0.25rem;
-    cursor: pointer;
-    opacity: 0;
-
-    &:hover {
-      transition: all 0.4s linear;
-      opacity: 1;
-    }
+.stylized_link {
+  color: $lightBlue;
+  cursor: pointer;
+  &:hover {
+    color: $darkBlue;
+    transition: all 0.4s linear;
   }
 }
 
-.mapping_relationship {
-  padding: 2px 6px;
-  border: 1px solid $greyColor;
-  border-radius: 4px;
-  &:hover {
-    background-color: rgb(245, 245, 245);
-    transition: all 0.3s linear;
-  }
+.ant-table-header {
+  overflow-x: auto !important;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

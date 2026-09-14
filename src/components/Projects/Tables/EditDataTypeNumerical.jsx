@@ -9,7 +9,7 @@ export const EditDataTypeNumerical = ({ type, form, tableData }) => {
     return {
       key: i,
       value: `ucum:${uc.code}`,
-      label: uc.display,
+      label: uc.display
     };
   });
 
@@ -46,25 +46,25 @@ export const EditDataTypeNumerical = ({ type, form, tableData }) => {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'space-evenly',
+          justifyContent: 'space-evenly'
         }}
       >
         <Form.Item
           preserve={false}
           style={{
-            flex: 1,
+            flex: 1
           }}
           label="Min"
           name={['min']}
           rules={[
             {
-              validator: validateMinMax,
-            },
+              validator: validateMinMax
+            }
           ]}
         >
           <InputNumber
             style={{
-              width: '15vw',
+              width: '15vw'
             }}
             placeholder="Min"
             autoFocus
@@ -79,13 +79,13 @@ export const EditDataTypeNumerical = ({ type, form, tableData }) => {
           name={['max']}
           rules={[
             {
-              validator: validateMinMax,
-            },
+              validator: validateMinMax
+            }
           ]}
         >
           <InputNumber
             style={{
-              width: '15vw',
+              width: '15vw'
             }}
             placeholder="Max"
             onChange={handleFieldChange}
@@ -95,9 +95,10 @@ export const EditDataTypeNumerical = ({ type, form, tableData }) => {
         </Form.Item>
         <Form.Item preserve={false} label="Units" name={['units']}>
           <Select
+            allowClear
             showSearch
             style={{
-              width: '100%',
+              width: '100%'
             }}
             defaultValue={tableData?.units || undefined}
             placeholder="Select UCUM units"

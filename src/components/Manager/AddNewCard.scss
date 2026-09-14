@@ -1,17 +1,18 @@
 .new_study_card_container {
   display: flex;
   flex-flow: row wrap;
-  font-size: 2rem;
-  height: 20vh;
+  height: 175px;
   border: 1px lightgray solid;
   border-radius: 5px;
   padding: 5px;
-  margin: 6vh 0 0 0;
+  margin: 50px 0 0 0;
   align-items: center;
   justify-content: center;
+  container-type: inline-size;
 }
 
 .new_study_card {
   display: flex;
+  font-size: clamp(1rem, 20cqi, 2rem);
   text-align: center;
 }

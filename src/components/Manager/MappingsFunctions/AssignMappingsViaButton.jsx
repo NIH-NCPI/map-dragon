@@ -1,62 +1,43 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Form, message, Modal, notification } from 'antd';
 import { AssignMappingsCheckboxes } from '../../Manager/MappingsFunctions/AssignMappingsCheckboxes';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ModalSpinner } from '../../Manager/Spinner';
 import { ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
   setAssignMappingsViaButton,
-  terminology,
+  component,
+  componentString
 }) => {
   const [form] = Form.useForm();
 
   const { vocabUrl, user } = useContext(myContext);
+  const { setActiveTerms } = useContext(MappingContext);
   const {
-    prefTerminologies,
     setApiResults,
     preferenceType,
     prefTypeKey,
     apiPreferencesCode,
+    setSelectedApi
   } = useContext(SearchContext);
   const { setMapping, idsForSelect, setIdsForSelect } =
     useContext(MappingContext);
   const [terminologiesToMap, setTerminologiesToMap] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [mappingProp, setMappingProp] = useState('');
   const [selectedBoxes, setSelectedBoxes] = useState([]);
 
   const onClose = () => {
     setApiResults([]);
     setSelectedBoxes([]);
     setIdsForSelect([]);
+    setSelectedApi(null);
+    setTerminologiesToMap([]);
+    setActiveTerms([]);
   };
-  const fetchTerminologies = () => {
-    setLoading(true);
-    const fetchPromises = prefTerminologies?.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
-    );
-
-    Promise.all(fetchPromises)
-      .then(results => {
-        // Once all fetch calls are resolved, set the combined data
-        setTerminologiesToMap(results);
-      })
-      .catch(error => {
-        notification.error({
-          message: 'Error',
-          description: 'An error occurred. Please try again.',
-        });
-      })
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    fetchTerminologies();
-  }, [assignMappingsViaButton]);
 
   const handleSubmit = values => {
     setLoading(true);
@@ -67,21 +48,23 @@ export const AssignMappingsViaButton = ({
         ? item.description?.map(d => d).join(',')
         : item.description,
       system: item.system,
-      mapping_relationship: idsForSelect[item.code],
+      mapping_relationship: idsForSelect[item.code]
     }));
     const mappingsDTO = {
-      mappings: selectedMappings,
-      // editor: user.email,
+      mappings: selectedMappings
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminology.id}/mapping/${assignMappingsViaButton.code}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
+        assignMappingsViaButton?.code
+      )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -92,27 +75,39 @@ export const AssignMappingsViaButton = ({
         }
       })
       .then(data => {
-        setMapping(data.codes);
+        if (data) setMapping(data.codes);
         form.resetFields();
         setAssignMappingsViaButton(false);
         message.success('Changes saved successfully.');
       })
+      .then(() =>
+        ontologyFilterCodeSubmit(
+          apiPreferencesCode,
+          preferenceType,
+          prefTypeKey,
+          assignMappingsViaButton.code,
+          vocabUrl,
+          component,
+          componentString,
+          notification
+        )
+      )
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred saving the ontology preferences.'
+          });
+        }
+        return error;
+      })
       .finally(() => setLoading(false));
-    ontologyFilterCodeSubmit(
-      apiPreferencesCode,
-      preferenceType,
-      prefTypeKey,
-      assignMappingsViaButton?.code,
-      vocabUrl,
-      null,
-      terminology
-    );
   };
 
   return (
     <Modal
       open={!!assignMappingsViaButton}
-      width={'60%'}
+      width={'70%'}
       onOk={() => {
         form.validateFields().then(values => {
           handleSubmit(values);
@@ -124,36 +119,29 @@ export const AssignMappingsViaButton = ({
         onClose();
         setAssignMappingsViaButton(false);
       }}
-      styles={{
-        body: {
-          minHeight: '55vh',
-          maxHeight: '55vh',
-          overflowY: 'auto',
-        },
-      }}
+      styles={{ body: { height: '60vh', overflowY: 'auto' } }}
       closeIcon={false}
       maskClosable={false}
-      destroyOnClose={true}
+      destroyOnHidden={true}
       cancelButtonProps={{ disabled: loading }}
       okButtonProps={{ disabled: loading }}
     >
-      {loading ? (
-        <ModalSpinner />
-      ) : (
-        <AssignMappingsCheckboxes
-          form={form}
-          terminologiesToMap={terminologiesToMap}
-          setTerminologiesToMap={setTerminologiesToMap}
-          selectedBoxes={selectedBoxes}
-          setSelectedBoxes={setSelectedBoxes}
-          mappingProp={
-            assignMappingsViaButton?.display
-              ? assignMappingsViaButton.display
-              : assignMappingsViaButton?.code
-          }
-          terminology={terminology}
-        />
-      )}
+      <AssignMappingsCheckboxes
+        form={form}
+        terminologiesToMap={terminologiesToMap}
+        setTerminologiesToMap={setTerminologiesToMap}
+        selectedBoxes={selectedBoxes}
+        setSelectedBoxes={setSelectedBoxes}
+        mappingProp={
+          assignMappingsViaButton?.display
+            ? assignMappingsViaButton.display
+            : assignMappingsViaButton?.code
+        }
+        mappingDesc={assignMappingsViaButton?.description}
+        component={component}
+        componentString={componentString}
+        loading={loading}
+      />
     </Modal>
   );
 };

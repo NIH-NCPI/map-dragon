@@ -1,5 +1,5 @@
-@import '../Styling/Variables';
-@import '../Styling/BackgroundImage.scss';
+@use '../Styling/Variables' as *;
+@use '../Styling/BackgroundImage.scss' as background;
 
 .results_page_container {
   background: white;
@@ -36,7 +36,7 @@
 }
 
 .search_results {
-  margin-top: 90px;
+  margin-top: 150px;
   background-color: none;
   z-index: 1;
 }

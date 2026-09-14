@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './OntologySearch.scss';
 import { useNavigate } from 'react-router-dom';
+import { cleanedSearchTerm } from '../Manager/Utility';
 
 export const OntologySearch = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -9,7 +10,7 @@ export const OntologySearch = () => {
   const ref = useRef();
 
   useEffect(() => {
-    document.title = 'Map Dragon';
+    document.title = 'MapDragon';
   }, []);
   const searchOnEnter = e => {
     /* if the input field has a value (i.e. term being searched), the value is transposed into the address bar. 
@@ -17,7 +18,7 @@ export const OntologySearch = () => {
     */
     if (e.key === 'Enter') {
       if (ref.current.value) {
-        navigate(`/search/${ref.current.value}`);
+        navigate(`/search/${cleanedSearchTerm(ref.current.value)}`);
       }
     }
   };

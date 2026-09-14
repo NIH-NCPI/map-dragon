@@ -1,13 +1,27 @@
-import { Button, Form, message, Modal, notification, Pagination } from 'antd';
+import {
+  Button,
+  Form,
+  message,
+  Modal,
+  notification,
+  Pagination,
+  Spin
+} from 'antd';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterAPI } from './FilterAPI';
 import { getOntologies } from '../FetchManager';
-import { ModalSpinner } from '../Spinner';
+import '../Spinner.scss';
 import { SearchContext } from '../../../Contexts/SearchContext';
+import { MappingContext } from '../../../Contexts/MappingContext';
 
-export const FilterSelect = ({ component, table, terminology }) => {
+export const FilterSelect = ({
+  component,
+  table,
+  terminology,
+  componentString
+}) => {
   const [form] = Form.useForm();
 
   const [addFilter, setAddFilter] = useState(false);
@@ -18,22 +32,34 @@ export const FilterSelect = ({ component, table, terminology }) => {
   const [displaySelectedOntologies, setDisplaySelectedOntologies] = useState(
     []
   );
+  const [selectedTerminologies, setSelectedTerminologies] = useState([]);
+
   const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [displaySelectedTerminologies, setDisplaySelectedTerminologies] =
+    useState([]);
+  const [terminologies, setTerminologies] = useState([]);
   const { user, vocabUrl, ontologyForPagination } = useContext(myContext);
   const {
     ontologyApis,
     setOntologyApis,
-    apiPreferences,
     preferenceTypeSet,
     preferenceType,
     prefTypeKey,
     searchText,
     setSearchText,
+    prefTerminologies,
+    existingPreferred,
+    setExistingPreferred,
+    preferredData,
+    setPreferredData,
+    setPrefTerminologies
   } = useContext(SearchContext);
+  const { setActiveTerms } = useContext(MappingContext);
 
   useEffect(() => {
     setExistingOntologies(initialChecked);
+    setExistingPreferred(initialCheckedTerm);
   }, [addFilter]);
 
   const existingFilters = Object.values(
@@ -45,7 +71,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
       Object.keys(item).map(key =>
         item[key].map(value => ({
           api: key,
-          ontology: value,
+          ontology: value
         }))
       )
     )
@@ -58,7 +84,14 @@ export const FilterSelect = ({ component, table, terminology }) => {
       .map(item => item.ontology);
   });
 
+  const initialCheckedTerm = preferredData?.map(term =>
+    JSON.stringify({
+      preferred_terminology: term?.id
+    })
+  );
+
   const [existingOntologies, setExistingOntologies] = useState(initialChecked);
+
   // Gets the ontologyAPIs on first load, automatically sets active to the first of the list to display on the page
   useEffect(() => {
     setLoading(true);
@@ -69,9 +102,39 @@ export const FilterSelect = ({ component, table, terminology }) => {
           setActive(data[0]?.api_id);
         }
       })
+      .then(() => fetchTerminologies())
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    fetchTerminologies();
+  }, [prefTerminologies]);
+
+  const fetchTerminologies = () => {
+    // Maps through prefTerminologies and fetches each terminology by its id
+    const fetchPromises = prefTerminologies?.map(pref =>
+      fetch(`${vocabUrl}/${pref?.reference}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+    );
+
+    Promise.all(fetchPromises)
+      .then(results => {
+        // Once all fetch calls are resolved, set the combined data
+        setPreferredData(results);
+        setExistingPreferred(results);
+      })
+      .catch(error => {
+        notification.error({
+          message: 'Error',
+          description: 'An error occurred. Please try again.'
+        });
+      });
+  };
   // Sets the first API in the list as active
   useEffect(() => {
     setActive(ontologyApis[0]?.api_id);
@@ -95,111 +158,128 @@ export const FilterSelect = ({ component, table, terminology }) => {
     setCurrentPage(1);
     setPageSize(10);
     setSelectedOntologies([]);
+    setSelectedTerminologies([]);
     setSelectedBoxes([]);
     setDisplaySelectedOntologies([]);
+    setDisplaySelectedTerminologies([]);
     setSearchText('');
   };
 
   // If the api doesn't exist in api_preference, creates an empty array for it
   // If the api_preference array for the api does not include an ontology_code, pushes the code to the array for the api
   // If there is an api in api_preferences that is not included with the ontology_code, it's added to apiPreference with an empty array
-  const handleSubmit = values => {
-    setLoading(true);
-    const apiPreferenceDTO = {
-      api_preference: apiPreference?.api_preference,
-    };
+  const handleSubmit = async values => {
+    try {
+      setLoading(true);
 
-    Object.keys(existingOntologies).forEach(api => {
-      apiPreferenceDTO.api_preference[api] = existingOntologies[api];
-    });
+      const ontologyBoxes = selectedBoxes.filter(box => box.ontology_code);
+      const terminologyBoxes = selectedBoxes.filter(box => box.id);
 
-    selectedBoxes.forEach(box => {
-      const api = box.api;
-      const ontology_code = box.ontology_code;
+      const preferredTerminologies = [
+        ...(existingPreferred?.map(ep => JSON.parse(ep)) ?? []),
+        ...(terminologyBoxes?.map(item => ({
+          preferred_terminology: item.id
+        })) ?? [])
+      ];
+      const preferredTermDTO = () => {
+        return {
+          'editor': user.email,
+          'preferred_terminologies': preferredTerminologies
+        };
+      };
 
-      // If the api already exists, merge with the existing ones
-      if (apiPreferenceDTO.api_preference[api]) {
-        apiPreferenceDTO.api_preference[api] = [
-          ...new Set([...apiPreferenceDTO.api_preference[api], ontology_code]),
-        ];
-      } else {
-        // Otherwise, create a new entry for that api
-        apiPreferenceDTO.api_preference[api] = [ontology_code];
-      }
-    });
+      const apiPreferenceDTO = {
+        api_preference: { ...existingOntologies },
+        editor: user?.email
+      };
 
-    const method =
-      Object.keys(preferenceType[prefTypeKey]?.api_preference || {}).length ===
-      0
-        ? 'POST'
-        : 'PUT';
+      ontologyBoxes.forEach(box => {
+        const api = box.api;
+        const ontology_code = box.ontology_code;
 
-    fetch(
-      `${vocabUrl}/${(component = table
-        ? `Table/${table.id}/filter/self`
-        : `Terminology/${terminology.id}/filter`)}`,
-      {
-        method: method,
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(apiPreferenceDTO),
-      }
-    )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
+        if (apiPreferenceDTO.api_preference[api]) {
+          apiPreferenceDTO.api_preference[api] = [
+            ...new Set([...apiPreferenceDTO.api_preference[api], ontology_code])
+          ];
         } else {
-          throw new Error('An unknown error occurred.');
+          apiPreferenceDTO.api_preference[api] = [ontology_code];
         }
-      })
-      .then(() =>
-        fetch(
-          `${vocabUrl}/${(component = table
-            ? `Table/${table.id}/filter/self`
-            : `Terminology/${terminology.id}/filter`)}`,
-          {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        )
-      )
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error('An unknown error occurred.');
+      });
+
+      const method =
+        Object.keys(preferenceType[prefTypeKey]?.api_preference || {})
+          .length === 0
+          ? 'POST'
+          : 'PUT';
+
+      const ontologyFetch = await fetch(
+        `${vocabUrl}/${(component = table
+          ? `Table/${table.id}/filter/self`
+          : `Terminology/${terminology.id}/filter`)}`,
+        {
+          method: method,
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(apiPreferenceDTO)
         }
-      })
-      .then(data => {
-        preferenceTypeSet(data);
-        form.resetFields();
-        setAddFilter(false);
-        message.success('Preferred ontologies saved successfully.');
-      })
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred saving the ontology preferences.',
-          });
+      );
+
+      const terminologyFetch = await fetch(
+        `${vocabUrl}/${componentString}/${
+          terminology ? terminology.id : table.id
+        }/preferred_terminology`,
+        {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(preferredTermDTO())
         }
-        return error;
-      })
-      .finally(() => setLoading(false));
+      );
+
+      const ontologyData = await ontologyFetch.json();
+
+      const termData = await terminologyFetch.json();
+
+      preferenceTypeSet({
+        self: { api_preference: ontologyData?.onto_api_preference }
+      });
+      setPrefTerminologies(
+        termData?.references?.map(ref => ({
+          reference: `Terminology/${ref.preferred_terminology}`
+        }))
+      );
+      setPreferredData(
+        termData?.references?.map(ref => ({
+          reference: `Terminology/${ref.preferred_terminology}`
+        }))
+      );
+      const ids = termData?.references.map(r => r.preferred_terminology);
+      setActiveTerms(ids);
+      form.resetFields();
+      setAddFilter(false);
+      message.success('Preferences saved successfully.');
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: 'An error occurred saving preferences.'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Creates a dynamic api preference object
   const apiPrefObject = preferenceType[prefTypeKey]?.api_preference;
 
   // Calculates the total length of all arrays to display number of ontology filters
-  const apiPrefLength =
-    apiPrefObject &&
-    Object.values(apiPrefObject)?.reduce((acc, arr) => acc + arr.length, 0);
+  const apiPrefLength = () => {
+    const ontoLength =
+      apiPrefObject &&
+      Object.values(apiPrefObject)?.reduce((acc, arr) => acc + arr.length, 0);
+    const termLength = prefTerminologies && prefTerminologies.length;
+
+    return ontoLength + termLength;
+  };
 
   // Makes a set of ontologies to exclude from the list of available (excludes those that have already been selected)
   // Converts the ontologies object into an array and filters based on the ontologiesToExclude
@@ -215,7 +295,7 @@ export const FilterSelect = ({ component, table, terminology }) => {
         const filteredOntologies = Object.values(ontologiesObject)
           .map(po => ({
             ...po,
-            api: ontologyForPagination?.[0]?.api_id,
+            api: ontologyForPagination?.[0]?.api_id
           }))
           .filter(obj => {
             return !ontologiesToExclude.has(obj.ontology_code);
@@ -228,11 +308,38 @@ export const FilterSelect = ({ component, table, terminology }) => {
       }
     }
   };
-
   const filteredOntologiesArray = filterOntologies();
 
   // Pagination
   const paginatedOntologies = filteredOntologiesArray?.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const filterTerminologies = () => {
+    const terminologiesToExclude = new Set([
+      ...prefTerminologies?.map(pt => `${pt?.name}|${pt?.url}`),
+      ...displaySelectedTerminologies?.map(dst => `${dst?.name}|${dst?.url}`),
+      ...preferredData?.map(ep => `${ep?.name}|${ep?.url}`)
+    ]);
+
+    return terminologies.filter(
+      t => !terminologiesToExclude.has(`${t?.name}|${t?.url}`)
+    );
+  };
+
+  const filteredTerminologyArray = filterTerminologies();
+
+  // Searches for terminologies by keystroke
+  const getFilteredItems = () =>
+    filteredTerminologyArray?.filter(
+      item =>
+        item?.name &&
+        item?.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+
+  // Pagination
+  const paginatedTerminologies = getFilteredItems().slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -243,10 +350,11 @@ export const FilterSelect = ({ component, table, terminology }) => {
         onClick={() => (user ? setAddFilter(true) : login())}
         type="primary"
         style={{
-          marginBottom: 16,
+          marginBottom: 16
         }}
       >
-        API Filters {apiPrefObject ? `(${apiPrefLength})` : ''}
+        Ontology Filters{' '}
+        {apiPrefObject || prefTerminologies ? `(${apiPrefLength()})` : ''}
       </Button>
       {addFilter && (
         <Modal
@@ -255,8 +363,8 @@ export const FilterSelect = ({ component, table, terminology }) => {
           styles={{
             body: {
               minHeight: '60vh',
-              maxHeight: '60vh',
-            },
+              maxHeight: '60vh'
+            }
           }}
           onOk={() => {
             form.validateFields().then(values => {
@@ -278,7 +386,11 @@ export const FilterSelect = ({ component, table, terminology }) => {
                   <Pagination
                     current={currentPage}
                     pageSize={pageSize}
-                    total={filteredOntologiesArray?.length}
+                    total={
+                      active === 'term'
+                        ? filteredTerminologyArray?.length
+                        : filteredOntologiesArray?.length
+                    }
                     onChange={handlePageChange}
                     showSizeChanger
                     onShowSizeChange={handlePageSizeChange}
@@ -293,28 +405,40 @@ export const FilterSelect = ({ component, table, terminology }) => {
             </>
           )}
         >
-          {loading ? (
-            <ModalSpinner />
-          ) : (
-            <FilterAPI
-              form={form}
-              setSelectedOntologies={setSelectedOntologies}
-              selectedBoxes={selectedBoxes}
-              setSelectedBoxes={setSelectedBoxes}
-              displaySelectedOntologies={displaySelectedOntologies}
-              setDisplaySelectedOntologies={setDisplaySelectedOntologies}
-              ontologyApis={ontologyApis}
-              active={active}
-              setActive={setActive}
-              paginatedOntologies={paginatedOntologies}
-              apiPreferences={apiPreferences}
-              table={table}
-              terminology={terminology}
-              existingOntologies={existingOntologies}
-              setExistingOntologies={setExistingOntologies}
-              flattenedFilters={flattenedFilters}
-            />
+          {loading && (
+            <div className="loading_overlay_modal">
+              <Spin />
+            </div>
           )}
+          <FilterAPI
+            form={form}
+            setSelectedOntologies={setSelectedOntologies}
+            selectedBoxes={selectedBoxes}
+            setSelectedBoxes={setSelectedBoxes}
+            displaySelectedOntologies={displaySelectedOntologies}
+            setDisplaySelectedOntologies={setDisplaySelectedOntologies}
+            ontologyApis={ontologyApis}
+            active={active}
+            setActive={setActive}
+            paginatedOntologies={paginatedOntologies}
+            table={table}
+            terminology={terminology}
+            existingOntologies={existingOntologies}
+            setExistingOntologies={setExistingOntologies}
+            flattenedFilters={flattenedFilters}
+            setExistingPreferred={setExistingPreferred}
+            existingPreferred={existingPreferred}
+            preferredData={preferredData}
+            paginatedTerminologies={paginatedTerminologies}
+            displaySelectedTerminologies={displaySelectedTerminologies}
+            setDisplaySelectedTerminologies={setDisplaySelectedTerminologies}
+            terminologies={terminologies}
+            setTerminologies={setTerminologies}
+            selectedTerminologies={selectedTerminologies}
+            setSelectedTerminologies={setSelectedTerminologies}
+            componentString={componentString}
+            setPrefTerminologies={setPrefTerminologies}
+          />
         </Modal>
       )}
     </>

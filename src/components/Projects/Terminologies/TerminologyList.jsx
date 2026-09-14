@@ -1,10 +1,10 @@
-import { Button, Input, notification, Space, Table } from 'antd';
+import { Button, Input, notification, Space, Spin, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAll } from '../../Manager/FetchManager';
-import { Spinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { AddTerminology } from './AddTerminology';
 import { DeleteOutlined } from '@ant-design/icons';
 import { DeleteTerminology } from './DeleteTerminology';
@@ -22,28 +22,30 @@ export const TerminologyList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Terminology Index - Map Dragon';
+    document.title = 'Terminology Index - MapDragon';
   }, []);
 
   const inputRef = useRef(null);
 
   useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
-    getAll(vocabUrl, 'Terminology', navigate)
+    getAll(vocabUrl, 'Terminology', navigate, controller.signal)
       .then(data => {
         setTerms(data);
       })
       .catch(error => {
-        if (error) {
+        if (error?.name !== 'AbortError') {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading terminologies.',
+            description: 'An error occurred loading terminologies.'
           });
         }
         return error;
       })
       .finally(() => setLoading(false));
     localStorage.setItem('pageSize', pageSize);
+    return () => controller.abort();
   }, [pageSize]);
 
   const terminologyTitle = () => {
@@ -68,12 +70,13 @@ export const TerminologyList = () => {
     {
       title: terminologyTitle(),
       dataIndex: 'name',
+      fixed: 'left',
       // Filters table by keystroke
       filterDropdown: ({
         setSelectedKeys,
         selectedKeys,
         confirm,
-        clearFilters,
+        clearFilters
       }) => (
         <div style={{ padding: 8 }}>
           <Input
@@ -117,24 +120,28 @@ export const TerminologyList = () => {
       filterIcon: filtered => (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
-      onFilterDropdownOpenChange: open => {
-        if (open) {
-          setTimeout(() => {
-            inputRef.current?.focus(); // Focus cursor on search input
-          }, 100); // Small delay to ensure input is rendered
+      filterDropdownProps: {
+        onOpenChange(open) {
+          if (open) {
+            setTimeout(() => {
+              inputRef.current?.focus(); // Focuses cursor on search input
+            }, 100); // Small delay to ensure input is rendered
+          }
         }
       },
-      width: 400,
+      getPopupContainer: triggerNode => triggerNode.parentNode,
+      width: 300
     },
     {
       title: 'Description',
       dataIndex: 'description',
+      width: 500
     },
     {
       title: '',
       dataIndex: 'delete_column',
-      width: 10,
-    },
+      width: 10
+    }
   ];
 
   const dataSource = terms.map((item, i) => ({
@@ -148,26 +155,31 @@ export const TerminologyList = () => {
           setDeleteId(item.id);
         }}
       />
-    ),
+    )
   }));
 
-  return loading ? (
-    <Spinner />
-  ) : (
+  return (
     <>
-      <div className="terminology_container">
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
+        </div>
+      )}
+
+      <div className="terminology_list_container">
         <h2>Terminology Index</h2>
         <AddTerminology />
         <Table
+          scroll={{ x: 'max-content' }}
+          sticky={{ offsetHeader: 80 }}
           showSizeChanger={true}
           columns={columns}
           dataSource={dataSource}
-          getPopupContainer={trigger => trigger.parentNode}
           pagination={{
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '30'],
             pageSize: pageSize, // Use the stored pageSize
-            onChange: handleTableChange, // Capture pagination changes
+            onChange: handleTableChange // Capture pagination changes
           }}
         />
       </div>

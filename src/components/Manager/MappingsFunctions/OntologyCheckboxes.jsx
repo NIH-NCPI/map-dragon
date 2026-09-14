@@ -4,21 +4,26 @@ import { useContext, useEffect, useState } from 'react';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import './MappingsFunctions.scss';
 
-export const OntologyCheckboxes = ({ preferenceType }) => {
+export const OntologyCheckboxes = ({
+  preferenceType,
+  activeTerms,
+  setActiveTerms,
+  terminologiesToMap
+}) => {
   const {
     apiPreferencesCode,
     setApiPreferencesCode,
     facetCounts,
     ontologyApis,
     prefTypeKey,
-    active,
     prefTerminologies,
     checkedOntologies,
     setCheckedOntologies,
     unformattedPref,
     selectedApi,
     setSelectedApi,
-    defaultOntologies
+    defaultOntologies,
+    setPage
   } = useContext(SearchContext);
   const { Search } = Input;
 
@@ -28,7 +33,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   const apiPreferences =
     unformattedPref[codeToSearch]?.api_preference ??
     unformattedPref[codeToSearch];
-  const apiPreferenceKeys = Object.keys(apiPreferences);
+  const apiPreferenceKeys = Object.keys(apiPreferences ?? {});
 
   apiPreferenceKeys?.forEach(key => {
     // Dynamically assigns the api values to allApiPreferences variable
@@ -37,7 +42,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
   const [searchText, setSearchText] = useState('');
 
-   const selectedOntologies = selectedApi === 'ols' ? defaultOntologies : ['SNOMEDCT_US'];
+  const selectedOntologies =
+    selectedApi === 'ols' ? defaultOntologies : ['SNOMEDCT_US'];
 
   //If there are no preferences set for an API, it sets them to default ontologies
   if (
@@ -55,17 +61,28 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     apiPreferencesCode.ols = selectedOntologies;
   }
 
-  const options =
-    ontologyApis &&
-    ontologyApis.map((aap, index) => ({
-      value: aap.api_id,
-      label: aap.api_id.toUpperCase(),
-    }));
+  // If prefTerminologies exist, adds "MD" label to show on screen for API options
+  const optionsSetup = () => {
+    const ontologies =
+      ontologyApis &&
+      ontologyApis.map((aap, index) => ({
+        value: aap.api_id,
+        label: aap.api_id.toUpperCase()
+      }));
 
+    prefTerminologies?.length > 0 &&
+      ontologies.push({ value: 'md', label: 'MD' });
+    return ontologies;
+  };
+
+  const options = optionsSetup();
   const defaultApi =
     Object.keys(allApiPreferences).length > 0
-      ? Object.keys(allApiPreferences)[0]
+      ? Object.keys(allApiPreferences).includes('umls')
+        ? 'umls'
+        : 'ols'
       : options[0]?.value;
+
   useEffect(() => {
     setSelectedApi(defaultApi);
   }, []);
@@ -108,14 +125,25 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
   else {
     existingOntologies = selectedOntologies;
   }
-
   useEffect(() => {
-    setCheckedOntologies(existingOntologies.map(eo => eo.toUpperCase()));
-  }, [preferenceType, selectedApi]);
+    const onts = existingOntologies.map(eo => eo.toUpperCase());
+    // To avoid infinite loop of state change
+    // Checks checkedOntologies against existingOntologies.
+    // If they match, returns checkedOntologies, otherwise returns the existingOntologies to keep state from updating unnecessarily
+    setCheckedOntologies(prev => {
+      if (
+        prev?.length === onts?.length &&
+        prev?.every((v, i) => v === onts[i])
+      ) {
+        return prev;
+      }
+      return onts;
+    });
+  }, [preferenceType, selectedApi, existingOntologies]);
 
   const onCheckboxChange = e => {
     const { value, checked } = e.target;
-
+    setPage(0);
     setCheckedOntologies(prevCheckedOntologies => {
       // If checked, adds the value to checkedOntologies, otherwise filters out the ones not checked
       const updatedCheckedOntologies = checked
@@ -141,8 +169,8 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
         updatedApiPreferences[selectedApi] = [
           ...new Set([
             ...updatedApiPreferences[selectedApi],
-            value.toUpperCase(),
-          ]),
+            value.toUpperCase()
+          ])
         ];
       } else {
         // If unchecked, removes the value from apiPreferencesCode for the respective api
@@ -153,6 +181,10 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
       return updatedApiPreferences;
     });
+  };
+
+  const onTermChange = checkedValues => {
+    setActiveTerms(checkedValues);
   };
 
   const formattedFacetCounts = ontologyCounts(facetCounts);
@@ -166,7 +198,7 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
 
     return {
       ...api,
-      ontologies: sortedOntologies,
+      ontologies: sortedOntologies
     };
   });
 
@@ -199,62 +231,91 @@ export const OntologyCheckboxes = ({ preferenceType }) => {
     return filtered;
   };
 
+  const getFilteredTerminologies = searchText => {
+    const filtered = terminologiesToMap?.filter(item =>
+      item?.name?.toUpperCase().startsWith(searchText?.toUpperCase())
+    );
+
+    return filtered;
+  };
+
   return (
-    <div
-      className={
-        active === 'search' || prefTerminologies.length === 0
-          ? 'ontology_form'
-          : 'ontology_form_pref'
-      }
-    >
+    <div className="ontology_form">
       <Radio.Group
         className="api_radio"
         optionType="button"
         buttonStyle="solid"
         options={options}
-        defaultValue={options[0].value}
-        onChange={e => setSelectedApi(e.target.value)}
+        defaultValue={defaultApi}
+        value={selectedApi}
+        onChange={e => {
+          setPage(0);
+          setSelectedApi(e.target.value);
+        }}
       />
       <Search
-        placeholder="Ontologies"
+        placeholder={selectedApi !== 'md' ? 'Ontologies' : 'Terminologies'}
         className="onto_search_bar"
         value={searchText}
         onChange={e => setSearchText(e.target.value)}
       />
-      <Form.Item
-        name="selected_ontologies"
-        valuePropName="value"
-        rules={[{ required: false }]}
-      >
-        <div className="modal_display_results">
-          {getFilteredItems(searchText)
-            .sort((a, b) => {
-              const key1 = Object.keys(a)[0].toUpperCase();
-              const key2 = Object.keys(b)[0].toUpperCase();
+      {selectedApi !== 'md' ? (
+        <Form.Item
+          name="selected_terminologies"
+          valuePropName="value"
+          rules={[{ required: false }]}
+        >
+          <div className="modal_display_results">
+            {getFilteredItems(searchText)
+              .sort((a, b) => {
+                const key1 = Object.keys(a)[0].toUpperCase();
+                const key2 = Object.keys(b)[0].toUpperCase();
 
-              const selectedOnts1 = existingOntologies?.includes(key1);
-              const selectedOnts2 = existingOntologies?.includes(key2);
+                const selectedOnts1 = existingOntologies?.includes(key1);
+                const selectedOnts2 = existingOntologies?.includes(key2);
 
-              // If both are in existingOntologies, they stay in their relative order
-              // If only one is in existingOntologies, it is displayed to the top
-              return selectedOnts2 - selectedOnts1;
+                // If both are in existingOntologies, they stay in their relative order
+                // If only one is in existingOntologies, it is displayed to the top
+                return selectedOnts2 - selectedOnts1;
+              })
+              .map((item, i) => {
+                const key = Object.keys(item)[0];
+                const value = item[key];
+                return (
+                  <Checkbox
+                    key={i}
+                    value={key}
+                    checked={checkedOntologiesArray?.includes(
+                      key.toUpperCase()
+                    )}
+                    onChange={onCheckboxChange}
+                  >
+                    {`${key.toUpperCase()} ${value !== 0 ? `(${value})` : ''}`}
+                  </Checkbox>
+                );
+              })}
+          </div>
+        </Form.Item>
+      ) : (
+        // Checkboxes for Preferred Terminologies
+        <Checkbox.Group
+          value={activeTerms}
+          options={getFilteredTerminologies(searchText)
+            ?.sort((a, b) => {
+              const key1 = Object.keys(a)[0];
+              const key2 = Object.keys(b)[0];
+
+              return key2 - key1;
             })
             .map((item, i) => {
-              const key = Object.keys(item)[0];
-              const value = item[key];
-              return (
-                <Checkbox
-                  key={i}
-                  value={key}
-                  checked={checkedOntologiesArray?.includes(key.toUpperCase())}
-                  onChange={onCheckboxChange}
-                >
-                  {`${key.toUpperCase()} ${value !== 0 ? `(${value})` : ''}`}
-                </Checkbox>
-              );
+              return {
+                value: item?.id,
+                label: item?.name
+              };
             })}
-        </div>
-      </Form.Item>
+          onChange={onTermChange}
+        />
+      )}
     </div>
   );
 };

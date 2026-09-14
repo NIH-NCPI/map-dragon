@@ -5,6 +5,7 @@ import { EditVariable } from './EditVariable';
 import { myContext } from '../../../App';
 import { ShowHistory } from '../../Manager/ShowHistory';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { uriEncoded } from '../../Manager/Utility';
 
 export const TableMenu = ({
   tableData,
@@ -13,9 +14,7 @@ export const TableMenu = ({
   form,
   loading,
   setLoading,
-  mapping,
-  setEditMappings,
-  setGetMappings,
+  setEditMappings
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, selectedKey, setSelectedKey, user } = useContext(myContext);
@@ -38,12 +37,6 @@ export const TableMenu = ({
   const passEditMappings = () => {
     setEditMappings(variable);
   };
-  const loginEditMappings = RequiredLogin({ handleSuccess: passEditMappings });
-
-  const passGetMappings = () => {
-    setGetMappings(variable);
-  };
-  const loginGetMappings = RequiredLogin({ handleSuccess: passGetMappings });
 
   // Opens the delete dialog box when Delete is selected in the menu
   useEffect(() => {
@@ -54,13 +47,13 @@ export const TableMenu = ({
 
   // Deletes individual variable
   const handleVarDelete = varName => {
-    fetch(`${vocabUrl}/Table/${table.id}/variable/${varName}`, {
+    fetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(varName)}`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ editor: user.email }),
+      body: JSON.stringify({ editor: user.email })
     })
       .then(res => {
         if (res.ok) {
@@ -71,12 +64,15 @@ export const TableMenu = ({
         } else {
           notification.error({
             message: 'Error',
-            description: 'An error occurred deleting the variable.',
+            description: 'An error occurred deleting the variable.'
           });
         }
       })
       .then(() => {
-        return fetch(`${vocabUrl}/Table/${table.id}`);
+        return fetch(`${vocabUrl}/Table/${table.id}`, {
+          method: 'GET',
+          credentials: 'include'
+        });
       })
       .then(res => {
         if (res.ok) {
@@ -86,7 +82,7 @@ export const TableMenu = ({
         } else {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading the Table.',
+            description: 'An error occurred loading the Table.'
           });
         }
       });
@@ -109,18 +105,9 @@ export const TableMenu = ({
       onCancel() {
         setDeleteRow(false);
         setSelectedKey(null);
-      },
+      }
     });
   };
-
-  // Matches the code in the tableData to the code in the mappings to see if a variable has mappings
-  const showEditMappings =
-    mapping?.length > 0 &&
-    mapping?.some(
-      m =>
-        m?.code.toLowerCase() === variable.code.toLowerCase() &&
-        m?.mappings?.length > 0
-    );
 
   // Menu items
   const items = [
@@ -132,14 +119,10 @@ export const TableMenu = ({
         { key: `${tableData.key}-2`, label: 'Delete' },
         {
           key: `${tableData.key}-3`,
-          label: showEditMappings ? 'Mappings' : 'Get Mappings',
-        },
-        {
-          key: `${tableData.key}-4`,
-          label: 'History',
-        },
-      ],
-    },
+          label: 'History'
+        }
+      ]
+    }
   ];
 
   // onClick function for Menu.
@@ -154,16 +137,6 @@ export const TableMenu = ({
       case `${tableData.key}-2`:
         return user ? setDeleteRow(true) : loginDelete();
       case `${tableData.key}-3`:
-        return showEditMappings
-          ? // If mappings exist for a variable, sets editMappings to the variable and opens EditMappingsTableModal in turn
-            user
-            ? setEditMappings(variable)
-            : loginEditMappings()
-          : // If mappings do not exist for a variable, sets getMappings to the variable and opens GetMappingsModal in turn
-          user
-          ? setGetMappings(variable)
-          : loginGetMappings();
-      case `${tableData.key}-4`:
         return setShowHistory(tableData.key);
     }
   };

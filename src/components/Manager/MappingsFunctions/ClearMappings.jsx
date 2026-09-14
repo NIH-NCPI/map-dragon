@@ -18,11 +18,7 @@ export const ClearMappings = ({ propId, component }) => {
   const handleDelete = evt => {
     return fetch(`${vocabUrl}/${component}/${propId}/mapping`, {
       method: 'DELETE',
-      credentials: 'include',
-      // headers: {
-      //   'Content-Type': 'application/json',
-      // },
-      // body: JSON.stringify({ editor: user.email }),
+      credentials: 'include'
     })
       .then(res => {
         if (res.ok) {
@@ -39,7 +35,7 @@ export const ClearMappings = ({ propId, component }) => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -59,7 +55,7 @@ export const ClearMappings = ({ propId, component }) => {
       },
       onCancel() {
         setClear(false);
-      },
+      }
     });
   };
 

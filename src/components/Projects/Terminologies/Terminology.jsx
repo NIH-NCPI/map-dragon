@@ -2,17 +2,17 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { myContext } from '../../../App';
 import './Terminology.scss';
-import { Spinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { getById } from '../../Manager/FetchManager';
 import {
-  Button,
   Col,
   Form,
   message,
   notification,
   Row,
+  Spin,
   Table,
-  Tooltip,
+  Tooltip
 } from 'antd';
 import {
   CaretDownOutlined,
@@ -20,9 +20,9 @@ import {
   CloseCircleOutlined,
   DownOutlined,
   MessageOutlined,
-  UpOutlined,
+  UpOutlined
 } from '@ant-design/icons';
-import { EditMappingsModal } from './EditMappingModal';
+import { EditMappingsModal } from '../../Manager/MappingsFunctions/EditMappingModal';
 import { EditTerminologyDetails } from './EditTerminologyDetails';
 import { SettingsDropdownTerminology } from '../../Manager/Dropdown/SettingsDropdownTerminology';
 import { ClearMappings } from '../../Manager/MappingsFunctions/ClearMappings';
@@ -31,17 +31,18 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import { GetMappingsModal } from '../../Manager/MappingsFunctions/GetMappingsModal';
 import { TerminologyMenu } from './TerminologyMenu';
 import { LoadCodes } from './LoadCodes';
-import { PreferredTerminology } from './PreferredTerminology';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
-import { AssignMappingsViaButton } from './AssignMappingsViaButton';
+import { AssignMappingsViaButton } from '../../Manager/MappingsFunctions/AssignMappingsViaButton';
 import {
   relationshipDisplay,
+  uriEncoded,
   userVote,
-  votesCount,
+  votesCount
 } from '../../Manager/Utility';
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
+import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -50,6 +51,7 @@ export const Terminology = () => {
   const { vocabUrl, user } = useContext(myContext);
   const { setPrefTerminologies, prefTerminologies, setApiPreferencesTerm } =
     useContext(SearchContext);
+
   const {
     editMappings,
     setEditMappings,
@@ -60,6 +62,8 @@ export const Terminology = () => {
     setRelationshipOptions,
     comment,
     setComment,
+    mappingsForSearch,
+    setMappingsForSearch
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
@@ -71,7 +75,7 @@ export const Terminology = () => {
   };
 
   useEffect(() => {
-    document.title = 'Terminology - Map Dragon';
+    document.title = 'Terminology - MapDragon';
   }, []);
 
   useEffect(() => {
@@ -80,7 +84,8 @@ export const Terminology = () => {
 
   useEffect(
     () => () => {
-      setApiPreferencesTerm(undefined);
+      setPrefTerminologies([]);
+      setApiPreferencesTerm(null);
     },
     []
   );
@@ -93,17 +98,20 @@ export const Terminology = () => {
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
       mappings: mapArr,
-      editor: user?.email,
+      editor: user?.email
     };
 
     fetch(
-      `${vocabUrl}/Terminology/${terminologyId}/mapping/${mappingCode}?user_input=true&user=${user?.email}`,
+      `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
+        mappingCode
+      )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(mappingsDTO),
+        body: JSON.stringify(mappingsDTO)
       }
     )
       .then(res => {
@@ -127,7 +135,7 @@ export const Terminology = () => {
 
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -141,29 +149,17 @@ code in the terminology, AND the mappings array length for the code is > 0, the 
 and returns the length of the mapping array (i.e. returns the number of codes mapped to the terminology code). 
 It then shows the mappings as table data and alows the user to delete a mapping from the table.*/
 
-  const noMapping = variable => (
-    <div className="no_mapping_button">
-      <Button
-        onClick={() => {
-          prefTerminologies.length > 0
-            ? setAssignMappingsViaButton({
-                display: variable.display,
-                code: variable.code,
-              })
-            : setGetMappings({
-                display: variable.display,
-                code: variable.code,
-              });
-        }}
-      >
-        {prefTerminologies?.length > 0 ? 'Assign Mappings' : 'Get Mappings'}
-      </Button>
-    </div>
-  );
-
-  const matchCode = variable => {
+  const matchCode = (variable, rowIndex) => {
     if (!mapping?.length) {
-      return noMapping(variable);
+      return (
+        <MappingButton
+          variable={variable}
+          setAssignMappingsViaButton={setAssignMappingsViaButton}
+          setGetMappings={setGetMappings}
+          component={terminology}
+          componentString={'Terminology'}
+        />
+      );
     }
 
     const variableMappings = mapping.find(
@@ -172,40 +168,67 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
     if (variableMappings && variableMappings.mappings?.length) {
       return variableMappings.mappings.map((code, i) => (
-        <div className="mapping" key={i}>
+        <div
+          className="mapping"
+          key={i}
+          ref={el => {
+            if (!el) return;
+            const sync = () => {
+              const relationshipEl = document.getElementById(
+                `relationship-${rowIndex}-${i}`
+              );
+              if (relationshipEl) {
+                relationshipEl.style.height = `${el.offsetHeight}px`;
+              }
+            };
+            const observer = new ResizeObserver(sync);
+            observer.observe(el);
+            sync();
+          }}
+        >
           <span>
-            <Tooltip
-              title={code.user_input?.comments_count}
-              mouseEnterDelay={0.75}
-            >
-              <MessageOutlined
-                className="mapping_actions"
-                onClick={() =>
-                  setComment({
-                    code: code.code,
-                    display: code.display,
-                    variableMappings: variableMappings.code,
-                  })
-                }
-              />
-            </Tooltip>
+            <MessageOutlined
+              className={
+                code.user_input?.comments_count
+                  ? 'mapping_actions mapping_actions--active'
+                  : 'mapping_actions mapping_actions--inactive'
+              }
+              onClick={() =>
+                setComment({
+                  code: code.code,
+                  display: code.display,
+                  variableMappings: variableMappings.code
+                })
+              }
+            />
           </span>
           <span className="mapping_votes">
             {userVote(code) === 'up' ? (
               <CaretUpOutlined
                 className="mapping_actions user_vote_icon"
                 style={{
-                  color: 'blue',
-                  cursor: 'not-allowed',
-                  fontSize: '1rem',
+                  color: 'blue'
                 }}
+                onClick={() =>
+                  userVote(code) === 'up' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    terminologyId,
+                    notification,
+                    setMapping,
+                    'Terminology'
+                  )
+                }
               />
             ) : (
               <UpOutlined
-                className="mapping_actions"
-                style={{
-                  color: 'blue',
-                }}
+                key="up"
+                className="mapping_actions vote-icon-wrapper icon-enter"
+                style={{ color: 'blue' }}
                 onClick={() =>
                   userVote(code) !== 'up' &&
                   mappingVotes(
@@ -223,18 +246,17 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               />
             )}
             <Tooltip
-              title={`up: ${code.user_input?.votes_count.up},
-                down: ${code.user_input?.votes_count.down}`}
+              title={`up: ${code.user_input?.votes_count.up}, down: ${code.user_input?.votes_count.down}`}
               mouseEnterDelay={0.75}
             >
               <span
-                className={
+                className={`votes_count${
                   (code.user_input?.votes_count.down !== 0 ||
                     code.user_input?.votes_count.up !== 0) &&
                   votesCount(code) === 0
-                    ? 'red_votes_count'
-                    : 'votes_count'
-                }
+                    ? ' red_votes_count'
+                    : ''
+                }`}
               >
                 {votesCount(code)}
               </span>
@@ -243,17 +265,28 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <CaretDownOutlined
                 className="mapping_actions user_vote_icon"
                 style={{
-                  color: 'green',
-                  cursor: 'not-allowed',
-                  fontSize: '1rem',
+                  color: 'green'
                 }}
+                onClick={() =>
+                  userVote(code) === 'down' &&
+                  mappingVotes(
+                    variableMappings,
+                    code,
+                    user,
+                    'reset',
+                    vocabUrl,
+                    terminologyId,
+                    notification,
+                    setMapping,
+                    'Terminology'
+                  )
+                }
               />
             ) : (
               <DownOutlined
-                className="mapping_actions"
-                style={{
-                  color: 'green',
-                }}
+                key="down"
+                className="mapping_actions vote-icon-wrapper icon-enter"
+                style={{ color: 'green' }}
                 onClick={() =>
                   userVote(code) !== 'down' &&
                   mappingVotes(
@@ -272,8 +305,16 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             )}
           </span>
           <span className="mapping-display">
-            {code?.code} {code?.display && `- ${code?.display}`}{' '}
-            {relationshipDisplay(code)}
+            <span
+              className="stylized_link"
+              onClick={() => {
+                setEditMappings(variable);
+                setMappingsForSearch(variableMappings?.mappings);
+              }}
+            >
+              {code?.ftd_code}
+            </span>
+            {code?.display && ` - ${code?.display}`}
           </span>
           <span
             className="mapping_actions"
@@ -287,7 +328,15 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         </div>
       ));
     } else {
-      return noMapping(variable);
+      return (
+        <MappingButton
+          variable={variable}
+          setAssignMappingsViaButton={setAssignMappingsViaButton}
+          setGetMappings={setGetMappings}
+          component={terminology}
+          componentString={'Terminology'}
+        />
+      );
     }
   };
 
@@ -301,6 +350,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     updateMappings(variableMappings?.mappings, variableMappings?.code);
   };
 
+  const matchRelationship = (variable, rowIndex) => {
+    if (!mapping?.length) return null;
+    const variableMappings = mapping.find(
+      item => item?.code === variable?.code
+    );
+    if (!variableMappings?.mappings?.length) return null;
+    return variableMappings.mappings.map((code, i) => (
+      <div
+        key={i}
+        className="relationship-cell"
+        id={`relationship-${rowIndex}-${i}`}
+      >
+        {relationshipDisplay(code)}
+      </div>
+    ));
+  };
   // data for each column in the table.
   // Map through the codes in the terminology and display the code, display, number of mapped terms,
   // and an edit or get mappings button depending on the condition.
@@ -312,7 +377,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         code: item.code,
         display: item.display,
         description: item.description,
-        mapped_terms: matchCode(item),
+        mapping_relationship: matchRelationship(item, index),
+        mapped_terms: matchCode(item, index)
       };
     });
 
@@ -350,9 +416,10 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           `${vocabUrl}/Terminology/${terminologyData?.id}/filter${optionalTableParam}`,
           {
             method: 'GET',
+            credentials: 'include',
             headers: {
-              'Content-Type': 'application/json',
-            },
+              'Content-Type': 'application/json'
+            }
           }
         );
 
@@ -387,7 +454,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
     } catch (error) {
       notification.error({
         message: 'Error',
-        description: error.message || 'An error occurred loading data.',
+        description: error.message || 'An error occurred loading data.'
       });
     } finally {
       setLoading(false);
@@ -400,22 +467,30 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       title: 'Code',
       dataIndex: 'code',
       width: 100,
+      fixed: 'left'
     },
     {
       title: 'Display',
       dataIndex: 'display',
-      width: 100,
+      width: 100
     },
     {
       title: 'Description',
       dataIndex: 'description',
-      width: 200,
+      width: 200
+    },
+    {
+      title: 'Relationship',
+      dataIndex: 'mapping_relationship',
+      width: 130
     },
     { title: 'Mapped Terms', dataIndex: 'mapped_terms', width: 350 },
     {
       title: '',
       dataIndex: 'delete_column',
       width: 10,
+      onCell: () => ({ style: { padding: '0', textAlign: 'center' } }),
+      onHeaderCell: () => ({ style: { padding: '0' } }),
       render: (_, tableData) => {
         return (
           <>
@@ -439,145 +514,146 @@ It then shows the mappings as table data and alows the user to delete a mapping 
             )}
           </>
         );
-      },
-    },
+      }
+    }
   ];
 
   return (
     <>
       {/* If page is still loading, display loading spinner. */}
-      {loading ? (
-        <Spinner />
-      ) : (
-        <div className="terminology_container">
-          <Row gutter={30}>
-            <div className="study_details_container">
-              <Col span={15}>
-                <div className="study_details">
-                  <div className="study_name">
-                    {/* Displays table name if there is one. If no name, displays DD id */}
-
-                    <h2>
-                      {terminology?.name ? terminology?.name : terminology?.id}
-                    </h2>
-                  </div>
-                  <div className="terminology_url">{terminology?.url}</div>
-
-                  <div className="terminology_desc">
-                    {/* Displays the DD description if there is one.
-                    If there is no description, 'No description provided' is displayed in a gray font */}
-                    {terminology?.description ? (
-                      terminology?.description
-                    ) : (
-                      <span className="no_description">
-                        No description provided.
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </Col>
-              <Col span={6}>
-                <div className="study_details_right">
-                  <div className="study_dropdown">
-                    {/* ant.design dropdown for edit. */}
-                    <SettingsDropdownTerminology codes={terminology.codes} />
-                  </div>
-                </div>
-              </Col>
-            </div>
-          </Row>
-          <div className="table_container">
-            <div className="add_row_buttons">
-              <FilterSelect component={terminology} terminology={terminology} />
-
-              <PreferredTerminology
-                terminology={terminology}
-                setTerminology={setTerminology}
-              />
-              <AddCode
-                terminology={terminology}
-                setTerminology={setTerminology}
-              />
-            </div>
-            {/* ant.design table with columns */}
-            {loading ? (
-              <Spinner />
-            ) : (
-              <Form form={form}>
-                <Table
-                  columns={columns}
-                  dataSource={dataSource}
-                  pagination={{
-                    showSizeChanger: true,
-                    pageSizeOptions: ['10', '20', '30'],
-                    pageSize: pageSize, // Use the stored pageSize
-                    onChange: handleTableChange, // Capture pagination changes
-                  }}
-                />
-              </Form>
-            )}
-          </div>
-          {/* The modals to edit and get mappings with data being passed. */}
-          <EditMappingsModal
-            editMappings={editMappings}
-            setEditMappings={setEditMappings}
-            terminologyId={terminologyId}
-            setMapping={setMapping}
-            mappingDesc={
-              editMappings?.description
-                ? editMappings?.description
-                : 'No Description'
-            }
-            terminology={terminology}
-          />
-          <GetMappingsModal
-            componentString={'Terminology'}
-            component={terminology}
-            terminology={terminology}
-            setTerminology={setTerminology}
-            searchProp={
-              getMappings?.display ? getMappings.display : getMappings?.code
-            }
-            setGetMappings={setGetMappings}
-            setMapping={setMapping}
-            terminologyId={terminologyId}
-            mappingProp={getMappings?.code}
-            mappingDesc={
-              getMappings?.description
-                ? getMappings?.description
-                : 'No Description'
-            }
-          />
-
-          {/* Displays the edit form */}
-          <EditTerminologyDetails
-            form={form}
-            terminology={terminology}
-            setTerminology={setTerminology}
-          />
-          <ClearMappings propId={terminologyId} component={'Terminology'} />
-          <LoadCodes
-            terminology={terminology}
-            setTerminology={setTerminology}
-          />
-          <AssignMappingsViaButton
-            assignMappingsViaButton={assignMappingsViaButton}
-            setAssignMappingsViaButton={setAssignMappingsViaButton}
-            terminology={terminology}
-          />
-
-          <MappingComments
-            mappingCode={comment?.code}
-            mappingDisplay={comment?.display}
-            variableMappings={comment?.variableMappings}
-            variableDisplay={comment?.variableMappings}
-            setComment={setComment}
-            idProp={terminologyId}
-            setMapping={setMapping}
-            component="Terminology"
-          />
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
         </div>
       )}
+      <div className="terminology_container">
+        <Row gutter={30}>
+          <div className="study_details_container">
+            <Col span={15}>
+              <div className="study_details">
+                <div className="study_name">
+                  {/* Displays table name if there is one. If no name, displays DD id */}
+
+                  <h2>
+                    {terminology?.name ? terminology?.name : terminology?.id}
+                  </h2>
+                </div>
+                <div className="terminology_url">{terminology?.url}</div>
+
+                <div className="terminology_desc">
+                  {/* Displays the DD description if there is one.
+                    If there is no description, 'No description provided' is displayed in a gray font */}
+                  {terminology?.description ? (
+                    terminology?.description
+                  ) : (
+                    <span className="no_description">
+                      No description provided.
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className="study_details_right">
+                <div className="study_dropdown">
+                  {/* ant.design dropdown for edit. */}
+                  <SettingsDropdownTerminology codes={terminology.codes} />
+                </div>
+                <div className="component_id">
+                  <b>ID</b>: {terminology?.id}
+                </div>
+              </div>
+            </Col>
+          </div>
+        </Row>
+        <div className="table_container">
+          <div className="add_row_buttons">
+            <FilterSelect
+              component={terminology}
+              table={null}
+              terminology={terminology}
+              componentString={'Terminology'}
+              setTerminology={setTerminology}
+              setTable={null}
+            />
+            <AddCode
+              terminology={terminology}
+              setTerminology={setTerminology}
+            />
+          </div>
+          {/* ant.design table with columns */}
+          {loading && (
+            <div className="loading_overlay">
+              <Spin />
+            </div>
+          )}
+          <Form form={form}>
+            <Table
+              scroll={{ x: 'max-content' }}
+              sticky={{ offsetHeader: 80 }}
+              columns={columns}
+              dataSource={dataSource}
+              pagination={{
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '30'],
+                pageSize: pageSize, // Use the stored pageSize
+                onChange: handleTableChange // Capture pagination changes
+              }}
+            />
+          </Form>
+        </div>
+        {/* The modals to edit and get mappings with data being passed. */}
+        <EditMappingsModal
+          editMappings={editMappings}
+          setEditMappings={setEditMappings}
+          setMapping={setMapping}
+          component={terminology}
+          componentString={'Terminology'}
+          mappingsForSearch={mappingsForSearch}
+          setMappingsForSearch={setMappingsForSearch}
+        />
+        <GetMappingsModal
+          componentString={'Terminology'}
+          component={terminology}
+          terminology={terminology}
+          setTerminology={setTerminology}
+          searchProp={getMappings?.name ? getMappings?.name : getMappings?.code}
+          setGetMappings={setGetMappings}
+          setMapping={setMapping}
+          terminologyId={terminologyId}
+          mappingProp={getMappings?.code}
+          mappingDesc={
+            getMappings?.description
+              ? getMappings?.description
+              : 'No Description'
+          }
+        />
+        {/* Displays the edit form */}
+        <EditTerminologyDetails
+          form={form}
+          terminology={terminology}
+          setTerminology={setTerminology}
+        />
+        <ClearMappings propId={terminologyId} component={'Terminology'} />
+        <LoadCodes terminology={terminology} setTerminology={setTerminology} />
+        <AssignMappingsViaButton
+          assignMappingsViaButton={assignMappingsViaButton}
+          setAssignMappingsViaButton={setAssignMappingsViaButton}
+          component={terminology}
+          componentString={'Terminology'}
+        />
+
+        <MappingComments
+          mappingCode={comment?.code}
+          mappingDisplay={comment?.display}
+          variableMappings={comment?.variableMappings}
+          variableDisplay={comment?.variableMappings}
+          setComment={setComment}
+          idProp={terminologyId}
+          setMapping={setMapping}
+          component="Terminology"
+        />
+      </div>
     </>
   );
 };

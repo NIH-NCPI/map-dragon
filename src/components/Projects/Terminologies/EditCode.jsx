@@ -1,7 +1,7 @@
-import { Form, Input, message, Modal, notification, Space } from 'antd';
+import { Form, Input, message, Modal, notification, Space, Spin } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../Contexts/MappingContext';
@@ -13,7 +13,7 @@ export const EditCode = ({
   terminology,
   setTerminology,
   form,
-  setSelectedKey,
+  setSelectedKey
 }) => {
   const [loading, setLoading] = useState(false);
   const { TextArea } = Input;
@@ -32,7 +32,7 @@ export const EditCode = ({
       form.setFieldsValue({
         code: tableData.code,
         display: tableData.display,
-        description: tableData.description,
+        description: tableData.description
       });
     }
   }, [editRow, tableData, form]);
@@ -62,21 +62,20 @@ export const EditCode = ({
     setLoading(true);
     const updatedRowDTO = {
       code: {
-        [`${tableData.code}`]: `${values.code}`,
+        [`${tableData.code}`]: `${values.code}`
       },
       display: {
-        [tableData.code]: values.display,
+        [tableData.code]: values.display
       },
       description: {
-        [tableData.code]: values.description,
-      },
+        [tableData.code]: values.description
+      }
     };
     // // If the new code already exists in the terminolgoy and does not match the index being edited,
     // // an error message displays that the code already exists. Otherwise the PUT call is run.
 
     handlePatch(vocabUrl, 'Terminology', terminology, {
-      ...updatedRowDTO,
-      // editor: user.email,
+      ...updatedRowDTO
     })
       .then(data => {
         setTerminology(data);
@@ -88,8 +87,7 @@ export const EditCode = ({
         if (error) {
           notification.error({
             message: 'Error',
-            description:
-              'An error occurred updating the row. Please try again.',
+            description: 'An error occurred updating the row. Please try again.'
           });
         }
         return error;
@@ -106,7 +104,7 @@ export const EditCode = ({
               notification.error({
                 message: 'Error',
                 description:
-                  'An error occurred loading mappings. Please try again.',
+                  'An error occurred loading mappings. Please try again.'
               });
             }
             return error;
@@ -133,68 +131,69 @@ export const EditCode = ({
             setSelectedKey(null);
           }}
           maskClosable={false}
-          destroyOnClose={true}
+          destroyOnHidden={true}
           cancelButtonProps={{ disabled: loading }}
           okButtonProps={{ disabled: loading }}
           closeIcon={false}
         >
-          {loading ? (
-            <ModalSpinner />
-          ) : (
-            <Form form={form} layout="vertical" preserve={false}>
-              <Space
-                style={{
-                  display: 'flex',
-                  marginBottom: 3,
-                }}
-                align="baseline"
-              >
-                <Form.Item
-                  name={['code']}
-                  label="Code"
-                  rules={[
-                    { required: true, message: 'Code is required.' },
-                    { validator: validateUnique },
-                  ]}
-                >
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '15vw',
-                    }}
-                    autoFocus
-                  />
-                </Form.Item>
-                <Form.Item
-                  name={['display']}
-                  label="Code display"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Code display is required.',
-                    },
-                  ]}
-                >
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '15vw',
-                    }}
-                    autoFocus
-                  />
-                </Form.Item>
-                <Form.Item name={['description']} label="Code description">
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '36vw',
-                    }}
-                    autoFocus
-                  />
-                </Form.Item>
-              </Space>
-            </Form>
+          {loading && (
+            <div className="loading_overlay_modal">
+              <Spin />
+            </div>
           )}
+          <Form form={form} layout="vertical" preserve={false}>
+            <Space
+              style={{
+                display: 'flex',
+                marginBottom: 3
+              }}
+              align="baseline"
+            >
+              <Form.Item
+                name={['code']}
+                label="Code"
+                rules={[
+                  { required: true, message: 'Code is required.' },
+                  { validator: validateUnique }
+                ]}
+              >
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '15vw'
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item
+                name={['display']}
+                label="Code display"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Code display is required.'
+                  }
+                ]}
+              >
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '15vw'
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item name={['description']} label="Code description">
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '36vw'
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+            </Space>
+          </Form>
         </Modal>
       )}
     </>

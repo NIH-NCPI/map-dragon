@@ -8,7 +8,6 @@ export function MappingContextRoot() {
   const [getMappings, setGetMappings] = useState(false); //triggers modal to open to search to get new mappings
   const [assignMappings, setAssignMappings] = useState(false);
   const [mapping, setMapping] = useState({}); // mapped terms for an individual terminologys
-  const [existingMappings, setExistingMappings] = useState([]);
   const [filteredMappings, setFilteredMappings] = useState([]);
   const [selectedMappings, setSelectedMappings] = useState([]);
   const [displaySelectedMappings, setDisplaySelectedMappings] = useState([]);
@@ -19,6 +18,8 @@ export function MappingContextRoot() {
   const [voteCount, setVoteCount] = useState(0);
   const [mappingComments, setMappingComments] = useState([]);
   const [comment, setComment] = useState(false);
+  const [mappingsForSearch, setMappingsForSearch] = useState([]);
+  const [activeTerms, setActiveTerms] = useState([]);
 
   const context = {
     editMappings,
@@ -27,8 +28,6 @@ export function MappingContextRoot() {
     setGetMappings,
     mapping,
     setMapping,
-    existingMappings,
-    setExistingMappings,
     filteredMappings,
     setFilteredMappings,
     selectedMappings,
@@ -51,6 +50,10 @@ export function MappingContextRoot() {
     setMappingComments,
     comment,
     setComment,
+    mappingsForSearch,
+    setMappingsForSearch,
+    activeTerms,
+    setActiveTerms
   };
 
   return (

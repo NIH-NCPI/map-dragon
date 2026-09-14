@@ -2,7 +2,6 @@ import { message } from 'antd';
 import { useState, createContext, useRef, useEffect } from 'react';
 import { AppRouter } from './AppRouter';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { getSessionStatus } from './components/Manager/SessionsManager';
 
 export const myContext = createContext();
 
@@ -30,7 +29,7 @@ function App() {
     name: '',
     description: '',
     title: '',
-    url: '',
+    url: ''
   }; //initial state of study
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
@@ -38,9 +37,10 @@ function App() {
   const [userPic, setUserPic] = useState(null);
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
   const [ucumCodes, setUcumCodes] = useState([]);
+  const [version, setVersion] = useState({});
 
   message.config({
-    top: '25vh',
+    top: '25vh'
   });
 
   return (
@@ -83,6 +83,8 @@ function App() {
           setOntologyForPagination,
           ucumCodes,
           setUcumCodes,
+          version,
+          setVersion
         }}
       >
         <AppRouter />

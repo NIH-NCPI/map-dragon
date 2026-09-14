@@ -1,9 +1,17 @@
-@import '../../Styling/Variables';
+@use '../../Styling/Variables' as *;
 .terminology_container {
   margin: 5vh 5% 13vh 5%;
   width: 90%;
 }
 
+.terminology_list_container {
+  margin: 5vh 5% 13vh 5%;
+  width: 90%;
+}
+
+.ant-table-header {
+  overflow: visible !important;
+}
 .description_wrapper {
   display: flex;
   flex-direction: row;
@@ -204,24 +212,42 @@ a.terminology_link:hover {
 .votes_count {
   background-color: rgb(230, 229, 229);
   padding: 0 3px;
+  box-sizing: border-box;
+  min-width: 20px;
+  text-align: center;
+  display: inline-block;
+  line-height: 1.5;
+  vertical-align: middle;
 }
+
 .red_votes_count {
   color: red;
 }
 
 .mapping_votes {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   align-items: center;
   padding-right: 0.25rem;
   font-size: 0.7rem;
-}
-
-.no_mapping_button {
-  padding-left: 2rem;
+  margin-left: 1px;
+  .anticon {
+    font-size: 14px;
+    width: 12px;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .user_vote_icon {
+    font-size: 16px !important;
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .mapping_relationship {
+  width: fit-content;
   padding: 2px 6px;
   border: 1px solid $greyColor;
   border-radius: 4px;
@@ -244,6 +270,22 @@ a.terminology_link:hover {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.4s linear;
+
+    &--active {
+      opacity: 1;
+      visibility: visible;
+      &:hover {
+        transition: all 0.4s linear;
+        color: $darkGrey;
+      }
+    }
+
+    &--inactive {
+      :hover {
+        transition: all 0.4s linear;
+        color: $darkGrey;
+      }
+    }
   }
   &:hover .mapping_actions {
     transition: all 0.4s linear;
@@ -252,6 +294,8 @@ a.terminology_link:hover {
   }
 }
 
-.pref_group {
-  border-bottom: solid 1px #eeee;
+.relationship-cell {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
 }
