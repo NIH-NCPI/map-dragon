@@ -97,8 +97,7 @@ export const Terminology = () => {
 
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
-      mappings: mapArr,
-      editor: user?.email
+      mappings: mapArr
     };
 
     fetch(

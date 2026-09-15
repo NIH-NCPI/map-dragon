@@ -37,8 +37,7 @@ export const FilterReset = ({
         {
           method: 'DELETE',
           credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ editor: user.email })
+          headers: { 'Content-Type': 'application/json' }
         }
       );
 
@@ -49,8 +48,7 @@ export const FilterReset = ({
         {
           method: 'DELETE',
           credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ editor: user.email })
+          headers: { 'Content-Type': 'application/json' }
         }
       );
 
