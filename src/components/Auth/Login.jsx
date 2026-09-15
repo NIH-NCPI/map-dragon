@@ -6,12 +6,21 @@ import { myContext } from '../../App';
 import { startSession } from '../Manager/SessionsManager';
 
 export const Login = () => {
-  const { user, setUser, setUserPic, userPic, vocabUrl } =
-    useContext(myContext);
+  const {
+    user,
+    setUser,
+    setUserPic,
+    userPic,
+    vocabUrl,
+    role,
+    setRole,
+    institutionIds,
+    setInstitutionIds
+  } = useContext(myContext);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const storedUserPic = localStorage.getItem('userPic');
+    const storedUser = sessionStorage.getItem('user');
+    const storedUserPic = sessionStorage.getItem('userPic');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
       setUserPic(JSON.parse(storedUserPic));
@@ -32,22 +41,19 @@ export const Login = () => {
       <GoogleLogin
         theme="filled_black"
         onSuccess={credentialResponse => {
-          console.log(credentialResponse);
           const credentialResponseDecoded = jwtDecode(
             credentialResponse.credential
           );
-          console.log(credentialResponseDecoded, 'credentialResponseDecoded');
-          localStorage.setItem(
-            'user',
-            JSON.stringify(credentialResponseDecoded.email)
+
+          startSession(vocabUrl, credentialResponse.credential).then(
+            profile => {
+              sessionStorage.setItem('user', JSON.stringify(profile));
+              setUser(profile.email);
+              setUserPic(credentialResponseDecoded.picture);
+              setRole(profile.role);
+              setInstitutionIds(profile.institutionIds);
+            }
           );
-          localStorage.setItem(
-            'picture',
-            JSON.stringify(credentialResponseDecoded.picture)
-          );
-          startSession(vocabUrl, credentialResponse.credential);
-          setUser(credentialResponseDecoded.email);
-          setUserPic(credentialResponseDecoded.picture);
         }}
         onError={() => {
           console.log('Login Failed');

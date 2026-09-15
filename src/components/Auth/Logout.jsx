@@ -6,16 +6,14 @@ import { endSession } from '../Manager/SessionsManager';
 import { useContext } from 'react';
 import { myContext } from '../../App';
 
-export const Logout = ({ user, setUser,userPic,setUserPic }) => {
-  const { vocabUrl } = useContext(myContext)
-
+export const Logout = ({ user, setUser, userPic, setUserPic }) => {
+  const { vocabUrl } = useContext(myContext);
   const logOut = () => {
-
     googleLogout();
     endSession(vocabUrl);
     setUser(null);
     setUserPic(null);
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
   };
 
   return (

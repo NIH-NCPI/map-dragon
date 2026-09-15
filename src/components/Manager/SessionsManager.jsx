@@ -12,7 +12,6 @@ export const startSession = (vocabUrl, token) => {
   }).then(async res => {
     const data = await res.json();
     if (res.ok) {
-      console.log('RESPONSE MESSAGE:', data.message);
       return data;
     } else {
       throw new Error(data.message || 'Unknown error occurred');

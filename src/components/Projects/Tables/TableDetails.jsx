@@ -84,7 +84,7 @@ export const TableDetails = () => {
   const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
 
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10
+    parseInt(sessionStorage.getItem('pageSize'), 10) || 10
   );
   const handleTableChange = (current, size) => {
     setPageSize(size);
@@ -102,7 +102,7 @@ export const TableDetails = () => {
 
   useEffect(() => {
     setDataSource(tableData(table));
-    localStorage.setItem('pageSize', pageSize);
+    sessionStorage.setItem('pageSize', pageSize);
   }, [table, mapping, pageSize]);
 
   const updateMappings = (mapArr, mappingCode) => {

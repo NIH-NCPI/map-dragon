@@ -17,7 +17,7 @@ export const RequiredLogin = ({ handleSuccess }) => {
         .then(res => res.json())
         .then(data => {
           setUser(data);
-          localStorage.setItem('user', JSON.stringify(data));
+          sessionStorage.setItem('user', JSON.stringify(data));
           if (handleSuccess) {
             handleSuccess();
           }

@@ -1,10 +1,13 @@
+import { useContext, useEffect } from 'react';
+import { myContext } from './App.jsx';
 import { OntologySearch } from './components/Search/OntologySearch';
 import {
   BrowserRouter,
   Outlet,
   Route,
   Routes,
-  Navigate
+  Navigate,
+  useLocation
 } from 'react-router-dom';
 import { NavBar } from './components/Nav/NavBar';
 import { LoginPage } from './components/Auth/LoginPage.jsx';
@@ -25,18 +28,34 @@ import { TerminologyList } from './components/Projects/Terminologies/Terminology
 import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
 
-export const AppRouter = () => {
-  const isLoggedIn = () => {
-    const storedUser = localStorage.getItem('user');
+const AuthDebugLogger = () => {
+  const { user, role, institutionIds } = useContext(myContext);
+  const location = useLocation();
 
-    if (storedUser) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  useEffect(() => {
+    console.log(
+      'user:',
+      user,
+      '| role:',
+      role,
+      '| institutionIds:',
+      institutionIds
+    );
+  }, [location.pathname]);
+
+  return null;
+};
+
+export const AppRouter = () => {
+  const { user, authLoading } = useContext(myContext);
+  const isLoggedIn = () => !!user;
+
+  if (authLoading) {
+    return null;
+  }
   return (
     <BrowserRouter>
+      <AuthDebugLogger />
       <Routes>
         <Route
           path="/"

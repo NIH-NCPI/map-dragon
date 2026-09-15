@@ -15,7 +15,7 @@ export const TerminologyList = () => {
   const [filter, setFilter] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10
+    parseInt(sessionStorage.getItem('pageSize'), 10) || 10
   );
   const { vocabUrl } = useContext(myContext);
 
@@ -44,7 +44,7 @@ export const TerminologyList = () => {
         return error;
       })
       .finally(() => setLoading(false));
-    localStorage.setItem('pageSize', pageSize);
+    sessionStorage.setItem('pageSize', pageSize);
     return () => controller.abort();
   }, [pageSize]);
 

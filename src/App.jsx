@@ -35,13 +35,28 @@ function App() {
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
   const [userPic, setUserPic] = useState(null);
+  const [role, setRole] = useState(null);
+  const [institutionIds, setInstitutionIds] = useState(null);
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
   const [ucumCodes, setUcumCodes] = useState([]);
   const [version, setVersion] = useState({});
+  const [authLoading, setAuthLoading] = useState(true); // new
 
   message.config({
     top: '25vh'
   });
+
+  useEffect(() => {
+    const cached = sessionStorage.getItem('userProfile');
+    if (cached) {
+      const profile = JSON.parse(cached);
+      setUser(profile.email);
+      setRole(profile.role);
+      setInstitutionIds(profile.institutionIds);
+      setUserPic(profile.picture ?? null);
+    }
+    setAuthLoading(false);
+  }, []);
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
@@ -84,7 +99,12 @@ function App() {
           ucumCodes,
           setUcumCodes,
           version,
-          setVersion
+          setVersion,
+          role,
+          setRole,
+          institutionIds,
+          setInstitutionIds,
+          authLoading
         }}
       >
         <AppRouter />
