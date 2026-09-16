@@ -36,8 +36,6 @@ export const endSession = vocabUrl => {
   }).then(async res => {
     const data = await res.json();
     if (res.ok) {
-      console.log(data.message, 'ended');
-
       return data;
     } else {
       throw new Error(data.message || 'Unknown error occurred');
@@ -55,7 +53,6 @@ export const getSessionStatus = vocabUrl => {
   }).then(async res => {
     const data = await res.json();
     if (res.ok) {
-      console.log(data.message);
       return data;
     } else {
       throw new Error(data.message || 'Unknown error occurred');
