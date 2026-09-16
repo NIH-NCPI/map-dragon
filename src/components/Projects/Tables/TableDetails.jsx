@@ -48,6 +48,7 @@ import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments
 import { AssignMappingsViaButton } from '../../Manager/MappingsFunctions/AssignMappingsViaButton';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
 import { EditMappingsModal } from '../../Manager/MappingsFunctions/EditMappingModal';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -108,10 +109,9 @@ export const TableDetails = () => {
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
       mappings: mapArr
-      // editor: user.email,
     };
 
-    fetch(
+    apiFetch(
       `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
         mappingCode
       )}?user_input=True&user=${user?.email}`,
@@ -186,7 +186,7 @@ export const TableDetails = () => {
         );
         setRelationshipOptions(relationshipData.codes);
 
-        const filterDataRes = await fetch(
+        const filterDataRes = await apiFetch(
           `${vocabUrl}/Table/${tableId}/filter/self`,
           {
             method: 'GET',

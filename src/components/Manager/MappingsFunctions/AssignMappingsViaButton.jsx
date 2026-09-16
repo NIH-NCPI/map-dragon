@@ -6,6 +6,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { ontologyFilterCodeSubmit } from '../../Manager/FetchManager';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../ApiFetch';
 
 export const AssignMappingsViaButton = ({
   assignMappingsViaButton,
@@ -54,7 +55,7 @@ export const AssignMappingsViaButton = ({
       mappings: selectedMappings
     };
 
-    fetch(
+    apiFetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         assignMappingsViaButton?.code
       )}?user_input=true&user=${user?.email}`,

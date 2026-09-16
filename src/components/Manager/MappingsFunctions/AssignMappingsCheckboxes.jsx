@@ -8,6 +8,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { MappingRelationship } from './MappingRelationship';
+import { apiFetch } from '../ApiFetch';
 
 export const AssignMappingsCheckboxes = ({
   terminologiesToMap,
@@ -95,7 +96,13 @@ export const AssignMappingsCheckboxes = ({
   const fetchTerminologies = () => {
     setLoadingResults(true);
     const fetchPromises = prefTerminologies?.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`).then(response => response.json())
+      apiFetch(`${vocabUrl}/${pref?.reference}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
     );
 
     Promise.all(fetchPromises)

@@ -4,7 +4,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext } from 'react';
 import { myContext } from '../../../App';
 import { useNavigate } from 'react-router-dom';
-import { handleDelete } from '../../Manager/FetchManager';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const DeleteTable = ({ DDId, studyId }) => {
   const { confirm } = Modal;
@@ -13,7 +13,7 @@ export const DeleteTable = ({ DDId, studyId }) => {
   const navigate = useNavigate();
 
   const deleteTable = evt => {
-    return fetch(`${vocabUrl}/Table/${table.id}`, {
+    return apiFetch(`${vocabUrl}/Table/${table.id}`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {

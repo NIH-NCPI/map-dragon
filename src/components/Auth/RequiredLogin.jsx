@@ -1,12 +1,13 @@
 import { useGoogleLogin } from '@react-oauth/google';
 import { useContext } from 'react';
 import { myContext } from '../../App';
+import { apiFetch } from '../Manager/ApiFetch';
 
 export const RequiredLogin = ({ handleSuccess }) => {
-  const { setUser } = useContext(myContext);
+  const { user, setUser } = useContext(myContext);
   const login = useGoogleLogin({
     onSuccess: tokenResponse => {
-      fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+      apiFetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
         method: 'GET',
         credentials: 'include',
         headers: {

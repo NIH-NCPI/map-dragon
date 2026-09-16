@@ -15,6 +15,7 @@ import DataTypeSubForm from './DataTypeSubForm';
 import '../../Manager/Spinner.scss';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const AddVariable = ({ table, setTable }) => {
   const { vocabUrl, user } = useContext(myContext);
@@ -33,14 +34,17 @@ export const AddVariable = ({ table, setTable }) => {
   const handleSubmit = values => {
     setLoading(true);
 
-    fetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`, {
-      method: 'PUT',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(values)
-    })
+    apiFetch(
+      `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
+      {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values)
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();

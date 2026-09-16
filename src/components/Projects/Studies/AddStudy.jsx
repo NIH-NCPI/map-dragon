@@ -4,6 +4,7 @@ import './StudyStyling.scss';
 import { Form, Input, message, Modal, notification, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../../Manager/Spinner.scss';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const AddStudy = ({ addStudy, setAddStudy }) => {
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ export const AddStudy = ({ addStudy, setAddStudy }) => {
   // The user is then redirected to the new study created.
   const handleSubmit = values => {
     setLoading(true);
-    fetch(`${vocabUrl}/Study`, {
+    apiFetch(`${vocabUrl}/Study`, {
       method: 'POST',
       credentials: 'include',
       headers: {

@@ -1,3 +1,4 @@
+import { apiFetch } from '../ApiFetch';
 import { getById } from '../FetchManager';
 import { uriEncoded } from '../Utility';
 
@@ -13,11 +14,10 @@ export const mappingVotes = (
   component
 ) => {
   const mappingVoteDTO = {
-    editor: user?.email,
     vote: vote
   };
 
-  return fetch(
+  return apiFetch(
     `${vocabUrl}/${component}/${componentId}/user_input/${uriEncoded(
       variableMappings?.code
     )}/mapping/${uriEncoded(code?.code)}/mapping_votes`,

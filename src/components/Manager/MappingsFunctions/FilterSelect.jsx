@@ -15,6 +15,7 @@ import { getOntologies } from '../FetchManager';
 import '../Spinner.scss';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
+import { apiFetch } from '../ApiFetch';
 
 export const FilterSelect = ({
   component,
@@ -113,7 +114,7 @@ export const FilterSelect = ({
   const fetchTerminologies = () => {
     // Maps through prefTerminologies and fetches each terminology by its id
     const fetchPromises = prefTerminologies?.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`, {
+      apiFetch(`${vocabUrl}/${pref?.reference}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -183,14 +184,12 @@ export const FilterSelect = ({
       ];
       const preferredTermDTO = () => {
         return {
-          'editor': user.email,
           'preferred_terminologies': preferredTerminologies
         };
       };
 
       const apiPreferenceDTO = {
-        api_preference: { ...existingOntologies },
-        editor: user?.email
+        api_preference: { ...existingOntologies }
       };
 
       ontologyBoxes.forEach(box => {
@@ -212,7 +211,7 @@ export const FilterSelect = ({
           ? 'POST'
           : 'PUT';
 
-      const ontologyFetch = await fetch(
+      const ontologyFetch = await apiFetch(
         `${vocabUrl}/${(component = table
           ? `Table/${table.id}/filter/self`
           : `Terminology/${terminology.id}/filter`)}`,
@@ -224,7 +223,7 @@ export const FilterSelect = ({
         }
       );
 
-      const terminologyFetch = await fetch(
+      const terminologyFetch = await apiFetch(
         `${vocabUrl}/${componentString}/${
           terminology ? terminology.id : table.id
         }/preferred_terminology`,

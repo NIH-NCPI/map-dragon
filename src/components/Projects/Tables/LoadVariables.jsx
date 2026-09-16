@@ -5,6 +5,7 @@ import './TableStyling.scss';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import '../../Manager/Spinner.scss';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const LoadVariables = ({ load, setLoad }) => {
   const [form] = Form.useForm();
@@ -14,7 +15,7 @@ export const LoadVariables = ({ load, setLoad }) => {
 
   const tableUpload = values => {
     setLoading(true);
-    fetch(`${vocabUrl}/LoadTable/${table.id}`, {
+    apiFetch(`${vocabUrl}/LoadTable/${table.id}`, {
       method: 'PUT',
       credentials: 'include',
       headers: {

@@ -12,9 +12,7 @@ export const Login = () => {
     setUserPic,
     userPic,
     vocabUrl,
-    role,
     setRole,
-    institutionIds,
     setInstitutionIds
   } = useContext(myContext);
 
@@ -22,7 +20,12 @@ export const Login = () => {
     const storedUser = sessionStorage.getItem('user');
     const storedUserPic = sessionStorage.getItem('userPic');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const profile = JSON.parse(storedUser);
+      setUser(profile?.email);
+      setRole(profile?.role);
+      setInstitutionIds(profile?.institutionIds);
+    }
+    if (storedUserPic) {
       setUserPic(JSON.parse(storedUserPic));
     }
   }, []);
@@ -36,7 +39,7 @@ export const Login = () => {
       setUserPic={setUserPic}
     />
   ) : (
-    // Logs user in, decodes the JWT token, saves the decoded JWT in local storage and sets user to it
+    // Logs user in, decodes the JWT token, saves user information in sessionStorage
     <div>
       <GoogleLogin
         theme="filled_black"
@@ -48,6 +51,10 @@ export const Login = () => {
           startSession(vocabUrl, credentialResponse.credential).then(
             profile => {
               sessionStorage.setItem('user', JSON.stringify(profile));
+              sessionStorage.setItem(
+                'userPic',
+                JSON.stringify(credentialResponseDecoded.picture)
+              );
               setUser(profile.email);
               setUserPic(credentialResponseDecoded.picture);
               setRole(profile.role);

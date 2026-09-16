@@ -43,6 +43,7 @@ import {
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -100,7 +101,7 @@ export const Terminology = () => {
       mappings: mapArr
     };
 
-    fetch(
+    apiFetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
         mappingCode
       )}?user_input=true&user=${user?.email}`,
@@ -411,7 +412,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       setTerminology(terminologyData);
 
       if (terminologyData) {
-        const filterResponse = await fetch(
+        const filterResponse = await apiFetch(
           `${vocabUrl}/Terminology/${terminologyData?.id}/filter${optionalTableParam}`,
           {
             method: 'GET',

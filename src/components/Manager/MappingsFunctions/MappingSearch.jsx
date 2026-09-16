@@ -9,6 +9,7 @@ import { getFiltersByCode, olsFilterOntologiesSearch } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { MappingRelationship } from './MappingRelationship';
 import { useParams } from 'react-router-dom';
+import { apiFetch } from '../ApiFetch';
 
 export const MappingSearch = ({
   setEditMappings,
@@ -80,7 +81,7 @@ export const MappingSearch = ({
   const fetchTerminologies = () => {
     setLoadingResults(true);
     const fetchPromises = prefTerminologies?.map(pref =>
-      fetch(`${vocabUrl}/${pref?.reference}`, {
+      apiFetch(`${vocabUrl}/${pref?.reference}`, {
         method: 'GET',
         credentials: 'include',
         headers: {

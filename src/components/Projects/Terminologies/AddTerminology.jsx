@@ -15,6 +15,7 @@ import { myContext } from '../../../App';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const AddTerminology = () => {
   const handleSuccess = () => {
@@ -37,7 +38,7 @@ export const AddTerminology = () => {
     }));
 
     setLoading(true);
-    fetch(`${vocabUrl}/Terminology`, {
+    apiFetch(`${vocabUrl}/Terminology`, {
       method: 'POST',
       credentials: 'include',
       headers: {

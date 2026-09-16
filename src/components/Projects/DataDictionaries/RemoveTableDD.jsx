@@ -4,6 +4,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { apiFetch } from '../../Manager/ApiFetch';
 const { confirm } = Modal;
 
 export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
@@ -18,7 +19,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
   // Function to remove table from a DD. Runs a DELETE call on the DD id and table id
   // Then fetches the updated DD data with the table removed.
   const handleRemove = () => {
-    return fetch(`${vocabUrl}/DataDictionary/${DDId}/Table/${table.id}`, {
+    return apiFetch(`${vocabUrl}/DataDictionary/${DDId}/Table/${table.id}`, {
       method: 'DELETE',
       credentials: 'include'
     })
@@ -39,7 +40,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
         }
         return error;
       })
-      .then(() => fetch(`${vocabUrl}/DataDictionary/${DDId}`))
+      .then(() => apiFetch(`${vocabUrl}/DataDictionary/${DDId}`))
       .then(res => res.json())
       .then(data => {
         setDataDictionary(data);

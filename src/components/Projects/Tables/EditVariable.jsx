@@ -16,6 +16,7 @@ import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import EditDataTypeSubForm from './EditDataTypeSubForm';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const EditVariable = ({
   editRow,
@@ -95,7 +96,7 @@ export const EditVariable = ({
           return error;
         })
         .then(() => {
-          fetch(
+          apiFetch(
             `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
             {
               method: 'PUT',
@@ -141,7 +142,7 @@ export const EditVariable = ({
         );
     } else {
       setLoading(true);
-      fetch(
+      apiFetch(
         `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
         {
           method: 'PUT',

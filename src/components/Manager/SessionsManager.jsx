@@ -1,26 +1,33 @@
+import { notification } from 'antd';
+import { apiFetch } from './ApiFetch';
+
 export const startSession = (vocabUrl, token) => {
   const body = {
     'credential': token
   };
-  return fetch(`${vocabUrl}/auth/google`, {
+  return apiFetch(`${vocabUrl}/auth/google`, {
     method: 'POST',
     credentials: 'include',
     body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json'
     }
-  }).then(async res => {
-    const data = await res.json();
+  }).then(res => {
     if (res.ok) {
-      return data;
-    } else {
-      throw new Error(data.message || 'Unknown error occurred');
+      return res.json();
+    } else if (res.status === 403) {
+      return res.json().then(error => {
+        notification.error({
+          message: 'Error',
+          description: error.message
+        });
+      });
     }
   });
 };
 
 export const endSession = vocabUrl => {
-  return fetch(`${vocabUrl}/session/terminate`, {
+  return apiFetch(`${vocabUrl}/session/terminate`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -39,7 +46,7 @@ export const endSession = vocabUrl => {
 };
 
 export const getSessionStatus = vocabUrl => {
-  return fetch(`${vocabUrl}/session/status`, {
+  return apiFetch(`${vocabUrl}/session/status`, {
     method: 'GET',
     credentials: 'include',
     headers: {

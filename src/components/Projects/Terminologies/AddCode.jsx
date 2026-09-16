@@ -13,6 +13,7 @@ import {
 import '../../Manager/Spinner.scss';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const AddCode = ({ terminology, setTerminology }) => {
   const { vocabUrl, user } = useContext(myContext);
@@ -28,7 +29,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
 
   const handleSubmit = values => {
     setLoading(true);
-    fetch(
+    apiFetch(
       `${vocabUrl}/Terminology/${terminology.id}/code/${uriEncoded(
         values.code
       )}`,

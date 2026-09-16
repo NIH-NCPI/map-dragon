@@ -7,6 +7,7 @@ import { ShowHistory } from '../../Manager/ShowHistory';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const TerminologyMenu = ({
   tableData,
@@ -15,10 +16,8 @@ export const TerminologyMenu = ({
   form,
   loading,
   setLoading,
-  mapping,
   setEditMappings,
-  setGetMappings,
-  prefTerminologies
+  setGetMappings
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, selectedKey, setSelectedKey, user } = useContext(myContext);
@@ -66,7 +65,7 @@ export const TerminologyMenu = ({
 
   // Deletes individual code
   const handleVarDelete = varName => {
-    fetch(`${vocabUrl}/Terminology/${terminology.id}/code/${varName}`, {
+    apiFetch(`${vocabUrl}/Terminology/${terminology.id}/code/${varName}`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
@@ -87,7 +86,7 @@ export const TerminologyMenu = ({
         }
       })
       .then(() => {
-        return fetch(`${vocabUrl}/Terminology/${terminology.id}`, {
+        return apiFetch(`${vocabUrl}/Terminology/${terminology.id}`, {
           method: 'GET',
           credentials: 'include'
         });

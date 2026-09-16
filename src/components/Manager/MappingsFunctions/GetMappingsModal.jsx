@@ -20,6 +20,7 @@ import {
 } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
 import { MappingRelationship } from './MappingRelationship';
+import { apiFetch } from '../ApiFetch';
 
 export const GetMappingsModal = ({
   component,
@@ -185,7 +186,7 @@ export const GetMappingsModal = ({
     };
 
     setLoadingResults(true);
-    fetch(
+    apiFetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         mappingProp
       )}?user_input=true&user=${user?.email}`,

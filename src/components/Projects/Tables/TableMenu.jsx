@@ -6,6 +6,7 @@ import { myContext } from '../../../App';
 import { ShowHistory } from '../../Manager/ShowHistory';
 import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const TableMenu = ({
   tableData,
@@ -47,13 +48,12 @@ export const TableMenu = ({
 
   // Deletes individual variable
   const handleVarDelete = varName => {
-    fetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(varName)}`, {
+    apiFetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(varName)}`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ editor: user.email })
+      }
     })
       .then(res => {
         if (res.ok) {
@@ -69,7 +69,7 @@ export const TableMenu = ({
         }
       })
       .then(() => {
-        return fetch(`${vocabUrl}/Table/${table.id}`, {
+        return apiFetch(`${vocabUrl}/Table/${table.id}`, {
           method: 'GET',
           credentials: 'include'
         });
