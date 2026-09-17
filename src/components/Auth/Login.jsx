@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useContext, useEffect } from 'react';
 import { Logout } from './Logout';
 import { myContext } from '../../App';
-import { startSession } from '../Manager/SessionsManager';
+import { startSession } from './SessionsManager';
 
 export const Login = () => {
   const {
@@ -37,6 +37,8 @@ export const Login = () => {
       setUser={setUser}
       userPic={userPic}
       setUserPic={setUserPic}
+      setRole={setRole}
+      setInstitutionIds={setInstitutionIds}
     />
   ) : (
     // Logs user in, decodes the JWT token, saves user information in sessionStorage

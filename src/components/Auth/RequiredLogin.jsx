@@ -17,8 +17,28 @@ export const RequiredLogin = ({ handleSuccess }) => {
       })
         .then(res => res.json())
         .then(data => {
-          setUser(data);
-          sessionStorage.setItem('user', JSON.stringify(data));
+           onSuccess={credentialResponse => {
+                    const credentialResponseDecoded = jwtDecode(
+                      credentialResponse.credential
+                    );
+          
+                    startSession(vocabUrl, credentialResponse.credential).then(
+                      profile => {
+                        sessionStorage.setItem('user', JSON.stringify(profile));
+                        sessionStorage.setItem(
+                          'userPic',
+                          JSON.stringify(credentialResponseDecoded.picture)
+                        );
+                        setUser(profile.email);
+                        setUserPic(credentialResponseDecoded.picture);
+                        setRole(profile.role);
+                        setInstitutionIds(profile.institutionIds);
+                      }
+                    );
+                  }}
+                  onError={() => {
+                    console.log('Login Failed');
+                  }}
           if (handleSuccess) {
             handleSuccess();
           }

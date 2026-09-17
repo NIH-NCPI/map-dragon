@@ -1,5 +1,5 @@
 import { notification } from 'antd';
-import { apiFetch } from './ApiFetch';
+import { apiFetch } from '../Manager/ApiFetch';
 
 export const startSession = (vocabUrl, token) => {
   const body = {

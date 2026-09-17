@@ -2,18 +2,28 @@ import { googleLogout } from '@react-oauth/google';
 import './Auth.scss';
 import { LogoutOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { endSession } from '../Manager/SessionsManager';
+import { endSession } from './SessionsManager';
 import { useContext } from 'react';
 import { myContext } from '../../App';
 
-export const Logout = ({ user, setUser, userPic, setUserPic }) => {
+export const Logout = ({
+  user,
+  setUser,
+  userPic,
+  setUserPic,
+  setRole,
+  setInstitutionIds
+}) => {
   const { vocabUrl } = useContext(myContext);
   const logOut = () => {
     googleLogout();
     endSession(vocabUrl);
     setUser(null);
     setUserPic(null);
+    setRole(null);
+    setInstitutionIds(null);
     sessionStorage.removeItem('user');
+    sessionStorage.removeItem('userPic');
   };
 
   return (
