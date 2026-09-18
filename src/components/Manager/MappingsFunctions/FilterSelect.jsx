@@ -7,7 +7,6 @@ import {
   Pagination,
   Spin
 } from 'antd';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { FilterAPI } from './FilterAPI';
@@ -144,7 +143,6 @@ export const FilterSelect = ({
   const handleSuccess = () => {
     setAddFilter(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   const handlePageSizeChange = (current, size) => {
     setPageSize(size);
@@ -346,7 +344,7 @@ export const FilterSelect = ({
   return (
     <>
       <Button
-        onClick={() => (user ? setAddFilter(true) : login())}
+        onClick={() => setAddFilter(true)}
         type="primary"
         style={{
           marginBottom: 16

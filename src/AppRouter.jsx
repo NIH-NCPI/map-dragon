@@ -28,24 +28,6 @@ import { TerminologyList } from './components/Projects/Terminologies/Terminology
 import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
 
-const AuthDebugLogger = () => {
-  const { user, role, institutionIds } = useContext(myContext);
-  const location = useLocation();
-
-  useEffect(() => {
-    console.log(
-      'user:',
-      user,
-      '| role:',
-      role,
-      '| institutionIds:',
-      institutionIds
-    );
-  }, [location.pathname]);
-
-  return null;
-};
-
 export const AppRouter = () => {
   const { user, authLoading } = useContext(myContext);
   const isLoggedIn = () => !!user;
@@ -55,7 +37,6 @@ export const AppRouter = () => {
   }
   return (
     <BrowserRouter>
-      <AuthDebugLogger />
       <Routes>
         <Route
           path="/"
@@ -77,12 +58,17 @@ export const AppRouter = () => {
           <Route index element={<OntologySearch />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/about" element={<About />} />
-          <Route path="/ontologies" element={<OntologyInfo />} />
           <Route path="/404" element={<Error404 />} />
           <Route element={<PageLayout />}>
             <Route path="*" element={<Navigate to="/404" />} />
             <Route element={<SearchContextRoot />}>
               <Route path="/search/:query" element={<SearchResults />} />
+              <Route
+                path="/ontologies"
+                element={
+                  isLoggedIn() ? <OntologyInfo /> : <Navigate to="/login" />
+                }
+              />
 
               <Route
                 path="/terminologies"

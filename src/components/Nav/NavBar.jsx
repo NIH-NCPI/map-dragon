@@ -3,7 +3,6 @@ import './NavBar.scss';
 import { Login } from '../Auth/Login';
 import { useContext, useState } from 'react';
 import { myContext } from '../../App';
-import { RequiredLogin } from '../Auth/RequiredLogin';
 import Logo from '../../assets/logo.png';
 
 export const NavBar = () => {
@@ -12,11 +11,6 @@ export const NavBar = () => {
   const navigate = useNavigate();
   const handleSuccess = () => {
     navigate(routeTo);
-  };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
-  const handleLogin = route => {
-    setRouteTo(route);
-    login();
   };
 
   return (
@@ -35,30 +29,14 @@ export const NavBar = () => {
             </li>
           </div>
           <div className="nav_links">
-            <div
-              onClick={() => {
-                if (user) {
-                  navigate('/studies');
-                } else {
-                  handleLogin('/studies');
-                }
-              }}
-            >
+            <NavLink to="/studies">
               <li className="nav_link">Studies</li>
-            </div>
+            </NavLink>
             <span className="nav_separator"></span>
 
-            <div
-              onClick={() => {
-                if (user) {
-                  navigate('/terminologies');
-                } else {
-                  handleLogin('/terminologies');
-                }
-              }}
-            >
+            <NavLink to="/terminologies">
               <li className="nav_link">Terminologies</li>
-            </div>
+            </NavLink>
             <span className="nav_separator"></span>
 
             <NavLink to="/ontologies">

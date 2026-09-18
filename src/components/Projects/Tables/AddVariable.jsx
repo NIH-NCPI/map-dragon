@@ -13,7 +13,6 @@ import {
 } from 'antd';
 import DataTypeSubForm from './DataTypeSubForm';
 import '../../Manager/Spinner.scss';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
 import { apiFetch } from '../../Manager/ApiFetch';
 
@@ -29,7 +28,6 @@ export const AddVariable = ({ table, setTable }) => {
   const handleSuccess = () => {
     setAddRow(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   const handleSubmit = values => {
     setLoading(true);
@@ -58,8 +56,6 @@ export const AddVariable = ({ table, setTable }) => {
         setAddRow(false);
         message.success('Variable added successfully.');
       })
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Variable added successfully.'))
       .catch(error => {
         if (error) {
           notification.error({
@@ -90,7 +86,7 @@ export const AddVariable = ({ table, setTable }) => {
   return (
     <>
       <Button
-        onClick={() => (user ? setAddRow(true) : login())}
+        onClick={() => setAddRow(true)}
         type="primary"
         style={{
           marginBottom: 16

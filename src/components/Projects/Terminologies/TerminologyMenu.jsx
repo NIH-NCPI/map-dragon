@@ -5,7 +5,6 @@ import { myContext } from '../../../App';
 import { EditCode } from './EditCode';
 import { ShowHistory } from '../../Manager/ShowHistory';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
 import { apiFetch } from '../../Manager/ApiFetch';
 
@@ -26,35 +25,6 @@ export const TerminologyMenu = ({
   const [deleteRow, setDeleteRow] = useState(null);
   const [editRow, setEditRow] = useState(null);
   const [showHistory, setShowHistory] = useState(null);
-
-  // Login functions for each case in the dropdown menu with different props passed depending on selection
-
-  const passEdit = () => {
-    setEditRow(tableData.key);
-  };
-  const loginEdit = RequiredLogin({ handleSuccess: passEdit });
-
-  const passDelete = () => {
-    setDeleteRow(true);
-  };
-  const loginDelete = RequiredLogin({ handleSuccess: passDelete });
-
-  const passAssignMappings = () => {
-    setAssignMappings(tableData.key);
-  };
-  const loginAssignMappings = RequiredLogin({
-    handleSuccess: passAssignMappings
-  });
-
-  const passEditMappings = () => {
-    setEditMappings(item);
-  };
-  const loginEditMappings = RequiredLogin({ handleSuccess: passEditMappings });
-
-  const passGetMappings = () => {
-    setGetMappings(item);
-  };
-  const loginGetMappings = RequiredLogin({ handleSuccess: passGetMappings });
 
   // Opens the delete dialog box when Delete is selected in the menu
   useEffect(() => {
@@ -143,16 +113,15 @@ export const TerminologyMenu = ({
   ];
 
   // onClick function for Menu.
-  // If a user is not logged in, the login screen is triggered
 
   const onClick = obj => {
     const key = obj.key;
     setSelectedKey(key);
     switch (key) {
       case `${tableData.key}-1`:
-        return user ? setEditRow(tableData.key) : loginEdit();
+        return setEditRow(tableData.key);
       case `${tableData.key}-2`:
-        return user ? setDeleteRow(true) : loginDelete();
+        return setDeleteRow(true);
       case `${tableData.key}-3`:
         return setShowHistory(tableData.key);
     }

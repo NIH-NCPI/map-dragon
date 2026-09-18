@@ -3,7 +3,6 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { apiFetch } from '../../Manager/ApiFetch';
 const { confirm } = Modal;
 
@@ -14,7 +13,6 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
   const handleSuccess = () => {
     setRemove(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   // Function to remove table from a DD. Runs a DELETE call on the DD id and table id
   // Then fetches the updated DD data with the table removed.
@@ -93,7 +91,7 @@ export const RemoveTableDD = ({ DDId, table, getDDTables }) => {
         }}
         onClick={e => {
           e.preventDefault();
-          user ? setRemove(true) : login();
+          setRemove(true);
         }}
       >
         Remove

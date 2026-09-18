@@ -34,7 +34,6 @@ import { AddVariable } from './AddVariable';
 import { ExpandedRowTable } from './ExpandedRowTable';
 import { TableMenu } from './TableMenu';
 import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import {
@@ -95,7 +94,6 @@ export const TableDetails = () => {
   const handleSuccess = () => {
     setLoad(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
     document.title = 'Table - MapDragon';
@@ -671,7 +669,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <Col span={6}>
                 {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
                 and triggers the modal to open*/}
-                <span onClick={() => (user ? setLoad(true) : login())}>
+                <span onClick={() => setLoad(true)}>
                   <Card
                     hoverable
                     style={{

@@ -11,7 +11,6 @@ import {
   Spin
 } from 'antd';
 import '../../Manager/Spinner.scss';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
 import { apiFetch } from '../../Manager/ApiFetch';
 
@@ -25,7 +24,6 @@ export const AddCode = ({ terminology, setTerminology }) => {
   const handleSuccess = () => {
     setAddRow(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   const handleSubmit = values => {
     setLoading(true);
@@ -87,7 +85,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
     <>
       <div className="add_row_button">
         <Button
-          onClick={() => (user ? setAddRow(true) : login())}
+          onClick={() => setAddRow(true)}
           type="primary"
           style={{
             marginBottom: 16
