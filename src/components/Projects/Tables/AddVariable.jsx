@@ -25,10 +25,6 @@ export const AddVariable = ({ table, setTable }) => {
   const { TextArea } = Input;
   const [form] = Form.useForm();
 
-  const handleSuccess = () => {
-    setAddRow(true);
-  };
-
   const handleSubmit = values => {
     setLoading(true);
 
@@ -91,7 +87,6 @@ export const AddVariable = ({ table, setTable }) => {
         style={{
           marginBottom: 16
         }}
-        // disabled={addRow}
       >
         Add variable
       </Button>
