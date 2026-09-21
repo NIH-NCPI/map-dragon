@@ -4,6 +4,7 @@ import { useContext, useEffect } from 'react';
 import { myContext } from '../../App';
 import { startSession } from './SessionsManager';
 import { SignedInUi } from './SignedInUI';
+import { UserMenu } from './UserMenu';
 
 export const Login = () => {
   const { user, setUser, setUserPic, vocabUrl, setRole, setInstitutionIds } =
@@ -25,7 +26,7 @@ export const Login = () => {
 
   // If there is a user, it displays the Logout function with user information. Otherwise, it displays the login button
   return user ? (
-    <SignedInUi />
+    <UserMenu />
   ) : (
     // Logs user in, decodes the JWT token, saves user information in sessionStorage
     <div>

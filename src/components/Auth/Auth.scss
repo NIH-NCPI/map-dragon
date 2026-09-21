@@ -17,3 +17,19 @@
   width: 22px;
   border-radius: 50%;
 }
+
+.user_menu {
+  .ant-menu-submenu-title::after {
+    border-bottom: none !important;
+  }
+
+  .ant-menu-submenu-active::after,
+  .ant-menu-submenu-open::after,
+  .ant-menu-submenu-selected::after {
+    border-bottom: none !important;
+  }
+
+  .ant-menu-submenu-title:hover::after {
+    border-bottom: none !important;
+  }
+}
