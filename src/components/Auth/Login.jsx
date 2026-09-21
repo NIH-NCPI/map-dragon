@@ -1,20 +1,13 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useContext, useEffect } from 'react';
-import { Logout } from './Logout';
 import { myContext } from '../../App';
 import { startSession } from './SessionsManager';
+import { SignedInUi } from './SignedInUI';
 
 export const Login = () => {
-  const {
-    user,
-    setUser,
-    setUserPic,
-    userPic,
-    vocabUrl,
-    setRole,
-    setInstitutionIds
-  } = useContext(myContext);
+  const { user, setUser, setUserPic, vocabUrl, setRole, setInstitutionIds } =
+    useContext(myContext);
 
   useEffect(() => {
     const storedUser = sessionStorage.getItem('user');
@@ -32,14 +25,7 @@ export const Login = () => {
 
   // If there is a user, it displays the Logout function with user information. Otherwise, it displays the login button
   return user ? (
-    <Logout
-      user={user}
-      setUser={setUser}
-      userPic={userPic}
-      setUserPic={setUserPic}
-      setRole={setRole}
-      setInstitutionIds={setInstitutionIds}
-    />
+    <SignedInUi />
   ) : (
     // Logs user in, decodes the JWT token, saves user information in sessionStorage
     <div>
