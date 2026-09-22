@@ -9,19 +9,24 @@ export const UserPage = () => {
   const { user, role, institutionIds, vocabUrl } = useContext(myContext);
   const navigate = useNavigate();
   const [tokens, setTokens] = useState([]);
-  const [newToken, setNewToken] = useState(false);
+  const [createToken, setCreateToken] = useState(false);
+  const [expiry, setExpiry] = useState(null);
   const [form] = Form.useForm();
   useEffect(() => {
     document.title = 'User Page - MapDragon';
-    getAll(vocabUrl, 'tokens', navigate).then(data => setTokens(data));
+    getAll(vocabUrl, 'tokens', navigate).then(data => {
+      setTokens(data);
+      setExpiry(data.expiresAt);
+    });
   }, []);
-
+  console.log(tokens);
   const expiresAt = () => {
     const date = new Date();
-    date.setFullYear(date.getFullYear() + 1);
+    date.setMinutes(date.getMinutes() + 10);
+    // date.setFullYear(date.getFullYear() + 1);
     return date;
   };
-  const createToken = values => {
+  const postToken = values => {
     handlePost(vocabUrl, 'tokens', {
       'name': values.name,
       expiresAt: expiresAt()
@@ -48,11 +53,20 @@ export const UserPage = () => {
   ];
 
   const tokenItems =
-    tokens?.flatMap((t, i) => [
-      { key: `t${i}-name`, label: 'Name', children: t.name },
-      { key: `t${i}-expiry`, label: 'Expiry Date', children: t.expiresAt }
-    ]) ?? [];
-  console.log(newToken);
+    tokens?.flatMap((t, i) => {
+      const isExpired = new Date(t.expiresAt) < new Date();
+      return [
+        { key: `t${i}-name`, label: 'Name', children: t.name },
+        {
+          key: `t${i}-expiry`,
+          label: 'Expiry Date',
+          children: isExpired
+            ? 'EXPIRED'
+            : new Date(t.expiresAt).toLocaleString()
+        }
+      ];
+    }) ?? [];
+
   return (
     <div className="user-page-container">
       <div>
@@ -96,7 +110,7 @@ export const UserPage = () => {
             <Button
               onClick={e => {
                 e.preventDefault();
-                setNewToken(true);
+                setCreateToken(true);
               }}
             >
               New token
@@ -110,17 +124,17 @@ export const UserPage = () => {
         )}
       </div>
 
-      {newToken === true && (
+      {createToken === true && (
         <Modal
-          open={newToken}
+          open={createToken}
           width={'50%'}
           onOk={() => {
             form.validateFields().then(values => {
-              createToken(values);
-              setNewToken(false);
+              postToken(values);
+              setCreateToken(false);
             });
           }}
-          onCancel={() => setNewToken(false)}
+          onCancel={() => setCreateToken(false)}
           closable={false}
           destroyOnHidden={true}
           maskClosable={true}
