@@ -3,7 +3,6 @@ import { jwtDecode } from 'jwt-decode';
 import { useContext, useEffect } from 'react';
 import { myContext } from '../../App';
 import { startSession } from './SessionsManager';
-import { SignedInUi } from './SignedInUI';
 import { UserMenu } from './UserMenu';
 
 export const Login = () => {

@@ -1,0 +1,19 @@
+.user-page-container {
+  line-height: 1.5rem;
+  height: 60vh;
+  margin: -15vh 10vw 0 10vw;
+}
+
+.descriptions-wrapper {
+  width: 28vw;
+}
+
+.institution-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ant-descriptions-item-label {
+  vertical-align: top;
+}
