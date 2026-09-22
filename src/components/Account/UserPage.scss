@@ -2,6 +2,8 @@
   line-height: 1.5rem;
   height: 60vh;
   margin: -15vh 10vw 0 10vw;
+  display: flex;
+  gap: 20px;
 }
 
 .descriptions-wrapper {
@@ -16,4 +18,19 @@
 
 .ant-descriptions-item-label {
   vertical-align: top;
+}
+
+.token-container {
+  margin: 7vh 10vw 0 0;
+}
+
+.tokens-wrapper {
+  width: 40vw;
+}
+
+.token-font {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
