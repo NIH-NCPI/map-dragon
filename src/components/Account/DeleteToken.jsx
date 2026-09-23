@@ -6,7 +6,7 @@ import { myContext } from '../../App';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
-export const DeleteToken = ({ setTokens, setExpiry }) => {
+export const DeleteToken = ({ setTokens }) => {
   const { confirm } = Modal;
   const { deleteToken, setDeleteToken, vocabUrl } = useContext(myContext);
   const navigate = useNavigate();
@@ -30,7 +30,6 @@ export const DeleteToken = ({ setTokens, setExpiry }) => {
       .then(() => {
         getAll(vocabUrl, 'tokens', navigate).then(data => {
           setTokens(data);
-          setExpiry(data?.expiresAt);
         });
       });
 

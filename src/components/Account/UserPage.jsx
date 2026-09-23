@@ -20,7 +20,6 @@ export const UserPage = () => {
   const [showToken, setShowToken] = useState(0);
   const [displayToken, setDisplayToken] = useState(0);
   const [copied, setCopied] = useState(false);
-  const [expiry, setExpiry] = useState(null);
   const [form] = Form.useForm();
 
   // Make sure to copy your personal access token now. You won’t be able to see it again!
@@ -30,7 +29,6 @@ export const UserPage = () => {
     getAll(vocabUrl, 'tokens', navigate)
       .then(data => {
         setTokens(data);
-        setExpiry(data.expiresAt);
       })
       .catch(error => {
         if (error) {
@@ -196,7 +194,6 @@ export const UserPage = () => {
                       setShowToken(false);
                       setCreateToken(false);
                       setTokens(data);
-                      setExpiry(data.expiresAt);
                     });
                   }}
                 >
@@ -259,7 +256,7 @@ export const UserPage = () => {
           </Modal>
         )}
       </div>
-      <DeleteToken setTokens={setTokens} setExpiry={setExpiry} />
+      <DeleteToken setTokens={setTokens} />
     </>
   );
 };
