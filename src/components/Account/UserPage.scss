@@ -1,3 +1,4 @@
+@use '../Styling/Variables' as *;
 .user-page-container {
   line-height: 1.5rem;
   height: 60vh;
@@ -25,7 +26,7 @@
 }
 
 .tokens-wrapper {
-  width: 40vw;
+  width: 42vw;
 }
 
 .token-font {
@@ -33,4 +34,26 @@
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', 'Noto Color Emoji';
+  background-color: rgb(255, 255, 255, 0.6);
+}
+
+.expires-div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.delete-token-icon {
+  cursor: pointer;
+}
+
+.token-display {
+  background-color: rgb(222, 255, 222);
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.copy-icon:hover {
+  transition: color 0.2s linear;
+  color: $darkBlue;
 }

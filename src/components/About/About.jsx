@@ -42,9 +42,9 @@ export const About = () => {
             items={items}
             labelStyle={{
               width: 130,
-              backgroundColor: 'rgb(189, 189, 187, 0.1)'
+              backgroundColor: 'rgb(255, 255, 255, 0.6)'
             }}
-            contentStyle={{ backgroundColor: 'rgb(189, 189, 187, 0.1)' }}
+            contentStyle={{ backgroundColor: 'rgb(255, 255, 255, 0.6)' }}
           />
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useContext, useState } from 'react';
 import { SignedInUi } from './SignedInUI';
 import { myContext } from '../../App';
 import { Link } from 'react-router-dom';
+import { handleLogout } from './Logout';
 
 export const UserMenu = () => {
   const { vocabUrl, user, setUser, setUserPic, setRole, setInstitutionIds } =
@@ -22,7 +23,7 @@ export const UserMenu = () => {
   const onClick = obj => {
     switch (obj.key) {
       case '2':
-        console.log(obj.key);
+        handleLogout(vocabUrl, setUser, setUserPic, setRole, setInstitutionIds);
         break;
       default:
         break;

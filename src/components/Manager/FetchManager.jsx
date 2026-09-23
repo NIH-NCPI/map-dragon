@@ -49,7 +49,7 @@ export const getById = async (vocabUrl, name, id, navigate) => {
 };
 
 // Deletes one element by its id
-export const handleDelete = (evt, vocabUrl, name, component, user) => {
+export const handleDelete = (evt, vocabUrl, name, component) => {
   const options = { method: 'DELETE', credentials: 'include' };
 
   if (name === 'Table' || name === 'Terminology') {

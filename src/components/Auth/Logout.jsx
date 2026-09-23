@@ -1,7 +1,13 @@
 import { googleLogout } from '@react-oauth/google';
 import { endSession } from './SessionsManager';
 
-export const handleLogout = () => {
+export const handleLogout = (
+  vocabUrl,
+  setUser,
+  setUserPic,
+  setRole,
+  setInstitutionIds
+) => {
   googleLogout();
   endSession(vocabUrl);
   setUser(null);
