@@ -39,12 +39,14 @@ export const Login = () => {
           startSession(vocabUrl, credentialResponse.credential).then(
             profile => {
               sessionStorage.setItem('user', JSON.stringify(profile));
-              sessionStorage.setItem(
-                'userPic',
-                JSON.stringify(credentialResponseDecoded.picture)
-              );
+              if (credentialResponseDecoded.picture) {
+                sessionStorage.setItem(
+                  'userPic',
+                  JSON.stringify(credentialResponseDecoded.picture)
+                );
+                setUserPic(credentialResponseDecoded.picture);
+              }
               setUser(profile.email);
-              setUserPic(credentialResponseDecoded.picture);
               setRole(profile.role);
               setInstitutionIds(profile.institutionIds);
             }
