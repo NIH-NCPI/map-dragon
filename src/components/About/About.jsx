@@ -35,7 +35,17 @@ export const About = () => {
       <div className="about_container">
         <h2>About</h2>
         <div className="about_description">
-          <Descriptions title="Version" bordered column={1} items={items} />
+          <Descriptions
+            title="Version"
+            bordered
+            column={1}
+            items={items}
+            labelStyle={{
+              width: 130,
+              backgroundColor: 'rgb(255, 255, 255, 0.6)'
+            }}
+            contentStyle={{ backgroundColor: 'rgb(255, 255, 255, 0.6)' }}
+          />
         </div>
       </div>
     </>

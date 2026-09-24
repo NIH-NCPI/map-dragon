@@ -27,6 +27,7 @@ import { OntologyInfo } from './components/Ontologies/OntologyAPIs.jsx';
 import { TerminologyList } from './components/Projects/Terminologies/TerminologyList';
 import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
+import { UserPage } from './components/Account/UserPage.jsx';
 
 export const AppRouter = () => {
   const { user, authLoading } = useContext(myContext);
@@ -61,6 +62,7 @@ export const AppRouter = () => {
           <Route path="/404" element={<Error404 />} />
           <Route element={<PageLayout />}>
             <Route path="*" element={<Navigate to="/404" />} />
+            <Route path="user" element={<UserPage />} />
             <Route element={<SearchContextRoot />}>
               <Route path="/search/:query" element={<SearchResults />} />
               <Route

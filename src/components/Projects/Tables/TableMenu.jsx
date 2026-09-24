@@ -18,7 +18,6 @@ export const TableMenu = ({
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, selectedKey, setSelectedKey, user } = useContext(myContext);
-  const { variable } = tableData;
   const [editRow, setEditRow] = useState(null);
   const [deleteRow, setDeleteRow] = useState(null);
   const [showHistory, setShowHistory] = useState(null);
