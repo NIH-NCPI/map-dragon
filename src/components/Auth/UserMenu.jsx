@@ -12,7 +12,7 @@ export const UserMenu = () => {
   const items = [
     {
       key: 'main-menu',
-      icon: <SignedInUi />,
+      label: <SignedInUi />,
       children: [
         { key: '1', label: <Link to="/user">User Page</Link> },
         { key: '2', label: 'Log Out' }
@@ -39,6 +39,7 @@ export const UserMenu = () => {
         triggerSubMenuAction="click"
         selectable={false}
         style={{ background: 'none', border: 'none' }}
+        disabledOverflow
       />
     </div>
   );
