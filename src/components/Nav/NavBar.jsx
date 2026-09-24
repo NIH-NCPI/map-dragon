@@ -1,18 +1,12 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './NavBar.scss';
 import { Login } from '../Auth/Login';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { myContext } from '../../App';
 import Logo from '../../assets/logo.png';
 
 export const NavBar = () => {
-  const [routeTo, setRouteTo] = useState(null);
   const { user } = useContext(myContext);
-  const navigate = useNavigate();
-  const handleSuccess = () => {
-    navigate(routeTo);
-  };
-
   return (
     <>
       <nav className="navbar">
@@ -58,9 +52,7 @@ export const NavBar = () => {
               <li className="nav_link last_nav_link">Search</li>
             </NavLink>
           </div>
-          <div className="login">
-            <Login />
-          </div>
+          <div className="login">{user && <Login />}</div>
         </ul>
       </nav>
     </>

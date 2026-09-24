@@ -1,15 +1,12 @@
-import { Button, Descriptions, Form, Input, Modal, Tooltip } from 'antd';
+import { Button, Descriptions } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../App';
 import './UserPage.scss';
 import { useNavigate } from 'react-router-dom';
-import { getAll, handlePost } from '../Manager/FetchManager';
-import {
-  CloseCircleOutlined,
-  CopyOutlined,
-  WarningTwoTone
-} from '@ant-design/icons';
+import { getAll } from '../Manager/FetchManager';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { DeleteToken } from './DeleteToken';
+import { CreateToken } from './CreateToken';
 
 export const UserPage = () => {
   const { user, role, institutionIds, vocabUrl, setDeleteToken } =
@@ -17,10 +14,6 @@ export const UserPage = () => {
   const navigate = useNavigate();
   const [tokens, setTokens] = useState([]);
   const [createToken, setCreateToken] = useState(false);
-  const [showToken, setShowToken] = useState(0);
-  const [displayToken, setDisplayToken] = useState(0);
-  const [copied, setCopied] = useState(false);
-  const [form] = Form.useForm();
 
   // Make sure to copy your personal access token now. You won’t be able to see it again!
 
@@ -39,28 +32,6 @@ export const UserPage = () => {
         }
       });
   }, []);
-
-  const postToken = values => {
-    handlePost(vocabUrl, 'tokens', {
-      'name': values.name,
-      expiresAt: expiresAt()
-    })
-      .then(data => setDisplayToken(data.token))
-      .catch(error => {
-        if (error) {
-          notification.error({
-            message: 'Error',
-            description: 'An error occurred creating the token.'
-          });
-        }
-      });
-  };
-
-  const expiresAt = () => {
-    const date = new Date();
-    date.setFullYear(date.getFullYear() + 1);
-    return date;
-  };
 
   const userItems = [
     { key: 'u1', label: 'Email', children: user },
@@ -118,7 +89,7 @@ export const UserPage = () => {
     }) ?? [];
   return (
     <>
-      <div className="user-page-container">
+      <div className="account-container">
         <div>
           <h2>User Page</h2>
 
@@ -179,81 +150,11 @@ export const UserPage = () => {
         </div>
 
         {createToken === true && (
-          <Modal
-            open={createToken}
-            width={'50%'}
-            closable={false}
-            destroyOnHidden={true}
-            maskClosable={true}
-            footer={
-              showToken ? (
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    getAll(vocabUrl, 'tokens', navigate).then(data => {
-                      setShowToken(false);
-                      setCreateToken(false);
-                      setTokens(data);
-                    });
-                  }}
-                >
-                  Close
-                </Button>
-              ) : (
-                <>
-                  <Button onClick={() => setCreateToken(false)}>Cancel</Button>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      form.validateFields().then(values => {
-                        postToken(values);
-                        setShowToken(true);
-                      });
-                    }}
-                  >
-                    Create
-                  </Button>
-                </>
-              )
-            }
-          >
-            <Form form={form} layout="vertical" preserve={false}>
-              <h2>New Token</h2>
-              <WarningTwoTone style={{ fontSize: '20px' }} /> The token will
-              only be shown once. Make sure it is saved somewhere safe!
-              <p></p>
-              {showToken ? (
-                <div className="token-display">
-                  <div>{displayToken}</div>
-                  <div>
-                    <Tooltip title="Copied!" open={copied} placement="top">
-                      <CopyOutlined
-                        className="copy-icon"
-                        onClick={() => {
-                          navigator.clipboard.writeText(displayToken);
-                          setCopied(true);
-                          setTimeout(() => setCopied(false), 1200);
-                        }}
-                      />
-                    </Tooltip>
-                  </div>
-                </div>
-              ) : (
-                <Form.Item
-                  name="name"
-                  label="Token Name"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please input token name.'
-                    }
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-              )}
-            </Form>
-          </Modal>
+          <CreateToken
+            createToken={createToken}
+            setCreateToken={setCreateToken}
+            setTokens={setTokens}
+          />
         )}
       </div>
       <DeleteToken setTokens={setTokens} />

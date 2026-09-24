@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { myContext } from './App.jsx';
 import { OntologySearch } from './components/Search/OntologySearch';
 import {
@@ -6,8 +6,7 @@ import {
   Outlet,
   Route,
   Routes,
-  Navigate,
-  useLocation
+  Navigate
 } from 'react-router-dom';
 import { NavBar } from './components/Nav/NavBar';
 import { LoginPage } from './components/Auth/LoginPage.jsx';
@@ -28,6 +27,7 @@ import { TerminologyList } from './components/Projects/Terminologies/Terminology
 import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
 import { UserPage } from './components/Account/UserPage.jsx';
+import { Institutions } from './components/Account/Institutions.jsx';
 
 export const AppRouter = () => {
   const { user, authLoading } = useContext(myContext);
@@ -63,6 +63,7 @@ export const AppRouter = () => {
           <Route element={<PageLayout />}>
             <Route path="*" element={<Navigate to="/404" />} />
             <Route path="user" element={<UserPage />} />
+            <Route path="institutions" element={<Institutions />} />
             <Route element={<SearchContextRoot />}>
               <Route path="/search/:query" element={<SearchResults />} />
               <Route
