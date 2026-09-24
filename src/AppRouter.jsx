@@ -6,7 +6,8 @@ import {
   Outlet,
   Route,
   Routes,
-  Navigate
+  Navigate,
+  useLocation
 } from 'react-router-dom';
 import { NavBar } from './components/Nav/NavBar';
 import { LoginPage } from './components/Auth/LoginPage.jsx';

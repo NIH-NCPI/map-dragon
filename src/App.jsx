@@ -40,8 +40,12 @@ function App() {
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
   const [ucumCodes, setUcumCodes] = useState([]);
   const [version, setVersion] = useState({});
+<<<<<<< HEAD
   const [authLoading, setAuthLoading] = useState(true);
   const [deleteToken, setDeleteToken] = useState(null);
+=======
+  const [authLoading, setAuthLoading] = useState(true); // new
+>>>>>>> 5da0de2 (Session Initialization)
 
   message.config({
     top: '25vh'
@@ -105,9 +109,13 @@ function App() {
           setRole,
           institutionIds,
           setInstitutionIds,
+<<<<<<< HEAD
           authLoading,
           deleteToken,
           setDeleteToken
+=======
+          authLoading
+>>>>>>> 5da0de2 (Session Initialization)
         }}
       >
         <AppRouter />
