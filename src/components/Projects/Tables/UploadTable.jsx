@@ -16,6 +16,7 @@ import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../../Manager/Spinner.scss';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const UploadTable = ({ addTable, setAddTable }) => {
   const [form] = Form.useForm();
@@ -33,12 +34,13 @@ export const UploadTable = ({ addTable, setAddTable }) => {
   const tableUpload = values => {
     setLoading(true);
     const newTableArray = [...dataDictionary?.tables];
-    fetch(`${vocabUrl}/LoadTable`, {
+    apiFetch(`${vocabUrl}/LoadTable`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ ...values, editor: user.email })
+      body: JSON.stringify(values)
     })
       .then(res => {
         if (res.status === 400) {

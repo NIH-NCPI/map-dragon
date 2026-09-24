@@ -3,8 +3,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { useParams } from 'react-router-dom';
-import { getById } from '../FetchManager';
+import { apiFetch } from '../ApiFetch';
 
 export const FilterReset = ({
   table,
@@ -28,7 +27,7 @@ export const FilterReset = ({
 
   const deleteOntologies = async evt => {
     try {
-      const ontoDelete = await fetch(
+      const ontoDelete = await apiFetch(
         `${vocabUrl}/${
           table
             ? `Table/${table.id}/filter/self`
@@ -36,19 +35,19 @@ export const FilterReset = ({
         }`,
         {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ editor: user.email })
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
         }
       );
 
-      const terminologyDelete = await fetch(
+      const terminologyDelete = await apiFetch(
         `${vocabUrl}/${componentString}/${
           table ? table.id : terminology.id
         }/preferred_terminology`,
         {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ editor: user.email })
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
         }
       );
 

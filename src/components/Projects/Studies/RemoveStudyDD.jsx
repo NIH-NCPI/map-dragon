@@ -3,7 +3,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { apiFetch } from '../../Manager/ApiFetch';
 const { confirm } = Modal;
 
 export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
@@ -12,13 +12,13 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
   const handleSuccess = () => {
     setRemove(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   // Function to remove DD from a study. Runs a DELETE call on the Study id and DD id
   // Then fetches the updated Study data with the DD removed.
   const handleRemove = () => {
-    return fetch(`${vocabUrl}/Study/${studyId}/dd/${dd.id}`, {
-      method: 'DELETE'
+    return apiFetch(`${vocabUrl}/Study/${studyId}/dd/${dd.id}`, {
+      method: 'DELETE',
+      credentials: 'include'
     })
       .then(res => {
         if (res.ok) {
@@ -36,7 +36,10 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
         }
         return error;
       })
-      .then(() => fetch(`${vocabUrl}/Study/${studyId}`))
+      .then(() => apiFetch(`${vocabUrl}/Study/${studyId}`), {
+        method: 'GET',
+        credentials: 'include'
+      })
       .then(res => res.json())
       .then(data => {
         setStudy(data);
@@ -89,7 +92,7 @@ export const RemoveStudyDD = ({ studyId, dd, getStudyDDs }) => {
         }}
         onClick={e => {
           e.preventDefault();
-          user ? setRemove(true) : login();
+          setRemove(true);
         }}
       >
         Remove

@@ -19,7 +19,7 @@ export const MappingRelationship = ({ mapping, variable }) => {
 
   const addInfo = str => {
     const label = mapping.display ? mapping.display : mapping.code;
-    //Gets with of modal (70% of screen size)
+    //Gets width of modal (70% of screen size)
     const modalWidth = document.body.clientWidth * 0.7;
     //Subtracts padding, etc. from modal width to get available width to use for label
 

@@ -19,7 +19,7 @@ export const LoginPage = () => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-around',
-          alignItems: 'center',
+          alignItems: 'center'
         }}
       >
         <Login />

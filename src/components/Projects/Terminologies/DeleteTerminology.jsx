@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import { myContext } from '../../../App';
 import { useNavigate } from 'react-router-dom';
 import { getAll } from '../../Manager/FetchManager';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const DeleteTerminology = ({ setTerms, deleteId, setDeleteId }) => {
   const { confirm } = Modal;
@@ -12,12 +13,12 @@ export const DeleteTerminology = ({ setTerms, deleteId, setDeleteId }) => {
 
   // Deletes specified terminology and updates the terminology list
   const deleteTerm = evt => {
-    fetch(`${vocabUrl}/Terminology/${deleteId}`, {
+    apiFetch(`${vocabUrl}/Terminology/${deleteId}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ editor: user.email }),
+        'Content-Type': 'application/json'
+      }
     })
       .then(res => {
         if (res.ok) {
@@ -30,7 +31,7 @@ export const DeleteTerminology = ({ setTerms, deleteId, setDeleteId }) => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred deleteing the Terminology.',
+            description: 'An error occurred deleteing the Terminology.'
           });
         }
         return error;
@@ -45,7 +46,7 @@ export const DeleteTerminology = ({ setTerms, deleteId, setDeleteId }) => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred loading Terminologies.',
+            description: 'An error occurred loading Terminologies.'
           });
         }
         return error;
@@ -65,7 +66,7 @@ export const DeleteTerminology = ({ setTerms, deleteId, setDeleteId }) => {
       },
       onCancel() {
         setDeleteId(null);
-      },
+      }
     });
   };
 

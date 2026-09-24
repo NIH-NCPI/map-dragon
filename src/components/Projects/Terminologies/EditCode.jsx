@@ -75,8 +75,7 @@ export const EditCode = ({
     // // an error message displays that the code already exists. Otherwise the PUT call is run.
 
     handlePatch(vocabUrl, 'Terminology', terminology, {
-      ...updatedRowDTO,
-      editor: user.email
+      ...updatedRowDTO
     })
       .then(data => {
         setTerminology(data);

@@ -19,8 +19,8 @@ import {
   ontologyFilterCodeSubmit
 } from '../FetchManager';
 import { OntologyCheckboxes } from './OntologyCheckboxes';
-
 import { MappingRelationship } from './MappingRelationship';
+import { apiFetch } from '../ApiFetch';
 
 export const GetMappingsModal = ({
   component,
@@ -182,17 +182,17 @@ export const GetMappingsModal = ({
     }));
 
     const mappingsDTO = {
-      mappings: selectedMappings,
-      editor: user.email
+      mappings: selectedMappings
     };
 
     setLoadingResults(true);
-    fetch(
+    apiFetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         mappingProp
       )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },

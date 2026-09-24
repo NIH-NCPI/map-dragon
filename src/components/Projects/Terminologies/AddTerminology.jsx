@@ -14,13 +14,12 @@ import '../../Manager/Spinner.scss';
 import { myContext } from '../../../App';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const AddTerminology = () => {
   const handleSuccess = () => {
     setCreateTerm(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
   const [form] = Form.useForm();
   const { vocabUrl, user } = useContext(myContext);
 
@@ -37,15 +36,15 @@ export const AddTerminology = () => {
     }));
 
     setLoading(true);
-    fetch(`${vocabUrl}/Terminology`, {
+    apiFetch(`${vocabUrl}/Terminology`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         ...values,
-        codes: cleanedCodes,
-        editor: user?.email
+        codes: cleanedCodes
       })
     })
       .then(res => {
@@ -95,13 +94,7 @@ export const AddTerminology = () => {
     <>
       <div className="add_row_buttons">
         <Button
-          onClick={() => {
-            if (user) {
-              setCreateTerm(true);
-            } else {
-              login();
-            }
-          }}
+          onClick={() => setCreateTerm(true)}
           type="primary"
           style={{
             marginBottom: 16

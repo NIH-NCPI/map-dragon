@@ -16,6 +16,7 @@ import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import EditDataTypeSubForm from './EditDataTypeSubForm';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const EditVariable = ({
   editRow,
@@ -83,8 +84,7 @@ export const EditVariable = ({
     // endpoint with a PUT request to edit the data for the variable.
     if (!table.variables.some(item => item?.name === values?.name)) {
       handlePatch(vocabUrl, 'Table', table, {
-        ...updatedName,
-        editor: user.email
+        ...updatedName
       })
         .catch(error => {
           if (error) {
@@ -96,14 +96,15 @@ export const EditVariable = ({
           return error;
         })
         .then(() => {
-          fetch(
+          apiFetch(
             `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
             {
               method: 'PUT',
+              credentials: 'include',
               headers: {
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ ...values, editor: user.email })
+              body: JSON.stringify(values)
             }
           )
             .then(res => {
@@ -141,14 +142,14 @@ export const EditVariable = ({
         );
     } else {
       setLoading(true);
-      fetch(
+      apiFetch(
         `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
         {
           method: 'PUT',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ ...values, editor: user.email })
+          }
         }
       )
         .then(res => {
@@ -164,6 +165,16 @@ export const EditVariable = ({
           setEditRow('');
           message.success('Changes saved successfully.');
         })
+        .catch(error => {
+          if (error) {
+            notification.error({
+              message: 'Error',
+              description: 'An error occurred editing the variable.'
+            });
+          }
+          return error;
+        })
+        .finally(() => setLoading(false))
 
         .then(() =>
           getById(

@@ -1,3 +1,4 @@
+import { apiFetch } from '../ApiFetch';
 import { getById } from '../FetchManager';
 import { uriEncoded } from '../Utility';
 
@@ -13,20 +14,20 @@ export const mappingVotes = (
   component
 ) => {
   const mappingVoteDTO = {
-    editor: user?.email,
-    vote: vote,
+    vote: vote
   };
 
-  return fetch(
+  return apiFetch(
     `${vocabUrl}/${component}/${componentId}/user_input/${uriEncoded(
       variableMappings?.code
     )}/mapping/${uriEncoded(code?.code)}/mapping_votes`,
     {
       method: 'PUT',
+      credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(mappingVoteDTO),
+      body: JSON.stringify(mappingVoteDTO)
     }
   )
     .then(res => {
@@ -40,7 +41,7 @@ export const mappingVotes = (
       if (error) {
         notification.error({
           message: 'Error',
-          description: 'An error occurred saving the vote.',
+          description: 'An error occurred saving the vote.'
         });
       }
       return error;
@@ -56,7 +57,7 @@ export const mappingVotes = (
           if (error) {
             notification.error({
               message: 'Error',
-              description: 'An error occurred loading mappings.',
+              description: 'An error occurred loading mappings.'
             });
           }
           return error;

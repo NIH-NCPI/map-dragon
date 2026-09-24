@@ -1,5 +1,4 @@
 import { Form, Input, InputNumber, Select, Space } from 'antd';
-import { getById } from '../../Manager/FetchManager';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 

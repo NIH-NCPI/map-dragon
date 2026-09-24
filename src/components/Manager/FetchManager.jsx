@@ -1,9 +1,11 @@
+import { apiFetch } from './ApiFetch';
 import { uriEncoded } from './Utility';
 
 // Fetches all elements at an endpoint
 export const getAll = (vocabUrl, name, navigate, signal) => {
-  return fetch(`${vocabUrl}/${name}`, {
+  return apiFetch(`${vocabUrl}/${name}`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -23,8 +25,9 @@ export const getAll = (vocabUrl, name, navigate, signal) => {
 
 // Fetches one element by its id
 export const getById = async (vocabUrl, name, id, navigate) => {
-  return fetch(`${vocabUrl}/${name}/${id}`, {
+  return apiFetch(`${vocabUrl}/${name}/${id}`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     }
@@ -47,15 +50,14 @@ export const getById = async (vocabUrl, name, id, navigate) => {
 
 // Deletes one element by its id
 export const handleDelete = (evt, vocabUrl, name, component, user) => {
-  const options = { method: 'DELETE' };
+  const options = { method: 'DELETE', credentials: 'include' };
 
   if (name === 'Table' || name === 'Terminology') {
     options.headers = {
       'Content-Type': 'application/json'
     };
-    options.body = JSON.stringify({ editor: user.email });
   }
-  return fetch(`${vocabUrl}/${name}/${component.id}`, options)
+  return apiFetch(`${vocabUrl}/${name}/${component.id}`, options)
     .then(response => {
       if (!response.ok) {
         return response.json().then(error => {
@@ -65,7 +67,10 @@ export const handleDelete = (evt, vocabUrl, name, component, user) => {
       return response.json();
     })
     .then(() => {
-      return fetch(`${vocabUrl}/${name}`);
+      return apiFetch(`${vocabUrl}/${name}`, {
+        method: 'GET',
+        credentials: 'include'
+      });
     })
     .then(res => {
       if (!res.ok) {
@@ -81,8 +86,9 @@ export const handleDelete = (evt, vocabUrl, name, component, user) => {
 
 // Updates one element by its id.
 export const handleUpdate = (vocabUrl, name, component, values) => {
-  return fetch(`${vocabUrl}/${name}/${component.id}`, {
+  return apiFetch(`${vocabUrl}/${name}/${component.id}`, {
     method: 'PUT',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -100,8 +106,9 @@ export const handleUpdate = (vocabUrl, name, component, values) => {
 
 // Posts a new element to an endpoint.
 export const handlePost = (vocabUrl, name, body) => {
-  return fetch(`${vocabUrl}/${name}`, {
+  return apiFetch(`${vocabUrl}/${name}`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -118,8 +125,9 @@ export const handlePost = (vocabUrl, name, body) => {
 };
 
 export const handlePatch = (vocabUrl, name, component, body) => {
-  return fetch(`${vocabUrl}/${name}/${component.id}/rename`, {
+  return apiFetch(`${vocabUrl}/${name}/${component.id}/rename`, {
     method: 'PATCH',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -136,10 +144,11 @@ export const handlePatch = (vocabUrl, name, component, body) => {
 };
 
 export const getProvenanceByCode = async (vocabUrl, name, id, code) => {
-  return fetch(
+  return apiFetch(
     `${vocabUrl}/Provenance/${name}/${id}/code/${uriEncoded(code)}`,
     {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       }
@@ -156,8 +165,9 @@ export const getProvenanceByCode = async (vocabUrl, name, id, code) => {
 };
 
 export const getOntologies = vocabUrl => {
-  return fetch(`${vocabUrl}/OntologyAPI`, {
+  return apiFetch(`${vocabUrl}/OntologyAPI`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     }
@@ -188,12 +198,13 @@ export const olsFilterOntologiesSearch = (
   notification
 ) => {
   setLoading(true);
-  return fetch(
+  return apiFetch(
     `${vocabUrl}/ontology_search?keyword=${uriEncoded(
       query
     )}&selected_ontologies=${ontologiesToSearch}&selected_api=${apiToSearch}&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
     {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       }
@@ -243,10 +254,11 @@ export const getFiltersByCode = (
   setLoading
 ) => {
   setLoading(true);
-  return fetch(
+  return apiFetch(
     `${vocabUrl}/${componentString}/${component.id}/filter/${uriEncoded(mappingProp)}`,
     {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       }
@@ -301,8 +313,9 @@ export const ontologyFilterCodeSubmit = (
   ) {
     apiPreference.api_preference = apiPreferencesCode;
     const fetchUrl = `${vocabUrl}/${componentString}/${component?.id}/filter/${uriEncoded(mappingProp)}`;
-    fetch(fetchUrl, {
+    apiFetch(fetchUrl, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(apiPreference)
     })
@@ -323,9 +336,11 @@ export const ontologyFilterCodeSubmit = (
       });
   }
 };
+
 export const getDefaultOntologies = async vocabUrl => {
-  return fetch(`${vocabUrl}/user/preferences/ontologies`, {
+  return apiFetch(`${vocabUrl}/user/preferences/ontologies`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     }

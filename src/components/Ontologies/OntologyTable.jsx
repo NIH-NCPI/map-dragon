@@ -6,13 +6,13 @@ export const OntologyTable = ({ ontology }) => {
   const [filter, setFilter] = useState(null);
 
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10
+    parseInt(sessionStorage.getItem('pageSize'), 10) || 10
   );
   const handleTableChange = (current, size) => {
     setPageSize(size);
   };
   useEffect(() => {
-    localStorage.setItem('pageSize', pageSize);
+    sessionStorage.setItem('pageSize', pageSize);
   }, [pageSize]);
 
   useEffect(() => {

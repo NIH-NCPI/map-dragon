@@ -34,7 +34,6 @@ import { AddVariable } from './AddVariable';
 import { ExpandedRowTable } from './ExpandedRowTable';
 import { TableMenu } from './TableMenu';
 import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import {
@@ -48,6 +47,7 @@ import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments
 import { AssignMappingsViaButton } from '../../Manager/MappingsFunctions/AssignMappingsViaButton';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
 import { EditMappingsModal } from '../../Manager/MappingsFunctions/EditMappingModal';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -84,7 +84,7 @@ export const TableDetails = () => {
   const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
 
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10
+    parseInt(sessionStorage.getItem('pageSize'), 10) || 10
   );
   const handleTableChange = (current, size) => {
     setPageSize(size);
@@ -94,7 +94,6 @@ export const TableDetails = () => {
   const handleSuccess = () => {
     setLoad(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
     document.title = 'Table - MapDragon';
@@ -102,21 +101,21 @@ export const TableDetails = () => {
 
   useEffect(() => {
     setDataSource(tableData(table));
-    localStorage.setItem('pageSize', pageSize);
+    sessionStorage.setItem('pageSize', pageSize);
   }, [table, mapping, pageSize]);
 
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
-      mappings: mapArr,
-      editor: user.email
+      mappings: mapArr
     };
 
-    fetch(
+    apiFetch(
       `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
         mappingCode
       )}?user_input=True&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -185,7 +184,7 @@ export const TableDetails = () => {
         );
         setRelationshipOptions(relationshipData.codes);
 
-        const filterDataRes = await fetch(
+        const filterDataRes = await apiFetch(
           `${vocabUrl}/Table/${tableId}/filter/self`,
           {
             method: 'GET',
@@ -670,7 +669,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
               <Col span={6}>
                 {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
                 and triggers the modal to open*/}
-                <span onClick={() => (user ? setLoad(true) : login())}>
+                <span onClick={() => setLoad(true)}>
                   <Card
                     hoverable
                     style={{

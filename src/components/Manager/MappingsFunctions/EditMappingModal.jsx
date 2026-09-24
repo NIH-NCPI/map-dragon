@@ -8,6 +8,7 @@ import { uriEncoded } from '../Utility';
 import { getById, ontologyFilterCodeSubmit } from '../FetchManager';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { MappingContext } from '../../../Contexts/MappingContext';
+import { apiFetch } from '../ApiFetch';
 
 export const EditMappingsModal = ({
   editMappings,
@@ -73,16 +74,16 @@ export const EditMappingsModal = ({
     });
 
     const mappingsDTO = {
-      mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])],
-      editor: user.email
+      mappings: [...(preexistingMappings ?? []), ...(selectedMappings ?? [])]
     };
 
-    fetch(
+    apiFetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         editMappings.code
       )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },

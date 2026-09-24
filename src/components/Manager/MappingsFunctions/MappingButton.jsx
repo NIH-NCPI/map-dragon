@@ -4,6 +4,7 @@ import { SearchContext } from '../../../Contexts/SearchContext';
 import { myContext } from '../../../App';
 import { uriEncoded } from '../Utility';
 import { MappingContext } from '../../../Contexts/MappingContext';
+import { apiFetch } from '../ApiFetch';
 
 export const MappingButton = ({
   variable,
@@ -44,17 +45,17 @@ export const MappingButton = ({
           description: '',
           system: 'https://freethedata.org/terms/null-flavor'
         }
-      ],
-      editor: user.email
+      ]
     };
 
     setLoading(true);
-    fetch(
+    apiFetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         variable?.code
       )}?user_input=true&user=${user?.email}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },

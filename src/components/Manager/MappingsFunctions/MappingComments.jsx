@@ -5,6 +5,7 @@ import { MappingContext } from '../../../Contexts/MappingContext';
 import '../Spinner.scss';
 import { getById } from '../FetchManager';
 import { uriEncoded } from '../Utility';
+import { apiFetch } from '../ApiFetch';
 
 export const MappingComments = ({
   mappingCode,
@@ -35,12 +36,13 @@ export const MappingComments = ({
 
   const getComments = () => {
     setLoading(true);
-    return fetch(
+    return apiFetch(
       `${vocabUrl}/${component}/${idProp}/user_input/${uriEncoded(
         variableMappings
       )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -68,16 +70,16 @@ export const MappingComments = ({
 
   const onFinish = values => {
     const mappingCommentDTO = {
-      editor: user?.email,
       note: values.comment
     };
 
-    return fetch(
+    return apiFetch(
       `${vocabUrl}/${component}/${idProp}/user_input/${uriEncoded(
         variableMappings
       )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
