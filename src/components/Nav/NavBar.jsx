@@ -52,7 +52,10 @@ export const NavBar = () => {
               <li className="nav_link last_nav_link">Search</li>
             </NavLink>
           </div>
-          <div className="login">{user && <Login />}</div>
+          <div className="login">
+            <Login />
+          </div>
+          {/* <div className="login">{user && <Login />}</div> */}
         </ul>
       </nav>
     </>

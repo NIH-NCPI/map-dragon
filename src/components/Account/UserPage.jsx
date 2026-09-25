@@ -1,7 +1,7 @@
 import { Button, Descriptions } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../App';
-import './UserPage.scss';
+import './Account.scss';
 import { useNavigate } from 'react-router-dom';
 import { getAll } from '../Manager/FetchManager';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -41,10 +41,10 @@ export const UserPage = () => {
       label: 'Institutions',
       children: (
         <div className="institution-wrapper">
-          {institutionIds.map(id => {
+          {institutionIds.map((id, i) => {
             return (
               <>
-                <div>{id}</div>
+                <div key={i}>{id}</div>
               </>
             );
           })}
