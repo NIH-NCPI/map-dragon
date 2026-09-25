@@ -31,14 +31,30 @@ export const Institutions = () => {
   }, []);
 
   const addEmail = institutionId => {
-    const email = newEmails[institutionId]?.trim();
-    if (!email) return;
-    handlePost(vocabUrl, `/admin/institutions/${institutionId}/allowlist`, {
-      'email': email
-    }).then(() => {
-      setNewEmails(prev => ({ ...prev, [institutionId]: '' }));
-      fetchInstitutions();
-    });
+    const raw = newEmails[institutionId]?.trim();
+    if (!raw) return;
+
+    const emailList = raw
+      .split(',')
+      .map(e => e.trim())
+      .filter(Boolean);
+
+    const body =
+      emailList.length > 1 ? { emails: emailList } : { email: emailList[0] };
+
+    handlePost(vocabUrl, `admin/institutions/${institutionId}/allowlist`, body)
+      .then(() => {
+        setNewEmails(prev => ({ ...prev, [institutionId]: '' }));
+        fetchInstitutions();
+      })
+      .catch(error => {
+        if (error) {
+          notification.error({
+            message: 'Error',
+            description: 'An error occurred adding the email.'
+          });
+        }
+      });
   };
 
   const columns = [
