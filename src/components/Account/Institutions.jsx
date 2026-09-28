@@ -1,4 +1,13 @@
-import { Button, Input, message, notification, Tabs, Table, Tag } from 'antd';
+import {
+  Button,
+  Input,
+  message,
+  notification,
+  Space,
+  Tabs,
+  Table,
+  Tag
+} from 'antd';
 import { CloseCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { getAll, handlePost } from '../Manager/FetchManager';
@@ -81,12 +90,15 @@ export const Institutions = () => {
       {
         title: 'Email',
         dataIndex: 'email',
-        key: 'email'
+        key: 'email',
+        width: 250
       },
       {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
+        width: 120,
+
         render: status => (
           <Tag color={status === 'active' ? 'green' : 'default'}>
             {status === 'active' ? 'Active User' : 'Allowed'}
@@ -96,7 +108,8 @@ export const Institutions = () => {
       {
         title: 'Last Active',
         dataIndex: 'last_login',
-        key: 'last_login'
+        key: 'last_login',
+        width: 200
       },
       {
         title: '',
@@ -118,32 +131,36 @@ export const Institutions = () => {
       children: (
         <>
           <Table
+            scroll={{ x: 'max-content' }}
+            width="max-content"
+            sticky={{ offsetHeader: 80 }}
             columns={columns}
             dataSource={rows}
-            pagination={false}
             size="small"
           />
 
-          <Input
-            placeholder="Add email"
-            style={{ width: 260 }}
-            value={newEmails[inst.id] || ''}
-            type="email"
-            onChange={e =>
-              setNewEmails(prev => ({
-                ...prev,
-                [inst.id]: e.target.value
-              }))
-            }
-            onPressEnter={() => addEmail(inst.id)}
-          />
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => addEmail(inst.id)}
-          >
-            Add
-          </Button>
+          <Space style={{ marginBottom: '20px' }}>
+            <Input
+              placeholder="Add email"
+              style={{ width: 260 }}
+              value={newEmails[inst.id] || ''}
+              type="email"
+              onChange={e =>
+                setNewEmails(prev => ({
+                  ...prev,
+                  [inst.id]: e.target.value
+                }))
+              }
+              onPressEnter={() => addEmail(inst.id)}
+            />
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => addEmail(inst.id)}
+            >
+              Add
+            </Button>
+          </Space>
         </>
       )
     };

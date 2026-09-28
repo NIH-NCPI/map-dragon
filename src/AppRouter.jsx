@@ -61,9 +61,9 @@ export const AppRouter = () => {
           <Route path="/about" element={<About />} />
           <Route path="/404" element={<Error404 />} />
           <Route element={<PageLayout />}>
-            <Route path="*" element={<Navigate to="/404" />} />
             <Route path="user" element={<UserPage />} />
             <Route path="institutions" element={<Institutions />} />
+            <Route path="*" element={<Navigate to="/404" />} />
             <Route element={<SearchContextRoot />}>
               <Route path="/search/:query" element={<SearchResults />} />
               <Route

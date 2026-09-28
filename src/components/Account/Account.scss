@@ -3,7 +3,7 @@
 .account-container {
   line-height: 1.5rem;
   min-height: 60vh;
-  margin: -15vh 10vw 0 10vw;
+  margin: 5vh 10vw 0 10vw;
   display: flex;
   gap: 20px;
 }
@@ -60,12 +60,8 @@
 }
 
 .inst-container {
+  margin: 5vh 10vw 10vh 10vw;
   line-height: 1.5rem;
-  min-height: 60vh;
-  margin: 0 10vw 0 10vw;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 }
 
 .inst-container h2 {
