@@ -40,7 +40,10 @@ export const DeleteUser = ({ fetchInstitutions }) => {
       title: 'Alert',
       icon: <ExclamationCircleFilled />,
       content: (
-        <span>{`Are you sure you want to delete user, ${deleteUser.email}?`}</span>
+        <span>
+          Are you sure you want to delete user,
+          <strong> {deleteUser.email}</strong>?
+        </span>
       ),
       onOk() {
         removeEmail(deleteUser?.id, deleteUser?.email);
