@@ -1,13 +1,4 @@
-import {
-  Button,
-  Input,
-  message,
-  notification,
-  Space,
-  Tabs,
-  Table,
-  Tag
-} from 'antd';
+import { Button, Input, message, notification, Tabs, Table, Tag } from 'antd';
 import { CloseCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useState } from 'react';
 import { getAll, handlePost } from '../Manager/FetchManager';
@@ -63,7 +54,7 @@ export const Institutions = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred adding the email.'
+            description: error.message
           });
         }
       });
@@ -137,6 +128,7 @@ export const Institutions = () => {
             placeholder="Add email"
             style={{ width: 260 }}
             value={newEmails[inst.id] || ''}
+            type="email"
             onChange={e =>
               setNewEmails(prev => ({
                 ...prev,

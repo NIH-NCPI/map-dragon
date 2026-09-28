@@ -118,7 +118,11 @@ export const handlePost = (vocabUrl, name, body) => {
       return res.json();
     } else {
       return res.json().then(error => {
-        throw new Error(error);
+        if (res.status === 400) {
+          throw new Error(error.message);
+        }
+
+        throw new Error('An error occurred');
       });
     }
   });
