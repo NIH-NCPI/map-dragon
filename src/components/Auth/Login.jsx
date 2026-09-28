@@ -13,7 +13,7 @@ export const Login = () => {
     const storedUser = sessionStorage.getItem('user');
     const storedUserPic = sessionStorage.getItem('userPic');
     if (storedUser) {
-      const profile = JSON.parse(storedUser);
+      const profile = JSON?.parse(storedUser);
       setUser(profile?.email);
       setRole(profile?.role);
       setInstitutionIds(profile?.institutionIds);

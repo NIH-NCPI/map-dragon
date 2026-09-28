@@ -42,6 +42,7 @@ function App() {
   const [version, setVersion] = useState({});
   const [authLoading, setAuthLoading] = useState(true);
   const [deleteToken, setDeleteToken] = useState(null);
+  const [deleteUser, setDeleteUser] = useState(null);
 
   message.config({
     top: '25vh'
@@ -107,7 +108,9 @@ function App() {
           setInstitutionIds,
           authLoading,
           deleteToken,
-          setDeleteToken
+          setDeleteToken,
+          deleteUser,
+          setDeleteUser
         }}
       >
         <AppRouter />

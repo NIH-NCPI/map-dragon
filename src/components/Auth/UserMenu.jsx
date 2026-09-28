@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { handleLogout } from './Logout';
 
 export const UserMenu = () => {
-  const { vocabUrl, user, setUser, setUserPic, setRole, setInstitutionIds } =
+  const { vocabUrl, role, setUser, setUserPic, setRole, setInstitutionIds } =
     useContext(myContext);
 
   const items = [
@@ -15,14 +15,20 @@ export const UserMenu = () => {
       label: <SignedInUi />,
       children: [
         { key: '1', label: <Link to="/user">User Page</Link> },
-        { key: '2', label: 'Log Out' }
+        { key: '3', label: 'Log Out' }
       ]
     }
   ];
 
+  if (role === 'admin') {
+    items[0].children.splice(1, 0, {
+      key: '2',
+      label: <Link to="/institutions">Institutions</Link>
+    });
+  }
   const onClick = obj => {
     switch (obj.key) {
-      case '2':
+      case '3':
         handleLogout(vocabUrl, setUser, setUserPic, setRole, setInstitutionIds);
         break;
       default:
