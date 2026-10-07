@@ -1,8 +1,9 @@
 @use '../Styling/Variables' as *;
-.user-page-container {
+
+.account-container {
   line-height: 1.5rem;
-  height: 60vh;
-  margin: -15vh 10vw 0 10vw;
+  min-height: 60vh;
+  margin: 5vh 10vw 0 10vw;
   display: flex;
   gap: 20px;
 }
@@ -56,4 +57,14 @@
 .copy-icon:hover {
   transition: color 0.2s linear;
   color: $darkBlue;
+}
+
+.inst-container {
+  margin: 5vh 10vw 10vh 10vw;
+  line-height: 1.5rem;
+}
+
+.inst-container h2 {
+  margin-top: 0;
+  margin-bottom: 0;
 }
