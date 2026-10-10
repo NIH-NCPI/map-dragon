@@ -28,13 +28,18 @@ import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
 import { UserPage } from './components/Account/UserPage.jsx';
 import { Institutions } from './components/Account/Institutions.jsx';
+import { Spin } from 'antd';
 
 export const AppRouter = () => {
   const { user, authLoading } = useContext(myContext);
   const isLoggedIn = () => !!user;
 
   if (authLoading) {
-    return null;
+    return (
+      <div className="loading_overlay">
+        <Spin />
+      </div>
+    );
   }
   return (
     <BrowserRouter>
