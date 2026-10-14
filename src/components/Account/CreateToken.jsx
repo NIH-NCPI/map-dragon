@@ -1,4 +1,4 @@
-import { Button, Input, Form, Modal, notification, Tooltip } from 'antd';
+import { Button, Input, Form, Modal, notification, Spin, Tooltip } from 'antd';
 import { CopyOutlined, WarningTwoTone } from '@ant-design/icons';
 import { getAll, handlePost } from '../Manager/FetchManager';
 import { useContext, useState } from 'react';
@@ -11,6 +11,7 @@ export const CreateToken = ({ createToken, setCreateToken, setTokens }) => {
   const [copied, setCopied] = useState(false);
   const [showToken, setShowToken] = useState(0);
   const [displayToken, setDisplayToken] = useState(0);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const expiresAt = () => {
@@ -20,6 +21,7 @@ export const CreateToken = ({ createToken, setCreateToken, setTokens }) => {
   };
 
   const postToken = values => {
+    setLoading(true);
     handlePost(vocabUrl, 'tokens', {
       'name': values.name,
       expiresAt: expiresAt()
@@ -32,7 +34,8 @@ export const CreateToken = ({ createToken, setCreateToken, setTokens }) => {
             description: 'An error occurred creating the token.'
           });
         }
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -74,6 +77,11 @@ export const CreateToken = ({ createToken, setCreateToken, setTokens }) => {
         )
       }
     >
+      {loading && (
+        <div className="loading_overlay_modal">
+          <Spin />
+        </div>
+      )}
       <Form form={form} layout="vertical" preserve={false}>
         <h2>New Token</h2>
         <WarningTwoTone style={{ fontSize: '20px' }} /> The token will only be

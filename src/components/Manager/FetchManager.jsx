@@ -118,7 +118,7 @@ export const handlePost = (vocabUrl, name, body) => {
       return res.json();
     } else {
       return res.json().then(error => {
-        if (res.status === 400) {
+        if (res.status === 400 || res.status === 409) {
           throw new Error(error.message);
         }
 

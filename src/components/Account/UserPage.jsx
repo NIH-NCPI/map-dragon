@@ -1,4 +1,4 @@
-import { Button, Descriptions } from 'antd';
+import { Button, Descriptions, Spin } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../App';
 import './Account.scss';
@@ -14,6 +14,7 @@ export const UserPage = () => {
   const navigate = useNavigate();
   const [tokens, setTokens] = useState([]);
   const [createToken, setCreateToken] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Make sure to copy your personal access token now. You won’t be able to see it again!
 
@@ -30,7 +31,8 @@ export const UserPage = () => {
             description: 'An error occurred fetching user tokens.'
           });
         }
-      });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const userItems = [
@@ -90,6 +92,11 @@ export const UserPage = () => {
 
   return (
     <>
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
+        </div>
+      )}
       <div className="account-container">
         <div>
           <h2>User Page</h2>
@@ -158,6 +165,7 @@ export const UserPage = () => {
           />
         )}
       </div>
+
       <DeleteToken setTokens={setTokens} />
     </>
   );

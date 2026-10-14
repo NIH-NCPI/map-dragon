@@ -1,10 +1,11 @@
 import {
   Button,
-  Input,
   Form,
   message,
   notification,
+  Select,
   Space,
+  Spin,
   Tabs,
   Table,
   Tag
@@ -17,11 +18,15 @@ import { useNavigate } from 'react-router-dom';
 import './Account.scss';
 import { DeleteUser } from './DeleteUser';
 import { useForm } from 'antd/es/form/Form';
+import { AddInstitution } from './AddInstitution';
 
 export const Institutions = () => {
   const [form] = useForm();
   const { vocabUrl, setDeleteUser, role } = useContext(myContext);
   const [institutions, setInstitutions] = useState([]);
+  const [addInst, setAddInst] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [emailLoading, setEmailLoading] = useState(false);
   const navigate = useNavigate();
 
   const fetchInstitutions = () => {
@@ -34,7 +39,8 @@ export const Institutions = () => {
             description: 'An error occurred fetching institutions.'
           });
         }
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -53,10 +59,13 @@ export const Institutions = () => {
 
     const body =
       emailList.length > 1 ? { emails: emailList } : { email: emailList[0] };
+    setEmailLoading(true);
 
     handlePost(vocabUrl, `admin/institutions/${institutionId}/allowlist`, body)
       .then(() => fetchInstitutions())
-      .then(() => message.success(`${emailList.join(', ')} added successfully`))
+      .then(() => {
+        message.success(`${emailList.join(', ')} added successfully`);
+      })
       .catch(error => {
         if (error) {
           notification.error({
@@ -64,15 +73,20 @@ export const Institutions = () => {
             description: error.message
           });
         }
-      });
+      })
+      .finally(() => setEmailLoading(false));
   };
 
   const handleAddEmail = instId => {
+    const field = `email_${instId}`;
+
     form
-      .validateFields([`email_${instId}`])
+      .validateFields([field])
       .then(values => {
-        addEmail(instId, values[`email_${instId}`]);
-        form.resetFields([`email_${instId}`]);
+        const emails = (values[field] ?? []).map(e => e.trim()).filter(Boolean);
+        if (emails.length === 0) return;
+        addEmail(instId, emails.join(','));
+        form.resetFields([field]);
       })
       .catch(() => {});
   };
@@ -98,7 +112,7 @@ export const Institutions = () => {
         title: 'Email',
         dataIndex: 'email',
         key: 'email',
-        width: 250
+        width: 300
       },
       {
         title: 'Status',
@@ -115,7 +129,7 @@ export const Institutions = () => {
         title: 'Last Active',
         dataIndex: 'last_login',
         key: 'last_login',
-        width: 200
+        width: 250
       },
       {
         title: '',
@@ -146,43 +160,48 @@ export const Institutions = () => {
           />
 
           {role === 'admin' && (
-            <Space align="start" style={{ marginBottom: '20px' }}>
-              <Form.Item
-                name={`email_${inst.id}`}
-                validateTrigger={[]}
-                rules={[
-                  { required: true, message: 'Please enter email.' },
-                  {
-                    type: 'email',
-                    message: 'Please enter a valid email address.'
-                  }
-                ]}
-                style={{ display: 'inline-block', width: 260, marginBottom: 0 }}
+            <div style={{ position: 'relative', marginBottom: 20 }}>
+              {emailLoading && (
+                <div className="loading_overlay_modal">
+                  <Spin />
+                </div>
+              )}
+
+              <div
+                style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}
               >
-                <Input
-                  placeholder="Add email"
-                  style={{ width: 260 }}
-                  type="email"
-                  onChange={e => {
-                    form.setFields([
-                      {
-                        name: `email_${inst.id}`,
-                        value: e.target.value,
-                        errors: []
+                <Form.Item
+                  name={`email_${inst.id}`}
+                  label="Users"
+                  style={{ flex: 1, marginBottom: 0 }}
+                  rules={[
+                    {
+                      type: 'array',
+                      defaultField: {
+                        type: 'email',
+                        message: 'Please input a valid email address.'
                       }
-                    ]);
-                  }}
-                  onPressEnter={() => handleAddEmail(inst.id)}
-                />
-              </Form.Item>
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => handleAddEmail(inst.id)}
-              >
-                Add
-              </Button>
-            </Space>
+                    }
+                  ]}
+                >
+                  <Select
+                    mode="tags"
+                    placeholder="Add email(s)"
+                    tokenSeparators={[',', ' ']}
+                    open={false}
+                    autoComplete="off"
+                  />
+                </Form.Item>
+
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => handleAddEmail(inst.id)}
+                >
+                  Add
+                </Button>
+              </div>
+            </div>
           )}
         </>
       )
@@ -190,14 +209,37 @@ export const Institutions = () => {
   });
 
   return (
-    <Form form={form} component={false}>
-      <div className="account-container">
-        <div>
-          <h2>Institutions</h2>
-          <Tabs items={items} />
+    <>
+      <Form form={form} component={false}>
+        {loading && (
+          <div className="loading_overlay">
+            <Spin />
+          </div>
+        )}
+        <div className="account-container">
+          <div>
+            <div className="institutions-header">
+              <h2>Institutions</h2>
+              {role === 'admin' && (
+                <Button
+                  type="primary"
+                  shape="circle"
+                  size="small"
+                  icon={<PlusOutlined />}
+                  onClick={() => setAddInst(true)}
+                />
+              )}
+            </div>
+            <Tabs items={items} />
+          </div>
+          <DeleteUser fetchInstitutions={fetchInstitutions} />
+          <AddInstitution
+            addInst={addInst}
+            setAddInst={setAddInst}
+            setInstitutions={setInstitutions}
+          />
         </div>
-        <DeleteUser fetchInstitutions={fetchInstitutions} />
-      </div>
-    </Form>
+      </Form>
+    </>
   );
 };

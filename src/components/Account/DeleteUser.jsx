@@ -1,13 +1,15 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { apiFetch } from '../Manager/ApiFetch';
-import { Modal, notification } from 'antd';
+import { Modal, notification, Spin } from 'antd';
 import { myContext } from '../../App';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 
 export const DeleteUser = ({ fetchInstitutions }) => {
   const { confirm } = Modal;
   const { deleteUser, setDeleteUser, vocabUrl } = useContext(myContext);
+  const [loading, setLoading] = useState(false);
   const removeEmail = (institutionId, email) => {
+    setLoading(true);
     apiFetch(
       `${vocabUrl}/admin/institutions/${institutionId}/allowlist/${encodeURIComponent(email)}`,
       {
@@ -31,6 +33,10 @@ export const DeleteUser = ({ fetchInstitutions }) => {
           message: 'Error',
           description: error.message || 'An error occurred removing the email.'
         });
+      })
+      .then(() => {
+        setLoading(false);
+        setDeleteUser(null);
       });
   };
 
@@ -40,10 +46,7 @@ export const DeleteUser = ({ fetchInstitutions }) => {
       title: 'Alert',
       icon: <ExclamationCircleFilled />,
       content: (
-        <span>
-          Are you sure you want to delete user,
-          <strong> {deleteUser.email}</strong>?
-        </span>
+        <span>{`Are you sure you want to delete user, ${deleteUser.email}?`}</span>
       ),
       onOk() {
         removeEmail(deleteUser?.id, deleteUser?.email);
@@ -55,5 +58,33 @@ export const DeleteUser = ({ fetchInstitutions }) => {
     });
   };
 
-  return deleteUser && showConfirm();
+  return (
+    <Modal
+      open={!!deleteUser}
+      className="clear-mappings"
+      title={
+        <span>
+          <ExclamationCircleFilled
+            style={{ color: '#faad14', marginRight: 8 }}
+          />
+          Alert
+        </span>
+      }
+      onOk={() => removeEmail(deleteUser?.id, deleteUser?.email)}
+      onCancel={() => setDeleteUser(null)}
+      okButtonProps={{ disabled: loading }}
+      cancelButtonProps={{ disabled: loading }}
+      closable={false}
+      maskClosable={false}
+      keyboard={false}
+      destroyOnHidden={true}
+    >
+      {loading && (
+        <div className="loading_overlay_modal">
+          <Spin />
+        </div>
+      )}
+      <span>{`Are you sure you want to delete user, ${deleteUser?.email}?`}</span>
+    </Modal>
+  );
 };
