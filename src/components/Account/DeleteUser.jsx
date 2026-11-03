@@ -40,24 +40,6 @@ export const DeleteUser = ({ fetchInstitutions }) => {
       });
   };
 
-  const showConfirm = () => {
-    confirm({
-      className: 'clear-mappings',
-      title: 'Alert',
-      icon: <ExclamationCircleFilled />,
-      content: (
-        <span>{`Are you sure you want to delete user, ${deleteUser.email}?`}</span>
-      ),
-      onOk() {
-        removeEmail(deleteUser?.id, deleteUser?.email);
-        setDeleteUser(null);
-      },
-      onCancel() {
-        setDeleteUser(null);
-      }
-    });
-  };
-
   return (
     <Modal
       open={!!deleteUser}

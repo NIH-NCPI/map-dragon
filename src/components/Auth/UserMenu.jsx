@@ -16,14 +16,20 @@ export const UserMenu = () => {
       children: [
         { key: '1', label: <Link to="/user">User Page</Link> },
         { key: '2', label: <Link to="/institutions">Institutions</Link> },
-        { key: '3', label: 'Log Out' }
+        { key: '4', label: 'Log Out' }
       ]
     }
   ];
 
+  role === 'admin' &&
+    items[0].children.splice(2, 0, {
+      key: '3',
+      label: <Link to="/admin">Admin</Link>
+    });
+
   const onClick = obj => {
     switch (obj.key) {
-      case '3':
+      case '4':
         handleLogout(vocabUrl, setUser, setUserPic, setRole, setInstitutionIds);
         break;
       default:
