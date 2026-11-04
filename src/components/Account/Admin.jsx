@@ -32,7 +32,6 @@ export const Admin = () => {
     document.title = 'Admin - MapDragon';
     fetchUsers();
   }, []);
-
   const columns = [
     {
       title: 'Name',
@@ -73,7 +72,7 @@ export const Admin = () => {
                 color="green"
                 variant="outlined"
                 size="small"
-                disabled={user?.email === record?.email || role !== 'admin'}
+                disabled={user === record?.email || role !== 'admin'}
                 onClick={() =>
                   setActionState({
                     id: record?.id,
@@ -93,7 +92,7 @@ export const Admin = () => {
           <Button
             danger
             size="small"
-            disabled={user?.email === record?.email || role !== 'admin'}
+            disabled={user === record?.email || role !== 'admin'}
             onClick={() =>
               setActionState({
                 id: record?.id,
