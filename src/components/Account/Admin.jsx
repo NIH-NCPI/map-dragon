@@ -5,9 +5,10 @@ import { myContext } from '../../App';
 import { useNavigate } from 'react-router-dom';
 import './Account.scss';
 import { UserAction } from './UserAction';
+import { RoleEditor } from './RoleEditor';
 
 export const Admin = () => {
-  const { vocabUrl } = useContext(myContext);
+  const { user, role, vocabUrl } = useContext(myContext);
   const [allUsers, setAllUsers] = useState([]);
   const [actionState, setActionState] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,15 @@ export const Admin = () => {
     {
       title: 'Role',
       dataIndex: 'role',
-      width: 80
+      width: 200,
+      render: (_, record) => (
+        <RoleEditor
+          record={record}
+          setAllUsers={setAllUsers}
+          disabledRole={user === record?.email}
+          fetchUsers={fetchUsers}
+        />
+      )
     },
     {
       title: 'Institutions',
@@ -54,7 +63,7 @@ export const Admin = () => {
       width: 180
     },
     {
-      title: 'Disabled',
+      title: '',
       width: 250,
       render: (_, record) =>
         record?.disabledAt ? (
@@ -64,6 +73,7 @@ export const Admin = () => {
                 color="green"
                 variant="outlined"
                 size="small"
+                disabled={user?.email === record?.email || role !== 'admin'}
                 onClick={() =>
                   setActionState({
                     id: record?.id,
@@ -75,7 +85,7 @@ export const Admin = () => {
                 Enable
               </Button>
             </div>
-            <div>
+            <div style={{ fontSize: '13px' }}>
               Disabled at {new Date(record?.disabledAt.$date).toLocaleString()}
             </div>
           </div>
@@ -83,6 +93,7 @@ export const Admin = () => {
           <Button
             danger
             size="small"
+            disabled={user?.email === record?.email || role !== 'admin'}
             onClick={() =>
               setActionState({
                 id: record?.id,
@@ -124,6 +135,7 @@ export const Admin = () => {
             dataSource={dataSource}
             scroll={{ x: 'max-content' }}
             sticky={{ offsetHeader: 80 }}
+            rowClassName={record => record.disabledAt && 'disabled_row'}
           />
         </div>
         <UserAction

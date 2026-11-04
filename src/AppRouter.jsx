@@ -34,7 +34,6 @@ import { Admin } from './components/Account/Admin.jsx';
 export const AppRouter = () => {
   const { user, authLoading } = useContext(myContext);
   const isLoggedIn = () => !!user;
-
   if (authLoading) {
     return (
       <div className="loading_overlay">

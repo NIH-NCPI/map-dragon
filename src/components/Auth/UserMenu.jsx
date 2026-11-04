@@ -14,16 +14,16 @@ export const UserMenu = () => {
       key: 'main-menu',
       label: <SignedInUi />,
       children: [
-        { key: '1', label: <Link to="/user">User Page</Link> },
         { key: '2', label: <Link to="/institutions">Institutions</Link> },
-        { key: '4', label: 'Log Out' }
+        { key: '3', label: <Link to="/user">User Page</Link> },
+        { key: '4', label: 'Log Out', danger: 'true' }
       ]
     }
   ];
 
   role === 'admin' &&
-    items[0].children.splice(2, 0, {
-      key: '3',
+    items[0].children.splice(0, 0, {
+      key: '1',
       label: <Link to="/admin">Admin</Link>
     });
 
