@@ -21,7 +21,7 @@ export const Admin = () => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred fetching sers.'
+            description: 'An error occurred fetching users.'
           });
         }
       })
@@ -46,7 +46,7 @@ export const Admin = () => {
     {
       title: 'Role',
       dataIndex: 'role',
-      width: 200,
+      width: 150,
       render: (_, record) => (
         <RoleEditor
           record={record}

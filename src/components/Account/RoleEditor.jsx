@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Tag, Button, Dropdown, message } from 'antd';
+import { Button, Dropdown, notification, Tag } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { handlePost } from '../Manager/FetchManager';
 import { myContext } from '../../App';
@@ -9,26 +9,25 @@ export const RoleEditor = ({ record, setAllUsers, disabledRole }) => {
   const [userRole, setUserRole] = useState(record.role);
   const [loading, setLoading] = useState(false);
 
-  const handleRoleChange = async ({ key }) => {
+  const handleRoleChange = ({ key }) => {
     if (key === userRole || loading) return;
 
     setLoading(true);
 
     const action = key === 'admin' ? 'promote' : 'demote';
 
-    try {
-      await handlePost(vocabUrl, `admin/users/${record.id}/${action}`);
+    handlePost(vocabUrl, `admin/users/${record.id}/${action}`)
+      .then(data => {
+        setAllUsers(prev =>
+          prev.map(u =>
+            u.id === record.id ? { ...u, userRole: data?.role } : u
+          )
+        );
 
-      setAllUsers(prev =>
-        prev.map(u => (u.id === record.id ? { ...u, userRole: key } : u))
-      );
-
-      setUserRole(key);
-    } catch (error) {
-      message.error(`Error updating role`);
-    } finally {
-      setLoading(false);
-    }
+        setUserRole(key);
+      })
+      .catch(error => notification.error(`Error updating role`))
+      .finally(() => setLoading(false));
   };
 
   const items = [
