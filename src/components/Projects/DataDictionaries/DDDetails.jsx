@@ -11,7 +11,6 @@ import { EditDDDetails } from './EditDDDetails';
 import { UploadTable } from '../Tables/UploadTable';
 import { RemoveTableDD } from './RemoveTableDD';
 import { DeleteDD } from './DeleteDD';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { ExportFile } from '../../Manager/MappingsFunctions/ExportFile';
 
 export const DDDetails = () => {
@@ -34,7 +33,6 @@ export const DDDetails = () => {
   const handleSuccess = () => {
     setAddTable(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   const navigate = useNavigate();
   /* Function that maps through the tables array in a DD.
@@ -143,7 +141,7 @@ export const DDDetails = () => {
             <Col span={6}>
               {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
                 and triggers the modal to open*/}
-              <span onClick={() => (user ? setAddTable(true) : login())}>
+              <span onClick={() => setAddTable(true)}>
                 <Card
                   hoverable
                   style={{

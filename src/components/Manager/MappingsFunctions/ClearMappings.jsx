@@ -5,6 +5,7 @@ import './MappingsFunctions.scss';
 import { useContext } from 'react';
 import { myContext } from '../../../App';
 import { MappingContext } from '../../../Contexts/MappingContext';
+import { apiFetch } from '../ApiFetch';
 
 export const ClearMappings = ({ propId, component }) => {
   const { confirm } = Modal;
@@ -16,12 +17,9 @@ export const ClearMappings = ({ propId, component }) => {
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
   // setReset is set to true to open the modal that performs the search for the code again.
   const handleDelete = evt => {
-    return fetch(`${vocabUrl}/${component}/${propId}/mapping`, {
+    return apiFetch(`${vocabUrl}/${component}/${propId}/mapping`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ editor: user.email }),
+      credentials: 'include'
     })
       .then(res => {
         if (res.ok) {
@@ -38,7 +36,7 @@ export const ClearMappings = ({ propId, component }) => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred. Please try again.',
+            description: 'An error occurred. Please try again.'
           });
         }
         return error;
@@ -58,7 +56,7 @@ export const ClearMappings = ({ propId, component }) => {
       },
       onCancel() {
         setClear(false);
-      },
+      }
     });
   };
 

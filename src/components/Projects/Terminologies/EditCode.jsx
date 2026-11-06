@@ -75,8 +75,7 @@ export const EditCode = ({
     // // an error message displays that the code already exists. Otherwise the PUT call is run.
 
     handlePatch(vocabUrl, 'Terminology', terminology, {
-      ...updatedRowDTO,
-      editor: user.email
+      ...updatedRowDTO
     })
       .then(data => {
         setTerminology(data);
@@ -97,7 +96,7 @@ export const EditCode = ({
         getById(
           vocabUrl,
           'Terminology',
-          `${terminologyId}/mapping?user_input=true&user=${user?.email}`
+          `${terminologyId}/mapping?user_input=true&user=${user}`
         )
           .then(data => setMapping(data.codes))
           .catch(error => {

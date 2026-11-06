@@ -1,24 +1,12 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './NavBar.scss';
 import { Login } from '../Auth/Login';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { myContext } from '../../App';
-import { RequiredLogin } from '../Auth/RequiredLogin';
 import Logo from '../../assets/logo.png';
 
 export const NavBar = () => {
-  const [routeTo, setRouteTo] = useState(null);
   const { user } = useContext(myContext);
-  const navigate = useNavigate();
-  const handleSuccess = () => {
-    navigate(routeTo);
-  };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
-  const handleLogin = route => {
-    setRouteTo(route);
-    login();
-  };
-
   return (
     <>
       <nav className="navbar">
@@ -35,30 +23,14 @@ export const NavBar = () => {
             </li>
           </div>
           <div className="nav_links">
-            <div
-              onClick={() => {
-                if (user) {
-                  navigate('/studies');
-                } else {
-                  handleLogin('/studies');
-                }
-              }}
-            >
+            <NavLink to="/studies">
               <li className="nav_link">Studies</li>
-            </div>
+            </NavLink>
             <span className="nav_separator"></span>
 
-            <div
-              onClick={() => {
-                if (user) {
-                  navigate('/terminologies');
-                } else {
-                  handleLogin('/terminologies');
-                }
-              }}
-            >
+            <NavLink to="/terminologies">
               <li className="nav_link">Terminologies</li>
-            </div>
+            </NavLink>
             <span className="nav_separator"></span>
 
             <NavLink to="/ontologies">
@@ -83,6 +55,7 @@ export const NavBar = () => {
           <div className="login">
             <Login />
           </div>
+          {/* <div className="login">{user && <Login />}</div> */}
         </ul>
       </nav>
     </>

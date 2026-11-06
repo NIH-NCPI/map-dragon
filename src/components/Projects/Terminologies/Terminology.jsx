@@ -43,6 +43,7 @@ import {
 import { mappingVotes } from '../../Manager/MappingsFunctions/MappingVotes';
 import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const Terminology = () => {
   const [form] = Form.useForm();
@@ -67,7 +68,7 @@ export const Terminology = () => {
   } = useContext(MappingContext);
 
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10
+    parseInt(sessionStorage.getItem('pageSize'), 10) || 10
   );
   const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
   const handleTableChange = (current, size) => {
@@ -79,7 +80,7 @@ export const Terminology = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('pageSize', pageSize);
+    sessionStorage.setItem('pageSize', pageSize);
   }, [pageSize]);
 
   useEffect(
@@ -97,16 +98,16 @@ export const Terminology = () => {
 
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
-      mappings: mapArr,
-      editor: user?.email
+      mappings: mapArr
     };
 
-    fetch(
+    apiFetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
         mappingCode
-      )}?user_input=true&user=${user?.email}`,
+      )}?user_input=true&user=${user}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -123,8 +124,8 @@ export const Terminology = () => {
       .then(data => {
         setMapping(data.codes);
         setEditMappings(null);
-        form.resetFields();
         message.success('Mapping removed.');
+        form.resetFields();
       })
       .catch(error => {
         console.log(error, 'error');
@@ -409,10 +410,11 @@ It then shows the mappings as table data and alows the user to delete a mapping 
       setTerminology(terminologyData);
 
       if (terminologyData) {
-        const filterResponse = await fetch(
+        const filterResponse = await apiFetch(
           `${vocabUrl}/Terminology/${terminologyData?.id}/filter${optionalTableParam}`,
           {
             method: 'GET',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json'
             }
@@ -429,7 +431,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         const mappingsData = await getById(
           vocabUrl,
           'Terminology',
-          `${terminologyId}/mapping?user_input=True&user=${user?.email}`
+          `${terminologyId}/mapping?user_input=True&user=${user}`
         );
         setMapping(mappingsData.codes);
 

@@ -1,8 +1,5 @@
 @use '../Styling/Variables' as *;
 
-$navColor: #080705;
-$linkColor: #f2f2f4;
-
 nav.navbar {
   z-index: 1;
   width: 100%;
@@ -65,18 +62,19 @@ li {
   padding: 0 clamp(0vw, 1.2vw, 1rem);
   font-weight: bold;
   cursor: pointer;
-  color: $linkColor;
+  color: $navLinkColor;
   border-bottom: 1px solid transparent;
 }
 
 .nav_link:hover {
-  border-bottom: 1px solid $linkColor;
+  border-bottom: 1px solid $navLinkColor;
+  transition: 0.2s all linear;
 }
 
 .nav_separator {
   height: 30px;
   width: 1px;
-  background-color: $linkColor;
+  background-color: $navLinkColor;
   margin: 0 clamp(0vw, 0.5vw, 0.5rem);
 }
 

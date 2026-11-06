@@ -4,6 +4,7 @@ import Papa from 'papaparse';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import '../../Manager/Spinner.scss';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const LoadCodes = ({ terminology, setTerminology }) => {
   const [form] = Form.useForm();
@@ -18,8 +19,9 @@ export const LoadCodes = ({ terminology, setTerminology }) => {
     }));
 
     setLoading(true);
-    fetch(`${vocabUrl}/Terminology/${terminology.id}`, {
+    apiFetch(`${vocabUrl}/Terminology/${terminology.id}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },

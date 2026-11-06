@@ -80,4 +80,18 @@ export const cleanedSearchTerm = term => {
 export const votesCount = code =>
   code.user_input?.votes_count.up - code.user_input?.votes_count.down;
 
-export const userVote = code => code.user_input?.users_vote;
+export const userVote = code => {
+  const foundVote = code.user_input?.users_vote;
+  return foundVote;
+};
+
+export const readStored = key => {
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw || raw === 'undefined') return null;
+    return JSON.parse(raw);
+  } catch {
+    sessionStorage.removeItem(key);
+    return null;
+  }
+};

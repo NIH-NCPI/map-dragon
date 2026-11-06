@@ -13,8 +13,8 @@ import {
 } from 'antd';
 import DataTypeSubForm from './DataTypeSubForm';
 import '../../Manager/Spinner.scss';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const AddVariable = ({ table, setTable }) => {
   const { vocabUrl, user } = useContext(myContext);
@@ -25,21 +25,20 @@ export const AddVariable = ({ table, setTable }) => {
   const { TextArea } = Input;
   const [form] = Form.useForm();
 
-  const handleSuccess = () => {
-    setAddRow(true);
-  };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
-
   const handleSubmit = values => {
     setLoading(true);
 
-    fetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ ...values, editor: user.email })
-    })
+    apiFetch(
+      `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
+      {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values)
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -51,9 +50,8 @@ export const AddVariable = ({ table, setTable }) => {
         setTable(data);
         form.resetFields();
         setAddRow(false);
+        message.success('Variable added successfully.');
       })
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Variable added successfully.'))
       .catch(error => {
         if (error) {
           notification.error({
@@ -84,12 +82,11 @@ export const AddVariable = ({ table, setTable }) => {
   return (
     <>
       <Button
-        onClick={() => (user ? setAddRow(true) : login())}
+        onClick={() => setAddRow(true)}
         type="primary"
         style={{
           marginBottom: 16
         }}
-        // disabled={addRow}
       >
         Add variable
       </Button>

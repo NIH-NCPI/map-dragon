@@ -11,8 +11,8 @@ import {
   Spin
 } from 'antd';
 import '../../Manager/Spinner.scss';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const AddCode = ({ terminology, setTerminology }) => {
   const { vocabUrl, user } = useContext(myContext);
@@ -24,20 +24,20 @@ export const AddCode = ({ terminology, setTerminology }) => {
   const handleSuccess = () => {
     setAddRow(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   const handleSubmit = values => {
     setLoading(true);
-    fetch(
+    apiFetch(
       `${vocabUrl}/Terminology/${terminology.id}/code/${uriEncoded(
         values.code
       )}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ ...values, editor: user.email })
+        body: JSON.stringify(values)
       }
     )
       .then(res => {
@@ -85,7 +85,7 @@ export const AddCode = ({ terminology, setTerminology }) => {
     <>
       <div className="add_row_button">
         <Button
-          onClick={() => (user ? setAddRow(true) : login())}
+          onClick={() => setAddRow(true)}
           type="primary"
           style={{
             marginBottom: 16

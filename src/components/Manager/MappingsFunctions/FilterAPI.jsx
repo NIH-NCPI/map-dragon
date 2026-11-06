@@ -6,6 +6,7 @@ import { FilterOntology } from './FilterOntology';
 import './FilterAPI.scss';
 import { getAll } from '../FetchManager';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../ApiFetch';
 
 export const FilterAPI = ({
   form,
@@ -59,8 +60,9 @@ export const FilterAPI = ({
   const getOntologyApiById = () => {
     return (
       setTableLoading(true),
-      fetch(`${vocabUrl}/OntologyAPI/${active}`, {
+      apiFetch(`${vocabUrl}/OntologyAPI/${active}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }

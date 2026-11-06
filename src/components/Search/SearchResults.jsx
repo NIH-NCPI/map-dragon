@@ -6,6 +6,7 @@ import './SearchResults.scss';
 import '../Manager/Spinner.scss';
 import { SearchContext } from '../../Contexts/SearchContext';
 import { cleanedSearchTerm, uriEncoded } from '../Manager/Utility';
+import { apiFetch } from '../Manager/ApiFetch';
 
 export const SearchResults = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -53,12 +54,13 @@ export const SearchResults = () => {
   // The response is set to the 'results'. Loading is set to false.
   const requestSearch = () => {
     setLoading(true);
-    fetch(
+    apiFetch(
       `${vocabUrl}/ontology_search?keyword=${uriEncoded(
         cleanedSearchTerm(query)
       )}&selected_ontologies=${defaultOntologies.join()}&selected_api=ols&results_per_page=${entriesPerPage}&start_index=${pageStart}`,
       {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }

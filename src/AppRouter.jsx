@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import { myContext } from './App.jsx';
 import { OntologySearch } from './components/Search/OntologySearch';
 import {
   BrowserRouter,
@@ -24,8 +26,21 @@ import { OntologyInfo } from './components/Ontologies/OntologyAPIs.jsx';
 import { TerminologyList } from './components/Projects/Terminologies/TerminologyList';
 import { SearchContextRoot } from './Contexts/SearchContext.jsx';
 import { About } from './components/About/About.jsx';
+import { UserPage } from './components/Account/UserPage.jsx';
+import { Institutions } from './components/Account/Institutions.jsx';
+import { Spin } from 'antd';
+import { Admin } from './components/Account/Admin.jsx';
 
 export const AppRouter = () => {
+  const { user, authLoading } = useContext(myContext);
+  const isLoggedIn = () => !!user;
+  if (authLoading) {
+    return (
+      <div className="loading_overlay">
+        <Spin />
+      </div>
+    );
+  }
   return (
     <BrowserRouter>
       <Routes>
@@ -49,49 +64,112 @@ export const AppRouter = () => {
           <Route index element={<OntologySearch />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/about" element={<About />} />
-          <Route path="/ontologies" element={<OntologyInfo />} />
           <Route path="/404" element={<Error404 />} />
           <Route element={<PageLayout />}>
+            <Route path="user" element={<UserPage />} />
+            <Route path="institutions" element={<Institutions />} />
+            <Route path="admin" element={<Admin />} />
             <Route path="*" element={<Navigate to="/404" />} />
             <Route element={<SearchContextRoot />}>
               <Route path="/search/:query" element={<SearchResults />} />
+              <Route
+                path="/ontologies"
+                element={
+                  isLoggedIn() ? <OntologyInfo /> : <Navigate to="/login" />
+                }
+              />
 
-              <Route path="/terminologies" element={<TerminologyList />} />
+              <Route
+                path="/terminologies"
+                element={
+                  isLoggedIn() ? <TerminologyList /> : <Navigate to="/login" />
+                }
+              />
               <Route
                 path="/terminology"
                 element={<Navigate to="/terminologies" />}
               />
               <Route element={<MappingContextRoot />}>
-                <Route path="/studies" element={<StudyList />} />
+                <Route
+                  path="/studies"
+                  element={
+                    isLoggedIn() ? <StudyList /> : <Navigate to="/login" />
+                  }
+                />
                 <Route path="/study" element={<Navigate to="/studies" />} />
                 <Route path="/Study/:studyId">
-                  <Route index element={<StudyDetails />} />
+                  <Route
+                    index
+                    element={
+                      isLoggedIn() ? <StudyDetails /> : <Navigate to="/login" />
+                    }
+                  />
                   <Route path="DataDictionary">
-                    <Route index element={<StudyDetails />} />
+                    <Route
+                      index
+                      element={
+                        isLoggedIn() ? (
+                          <StudyDetails />
+                        ) : (
+                          <Navigate to="/login" />
+                        )
+                      }
+                    />
                     <Route
                       path="/Study/:studyId/DataDictionary/:DDId/Table/"
-                      element={<DDDetails />}
+                      element={
+                        isLoggedIn() ? <DDDetails /> : <Navigate to="/login" />
+                      }
                     />
                     <Route path="/Study/:studyId/DataDictionary/:DDId">
-                      <Route index element={<DDDetails />} />
+                      <Route
+                        index
+                        element={
+                          isLoggedIn() ? (
+                            <DDDetails />
+                          ) : (
+                            <Navigate to="/login" />
+                          )
+                        }
+                      />
                       <Route
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId"
-                        element={<TableDetails />}
+                        element={
+                          isLoggedIn() ? (
+                            <TableDetails />
+                          ) : (
+                            <Navigate to="/login" />
+                          )
+                        }
                       />
                       <Route
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId/Terminology/:terminologyId"
-                        element={<Terminology />}
+                        element={
+                          isLoggedIn() ? (
+                            <Terminology />
+                          ) : (
+                            <Navigate to="/login" />
+                          )
+                        }
                       />
                       <Route
                         path="/Study/:studyId/DataDictionary/:DDId/Table/:tableId/Terminology/"
-                        element={<Terminology />}
+                        element={
+                          isLoggedIn() ? (
+                            <Terminology />
+                          ) : (
+                            <Navigate to="/login" />
+                          )
+                        }
                       />
                     </Route>
                   </Route>
                 </Route>
                 <Route
                   path="/Terminology/:terminologyId"
-                  element={<Terminology />}
+                  element={
+                    isLoggedIn() ? <Terminology /> : <Navigate to="/login" />
+                  }
                 />
               </Route>
             </Route>

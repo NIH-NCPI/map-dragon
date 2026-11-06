@@ -8,7 +8,6 @@ import '../../Manager/Spinner.scss';
 import { getAll } from '../../Manager/FetchManager';
 import { Row, Col, Card, notification, Spin } from 'antd';
 import { AddStudy } from './AddStudy';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 const { Meta } = Card;
 
 export const StudyList = () => {
@@ -20,7 +19,6 @@ export const StudyList = () => {
   const handleSuccess = () => {
     setAddStudy(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
   // API call to fetch all studies. Sets response to 'studies' then sets loading to false
   useEffect(() => {
     document.title = 'Studies - MapDragon';
@@ -60,15 +58,7 @@ export const StudyList = () => {
               <Col span={6}>
                 {/* The first column is a card that opens a modal to add a new study. It sets 'addStudy' to true on click
                 and triggers the modal to open*/}
-                <span
-                  onClick={() => {
-                    if (user) {
-                      setAddStudy(true);
-                    } else {
-                      login();
-                    }
-                  }}
-                >
+                <span onClick={() => setAddStudy(true)}>
                   <Card
                     hoverable
                     style={{

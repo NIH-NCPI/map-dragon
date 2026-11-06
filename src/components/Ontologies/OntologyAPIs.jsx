@@ -7,6 +7,7 @@ import '../Manager/Spinner.scss';
 import { Spin, Tooltip } from 'antd';
 
 import { OntologyTable } from './OntologyTable';
+import { apiFetch } from '../Manager/ApiFetch';
 
 export const OntologyInfo = () => {
   const { vocabUrl } = useContext(myContext);
@@ -37,8 +38,9 @@ export const OntologyInfo = () => {
   const getOntologyApiById = () => {
     return (
       setTableLoading(true),
-      fetch(`${vocabUrl}/OntologyAPI/${active}`, {
+      apiFetch(`${vocabUrl}/OntologyAPI/${active}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }

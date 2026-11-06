@@ -1,3 +1,5 @@
+@use '../Styling/Variables' as *;
+
 .logged_in_user {
   display: flex;
   align-items: center;
@@ -11,9 +13,30 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  border-bottom: 1px transparent solid;
+}
+.user_email:hover {
+  border-bottom: 1px $navLinkColor solid;
+  transition: 0.2s linear all;
 }
 
 .user_image {
   width: 22px;
   border-radius: 50%;
+}
+
+.user_menu {
+  .ant-menu-submenu-title::after {
+    border-bottom: none !important;
+  }
+
+  .ant-menu-submenu-active::after,
+  .ant-menu-submenu-open::after,
+  .ant-menu-submenu-selected::after {
+    border-bottom: none !important;
+  }
+
+  .ant-menu-submenu-title:hover::after {
+    border-bottom: none !important;
+  }
 }

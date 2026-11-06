@@ -7,7 +7,7 @@ import '../../Manager/Spinner.scss';
 export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  const { vocabUrl, user } = useContext(myContext);
+  const { vocabUrl } = useContext(myContext);
   // Sets the initial values displayed in the form and esnures they are current
   const changeHandler = () => {
     form.setFieldsValue({
@@ -25,8 +25,7 @@ export const EditTableDetails = ({ table, setTable, edit, setEdit }) => {
     handleUpdate(vocabUrl, 'Table', table, {
       ...values,
       filename: table.filename,
-      variables: table?.variables,
-      editor: user.email
+      variables: table?.variables
     })
       .then(data => {
         setTable(data);
