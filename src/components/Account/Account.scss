@@ -74,3 +74,18 @@
   align-items: center;
   gap: 10px;
 }
+
+.disabled_div {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.disabled_row {
+  color: #a5a5a5;
+}
+
+.role-editor {
+  display: inline-flex;
+  gap: 6px;
+}

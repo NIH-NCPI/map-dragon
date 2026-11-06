@@ -125,7 +125,7 @@ export const EditVariable = ({
           getById(
             vocabUrl,
             'Table',
-            `${tableId}/mapping?user_input=True&user=${user?.email}`
+            `${tableId}/mapping?user_input=True&user=${user}`
           )
             .then(data => setMapping(data.codes))
             .catch(error => {
@@ -149,7 +149,8 @@ export const EditVariable = ({
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          body: JSON.stringify(values)
         }
       )
         .then(res => {
@@ -180,7 +181,7 @@ export const EditVariable = ({
           getById(
             vocabUrl,
             'Table',
-            `${tableId}/mapping?user_input=True&user=${user?.email}`
+            `${tableId}/mapping?user_input=True&user=${user}`
           )
             .then(data => setMapping(data.codes))
             .catch(error => {

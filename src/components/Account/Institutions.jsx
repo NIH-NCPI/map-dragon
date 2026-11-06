@@ -230,7 +230,12 @@ export const Institutions = () => {
                 />
               )}
             </div>
-            <Tabs items={items} />
+            <Tabs
+              tabBarStyle={{
+                backgroundColor: 'white'
+              }}
+              items={items}
+            />
           </div>
           <DeleteUser fetchInstitutions={fetchInstitutions} />
           <AddInstitution

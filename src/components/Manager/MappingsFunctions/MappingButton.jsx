@@ -52,7 +52,7 @@ export const MappingButton = ({
     apiFetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         variable?.code
-      )}?user_input=true&user=${user?.email}`,
+      )}?user_input=true&user=${user}`,
       {
         method: 'PUT',
         credentials: 'include',

@@ -50,7 +50,7 @@ export const mappingVotes = (
       getById(
         vocabUrl,
         component,
-        `${componentId}/mapping?user_input=True&user=${user?.email}`
+        `${componentId}/mapping?user_input=True&user=${user}`
       )
         .then(data => setMapping(data.codes))
         .catch(error => {

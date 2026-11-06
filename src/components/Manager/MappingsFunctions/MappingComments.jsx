@@ -107,7 +107,7 @@ export const MappingComments = ({
         getById(
           vocabUrl,
           component,
-          `${idProp}/mapping?user_input=True&user=${user?.email}`
+          `${idProp}/mapping?user_input=True&user=${user}`
         )
           .then(data => setMapping(data.codes))
           .catch(error => {
