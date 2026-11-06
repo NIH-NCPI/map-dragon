@@ -1,3 +1,4 @@
+import { notification } from 'antd';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useContext, useEffect } from 'react';
@@ -39,7 +40,10 @@ export const Login = () => {
           startSession(vocabUrl, credentialResponse.credential)
             .then(profile => {
               if (!profile || !profile.email) {
-                console.error('Login failed', profile);
+                notification.error({
+                  message: 'Error',
+                  description: `Login failed, ${profile}.`
+                });
                 return;
               }
               sessionStorage.setItem('user', JSON.stringify(profile));
@@ -55,7 +59,10 @@ export const Login = () => {
               setInstitutionIds(profile.institutionIds);
             })
             .catch(err => {
-              console.error('Login failed', err);
+              notification.error({
+                message: 'Error',
+                description: err.message ?? 'Login failed.'
+              });
             });
         }}
       />
