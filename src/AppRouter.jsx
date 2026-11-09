@@ -29,11 +29,11 @@ import { About } from './components/About/About.jsx';
 import { UserPage } from './components/Account/UserPage.jsx';
 import { Institutions } from './components/Account/Institutions.jsx';
 import { Spin } from 'antd';
+import { Admin } from './components/Account/Admin.jsx';
 
 export const AppRouter = () => {
   const { user, authLoading } = useContext(myContext);
   const isLoggedIn = () => !!user;
-
   if (authLoading) {
     return (
       <div className="loading_overlay">
@@ -68,6 +68,7 @@ export const AppRouter = () => {
           <Route element={<PageLayout />}>
             <Route path="user" element={<UserPage />} />
             <Route path="institutions" element={<Institutions />} />
+            <Route path="admin" element={<Admin />} />
             <Route path="*" element={<Navigate to="/404" />} />
             <Route element={<SearchContextRoot />}>
               <Route path="/search/:query" element={<SearchResults />} />

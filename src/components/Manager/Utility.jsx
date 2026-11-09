@@ -114,3 +114,14 @@ export const userVote = code => {
   const foundVote = code.user_input?.users_vote;
   return foundVote;
 };
+
+export const readStored = key => {
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw || raw === 'undefined') return null;
+    return JSON.parse(raw);
+  } catch {
+    sessionStorage.removeItem(key);
+    return null;
+  }
+};

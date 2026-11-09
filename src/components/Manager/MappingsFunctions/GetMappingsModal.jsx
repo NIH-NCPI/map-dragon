@@ -189,7 +189,7 @@ export const GetMappingsModal = ({
     apiFetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         mappingProp
-      )}?user_input=true&user=${user?.email}`,
+      )}?user_input=true&user=${user}`,
       {
         method: 'PUT',
         credentials: 'include',

@@ -58,7 +58,7 @@ export const AssignMappingsViaButton = ({
     apiFetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         assignMappingsViaButton?.code
-      )}?user_input=true&user=${user?.email}`,
+      )}?user_input=true&user=${user}`,
       {
         method: 'PUT',
         credentials: 'include',

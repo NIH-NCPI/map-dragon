@@ -104,7 +104,7 @@ export const Terminology = () => {
     apiFetch(
       `${vocabUrl}/Terminology/${terminologyId}/mapping/${uriEncoded(
         mappingCode
-      )}?user_input=true&user=${user?.email}`,
+      )}?user_input=true&user=${user}`,
       {
         method: 'PUT',
         credentials: 'include',
@@ -433,7 +433,7 @@ It then shows the mappings as table data and alows the user to delete a mapping 
         const mappingsData = await getById(
           vocabUrl,
           'Terminology',
-          `${terminologyId}/mapping?user_input=True&user=${user?.email}`
+          `${terminologyId}/mapping?user_input=True&user=${user}`
         );
         setMapping(mappingsData.codes);
 

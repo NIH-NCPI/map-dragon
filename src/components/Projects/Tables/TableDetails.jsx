@@ -112,7 +112,7 @@ export const TableDetails = () => {
     apiFetch(
       `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
         mappingCode
-      )}?user_input=True&user=${user?.email}`,
+      )}?user_input=True&user=${user}`,
       {
         method: 'PUT',
         credentials: 'include',
@@ -166,7 +166,7 @@ export const TableDetails = () => {
         const mappingData = await getById(
           vocabUrl,
           'Table',
-          `${tableId}/mapping?user_input=True&user=${user?.email}`
+          `${tableId}/mapping?user_input=True&user=${user}`
         );
         setMapping(mappingData.codes);
 

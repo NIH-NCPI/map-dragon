@@ -1,25 +1,26 @@
+import { notification } from 'antd';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useContext, useEffect } from 'react';
 import { myContext } from '../../App';
 import { startSession } from './SessionsManager';
 import { UserMenu } from './UserMenu';
+import { readStored } from '../Manager/Utility';
 
 export const Login = () => {
   const { user, setUser, setUserPic, vocabUrl, setRole, setInstitutionIds } =
     useContext(myContext);
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem('user');
-    const storedUserPic = sessionStorage.getItem('userPic');
-    if (storedUser) {
-      const profile = JSON?.parse(storedUser);
+    const profile = readStored('user');
+    if (profile) {
       setUser(profile?.email);
       setRole(profile?.role);
       setInstitutionIds(profile?.institutionIds);
     }
-    if (storedUserPic) {
-      setUserPic(JSON.parse(storedUserPic));
+    const pic = readStored('userPic');
+    if (pic) {
+      setUserPic(pic);
     }
   }, []);
 
@@ -36,8 +37,15 @@ export const Login = () => {
             credentialResponse.credential
           );
 
-          startSession(vocabUrl, credentialResponse.credential).then(
-            profile => {
+          startSession(vocabUrl, credentialResponse.credential)
+            .then(profile => {
+              if (!profile || !profile.email) {
+                notification.error({
+                  message: 'Error',
+                  description: `Login failed, ${profile}.`
+                });
+                return;
+              }
               sessionStorage.setItem('user', JSON.stringify(profile));
               if (credentialResponseDecoded.picture) {
                 sessionStorage.setItem(
@@ -49,11 +57,13 @@ export const Login = () => {
               setUser(profile.email);
               setRole(profile.role);
               setInstitutionIds(profile.institutionIds);
-            }
-          );
-        }}
-        onError={() => {
-          console.log('Login Failed');
+            })
+            .catch(err => {
+              notification.error({
+                message: 'Error',
+                description: err.message ?? 'Login failed.'
+              });
+            });
         }}
       />
     </div>

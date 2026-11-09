@@ -96,7 +96,7 @@ export const EditCode = ({
         getById(
           vocabUrl,
           'Terminology',
-          `${terminologyId}/mapping?user_input=true&user=${user?.email}`
+          `${terminologyId}/mapping?user_input=true&user=${user}`
         )
           .then(data => setMapping(data.codes))
           .catch(error => {

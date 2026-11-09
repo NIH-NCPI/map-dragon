@@ -80,7 +80,7 @@ export const EditMappingsModal = ({
     apiFetch(
       `${vocabUrl}/${componentString}/${component.id}/mapping/${uriEncoded(
         editMappings.code
-      )}?user_input=true&user=${user?.email}`,
+      )}?user_input=true&user=${user}`,
       {
         method: 'PUT',
         credentials: 'include',
@@ -154,7 +154,7 @@ export const EditMappingsModal = ({
           getById(
             vocabUrl,
             componentString,
-            `${component.id}/mapping?user_input=True&user=${user?.email}`
+            `${component.id}/mapping?user_input=True&user=${user}`
           ).then(data => setMapping(data.codes));
       }}
       cancelButtonProps={{ disabled: loading }}
