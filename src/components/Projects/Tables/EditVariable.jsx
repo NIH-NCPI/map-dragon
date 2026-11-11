@@ -1,12 +1,22 @@
-import { Form, Input, message, Modal, notification, Select, Space } from 'antd';
+import {
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Select,
+  Space,
+  Spin
+} from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { getById, handlePatch } from '../../Manager/FetchManager';
 import { useParams } from 'react-router-dom';
 import { MappingContext } from '../../../Contexts/MappingContext';
 import EditDataTypeSubForm from './EditDataTypeSubForm';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const EditVariable = ({
   editRow,
@@ -74,8 +84,7 @@ export const EditVariable = ({
     // endpoint with a PUT request to edit the data for the variable.
     if (!table.variables.some(item => item?.name === values?.name)) {
       handlePatch(vocabUrl, 'Table', table, {
-        ...updatedName,
-        editor: user.email
+        ...updatedName
       })
         .catch(error => {
           if (error) {
@@ -87,14 +96,15 @@ export const EditVariable = ({
           return error;
         })
         .then(() => {
-          fetch(
+          apiFetch(
             `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
             {
               method: 'PUT',
+              credentials: 'include',
               headers: {
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ ...values, editor: user.email })
+              body: JSON.stringify(values)
             }
           )
             .then(res => {
@@ -115,7 +125,7 @@ export const EditVariable = ({
           getById(
             vocabUrl,
             'Table',
-            `${tableId}/mapping?user_input=True&user=${user?.email}`
+            `${tableId}/mapping?user_input=True&user=${user}`
           )
             .then(data => setMapping(data.codes))
             .catch(error => {
@@ -132,14 +142,15 @@ export const EditVariable = ({
         );
     } else {
       setLoading(true);
-      fetch(
+      apiFetch(
         `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
         {
           method: 'PUT',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ ...values, editor: user.email })
+          body: JSON.stringify(values)
         }
       )
         .then(res => {
@@ -155,12 +166,22 @@ export const EditVariable = ({
           setEditRow('');
           message.success('Changes saved successfully.');
         })
+        .catch(error => {
+          if (error) {
+            notification.error({
+              message: 'Error',
+              description: 'An error occurred editing the variable.'
+            });
+          }
+          return error;
+        })
+        .finally(() => setLoading(false))
 
         .then(() =>
           getById(
             vocabUrl,
             'Table',
-            `${tableId}/mapping?user_input=True&user=${user?.email}`
+            `${tableId}/mapping?user_input=True&user=${user}`
           )
             .then(data => setMapping(data.codes))
             .catch(error => {
@@ -203,87 +224,88 @@ export const EditVariable = ({
           okButtonProps={{ disabled: loading }}
           closeIcon={false}
         >
-          {loading ? (
-            <ModalSpinner />
-          ) : (
-            <Form form={form} layout="vertical" preserve={false}>
-              <Space
-                style={{
-                  display: 'flex',
-                  marginBottom: 3
-                }}
-                align="baseline"
-              >
-                <Form.Item
-                  name={['name']}
-                  label="Variable name"
-                  rules={[
-                    { required: true, message: 'Variable name is required.' },
-                    { validator: validateUnique }
-                  ]}
-                >
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '15vw'
-                    }}
-                    autoFocus
-                  />
-                </Form.Item>
-                <Form.Item
-                  name={['description']}
-                  label="Variable description"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Variable description is required.'
-                    }
-                  ]}
-                >
-                  <TextArea
-                    autoSize={true}
-                    style={{
-                      width: '39vw'
-                    }}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Data Type"
-                  name={['data_type']}
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Select data type.'
-                    }
-                  ]}
-                >
-                  <Select
-                    value={form.getFieldValue('data_type')}
-                    style={{ width: '10vw' }}
-                    placeholder="Select data type"
-                    onChange={value => {
-                      form.setFieldsValue({ data_type: value });
-                      setType(value);
-                    }}
-                    options={[
-                      { value: 'STRING', label: 'String' },
-                      { value: 'INTEGER', label: 'Integer' },
-                      { value: 'QUANTITY', label: 'Quantity' },
-                      { value: 'ENUMERATION', label: 'Enumeration' }
-                    ]}
-                  />
-                </Form.Item>
-              </Space>
-              <EditDataTypeSubForm
-                setLoading={setLoading}
-                type={type}
-                setType={setType}
-                form={form}
-                editRow={editRow}
-                tableData={tableData}
-              />
-            </Form>
+          {loading && (
+            <div className="loading_overlay_modal">
+              <Spin />
+            </div>
           )}
+          <Form form={form} layout="vertical" preserve={false}>
+            <Space
+              style={{
+                display: 'flex',
+                marginBottom: 3
+              }}
+              align="baseline"
+            >
+              <Form.Item
+                name={['name']}
+                label="Variable name"
+                rules={[
+                  { required: true, message: 'Variable name is required.' },
+                  { validator: validateUnique }
+                ]}
+              >
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '15vw'
+                  }}
+                  autoFocus
+                />
+              </Form.Item>
+              <Form.Item
+                name={['description']}
+                label="Variable description"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Variable description is required.'
+                  }
+                ]}
+              >
+                <TextArea
+                  autoSize={true}
+                  style={{
+                    width: '39vw'
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Data Type"
+                name={['data_type']}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Select data type.'
+                  }
+                ]}
+              >
+                <Select
+                  value={form.getFieldValue('data_type')}
+                  style={{ width: '10vw' }}
+                  placeholder="Select data type"
+                  onChange={value => {
+                    form.setFieldsValue({ data_type: value });
+                    setType(value);
+                  }}
+                  options={[
+                    { value: 'STRING', label: 'String' },
+                    { value: 'INTEGER', label: 'Integer' },
+                    { value: 'QUANTITY', label: 'Quantity' },
+                    { value: 'ENUMERATION', label: 'Enumeration' }
+                  ]}
+                />
+              </Form.Item>
+            </Space>
+            <EditDataTypeSubForm
+              setLoading={setLoading}
+              type={type}
+              setType={setType}
+              form={form}
+              editRow={editRow}
+              tableData={tableData}
+            />
+          </Form>
         </Modal>
       )}
     </>

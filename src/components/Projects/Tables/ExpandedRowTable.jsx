@@ -5,22 +5,22 @@ export const ExpandedRowTable = ({ record }) => {
     {
       title: 'Min',
       dataIndex: 'min',
-      key: 'min',
+      key: 'min'
     },
     {
       title: 'Max',
       dataIndex: 'max',
-      key: 'max',
+      key: 'max'
     },
     {
       title: 'Units',
       key: 'units',
-      dataIndex: 'units',
-    },
+      dataIndex: 'units'
+    }
   ];
 
   const dataSource = [
-    { key: 1, min: record.min, max: record.max, units: record.units },
+    { key: 1, min: record.min, max: record.max, units: record.units }
   ];
 
   return <Table columns={columns} dataSource={dataSource} pagination={false} />;

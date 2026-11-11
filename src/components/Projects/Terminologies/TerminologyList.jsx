@@ -1,10 +1,10 @@
-import { Button, Input, notification, Space, Table } from 'antd';
+import { Button, Input, notification, Space, Spin, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { myContext } from '../../../App';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAll } from '../../Manager/FetchManager';
-import { Spinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { AddTerminology } from './AddTerminology';
 import { DeleteOutlined } from '@ant-design/icons';
 import { DeleteTerminology } from './DeleteTerminology';
@@ -15,7 +15,7 @@ export const TerminologyList = () => {
   const [filter, setFilter] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10
+    parseInt(sessionStorage.getItem('pageSize'), 10) || 10
   );
   const { vocabUrl } = useContext(myContext);
 
@@ -44,7 +44,7 @@ export const TerminologyList = () => {
         return error;
       })
       .finally(() => setLoading(false));
-    localStorage.setItem('pageSize', pageSize);
+    sessionStorage.setItem('pageSize', pageSize);
     return () => controller.abort();
   }, [pageSize]);
 
@@ -124,16 +124,18 @@ export const TerminologyList = () => {
         onOpenChange(open) {
           if (open) {
             setTimeout(() => {
-              inputRef.current?.focus(); // Focus cursor on search input
+              inputRef.current?.focus(); // Focuses cursor on search input
             }, 100); // Small delay to ensure input is rendered
           }
         }
       },
-      width: 400
+      getPopupContainer: triggerNode => triggerNode.parentNode,
+      width: 300
     },
     {
       title: 'Description',
-      dataIndex: 'description'
+      dataIndex: 'description',
+      width: 500
     },
     {
       title: '',
@@ -156,10 +158,14 @@ export const TerminologyList = () => {
     )
   }));
 
-  return loading ? (
-    <Spinner />
-  ) : (
+  return (
     <>
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
+        </div>
+      )}
+
       <div className="terminology_list_container">
         <h2>Terminology Index</h2>
         <AddTerminology />
@@ -169,7 +175,6 @@ export const TerminologyList = () => {
           showSizeChanger={true}
           columns={columns}
           dataSource={dataSource}
-          getPopupContainer={trigger => trigger.parentNode}
           pagination={{
             showSizeChanger: true,
             pageSizeOptions: ['10', '20', '30'],

@@ -29,18 +29,36 @@ function App() {
     name: '',
     description: '',
     title: '',
-    url: '',
+    url: ''
   }; //initial state of study
   const [study, setStudy] = useState(initialStudy);
   const [selectedKey, setSelectedKey] = useState(null);
   const [user, setUser] = useState(null);
+  const [userPic, setUserPic] = useState(null);
+  const [role, setRole] = useState(null);
+  const [institutionIds, setInstitutionIds] = useState(null);
   const [ontologyForPagination, setOntologyForPagination] = useState([]);
   const [ucumCodes, setUcumCodes] = useState([]);
   const [version, setVersion] = useState({});
+  const [authLoading, setAuthLoading] = useState(true);
+  const [deleteToken, setDeleteToken] = useState(null);
+  const [deleteUser, setDeleteUser] = useState(null);
 
   message.config({
-    top: '25vh',
+    top: '25vh'
   });
+
+  useEffect(() => {
+    const cached = sessionStorage.getItem('userProfile');
+    if (cached) {
+      const profile = JSON.parse(cached);
+      setUser(profile.email);
+      setRole(profile.role);
+      setInstitutionIds(profile.institutionIds);
+      setUserPic(profile.picture ?? null);
+    }
+    setAuthLoading(false);
+  }, []);
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
@@ -74,6 +92,8 @@ function App() {
           setExportState,
           user,
           setUser,
+          userPic,
+          setUserPic,
           importState,
           setImportState,
           ontologyForPagination,
@@ -82,6 +102,15 @@ function App() {
           setUcumCodes,
           version,
           setVersion,
+          role,
+          setRole,
+          institutionIds,
+          setInstitutionIds,
+          authLoading,
+          deleteToken,
+          setDeleteToken,
+          deleteUser,
+          setDeleteUser
         }}
       >
         <AppRouter />

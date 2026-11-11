@@ -1,11 +1,12 @@
+import { useContext } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { myContext } from '../../App';
 
 export const PageLayout = () => {
   const location = useLocation();
-  const isLoggedIn = () => {
-    const storedUser = localStorage.getItem('user');
-    return !!storedUser;
-  };
+  const { user } = useContext(myContext);
+
+  const isLoggedIn = () => !!user;
   return isLoggedIn() ? (
     <Outlet />
   ) : (

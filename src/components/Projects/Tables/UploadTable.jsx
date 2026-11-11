@@ -2,10 +2,11 @@ import {
   Button,
   Form,
   Input,
-  Upload,
+  message,
   Modal,
   notification,
-  message,
+  Spin,
+  Upload
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
@@ -14,7 +15,8 @@ import { handleUpdate } from '../../Manager/FetchManager';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const UploadTable = ({ addTable, setAddTable }) => {
   const [form] = Form.useForm();
@@ -32,12 +34,13 @@ export const UploadTable = ({ addTable, setAddTable }) => {
   const tableUpload = values => {
     setLoading(true);
     const newTableArray = [...dataDictionary?.tables];
-    fetch(`${vocabUrl}/LoadTable`, {
+    apiFetch(`${vocabUrl}/LoadTable`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ ...values, editor: user.email }),
+      body: JSON.stringify(values)
     })
       .then(res => {
         if (res.status === 400) {
@@ -45,7 +48,7 @@ export const UploadTable = ({ addTable, setAddTable }) => {
             notification.error({
               message: 'Error',
               description: `${error.message_to_user}`,
-              duration: 10,
+              duration: 10
             });
             throw new Error('400 error');
           });
@@ -63,7 +66,7 @@ export const UploadTable = ({ addTable, setAddTable }) => {
         newTableArray.push({ 'reference': `Table/${data.id}` });
         handleUpdate(vocabUrl, 'DataDictionary', dataDictionary, {
           ...dataDictionary,
-          tables: newTableArray,
+          tables: newTableArray
         })
           .then(updatedData => {
             setDataDictionary(updatedData);
@@ -77,7 +80,7 @@ export const UploadTable = ({ addTable, setAddTable }) => {
             if (error.message !== '400 error') {
               notification.error({
                 message: 'Error',
-                description: 'An error occurred uploading the table',
+                description: 'An error occurred uploading the table'
               });
             }
           });
@@ -98,12 +101,12 @@ export const UploadTable = ({ addTable, setAddTable }) => {
             values.filename = values.csvContents.file.name;
             values.csvContents = result.data;
             tableUpload(values);
-          },
+          }
         })
       : tableUpload({
           ...values,
           csvContents: [],
-          filename: null,
+          filename: null
         });
   };
   return (
@@ -131,57 +134,56 @@ export const UploadTable = ({ addTable, setAddTable }) => {
         maskClosable={false}
         closeIcon={false}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <Form form={form} layout="vertical" name="form_in_modal">
-            <h2>Upload Table</h2>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[{ required: true, message: 'Please input Table name.' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label="Description"
-              rules={[{ required: false }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="url"
-              label="System"
-              rules={[
-                { required: true, message: 'Please input Table system.' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="csvContents"
-              extra="CSV files only in Data Dictionary format."
-            >
-              <Upload
-                maxCount={1}
-                onRemove={file => {
-                  const index = fileList.indexOf(file);
-                  const newFileList = fileList.slice();
-                  newFileList.splice(index, 1);
-                  setFileList(newFileList);
-                }}
-                beforeUpload={file => {
-                  setFileList([...fileList, file]);
-                  return false;
-                }}
-                accept=".csv"
-              >
-                <Button icon={<UploadOutlined />}>Select File</Button>
-              </Upload>
-            </Form.Item>
-          </Form>
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        <Form form={form} layout="vertical" name="form_in_modal">
+          <h2>Upload Table</h2>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, message: 'Please input Table name.' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: false }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="url"
+            label="System"
+            rules={[{ required: true, message: 'Please input Table system.' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="csvContents"
+            extra="CSV files only in Data Dictionary format."
+          >
+            <Upload
+              maxCount={1}
+              onRemove={file => {
+                const index = fileList.indexOf(file);
+                const newFileList = fileList.slice();
+                newFileList.splice(index, 1);
+                setFileList(newFileList);
+              }}
+              beforeUpload={file => {
+                setFileList([...fileList, file]);
+                return false;
+              }}
+              accept=".csv"
+            >
+              <Button icon={<UploadOutlined />}>Select File</Button>
+            </Upload>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

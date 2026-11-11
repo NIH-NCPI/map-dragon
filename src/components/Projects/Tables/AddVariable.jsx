@@ -9,11 +9,12 @@ import {
   notification,
   Select,
   Space,
+  Spin
 } from 'antd';
 import DataTypeSubForm from './DataTypeSubForm';
-import { ModalSpinner } from '../../Manager/Spinner';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
+import '../../Manager/Spinner.scss';
 import { uriEncoded } from '../../Manager/Utility';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const AddVariable = ({ table, setTable }) => {
   const { vocabUrl, user } = useContext(myContext);
@@ -24,21 +25,20 @@ export const AddVariable = ({ table, setTable }) => {
   const { TextArea } = Input;
   const [form] = Form.useForm();
 
-  const handleSuccess = () => {
-    setAddRow(true);
-  };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
-
   const handleSubmit = values => {
     setLoading(true);
 
-    fetch(`${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ ...values, editor: user.email }),
-    })
+    apiFetch(
+      `${vocabUrl}/Table/${table.id}/variable/${uriEncoded(values.name)}`,
+      {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values)
+      }
+    )
       .then(res => {
         if (res.ok) {
           return res.json();
@@ -50,14 +50,13 @@ export const AddVariable = ({ table, setTable }) => {
         setTable(data);
         form.resetFields();
         setAddRow(false);
+        message.success('Variable added successfully.');
       })
-      // Displays a self-closing message that the udpates have been successfully saved.
-      .then(() => message.success('Variable added successfully.'))
       .catch(error => {
         if (error) {
           notification.error({
             message: 'Error',
-            description: 'An error occurred adding the variable.',
+            description: 'An error occurred adding the variable.'
           });
         }
         return error;
@@ -83,12 +82,11 @@ export const AddVariable = ({ table, setTable }) => {
   return (
     <>
       <Button
-        onClick={() => (user ? setAddRow(true) : login())}
+        onClick={() => setAddRow(true)}
         type="primary"
         style={{
-          marginBottom: 16,
+          marginBottom: 16
         }}
-        // disabled={addRow}
       >
         Add variable
       </Button>
@@ -111,78 +109,79 @@ export const AddVariable = ({ table, setTable }) => {
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <Form form={form} layout="vertical">
-            <Space
-              style={{
-                display: 'flex',
-                marginBottom: 3,
-              }}
-              align="baseline"
-            >
-              <Form.Item
-                name={['name']}
-                label="Variable name"
-                rules={[
-                  { required: true, message: 'Input variable name.' },
-                  { validator: validateUnique },
-                ]}
-              >
-                <Input
-                  style={{
-                    width: '15vw',
-                  }}
-                  autoFocus
-                />
-              </Form.Item>
-              <Form.Item
-                name={['description']}
-                label="Variable description"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Input variable description.',
-                  },
-                ]}
-              >
-                <TextArea
-                  rows={1}
-                  style={{
-                    width: '39vw',
-                  }}
-                  autoFocus
-                />
-              </Form.Item>
-              <Form.Item
-                label="Data Type"
-                name={['data_type']}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Select data type.',
-                  },
-                ]}
-              >
-                <Select
-                  style={{ width: '10vw' }}
-                  placeholder="Select data type"
-                  onChange={value => {
-                    setType(value);
-                  }}
-                  options={[
-                    { value: 'ENUMERATION', label: 'Enumeration' },
-                    { value: 'INTEGER', label: 'Integer' },
-                    { value: 'QUANTITY', label: 'Quantity' },
-                    { value: 'STRING', label: 'String' },
-                  ]}
-                />
-              </Form.Item>
-            </Space>
-            <DataTypeSubForm form={form} type={type} />
-          </Form>
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        <Form form={form} layout="vertical">
+          <Space
+            style={{
+              display: 'flex',
+              marginBottom: 3
+            }}
+            align="baseline"
+          >
+            <Form.Item
+              name={['name']}
+              label="Variable name"
+              rules={[
+                { required: true, message: 'Input variable name.' },
+                { validator: validateUnique }
+              ]}
+            >
+              <Input
+                style={{
+                  width: '15vw'
+                }}
+                autoFocus
+              />
+            </Form.Item>
+            <Form.Item
+              name={['description']}
+              label="Variable description"
+              rules={[
+                {
+                  required: true,
+                  message: 'Input variable description.'
+                }
+              ]}
+            >
+              <TextArea
+                rows={1}
+                style={{
+                  width: '39vw'
+                }}
+                autoFocus
+              />
+            </Form.Item>
+            <Form.Item
+              label="Data Type"
+              name={['data_type']}
+              rules={[
+                {
+                  required: true,
+                  message: 'Select data type.'
+                }
+              ]}
+            >
+              <Select
+                style={{ width: '10vw' }}
+                placeholder="Select data type"
+                onChange={value => {
+                  setType(value);
+                }}
+                options={[
+                  { value: 'ENUMERATION', label: 'Enumeration' },
+                  { value: 'INTEGER', label: 'Integer' },
+                  { value: 'QUANTITY', label: 'Quantity' },
+                  { value: 'STRING', label: 'String' }
+                ]}
+              />
+            </Form.Item>
+          </Space>
+          <DataTypeSubForm form={form} type={type} />
+        </Form>
       </Modal>
     </>
   );

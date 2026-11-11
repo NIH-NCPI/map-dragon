@@ -1,10 +1,11 @@
-import { Button, Form, Upload, Modal, notification, message } from 'antd';
+import { Button, Form, message, Modal, notification, Spin, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
 import './TableStyling.scss';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const LoadVariables = ({ load, setLoad }) => {
   const [form] = Form.useForm();
@@ -14,12 +15,13 @@ export const LoadVariables = ({ load, setLoad }) => {
 
   const tableUpload = values => {
     setLoading(true);
-    fetch(`${vocabUrl}/LoadTable/${table.id}`, {
+    apiFetch(`${vocabUrl}/LoadTable/${table.id}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ ...values, editor: user.email }),
+      body: JSON.stringify(values)
     })
       .then(res => {
         if (res.status === 400) {
@@ -27,7 +29,7 @@ export const LoadVariables = ({ load, setLoad }) => {
             notification.error({
               message: 'Error',
               description: `${error.message_to_user}`,
-              duration: 10,
+              duration: 10
             });
             throw new Error('400 error');
           });
@@ -47,7 +49,7 @@ export const LoadVariables = ({ load, setLoad }) => {
         if (error.message !== '400 error') {
           notification.error({
             message: 'Error',
-            description: 'An error occurred uploading the variables',
+            description: 'An error occurred uploading the variables'
           });
         }
       })
@@ -65,7 +67,7 @@ export const LoadVariables = ({ load, setLoad }) => {
         values.filename = values.csvContents.file.name;
         values.csvContents = result.data;
         tableUpload(values);
-      },
+      }
     });
   };
 
@@ -95,35 +97,36 @@ export const LoadVariables = ({ load, setLoad }) => {
         maskClosable={false}
         closeIcon={false}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <Form form={form} layout="vertical" name="form_in_modal">
-            <h2>Upload Variables</h2>
-            <Form.Item
-              name="csvContents"
-              rules={[{ required: true, message: 'Please select file.' }]}
-              extra="CSV files only, in Data Dictionary format."
-            >
-              <Upload
-                maxCount={1}
-                onRemove={file => {
-                  const index = fileList.indexOf(file);
-                  const newFileList = fileList.slice();
-                  newFileList.splice(index, 1);
-                  setFileList(newFileList);
-                }}
-                beforeUpload={file => {
-                  setFileList([...fileList, file]);
-                  return false;
-                }}
-                accept=".csv"
-              >
-                <Button icon={<UploadOutlined />}>Select File</Button>
-              </Upload>
-            </Form.Item>
-          </Form>
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        <Form form={form} layout="vertical" name="form_in_modal">
+          <h2>Upload Variables</h2>
+          <Form.Item
+            name="csvContents"
+            rules={[{ required: true, message: 'Please select file.' }]}
+            extra="CSV files only, in Data Dictionary format."
+          >
+            <Upload
+              maxCount={1}
+              onRemove={file => {
+                const index = fileList.indexOf(file);
+                const newFileList = fileList.slice();
+                newFileList.splice(index, 1);
+                setFileList(newFileList);
+              }}
+              beforeUpload={file => {
+                setFileList([...fileList, file]);
+                return false;
+              }}
+              accept=".csv"
+            >
+              <Button icon={<UploadOutlined />}>Select File</Button>
+            </Upload>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

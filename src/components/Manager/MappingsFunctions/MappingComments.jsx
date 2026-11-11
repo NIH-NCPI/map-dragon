@@ -1,10 +1,11 @@
-import { Button, Form, Input, Modal, notification } from 'antd';
+import { Button, Form, Input, Modal, notification, Spin } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import { MappingContext } from '../../../Contexts/MappingContext';
-import { ModalSpinner } from '../Spinner';
+import '../Spinner.scss';
 import { getById } from '../FetchManager';
 import { uriEncoded } from '../Utility';
+import { apiFetch } from '../ApiFetch';
 
 export const MappingComments = ({
   mappingCode,
@@ -35,12 +36,13 @@ export const MappingComments = ({
 
   const getComments = () => {
     setLoading(true);
-    return fetch(
+    return apiFetch(
       `${vocabUrl}/${component}/${idProp}/user_input/${uriEncoded(
         variableMappings
       )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -68,16 +70,16 @@ export const MappingComments = ({
 
   const onFinish = values => {
     const mappingCommentDTO = {
-      editor: user?.email,
       note: values.comment
     };
 
-    return fetch(
+    return apiFetch(
       `${vocabUrl}/${component}/${idProp}/user_input/${uriEncoded(
         variableMappings
       )}/mapping/${uriEncoded(mappingCode)}/mapping_conversations`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -105,7 +107,7 @@ export const MappingComments = ({
         getById(
           vocabUrl,
           component,
-          `${idProp}/mapping?user_input=True&user=${user?.email}`
+          `${idProp}/mapping?user_input=True&user=${user}`
         )
           .then(data => setMapping(data.codes))
           .catch(error => {
@@ -194,11 +196,12 @@ export const MappingComments = ({
             </Button>
           </Form.Item>
         </Form>
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          mappingComments?.map((mc, i) => commentDisplay(mc, i))
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        {mappingComments?.map((mc, i) => commentDisplay(mc, i))}
       </Modal>
     </>
   );

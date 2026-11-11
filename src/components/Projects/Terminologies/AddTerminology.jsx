@@ -5,21 +5,21 @@ import {
   message,
   Modal,
   notification,
-  Upload,
+  Spin,
+  Upload
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useContext, useState } from 'react';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { myContext } from '../../../App';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const AddTerminology = () => {
   const handleSuccess = () => {
     setCreateTerm(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
   const [form] = Form.useForm();
   const { vocabUrl, user } = useContext(myContext);
 
@@ -32,20 +32,20 @@ export const AddTerminology = () => {
   const termUpload = values => {
     const cleanedCodes = values.codes.map(item => ({
       ...item,
-      code: item.code.toLowerCase().replaceAll(' ', '_'),
+      code: item.code.toLowerCase().replaceAll(' ', '_')
     }));
 
     setLoading(true);
-    fetch(`${vocabUrl}/Terminology`, {
+    apiFetch(`${vocabUrl}/Terminology`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         ...values,
-        codes: cleanedCodes,
-        editor: user?.email,
-      }),
+        codes: cleanedCodes
+      })
     })
       .then(res => {
         if (!res.ok) {
@@ -64,7 +64,7 @@ export const AddTerminology = () => {
       .catch(error => {
         notification.error({
           message: 'Error',
-          description: 'An error occurred uploading the terminology',
+          description: 'An error occurred uploading the terminology'
         });
       })
       .finally(() => setLoading(false));
@@ -82,11 +82,11 @@ export const AddTerminology = () => {
           complete: function (result) {
             values.codes = result.data;
             termUpload(values);
-          },
+          }
         })
       : termUpload({
           ...values,
-          codes: [],
+          codes: []
         });
   };
 
@@ -94,16 +94,10 @@ export const AddTerminology = () => {
     <>
       <div className="add_row_buttons">
         <Button
-          onClick={() => {
-            if (user) {
-              setCreateTerm(true);
-            } else {
-              login();
-            }
-          }}
+          onClick={() => setCreateTerm(true)}
           type="primary"
           style={{
-            marginBottom: 16,
+            marginBottom: 16
           }}
         >
           Create Terminology
@@ -127,59 +121,60 @@ export const AddTerminology = () => {
         okButtonProps={{ disabled: loading }}
         closeIcon={false}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <Form form={form} layout="vertical" name="form_in_modal">
-            <h2>Create Terminology</h2>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[
-                { required: true, message: 'Please input Terminology name.' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label="Description"
-              rules={[{ required: false }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="url"
-              label="System"
-              rules={[
-                { required: true, message: 'Please input Terminology system.' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="codes"
-              extra="CSV files only in Data Dictionary format."
-            >
-              <Upload
-                maxCount={1}
-                onRemove={file => {
-                  const index = fileList.indexOf(file);
-                  const newFileList = fileList.slice();
-                  newFileList.splice(index, 1);
-                  setFileList(newFileList);
-                }}
-                beforeUpload={file => {
-                  setFileList([...fileList, file]);
-                  return false;
-                }}
-                accept=".csv"
-              >
-                <Button icon={<UploadOutlined />}>Select File</Button>
-              </Upload>
-            </Form.Item>
-          </Form>
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        <Form form={form} layout="vertical" name="form_in_modal">
+          <h2>Create Terminology</h2>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              { required: true, message: 'Please input Terminology name.' }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: false }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="url"
+            label="System"
+            rules={[
+              { required: true, message: 'Please input Terminology system.' }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="codes"
+            extra="CSV files only in Data Dictionary format."
+          >
+            <Upload
+              maxCount={1}
+              onRemove={file => {
+                const index = fileList.indexOf(file);
+                const newFileList = fileList.slice();
+                newFileList.splice(index, 1);
+                setFileList(newFileList);
+              }}
+              beforeUpload={file => {
+                setFileList([...fileList, file]);
+                return false;
+              }}
+              accept=".csv"
+            >
+              <Button icon={<UploadOutlined />}>Select File</Button>
+            </Upload>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

@@ -2,10 +2,12 @@ import { useContext, useEffect, useState } from 'react';
 import './OntologyInfo.scss';
 import { getOntologies } from '../Manager/FetchManager';
 import { myContext } from '../../App';
-import { SmallSpinner, Spinner } from '../Manager/Spinner';
-import { Tooltip } from 'antd';
+import '../Manager/Spinner.scss';
+
+import { Spin, Tooltip } from 'antd';
 
 import { OntologyTable } from './OntologyTable';
+import { apiFetch } from '../Manager/ApiFetch';
 
 export const OntologyInfo = () => {
   const { vocabUrl } = useContext(myContext);
@@ -36,8 +38,9 @@ export const OntologyInfo = () => {
   const getOntologyApiById = () => {
     return (
       setTableLoading(true),
-      fetch(`${vocabUrl}/OntologyAPI/${active}`, {
+      apiFetch(`${vocabUrl}/OntologyAPI/${active}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -58,39 +61,47 @@ export const OntologyInfo = () => {
     );
   };
 
-  return loading ? (
-    <Spinner />
-  ) : (
-    <div className="studies_container">
-      <h2>Ontology Information</h2>
-
-      <div className="ontology_container">
-        <div className="api_list">
-          <div className="api_label">APIs</div>
-          {ontologyApis.map((api, index) => (
-            <div
-              key={index}
-              className={active === api.api_id ? 'active_api' : 'inactive_api'}
-              onClick={() => setActive(api.api_id)}
-            >
-              <Tooltip
-                placement="left"
-                mouseEnterDelay={0.5}
-                title={api.api_name}
-              >
-                {api.api_id.toUpperCase()}
-              </Tooltip>
-            </div>
-          ))}
+  return (
+    <>
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
         </div>
-        <div className="ontology_list">
-          {tableLoading ? (
-            <SmallSpinner />
-          ) : (
+      )}
+      <div className="studies_container">
+        <h2>Ontology Information</h2>
+
+        <div className="ontology_container">
+          <div className="api_list">
+            <div className="api_label">APIs</div>
+            {ontologyApis.map((api, index) => (
+              <div
+                key={index}
+                className={
+                  active === api.api_id ? 'active_api' : 'inactive_api'
+                }
+                onClick={() => setActive(api.api_id)}
+              >
+                <Tooltip
+                  placement="left"
+                  mouseEnterDelay={0.5}
+                  title={api.api_name}
+                >
+                  {api.api_id.toUpperCase()}
+                </Tooltip>
+              </div>
+            ))}
+          </div>
+          <div className="ontology_list">
+            {tableLoading && (
+              <div className="loading_overlay_ontologies">
+                <Spin />
+              </div>
+            )}
             <OntologyTable ontology={ontology} />
-          )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

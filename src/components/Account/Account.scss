@@ -1,0 +1,91 @@
+@use '../Styling/Variables' as *;
+
+.account-container {
+  line-height: 1.5rem;
+  min-height: 60vh;
+  margin: 5vh 10vw 0 10vw;
+  display: flex;
+  gap: 20px;
+}
+
+.descriptions-wrapper {
+  width: 28vw;
+}
+
+.institution-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ant-descriptions-item-label {
+  vertical-align: top;
+}
+
+.token-container {
+  margin: 7vh 10vw 0 0;
+}
+
+.tokens-wrapper {
+  width: 42vw;
+}
+
+.token-font {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+  background-color: rgb(255, 255, 255, 0.6);
+}
+
+.expires-div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.delete-token-icon {
+  cursor: pointer;
+}
+
+.token-display {
+  background-color: rgb(222, 255, 222);
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.copy-icon:hover {
+  transition: color 0.2s linear;
+  color: $darkBlue;
+}
+
+.inst-container {
+  margin: 5vh 10vw 10vh 10vw;
+  line-height: 1.5rem;
+}
+
+.inst-container h2 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.institutions-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.disabled_div {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.disabled_row {
+  color: #a5a5a5;
+}
+
+.role-editor {
+  display: inline-flex;
+  gap: 6px;
+}

@@ -1,5 +1,4 @@
 import { Form, Input, InputNumber, Select, Space } from 'antd';
-import { getById } from '../../Manager/FetchManager';
 import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 
@@ -10,7 +9,7 @@ export const DataTypeNumerical = ({ form, type }) => {
     return {
       key: i,
       value: `ucum:${uc.code}`,
-      label: uc.display,
+      label: uc.display
     };
   });
 
@@ -47,13 +46,13 @@ export const DataTypeNumerical = ({ form, type }) => {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'space-evenly',
+          justifyContent: 'space-evenly'
         }}
       >
         <Form.Item
           preserve={false}
           style={{
-            flex: 1,
+            flex: 1
           }}
           label="Min"
           name="min"
@@ -61,7 +60,7 @@ export const DataTypeNumerical = ({ form, type }) => {
         >
           <InputNumber
             style={{
-              width: '15vw',
+              width: '15vw'
             }}
             placeholder="Min"
             autoFocus
@@ -78,7 +77,7 @@ export const DataTypeNumerical = ({ form, type }) => {
         >
           <InputNumber
             style={{
-              width: '15vw',
+              width: '15vw'
             }}
             placeholder="Max"
             onChange={handleFieldChange}
@@ -88,9 +87,10 @@ export const DataTypeNumerical = ({ form, type }) => {
         </Form.Item>
         <Form.Item preserve={false} label="Units" name="units">
           <Select
+            allowClear
             showSearch
             style={{
-              width: '100%',
+              width: '100%'
             }}
             placeholder="Select UCUM units"
             optionFilterProp="children"

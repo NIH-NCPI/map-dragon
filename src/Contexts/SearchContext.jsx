@@ -28,6 +28,7 @@ export function SearchContextRoot() {
   const [defaultOntologies, setDefaultOntologies] = useState([]);
   const [page, setPage] = useState(0);
   const entriesPerPage = 100;
+
   useEffect(() => {
     const fetchDefaultOntologiesData = async () => {
       try {

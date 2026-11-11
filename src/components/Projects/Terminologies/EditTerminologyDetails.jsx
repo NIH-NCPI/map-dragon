@@ -1,13 +1,13 @@
-import { Form, Input, Modal, message } from 'antd';
+import { Form, Input, message, Modal, Spin } from 'antd';
 import { useContext, useState } from 'react';
 import { myContext } from '../../../App';
 import { handleUpdate } from '../../Manager/FetchManager';
-import { ModalSpinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 
 export const EditTerminologyDetails = ({
   form,
   terminology,
-  setTerminology,
+  setTerminology
 }) => {
   const [loading, setLoading] = useState(false);
   const { edit, setEdit, vocabUrl, user } = useContext(myContext);
@@ -16,7 +16,7 @@ export const EditTerminologyDetails = ({
     form.setFieldsValue({
       name: terminology?.name,
       description: terminology?.description,
-      url: terminology?.url,
+      url: terminology?.url
     });
   };
 
@@ -27,7 +27,7 @@ export const EditTerminologyDetails = ({
     setLoading(true);
     handleUpdate(vocabUrl, 'Terminology', terminology, {
       ...values,
-      codes: terminology?.codes,
+      codes: terminology?.codes
     })
       .then(data => {
         setTerminology(data);
@@ -60,43 +60,44 @@ export const EditTerminologyDetails = ({
         cancelButtonProps={{ disabled: loading }}
         okButtonProps={{ disabled: loading }}
       >
-        {loading ? (
-          <ModalSpinner />
-        ) : (
-          <Form
-            form={form}
-            layout="vertical"
-            preserve={false}
-            onChange={changeHandler()}
-          >
-            <h2>{terminology?.name ? terminology?.name : terminology?.id}</h2>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[
-                { required: true, message: 'Please input Terminology name.' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label="Description"
-              rules={[{ required: false }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="url"
-              label="System"
-              rules={[
-                { required: true, message: 'Please input Terminology system.' },
-              ]}
-            >
-              <Input />
-            </Form.Item>{' '}
-          </Form>
+        {loading && (
+          <div className="loading_overlay_modal">
+            <Spin />
+          </div>
         )}
+        <Form
+          form={form}
+          layout="vertical"
+          preserve={false}
+          onChange={changeHandler()}
+        >
+          <h2>{terminology?.name ? terminology?.name : terminology?.id}</h2>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              { required: true, message: 'Please input Terminology name.' }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: false }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="url"
+            label="System"
+            rules={[
+              { required: true, message: 'Please input Terminology system.' }
+            ]}
+          >
+            <Input />
+          </Form.Item>{' '}
+        </Form>
       </Modal>
     </>
   );

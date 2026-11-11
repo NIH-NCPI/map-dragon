@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { myContext } from '../../../App';
 import './TableStyling.scss';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Spinner } from '../../Manager/Spinner';
+import '../../Manager/Spinner.scss';
 import { getById } from '../../Manager/FetchManager';
 import {
   Card,
@@ -11,6 +11,7 @@ import {
   message,
   notification,
   Row,
+  Spin,
   Table,
   Tooltip
 } from 'antd';
@@ -33,7 +34,6 @@ import { AddVariable } from './AddVariable';
 import { ExpandedRowTable } from './ExpandedRowTable';
 import { TableMenu } from './TableMenu';
 import { SettingsDropdownTable } from '../../Manager/Dropdown/SettingsDropdownTable';
-import { RequiredLogin } from '../../Auth/RequiredLogin';
 import { FilterSelect } from '../../Manager/MappingsFunctions/FilterSelect';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import {
@@ -47,6 +47,7 @@ import { MappingComments } from '../../Manager/MappingsFunctions/MappingComments
 import { AssignMappingsViaButton } from '../../Manager/MappingsFunctions/AssignMappingsViaButton';
 import { MappingButton } from '../../Manager/MappingsFunctions/MappingButton';
 import { EditMappingsModal } from '../../Manager/MappingsFunctions/EditMappingModal';
+import { apiFetch } from '../../Manager/ApiFetch';
 
 export const TableDetails = () => {
   const [form] = Form.useForm();
@@ -83,7 +84,7 @@ export const TableDetails = () => {
   const [assignMappingsViaButton, setAssignMappingsViaButton] = useState(false);
 
   const [pageSize, setPageSize] = useState(
-    parseInt(localStorage.getItem('pageSize'), 10) || 10
+    parseInt(sessionStorage.getItem('pageSize'), 10) || 10
   );
   const handleTableChange = (current, size) => {
     setPageSize(size);
@@ -93,7 +94,6 @@ export const TableDetails = () => {
   const handleSuccess = () => {
     setLoad(true);
   };
-  const login = RequiredLogin({ handleSuccess: handleSuccess });
 
   useEffect(() => {
     document.title = 'Table - MapDragon';
@@ -101,21 +101,21 @@ export const TableDetails = () => {
 
   useEffect(() => {
     setDataSource(tableData(table));
-    localStorage.setItem('pageSize', pageSize);
+    sessionStorage.setItem('pageSize', pageSize);
   }, [table, mapping, pageSize]);
 
   const updateMappings = (mapArr, mappingCode) => {
     const mappingsDTO = {
-      mappings: mapArr,
-      editor: user.email
+      mappings: mapArr
     };
 
-    fetch(
+    apiFetch(
       `${vocabUrl}/Table/${tableId}/mapping/${uriEncoded(
         mappingCode
-      )}?user_input=True&user=${user?.email}`,
+      )}?user_input=True&user=${user}`,
       {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -166,7 +166,7 @@ export const TableDetails = () => {
         const mappingData = await getById(
           vocabUrl,
           'Table',
-          `${tableId}/mapping?user_input=True&user=${user?.email}`
+          `${tableId}/mapping?user_input=True&user=${user}`
         );
         setMapping(mappingData.codes);
 
@@ -184,7 +184,7 @@ export const TableDetails = () => {
         );
         setRelationshipOptions(relationshipData.codes);
 
-        const filterDataRes = await fetch(
+        const filterDataRes = await apiFetch(
           `${vocabUrl}/Table/${tableId}/filter/self`,
           {
             method: 'GET',
@@ -314,6 +314,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           variable={variable}
           setGetMappings={setGetMappings}
           setAssignMappingsViaButton={setAssignMappingsViaButton}
+          component={table}
+          componentString={'Table'}
         />
       );
     }
@@ -352,14 +354,15 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                   ? 'mapping_actions mapping_actions--active'
                   : 'mapping_actions mapping_actions--inactive'
               }
-              onClick={() =>
+              onClick={e => {
+                e.stopPropagation();
                 setComment({
                   code: code.code,
                   display: code.display,
                   variableMappings: variableMappings.code,
                   variableDisplay: foundDisplay.name
-                })
-              }
+                });
+              }}
             />
           </span>
           <span className="mapping_votes">
@@ -369,20 +372,21 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'blue'
                 }}
-                onClick={() =>
+                onClick={e => {
+                  e.stopPropagation();
                   userVote(code) === 'up' &&
-                  mappingVotes(
-                    variableMappings,
-                    code,
-                    user,
-                    'reset',
-                    vocabUrl,
-                    tableId,
-                    notification,
-                    setMapping,
-                    'Table'
-                  )
-                }
+                    mappingVotes(
+                      variableMappings,
+                      code,
+                      user,
+                      'reset',
+                      vocabUrl,
+                      tableId,
+                      notification,
+                      setMapping,
+                      'Table'
+                    );
+                }}
               />
             ) : (
               <UpOutlined
@@ -390,20 +394,22 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'blue'
                 }}
-                onClick={() =>
+                onClick={e => {
+                  e.stopPropagation();
+
                   userVote(code) !== 'up' &&
-                  mappingVotes(
-                    variableMappings,
-                    code,
-                    user,
-                    'up',
-                    vocabUrl,
-                    tableId,
-                    notification,
-                    setMapping,
-                    'Table'
-                  )
-                }
+                    mappingVotes(
+                      variableMappings,
+                      code,
+                      user,
+                      'up',
+                      vocabUrl,
+                      tableId,
+                      notification,
+                      setMapping,
+                      'Table'
+                    );
+                }}
               />
             )}
             <Tooltip
@@ -429,20 +435,21 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'green'
                 }}
-                onClick={() =>
+                onClick={e => {
+                  e.stopPropagation();
                   userVote(code) === 'down' &&
-                  mappingVotes(
-                    variableMappings,
-                    code,
-                    user,
-                    'reset',
-                    vocabUrl,
-                    tableId,
-                    notification,
-                    setMapping,
-                    'Table'
-                  )
-                }
+                    mappingVotes(
+                      variableMappings,
+                      code,
+                      user,
+                      'reset',
+                      vocabUrl,
+                      tableId,
+                      notification,
+                      setMapping,
+                      'Table'
+                    );
+                }}
               />
             ) : (
               <DownOutlined
@@ -450,27 +457,31 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                 style={{
                   color: 'green'
                 }}
-                onClick={() =>
+                onClick={e => {
+                  e.stopPropagation();
+
                   userVote(code) !== 'down' &&
-                  mappingVotes(
-                    variableMappings,
-                    code,
-                    user,
-                    'down',
-                    vocabUrl,
-                    tableId,
-                    notification,
-                    setMapping,
-                    'Table'
-                  )
-                }
+                    mappingVotes(
+                      variableMappings,
+                      code,
+                      user,
+                      'down',
+                      vocabUrl,
+                      tableId,
+                      notification,
+                      setMapping,
+                      'Table'
+                    );
+                }}
               />
             )}
           </span>
           <span className="mapping-display">
             <span
               className="stylized_link"
-              onClick={() => {
+              onClick={e => {
+                e.stopPropagation();
+
                 setEditMappings(variable);
                 setMappingsForSearch(variableMappings?.mappings);
               }}
@@ -481,7 +492,10 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           </span>
           <span
             className="mapping_actions"
-            onClick={() => handleRemoveMapping(variableMappings, code)}
+            onClick={e => {
+              e.stopPropagation();
+              handleRemoveMapping(variableMappings, code);
+            }}
           >
             <CloseCircleOutlined
               className="mapping_actions"
@@ -496,6 +510,8 @@ It then shows the mappings as table data and alows the user to delete a mapping 
           variable={variable}
           setGetMappings={setGetMappings}
           setAssignMappingsViaButton={setAssignMappingsViaButton}
+          component={table}
+          componentString={'Table'}
         />
       );
     }
@@ -553,127 +569,126 @@ It then shows the mappings as table data and alows the user to delete a mapping 
 
   return (
     <>
-      {loading ? (
-        // If page is loading, display loading spinner. Otherwise display code below
-
-        <Spinner />
-      ) : (
-        <div className="table_id_container">
-          <Row gutter={30}>
-            <div className="study_details_container">
-              <Col span={15}>
-                <div className="study_details">
-                  <div className="study_name">
-                    {/* Displays table name if there is one. If no name, displays DD id */}
-
-                    <h2>{table?.name ? table?.name : table?.id}</h2>
-                  </div>
-                  <div className="study_desc">
-                    {/* Displays the DD description if there is one.
-                    If there is no description, 'No description provided' is displayed in a gray font */}
-                    {table?.description ? (
-                      table?.description
-                    ) : (
-                      <span className="no_description">
-                        No description provided.
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </Col>
-              <Col span={6}>
-                <div className="study_details_right">
-                  <div className="study_dropdown">
-                    {/* ant.design dropdown for edit. */}
-                    <SettingsDropdownTable table={table} />
-                  </div>
-                  <div className="component_id">
-                    <b>ID</b>: {table?.id}
-                  </div>
-                </div>
-              </Col>
-            </div>
-          </Row>
-          {table?.filename ? (
-            <>
-              <div className="terminology_details terminology_desc">
-                File name: {table?.filename}
-              </div>
-            </>
-          ) : (
-            ''
-          )}
-          <div className="terminology_details">{table?.url}</div>
-          <div className="terminology_details terminology_desc"></div>
-          <div className="table_container">
-            {/* ant.design table displaying the pre-defined columns and data, with expandable rows. 
-            The expandable rows currently show the min, max, and units properties with no styling. */}
-            {table?.variables?.length > 0 ? (
-              <>
-                <div className="add_row_buttons">
-                  <FilterSelect
-                    component={table}
-                    table={table}
-                    terminology={null}
-                    componentString={'Table'}
-                  />
-                  <AddVariable
-                    table={table}
-                    setTable={setTable}
-                    dataSource={dataSource}
-                    setDataSource={setDataSource}
-                    form={form}
-                  />
-                </div>
-                <Form form={form}>
-                  <Table
-                    scroll={{ x: 'max-content' }}
-                    sticky={{ offsetHeader: 80 }}
-                    columns={columns}
-                    dataSource={dataSource}
-                    expandable={{
-                      expandRowByClick: 'true',
-                      expandedRowRender,
-                      rowExpandable: record =>
-                        record.data_type === 'INTEGER' ||
-                        record.data_type === 'QUANTITY'
-                    }}
-                    pagination={{
-                      showSizeChanger: true,
-                      pageSizeOptions: ['10', '20', '30'],
-                      pageSize: pageSize, // Use the stored pageSize
-                      onChange: handleTableChange // Capture pagination changes
-                    }}
-                  />
-                </Form>
-                <ExportFile componentString="Table" component={table} />
-              </>
-            ) : (
-              <Row gutter={[20, 24]}>
-                <Col span={6}>
-                  {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
-                and triggers the modal to open*/}
-                  <span onClick={() => (user ? setLoad(true) : login())}>
-                    <Card
-                      hoverable
-                      style={{
-                        border: '1px solid darkgray',
-                        height: '42vh'
-                      }}
-                    >
-                      <div className="new_study_card_container">
-                        <div className="new_study_card">
-                          Upload Variables (CSV)
-                        </div>
-                      </div>
-                    </Card>
-                  </span>
-                </Col>
-              </Row>
-            )}
-          </div>
+      {loading && (
+        <div className="loading_overlay">
+          <Spin />
         </div>
       )}
+      <div className="table_id_container">
+        <Row gutter={30}>
+          <div className="study_details_container">
+            <Col span={15}>
+              <div className="study_details">
+                <div className="study_name">
+                  {/* Displays table name if there is one. If no name, displays DD id */}
+
+                  <h2>{table?.name ? table?.name : table?.id}</h2>
+                </div>
+                <div className="study_desc">
+                  {/* Displays the DD description if there is one.
+                    If there is no description, 'No description provided' is displayed in a gray font */}
+                  {table?.description ? (
+                    table?.description
+                  ) : (
+                    <span className="no_description">
+                      No description provided.
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className="study_details_right">
+                <div className="study_dropdown">
+                  {/* ant.design dropdown for edit. */}
+                  <SettingsDropdownTable table={table} />
+                </div>
+                <div className="component_id">
+                  <b>ID</b>: {table?.id}
+                </div>
+              </div>
+            </Col>
+          </div>
+        </Row>
+        {table?.filename ? (
+          <>
+            <div className="terminology_details terminology_desc">
+              File name: {table?.filename}
+            </div>
+          </>
+        ) : (
+          ''
+        )}
+        <div className="terminology_details">{table?.url}</div>
+        <div className="terminology_details terminology_desc"></div>
+        <div className="table_container">
+          {/* ant.design table displaying the pre-defined columns and data, with expandable rows. 
+            The expandable rows currently show the min, max, and units properties with no styling. */}
+          {table?.variables?.length > 0 ? (
+            <>
+              <div className="add_row_buttons">
+                <FilterSelect
+                  component={table}
+                  table={table}
+                  terminology={null}
+                  componentString={'Table'}
+                />
+                <AddVariable
+                  table={table}
+                  setTable={setTable}
+                  dataSource={dataSource}
+                  setDataSource={setDataSource}
+                  form={form}
+                />
+              </div>
+              <Form form={form}>
+                <Table
+                  scroll={{ x: 'max-content' }}
+                  sticky={{ offsetHeader: 80 }}
+                  columns={columns}
+                  dataSource={dataSource}
+                  expandable={{
+                    expandRowByClick: true,
+                    expandedRowRender,
+                    rowExpandable: record =>
+                      record.data_type === 'INTEGER' ||
+                      record.data_type === 'QUANTITY'
+                  }}
+                  pagination={{
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '30'],
+                    pageSize: pageSize, // Use the stored pageSize
+                    onChange: handleTableChange // Capture pagination changes
+                  }}
+                />
+              </Form>
+              <ExportFile componentString="Table" component={table} />
+            </>
+          ) : (
+            <Row gutter={[20, 24]}>
+              <Col span={6}>
+                {/* The first column is a card that opens a modal to add a new study. It sets 'addTable' to true on click
+                and triggers the modal to open*/}
+                <span onClick={() => setLoad(true)}>
+                  <Card
+                    hoverable
+                    style={{
+                      border: '1px solid darkgray',
+                      height: '42vh'
+                    }}
+                  >
+                    <div className="new_study_card_container">
+                      <div className="new_study_card">
+                        Upload Variables (CSV)
+                      </div>
+                    </div>
+                  </Card>
+                </span>
+              </Col>
+            </Row>
+          )}
+        </div>
+      </div>
 
       {/* Displays the edit form */}
       <EditTableDetails

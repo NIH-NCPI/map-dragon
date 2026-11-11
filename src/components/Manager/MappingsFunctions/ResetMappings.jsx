@@ -6,35 +6,33 @@ import { useContext } from 'react';
 import { myContext } from '../../../App';
 import { uriEncoded } from '../Utility';
 import { MappingContext } from '../../../Contexts/MappingContext';
+import { apiFetch } from '../ApiFetch';
 
 export const ResetMappings = ({
   id,
   componentString,
   editMappings,
   setReset,
+  setExistingMappings,
   form
 }) => {
   const { confirm } = Modal;
   const { vocabUrl, user } = useContext(myContext);
-  const {
-    setExistingMappings,
-    setSelectedBoxes,
-    setDisplaySelectedMappings,
-    setSelectedMappings
-  } = useContext(MappingContext);
+  const { setSelectedBoxes, setDisplaySelectedMappings, setSelectedMappings } =
+    useContext(MappingContext);
 
   // The mappings for the code in the terminology are deleted when the "Reset" button is clicked
   // The updated data is fetched for the mappings for the code after the current mappings have been deleted.
   // setReset is set to true to open the modal that performs the search for the code again.
   const handleDelete = evt => {
-    return fetch(
+    return apiFetch(
       `${vocabUrl}/${componentString}/${id}/mapping/${uriEncoded(editMappings.code)}`,
       {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ editor: user.email })
+        }
       }
     )
       .then(response => {

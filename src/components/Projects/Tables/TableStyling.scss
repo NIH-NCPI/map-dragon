@@ -84,3 +84,9 @@ input::file-selector-button:hover {
     transition: all 0.4s linear;
   }
 }
+
+.ant-table-header {
+  overflow-x: auto !important;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
