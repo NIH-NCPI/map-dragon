@@ -33,10 +33,9 @@ export function SearchContextRoot() {
     const fetchDefaultOntologiesData = async () => {
       try {
         const result = await getDefaultOntologies(vocabUrl);
+        const first_value = Object.values(result)[0];
         setDefaultOntologies(
-          result['Application Default'].api_preference.ols.map(str =>
-            str.toUpperCase()
-          )
+          first_value.api_preference.ols.map(str => str.toUpperCase())
         ); // Update state with fetched data
       } catch (error) {
         console.error('Error fetching default ontologies:', error);

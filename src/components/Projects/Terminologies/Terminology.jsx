@@ -210,7 +210,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                   color: 'blue'
                 }}
                 onClick={() =>
-                  userVote(code) === 'up' &&
                   mappingVotes(
                     variableMappings,
                     code,
@@ -268,7 +267,6 @@ It then shows the mappings as table data and alows the user to delete a mapping 
                   color: 'green'
                 }}
                 onClick={() =>
-                  userVote(code) === 'down' &&
                   mappingVotes(
                     variableMappings,
                     code,
