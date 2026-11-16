@@ -134,14 +134,17 @@ export const Institutions = () => {
       {
         title: '',
         key: 'delete',
-        render: (_, record) => (
-          <Button
-            danger
-            type="text"
-            icon={role === 'admin' && <CloseCircleOutlined />}
-            onClick={() => setDeleteUser({ id: inst.id, email: record.email })}
-          />
-        )
+        render: (_, record) =>
+          role === 'admin' && (
+            <Button
+              danger
+              type="text"
+              icon={<CloseCircleOutlined />}
+              onClick={() =>
+                setDeleteUser({ id: inst.id, email: record.email })
+              }
+            />
+          )
       }
     ];
 

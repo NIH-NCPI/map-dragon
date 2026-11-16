@@ -271,9 +271,13 @@ export const FilterSelect = ({
   // Calculates the total length of all arrays to display number of ontology filters
   const apiPrefLength = () => {
     const ontoLength =
-      apiPrefObject &&
-      Object.values(apiPrefObject)?.reduce((acc, arr) => acc + arr.length, 0);
-    const termLength = prefTerminologies && prefTerminologies.length;
+      (apiPrefObject &&
+        Object.values(apiPrefObject)?.reduce(
+          (acc, arr) => acc + arr.length,
+          0
+        )) ??
+      0;
+    const termLength = prefTerminologies?.length ?? 0;
 
     return ontoLength + termLength;
   };
