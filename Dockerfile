@@ -1,7 +1,7 @@
 # Stage 1: Build the React app
 
 # FROM node:latest as build
-FROM node:18-alpine AS build 
+FROM node:22-alpine AS build 
 
 
 
